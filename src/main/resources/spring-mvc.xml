@@ -64,7 +64,6 @@
 						<value>/userController/currentUserResourcePage</value><!-- 查看自己的权限页面 -->
 						<value>/cache/clearAll</value><!-- 清除全部缓存 -->
 						<value>/userController/combogridByRole</value><!-- 关联用户的combogrid -->
-						
 					</list>
 				</property>
 			</bean>
