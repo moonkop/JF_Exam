@@ -72,7 +72,7 @@ public class ExamModel
     public void setClose_time(Long close_time)
     {
         this.close_time = close_time;
-        this.close_timeView=FormatUtil.formatDateTime(close_time)
+        this.close_timeView=FormatUtil.formatDateTime(close_time);
     }
 
     public Integer getExam_status()
