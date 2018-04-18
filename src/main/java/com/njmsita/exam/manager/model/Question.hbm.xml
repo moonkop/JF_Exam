@@ -3,10 +3,15 @@
         '-//Hibernate/Hibernate Mapping DTD 3.0//EN'
         'http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd'>
 <hibernate-mapping>
-    <class name="" table="">
+    <class name="com.njmsita.exam.manager.model.QuestionModel" table="question">
         <id name="id">
             <generator class="assigned"/>
         </id>
-        <properties name=""/>
+        <properties name="code"/>
+        <properties name="outline"/>
+        <properties name="options"/>
+        <properties name="answer"/>
+        <properties name="is_private"/>
+        <properties name="create_time"/>
     </class>
 </hibernate-mapping>

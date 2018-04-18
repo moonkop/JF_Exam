@@ -34,7 +34,7 @@ public class ExamModel
     //所含题目
     private String paper_content;
     //参加班级
-    private String classroomid;
+    private String classroom_id;
 
     private Long open_time;
     private Long close_time;
@@ -131,14 +131,14 @@ public class ExamModel
         this.paper_content = paper_content;
     }
 
-    public String getClassroomid()
+    public String getClassroom_id()
     {
-        return classroomid;
+        return classroom_id;
     }
 
-    public void setClassroomid(String classroomid)
+    public void setClassroom_id(String classroom_id)
     {
-        this.classroomid = classroomid;
+        this.classroom_id = classroom_id;
     }
 
     public SubjectModel getSubject()
