@@ -1,7 +1,19 @@
 <!-- @@master = /components/master.html {"title":"教师管理"} -->
 <!-- @@block  =  content-->
 
+<script>
+    $(document).ready(
+        function () {
 
+            $(".js-view").on("click",function () {
+                window.location.href="/dist/pages/manage/teacher/detail.html"
+            })
+            $(".js-edit").on("click",function () {
+                window.location.href="/dist/pages/manage/teacher/edit.html"
+            })
+        }
+    )
+</script>
 
 <div class="row">
     <div class="col-lg-12">
@@ -9,7 +21,7 @@
             教师管理
         </h3>
         <div class="table-btns">
-            <button class="btn btn-primary"> 添加教师</button>
+            <a class="btn btn-primary" href="add.html"> 添加教师</a>
             <button class="btn btn-default"> 批量导入教师</button>
         </div>
 
@@ -32,9 +44,9 @@
                 <td>管理员</td>
                 <td>机蜂培训</td>
                 <td>
-                    <a class="fa fa-search js-view " title="预览"></a>
-                    <a class="fa fa-pencil js-edit " title="修改"></a>
-                    <a class="fa fa-trash js-del " title="删除"></a>
+                    <a class="fa fa-search js-view" title="预览"></a>
+                    <a class="fa fa-pencil js-edit" title="修改"></a>
+                    <a class="fa fa-trash js-del" title="删除"></a>
                 </td>
             </tr>
             <tr>
