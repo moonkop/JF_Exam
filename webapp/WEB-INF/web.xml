@@ -14,7 +14,7 @@
   <!--配置spring文件加载路径-->
   <context-param>
     <param-name>contextConfigLocation</param-name>
-    <param-value>classpath:spring*.xml</param-value>
+    <param-value>classpath:springConfig.xml</param-value>
   </context-param>
 
   <!--防止懒加载-->

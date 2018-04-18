@@ -1,4 +1,5 @@
-﻿package com.njmsita.exam.utils.format;
+package com.njmsita.exam.utils.format;
+
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
