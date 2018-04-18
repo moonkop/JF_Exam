@@ -1,6 +1,30 @@
 package com.njmsita.exam.manager.model;
 
-
+/**
+ * 学校实体模型
+ */
 public class SchoolModel
 {
+    private String id;
+    private String name;
+
+    public String getId()
+    {
+        return id;
+    }
+
+    public void setId(String id)
+    {
+        this.id = id;
+    }
+
+    public String getName()
+    {
+        return name;
+    }
+
+    public void setName(String name)
+    {
+        this.name = name;
+    }
 }

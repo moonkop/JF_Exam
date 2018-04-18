@@ -1,10 +1,12 @@
 package com.njmsita.exam.base;
 
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+@RequestMapping("/baseController")
 public class BaseController{
-	public static final String LIST = "list";
-	public static final String TO_LIST = "toList";
-	public static final String INPUT = "input";
-	
 	public Integer pageNum = 1;
 	public Integer pageCount = 10;
 	public Integer maxPageNum;
@@ -14,8 +16,20 @@ public class BaseController{
 		this.dataTotal = dataTotal ;
 		maxPageNum = (dataTotal + pageCount -1) / pageCount;
 	}
-	
-	protected EmpModel getLogin(){
-		return (EmpModel) getSession(EmpModel.EMP_LOGIN_USER_OBJECT_NAME);
+
+	/**
+	 * 用户跳转JSP页面
+	 *
+	 * 此方法不考虑权限控制
+	 *
+	 * @param folder
+	 *            路径
+	 * @param jspName
+	 *            JSP名称(不加后缀)
+	 * @return 指定JSP页面
+	 */
+	@RequestMapping("/{folder}/{jspName}")
+	public String redirectJsp(@PathVariable String folder, @PathVariable String jspName) {
+		return "/" + folder + "/" + jspName;
 	}
 }
