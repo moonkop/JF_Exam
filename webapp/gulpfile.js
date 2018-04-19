@@ -7,23 +7,16 @@ var rename = require("gulp-rename");
 var uglify = require('gulp-uglify');
 var pkg = require('./package.json');
 var sourcemaps = require('gulp-sourcemaps');
-var extender = require('gulp-html-extend')
-
+var extender = require('gulp-html-extend');
+var insert=require('gulp-insert');
 // Set the banner content
-var banner = ['/*!\n',
-    ' * Start Bootstrap - <%= pkg.title %> v<%= pkg.version %> (<%= pkg.homepage %>)\n',
-    ' * Copyright 2013-' + (new Date()).getFullYear(), ' <%= pkg.author %>\n',
-    ' * Licensed under <%= pkg.license.type %> (<%= pkg.license.url %>)\n',
-    ' */\n',
-    ''
-].join('');
+
 
 // Compile LESS files from /less into /css
 gulp.task('less', function() {
     return gulp.src('less/sb-admin-2.less')
         .pipe(sourcemaps.init())
         .pipe(less())
-        .pipe(header(banner, { pkg: pkg }))
         .pipe(sourcemaps.write())
         .pipe(gulp.dest('dist/css'))
         .pipe(browserSync.reload({
@@ -42,6 +35,7 @@ gulp.task('html',function () {
 gulp.task('jsp',function () {
     return gulp.src('dist/pages/**/*.html')
         .pipe(rename({extname:".jsp"}))
+        .pipe(insert.prepend("<%@ page contentType=\"text/html;charset=UTF-8\" language=\"java\" pageEncoding=\"UTF-8\"%>"))
         .pipe(gulp.dest("dist/jsp"))
 })
 
@@ -59,7 +53,6 @@ gulp.task('minify-css', ['less'], function() {
 // Copy JS to dist
 gulp.task('js', function() {
     return gulp.src(['js/sb-admin-2.js'])
-        .pipe(header(banner, { pkg: pkg }))
         .pipe(gulp.dest('dist/js'))
         .pipe(browserSync.reload({
             stream: true
@@ -77,7 +70,6 @@ gulp.task('minify-js', ['js'], function() {
             }
 
         ))
-        .pipe(header(banner, { pkg: pkg }))
         .pipe(rename({ suffix: '.min' }))
         .pipe(gulp.dest('dist/js'))
         .pipe(browserSync.reload({

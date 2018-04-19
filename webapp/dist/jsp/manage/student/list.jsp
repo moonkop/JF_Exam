@@ -1,9 +1,9 @@
-
+<%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8"%>
 
 <html lang="en">
 
 <head>
-    <title>教师管理 - 添加</title>
+    <title>学生管理</title>
 <!-- start header.html-->
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -121,74 +121,81 @@
 <!-- end sidebar.html-->
     <div id="page-wrapper">
 <!-- start content -->
+<script>
+    $(document).ready(
+        function () {
+
+            $(".js-view").on("click",function () {
+                window.location.href="/dist/pages/manage/student/detail.html"
+            })
+            $(".js-edit").on("click",function () {
+                window.location.href="/dist/pages/manage/student/edit.html"
+            })
+        }
+    )
+</script>
+
 <div class="row">
     <div class="col-lg-12">
         <h3>
-            教师管理 - 编辑
+            学生管理
         </h3>
-        <div class="panel panel-primary main-panel">
-            <div class="panel-body">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <form role="form" class="form-horizontal">
-                            <div class="form-group">
-                                <label class="col-sm-2 control-label">学校</label>
-                                <div class="col-sm-8">
-                                    <select  class="form-control" placeholder="请选择学校">
-                                        <option value="">机蜂夏令营</option>
-                                        <option value="">清华大学</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-2 control-label">姓名</label>
-                                <div class="col-sm-8">
-                                    <input type="text" class="form-control" id="inputName"
-                                           value="张甜甜">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-2 control-label">密码</label>
-                                <div class="col-sm-8">
-                                    <input type="password" class="form-control" id="inputPassword"
-                                           placeholder="如需修改，请输入">
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="col-sm-2 control-label">身份证号码</label>
-                                <div class="col-sm-8">
-                                    <input type="text" class="form-control" id="inputIDCard" name="inputIDCard"
-                                           value="320503197110070521">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="inputEmail" class="col-sm-2 control-label">Email</label>
-                                <div class="col-sm-8">
-                                    <input type="email" class="form-control" id="inputEmail" name="inputEmail"
-                                           value="zhangtiantian@qq.com">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="inputTel" class="col-sm-2 control-label">电话</label>
-                                <div class="col-sm-8">
-                                    <input type="text" class="form-control" id="inputTel" name="inputTel"
-                                           value="18115151516">
-                                </div>
-                            </div>
-                            <div class="col-sm-offset-2">
-                                <button type="submit" class="btn btn-primary">提交</button>
-                                <button type="submit" class="btn btn-default">取消</button>
-                            </div>
-                        </form>
-                    </div>
-
-                </div>
-
-            </div>
-
+        <div class="table-btns">
+            <a class="btn btn-primary" href="add.html"> 添加学生</a>
+            <button class="btn btn-default"> 批量导入学生</button>
         </div>
+
+
+        <table class="table table-striped table-bordered table-hover">
+            <thead>
+            <tr>
+                <th>学校</th>
+                <th>学号</th>
+                <th>姓名</th>
+                <th>班级</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>机蜂夏令营</td>
+                <td>215110</td>
+                <td>张甜甜</td>
+                <td>机蜂培训</td>
+                <td>
+                    <a class="fa fa-search js-view" title="预览"></a>
+                    <a class="fa fa-pencil js-edit" title="修改"></a>
+                    <a class="fa fa-trash js-del" title="删除"></a>
+                </td>
+            </tr>
+            <tr>
+                <td>机蜂夏令营</td>
+                <td>215111</td>
+                <td>刘丹丹</td>
+                <td>机蜂培训</td>
+                <td>
+                    <a class="fa fa-search js-view" title="预览"></a>
+                    <a class="fa fa-pencil js-edit" title="修改"></a>
+                    <a class="fa fa-trash js-del" title="删除"></a>
+                </td>
+            </tr>
+            <tr>
+                <td>机蜂夏令营</td>
+                <td>215112</td>
+                <td>黄婷婷</td>
+                <td>清华大学</td>
+                <td>
+                    <a class="fa fa-search js-view" title="预览"></a>
+                    <a class="fa fa-pencil js-edit" title="修改"></a>
+                    <a class="fa fa-trash js-del" title="删除"></a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+
     </div>
+
 </div>
 
 <!-- end content -->

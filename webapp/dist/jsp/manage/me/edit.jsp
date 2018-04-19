@@ -1,9 +1,9 @@
-
+<%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8"%>
 
 <html lang="en">
 
 <head>
-    <title>教师管理 - 添加</title>
+    <title>个人信息 - 编辑</title>
 <!-- start header.html-->
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -124,7 +124,7 @@
 <div class="row">
     <div class="col-lg-12">
         <h3>
-            教师管理 - 编辑
+            个人信息 - 编辑
         </h3>
         <div class="panel panel-primary main-panel">
             <div class="panel-body">
@@ -132,48 +132,36 @@
                     <div class="col-lg-12">
                         <form role="form" class="form-horizontal">
                             <div class="form-group">
-                                <label class="col-sm-2 control-label">学校</label>
-                                <div class="col-sm-8">
-                                    <select  class="form-control" placeholder="请选择学校">
-                                        <option value="">机蜂夏令营</option>
-                                        <option value="">清华大学</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group">
                                 <label class="col-sm-2 control-label">姓名</label>
                                 <div class="col-sm-8">
-                                    <input type="text" class="form-control" id="inputName"
-                                           value="张甜甜">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-2 control-label">密码</label>
-                                <div class="col-sm-8">
-                                    <input type="password" class="form-control" id="inputPassword"
-                                           placeholder="如需修改，请输入">
+                                    <p class="form-control-static">徐强</p>
                                 </div>
                             </div>
 
                             <div class="form-group">
+                                <label class="col-sm-2 control-label">身份</label>
+                                <div class="col-sm-8">
+                                    <p class="form-control-static">超级管理员</p>
+                                </div>
+                            </div>
+                            <div class="form-group">
                                 <label class="col-sm-2 control-label">身份证号码</label>
                                 <div class="col-sm-8">
-                                    <input type="text" class="form-control" id="inputIDCard" name="inputIDCard"
-                                           value="320503197110070521">
+                                    <p class="form-control-static">320502199705152254</p>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="inputEmail" class="col-sm-2 control-label">Email</label>
                                 <div class="col-sm-8">
-                                    <input type="email" class="form-control" id="inputEmail" name="inputEmail"
-                                           value="zhangtiantian@qq.com">
+                                    <input type="email" class="form-control" id="inputEmail"
+                                           placeholder="请输入Email">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="inputTel" class="col-sm-2 control-label">电话</label>
                                 <div class="col-sm-8">
-                                    <input type="text" class="form-control" id="inputTel" name="inputTel"
-                                           value="18115151516">
+                                    <input type="email" class="form-control" id="inputTel"
+                                           placeholder="请输入电话号码">
                                 </div>
                             </div>
                             <div class="col-sm-offset-2">
@@ -188,8 +176,11 @@
             </div>
 
         </div>
+
     </div>
+
 </div>
+
 
 <!-- end content -->
     </div>
