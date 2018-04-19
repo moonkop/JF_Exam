@@ -39,7 +39,11 @@ gulp.task('html',function () {
             stream:true
         }))
 })
-
+gulp.task('jsp',function () {
+    return gulp.src('dist/pages/**/*.html')
+        .pipe(rename({extname:".jsp"}))
+        .pipe(gulp.dest("dist/jsp"))
+})
 
 // Minify compiled CSS
 gulp.task('minify-css', ['less'], function() {
