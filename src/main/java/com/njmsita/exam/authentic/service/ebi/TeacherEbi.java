@@ -7,4 +7,5 @@ import org.springframework.transaction.annotation.Transactional;
 
 public interface TeacherEbi extends BaseEbi<TeacherModel>
 {
+    public TeacherModel login(String teacher_id, String password, String loginIp);
 }

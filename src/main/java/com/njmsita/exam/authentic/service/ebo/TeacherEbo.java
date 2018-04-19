@@ -4,6 +4,7 @@ import com.njmsita.exam.authentic.dao.dao.TeacherDao;
 import com.njmsita.exam.authentic.model.TeacherModel;
 import com.njmsita.exam.authentic.service.ebi.TeacherEbi;
 import com.njmsita.exam.base.BaseQueryModel;
+import com.njmsita.exam.utils.format.MD5Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,5 +51,22 @@ public class TeacherEbo implements TeacherEbi
     public Integer getCount(BaseQueryModel qm)
     {
         return teacherDao.getCount(qm);
+    }
+
+    //------------------------------------以上为基本方法----------------------------
+    //------------------------------------以上为基本方法----------------------------
+    //------------------------------------以上为基本方法----------------------------
+    //------------------------------------以上为基本方法----------------------------
+    //------------------------------------以上为基本方法----------------------------
+
+    public TeacherModel login(String teacher_id, String password, String loginIp)
+    {
+        password = MD5Utils.md5(password);
+        TeacherModel loginTea=teacherDao.getByUsernameAndPwd(teacher_id,password);
+        if(loginTea!=null){
+            loginTea.setLast_login_time(System.currentTimeMillis());
+            loginTea.setLast_login_ip(loginIp);
+        }
+        return loginTea;
     }
 }

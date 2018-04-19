@@ -1,17 +1,21 @@
 package com.njmsita.exam.authentic.controller;
 
 import com.njmsita.exam.authentic.model.TeacherModel;
+import com.njmsita.exam.authentic.model.TresourceModel;
 import com.njmsita.exam.authentic.service.ebi.TeacherEbi;
 import com.njmsita.exam.authentic.service.ebi.TresourceEbi;
 import com.njmsita.exam.authentic.service.ebi.TroleEbi;
 import com.njmsita.exam.base.BaseController;
+import com.njmsita.exam.utils.consts.SysConsts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 @Controller
 @Scope("prototype")
@@ -28,8 +32,34 @@ public class TeacherController extends BaseController
     private TresourceEbi tresourceEbi;
 
     @RequestMapping("/login")
-    public String login(TeacherModel login, HttpSession session){
-        System.out.println(login.getTeacher_id()+""+login.getPassword());
+    public String login(TeacherModel login, HttpSession session, HttpServletRequest request){
+
+        //获取IP地址
+        String loginIp=request.getHeader("x-forwarded-for");
+        if(loginIp == null || loginIp.length() == 0 || "unknown".equalsIgnoreCase(loginIp)) {
+            loginIp = request.getHeader("Proxy-Client-IP");
+        }
+        if(loginIp == null || loginIp.length() == 0 || "unknown".equalsIgnoreCase(loginIp)) {
+            loginIp = request.getHeader("WL-Proxy-Client-IP");
+        }
+        if(loginIp == null || loginIp.length() == 0 || "unknown".equalsIgnoreCase(loginIp)) {
+            loginIp = request.getRemoteAddr();
+        }
+
+        TeacherModel loginTea=teacherEbi.login(login.getTeacher_id(),login.getPassword(),loginIp);
+        if(loginTea!=null){
+            List<TresourceModel> resModels = tresourceEbi.getAllByLogin(loginTea.getId());
+            StringBuilder sbd=new StringBuilder();
+            for (TresourceModel resModel : resModels)
+            {
+                sbd.append(resModel.getUrl());
+                sbd.append(",");
+            }
+            loginTea.setLoginRes(sbd.toString());
+            session.setAttribute(SysConsts.TEA_LOGIN_TEACHER_OBJECT_NAME,loginTea);
+            return "dist/jsp/login_teacher";
+        }
+
         return "redirect:dist/pages/index_teacher";
     }
 }

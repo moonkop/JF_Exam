@@ -20,6 +20,8 @@ public class TeacherModel
     private Long createtime;
     private Long modifytime;
 
+    private String loginRes;
+
     //时间视图值，用来显示用的
     private String last_login_timeView;
     private String createtimeView;
@@ -27,6 +29,16 @@ public class TeacherModel
 
     //所拥有的角色 n TO 1
     private  TroleModel role;
+
+    public String getLoginRes()
+    {
+        return loginRes;
+    }
+
+    public void setLoginRes(String loginRes)
+    {
+        this.loginRes = loginRes;
+    }
 
     public Long getLast_login_time()
     {

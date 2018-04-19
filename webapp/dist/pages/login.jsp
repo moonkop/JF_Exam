@@ -29,13 +29,7 @@
     <![endif]-->
     <!-- end header.html-->
 
-    <script type="text/javascript">
-        $(function () {
-            $("#commit").click(function () {
-                $("form:first").submit();
-            })
-        });
-    </script>
+
 </head>
 <body>
 <div class="container">

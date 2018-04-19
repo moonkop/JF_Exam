@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 
 public interface TeacherDao extends BaseDao<TeacherModel>
 {
+    public TeacherModel getByUsernameAndPwd(String teacher_id, String password);
 }
