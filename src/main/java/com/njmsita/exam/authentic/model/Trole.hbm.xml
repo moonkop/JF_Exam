@@ -17,7 +17,7 @@
             <key column="pid"/>
             <one-to-many class="com.njmsita.exam.authentic.model.TroleModel"/>
         </set>
-        <set name="tresources">
+        <set name="tresources" table="trole_tresource">
             <key column="id"></key>
             <many-to-many column="trole_id" class="com.njmsita.exam.authentic.model.TresourceModel"/>
         </set>

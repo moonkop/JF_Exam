@@ -18,4 +18,10 @@ public class TresourceDaoImpl extends BaseImpl<TresourceModel> implements Tresou
     {
         TresourceQueryModel rqm= (TresourceQueryModel) qm;
     }
+
+    public List<TresourceModel> getAllByLoginTea(String id)
+    {
+        String hql ="select resm from TeacherModel tm join tm.role rm join rm.tresources resm where tm.id=?";
+        return this.getHibernateTemplate().find(hql,id);
+    }
 }
