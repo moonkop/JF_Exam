@@ -5,10 +5,14 @@ import com.njmsita.exam.manager.dao.dao.ClassroomDao;
 import com.njmsita.exam.manager.model.ClassroomModel;
 import com.njmsita.exam.manager.service.ebi.ClassroomEbi;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.util.List;
 
+@Transactional
+@Service
 public class ClassroomEbo implements ClassroomEbi
 {
     @Autowired

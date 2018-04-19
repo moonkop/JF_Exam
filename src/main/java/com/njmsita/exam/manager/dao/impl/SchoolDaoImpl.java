@@ -6,10 +6,11 @@ import com.njmsita.exam.manager.dao.dao.SchoolDao;
 import com.njmsita.exam.manager.model.SchoolModel;
 import com.njmsita.exam.manager.model.querymodel.SchoolQueryModel;
 import org.hibernate.criterion.DetachedCriteria;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class SchoolDaoImpl extends BaseImpl<SchoolModel> implements SchoolDao
 {
-    @Override
     public void doQbc(DetachedCriteria dc, BaseQueryModel qm)
     {
         SchoolQueryModel sqm= (SchoolQueryModel) qm;

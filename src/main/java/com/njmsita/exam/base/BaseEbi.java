@@ -6,7 +6,6 @@ import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
 
 
-@Transactional
 public interface BaseEbi<T> {
 
 	/**

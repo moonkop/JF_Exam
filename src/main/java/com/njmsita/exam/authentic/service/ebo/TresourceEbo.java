@@ -5,10 +5,14 @@ import com.njmsita.exam.authentic.model.TresourceModel;
 import com.njmsita.exam.authentic.service.ebi.TresourceEbi;
 import com.njmsita.exam.base.BaseQueryModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.util.List;
 
+@Transactional
+@Service
 public class TresourceEbo implements TresourceEbi
 {
     @Autowired

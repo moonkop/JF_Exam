@@ -5,10 +5,14 @@ import com.njmsita.exam.authentic.model.StudentModel;
 import com.njmsita.exam.authentic.service.ebi.StudentEbi;
 import com.njmsita.exam.base.BaseQueryModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.util.List;
 
+@Service
+@Transactional
 public class StudentEbo implements StudentEbi
 {
     @Autowired

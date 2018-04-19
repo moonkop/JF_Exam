@@ -13,9 +13,8 @@
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
 	<!-- 自动扫描controller包下的所有类，使其认为spring mvc的控制器 -->
-	<context:component-scan base-package="com.njmsita.exam.*.controller,com.njmsita.exam.authentic.teacher.service,com.njmsita.exam.*.dao" />
-	
-	<!--<context:property-placeholder location="classpath:config.properties" />-->
+	<context:component-scan base-package="com.njmsita.exam.authentic.controller,com.njmsita.exam.manager.controller,com.njmsita.exam.manager.dao,com.njmsita.exam.manager.service,com.njmsita.exam.authentic.dao,com.njmsita.exam.authentic.service" />
+	<context:property-placeholder location="classpath:config.properties" />
 
 	<!-- Spring MVC JSON配置 -->
 	<mvc:annotation-driven>
@@ -33,41 +32,45 @@
 	  
 
 	<!-- 对模型视图名称的解析，即在模型视图名称添加前后缀 -->
-	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" p:prefix="/WEB-INF/jsp/" p:suffix=".jsp" />
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver" p:prefix="/" p:suffix=".jsp" />
 
-
-	
-	<!-- 静态资源访问（不拦截此目录下的东西的访问） -->  
-	<mvc:resources location="/upload/"  mapping="/upload/**" />
+	<!--&lt;!&ndash; 静态资源访问（不拦截此目录下的东西的访问） &ndash;&gt;-->
+	<mvc:resources location="/less/"  mapping="/less/**" />
+	<mvc:resources location="/dist/"  mapping="/dist/**" />
+	<mvc:resources location="/js/"  mapping="/js/**" />
+	<mvc:resources location="/data/"  mapping="/data/**" />
+	<mvc:resources location="/templates/"  mapping="/templates/**" />
+	<mvc:resources location="/vendor/"  mapping="/vendor/**" />
 	<!-- 拦截器 -->
-	<mvc:interceptors>
+	<!--<mvc:interceptors>
 		<mvc:interceptor>
 			<mvc:mapping path="/**" />
 			<bean class="sy.interceptors.SecurityInterceptor">
-				<!-- 不需要权限验证的地址 -->
+				&lt;!&ndash; 不需要权限验证的地址 &ndash;&gt;
 				<property name="excludeUrls">
 					<list>
-						<value>/initController/init</value><!-- 初始化数据库 -->
-						<value>/resourceController/tree</value><!-- 首页左侧功能菜单 -->
-						<value>/userController/reg</value><!-- 用户注册 -->
-						<value>/userController/login</value><!-- 用户登录 -->
-						<value>/userController/loginHuasheng</value><!-- 用户登录 -->
-						<value>/userController/loginCombobox</value><!-- 用户登录里面的autocomplete功能 -->
-						<value>/userController/loginCombogrid</value><!-- 用户登录里面的combogrid功能 -->
-						<value>/userController/logout</value><!-- 注销登录 -->
-						<value>/resourceController/allTree</value><!-- 角色访问资源下拉树 -->
-						<value>/roleController/tree</value><!-- 用户访问角色树(只能看到自己拥有的角色) -->
-						<value>/roleController/allTree</value><!-- 用户访问角色树 -->
-						<value>/userController/editCurrentUserPwdPage</value><!-- 用户修改自己的密码页面 -->
-						<value>/userController/editCurrentUserPwd</value><!-- 用户修改自己的密码 -->
-						<value>/userController/currentUserRolePage</value><!-- 查看自己的角色页面 -->
-						<value>/userController/currentUserResourcePage</value><!-- 查看自己的权限页面 -->
-						<value>/cache/clearAll</value><!-- 清除全部缓存 -->
-						<value>/userController/combogridByRole</value><!-- 关联用户的combogrid -->
+						<value>/initController/init</value>&lt;!&ndash; 初始化数据库 &ndash;&gt;
+						<value>/resourceController/tree</value>&lt;!&ndash; 首页左侧功能菜单 &ndash;&gt;
+						<value>/userController/reg</value>&lt;!&ndash; 用户注册 &ndash;&gt;
+						<value>/userController/login</value>&lt;!&ndash; 用户登录 &ndash;&gt;
+						<value>/userController/loginHuasheng</value>&lt;!&ndash; 用户登录 &ndash;&gt;
+						<value>/userController/loginCombobox</value>&lt;!&ndash; 用户登录里面的autocomplete功能 &ndash;&gt;
+						<value>/userController/loginCombogrid</value>&lt;!&ndash; 用户登录里面的combogrid功能 &ndash;&gt;
+						<value>/userController/logout</value>&lt;!&ndash; 注销登录 &ndash;&gt;
+						<value>/resourceController/allTree</value>&lt;!&ndash; 角色访问资源下拉树 &ndash;&gt;
+						<value>/roleController/tree</value>&lt;!&ndash; 用户访问角色树(只能看到自己拥有的角色) &ndash;&gt;
+						<value>/roleController/allTree</value>&lt;!&ndash; 用户访问角色树 &ndash;&gt;
+						<value>/userController/editCurrentUserPwdPage</value>&lt;!&ndash; 用户修改自己的密码页面 &ndash;&gt;
+						<value>/userController/editCurrentUserPwd</value>&lt;!&ndash; 用户修改自己的密码 &ndash;&gt;
+						<value>/userController/currentUserRolePage</value>&lt;!&ndash; 查看自己的角色页面 &ndash;&gt;
+						<value>/userController/currentUserResourcePage</value>&lt;!&ndash; 查看自己的权限页面 &ndash;&gt;
+						<value>/cache/clearAll</value>&lt;!&ndash; 清除全部缓存 &ndash;&gt;
+						<value>/userController/combogridByRole</value>&lt;!&ndash; 关联用户的combogrid &ndash;&gt;
+						
 					</list>
 				</property>
 			</bean>
 		</mvc:interceptor>
-	</mvc:interceptors>
+	</mvc:interceptors>-->
 
 </beans>

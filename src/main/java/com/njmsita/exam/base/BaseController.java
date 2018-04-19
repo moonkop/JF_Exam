@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/baseController")
+@RequestMapping("base")
 public class BaseController{
 	public Integer pageNum = 1;
 	public Integer pageCount = 10;
@@ -28,8 +28,8 @@ public class BaseController{
 	 *            JSP名称(不加后缀)
 	 * @return 指定JSP页面
 	 */
-	@RequestMapping("/{folder}/{jspName}")
-	public String redirectJsp(@PathVariable String folder, @PathVariable String jspName) {
-		return "/" + folder + "/" + jspName;
-	}
+	/*@RequestMapping("/{folder}/{jspName}")
+	public String redirectJsp(@PathVariable("folder") String folder, @PathVariable("jspName") String jspName) {
+		return folder + "/" + jspName;
+	}*/
 }

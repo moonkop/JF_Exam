@@ -5,10 +5,14 @@ import com.njmsita.exam.manager.dao.dao.SubjectDao;
 import com.njmsita.exam.manager.model.SubjectModel;
 import com.njmsita.exam.manager.service.ebi.SubjectEbi;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.util.List;
 
+@Transactional
+@Service
 public class SubjectEbo implements SubjectEbi
 {
     @Autowired

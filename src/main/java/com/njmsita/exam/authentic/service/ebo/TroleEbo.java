@@ -5,10 +5,14 @@ import com.njmsita.exam.authentic.model.TroleModel;
 import com.njmsita.exam.authentic.service.ebi.TroleEbi;
 import com.njmsita.exam.base.BaseQueryModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.util.List;
 
+@Transactional
+@Service
 public class TroleEbo implements TroleEbi
 {
     @Autowired

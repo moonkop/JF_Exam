@@ -5,15 +5,22 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 
+import org.hibernate.SessionFactory;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.springframework.stereotype.Repository;
 
+import javax.annotation.Resource;
 
 public abstract class BaseImpl<T> extends HibernateDaoSupport implements BaseDao<T> {
 
-	
+	@Resource
+	public void setMySessionFactory(SessionFactory sessionFactory){
+		super.setSessionFactory(sessionFactory);
+	}
+
 	private Class<T> entityClass=null;
 	public BaseImpl(){
 		Type genType = getClass().getGenericSuperclass();   

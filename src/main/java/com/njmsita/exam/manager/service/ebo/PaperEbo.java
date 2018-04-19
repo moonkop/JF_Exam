@@ -5,10 +5,14 @@ import com.njmsita.exam.manager.dao.dao.PaperDao;
 import com.njmsita.exam.manager.model.PaperModel;
 import com.njmsita.exam.manager.service.ebi.PaperEbi;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.util.List;
 
+@Transactional
+@Service
 public class PaperEbo implements PaperEbi
 {
     @Autowired

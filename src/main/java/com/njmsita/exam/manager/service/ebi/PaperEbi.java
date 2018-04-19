@@ -5,8 +5,6 @@ import com.njmsita.exam.manager.model.PaperModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Transactional
-@Service
 public interface PaperEbi extends BaseEbi<PaperModel>
 {
 }
