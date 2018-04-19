@@ -52,4 +52,9 @@ public class TresourceEbo implements TresourceEbi
     {
         return tresourceDao.getCount(qm);
     }
+
+    public List<TresourceModel> getAllByLoginTea(String id)
+    {
+        return tresourceDao.getAllByLoginTea(id);
+    }
 }

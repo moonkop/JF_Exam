@@ -8,7 +8,6 @@ import com.njmsita.exam.authentic.service.ebi.TroleEbi;
 import com.njmsita.exam.base.BaseController;
 import com.njmsita.exam.utils.consts.SysConsts;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,7 +47,7 @@ public class TeacherController extends BaseController
 
         TeacherModel loginTea=teacherEbi.login(login.getTeacher_id(),login.getPassword(),loginIp);
         if(loginTea!=null){
-            List<TresourceModel> resModels = tresourceEbi.getAllByLogin(loginTea.getId());
+            List<TresourceModel> resModels = tresourceEbi.getAllByLoginTea(loginTea.getId());
             StringBuilder sbd=new StringBuilder();
             for (TresourceModel resModel : resModels)
             {

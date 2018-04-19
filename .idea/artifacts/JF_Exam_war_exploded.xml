@@ -2,6 +2,10 @@
   <artifact type="exploded-war" name="JF_Exam:war exploded">
     <output-path>$PROJECT_DIR$/target/Peanut</output-path>
     <root id="root">
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/target/Peanut/META-INF/MANIFEST.MF" />
+      </element>
+      <element id="javaee-facet-resources" facet="JF_Exam/web/Web" />
       <element id="directory" name="WEB-INF">
         <element id="directory" name="classes">
           <element id="module-output" name="JF_Exam" />
@@ -107,10 +111,6 @@
           <element id="library" level="project" name="Maven: joda-time:joda-time:2.9.6" />
         </element>
       </element>
-      <element id="directory" name="META-INF">
-        <element id="file-copy" path="$PROJECT_DIR$/target/Peanut/META-INF/MANIFEST.MF" />
-      </element>
-      <element id="javaee-facet-resources" facet="JF_Exam/web/Web" />
     </root>
   </artifact>
 </component>
