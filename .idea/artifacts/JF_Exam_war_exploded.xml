@@ -1,12 +1,17 @@
 <component name="ArtifactManager">
   <artifact type="exploded-war" name="JF_Exam:war exploded">
-    <output-path>$PROJECT_DIR$/target/Peanut</output-path>
+    <output-path>$PROJECT_DIR$/target/JF_Exam</output-path>
     <root id="root">
       <element id="directory" name="WEB-INF">
         <element id="directory" name="classes">
           <element id="module-output" name="JF_Exam" />
         </element>
         <element id="directory" name="lib">
+          <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-core:2.1.2" />
+          <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.1.2" />
+          <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.1.1" />
+          <element id="library" level="project" name="Maven: org.codehaus.jackson:jackson-mapper-asl:1.9.13" />
+          <element id="library" level="project" name="Maven: org.codehaus.jackson:jackson-core-asl:1.9.13" />
           <element id="library" level="project" name="Maven: org.apache.xmlgraphics:batik-codec:1.7" />
           <element id="library" level="project" name="Maven: org.apache.xmlgraphics:batik-awt-util:1.7" />
           <element id="library" level="project" name="Maven: org.apache.xmlgraphics:batik-bridge:1.7" />
@@ -108,7 +113,7 @@
         </element>
       </element>
       <element id="directory" name="META-INF">
-        <element id="file-copy" path="$PROJECT_DIR$/target/Peanut/META-INF/MANIFEST.MF" />
+        <element id="file-copy" path="$PROJECT_DIR$/target/JF_Exam/META-INF/MANIFEST.MF" />
       </element>
       <element id="javaee-facet-resources" facet="JF_Exam/web/Web" />
     </root>
