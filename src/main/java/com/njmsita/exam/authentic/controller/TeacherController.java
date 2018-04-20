@@ -2,24 +2,23 @@ package com.njmsita.exam.authentic.controller;
 
 import com.njmsita.exam.authentic.model.TeacherVo;
 import com.njmsita.exam.authentic.service.ebi.RoleEbi;
-import com.njmsita.exam.authentic.service.ebi.TeaEbi;
+import com.njmsita.exam.authentic.service.ebi.TeacherEbi;
 import com.njmsita.exam.utils.consts.SysConsts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 @Controller
 @Scope("prototype")
-@RequestMapping("/tea")
-public class TeaController
+@RequestMapping("/teacher")
+public class TeacherController
 {
     @Autowired
-    private TeaEbi teaEbi;
+    private TeacherEbi teacherEbi;
 
     @Autowired
     private RoleEbi roleEbi;
@@ -38,7 +37,7 @@ public class TeaController
         if(loginIp == null || loginIp.length() == 0 || "unknown".equalsIgnoreCase(loginIp)) {
             loginIp = request.getRemoteAddr();
         }
-        TeacherVo loginTea=teaEbi.login(teaVo.getTeacherId(),teaVo.getPassword(),loginIp);
+        TeacherVo loginTea= teacherEbi.login(teaVo.getTeacherId(),teaVo.getPassword(),loginIp);
         if(loginTea!=null){
 //            List<ResModel> resModels = resEbi.getAllByEmp(loginEmp.getUuid());
 //            StringBuilder sbd=new StringBuilder();

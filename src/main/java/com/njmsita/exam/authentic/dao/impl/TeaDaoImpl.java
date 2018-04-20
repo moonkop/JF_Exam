@@ -1,10 +1,7 @@
 package com.njmsita.exam.authentic.dao.impl;
 
-import com.njmsita.exam.authentic.dao.dao.StudentDao;
-import com.njmsita.exam.authentic.dao.dao.TeaDao;
-import com.njmsita.exam.authentic.model.StudentEntity;
+import com.njmsita.exam.authentic.dao.dao.TeacherDao;
 import com.njmsita.exam.authentic.model.TeacherVo;
-import com.njmsita.exam.authentic.model.querymodel.StudentQueryModel;
 import com.njmsita.exam.authentic.model.querymodel.TeaQueryModel;
 import com.njmsita.exam.base.BaseImpl;
 import com.njmsita.exam.base.BaseQueryModel;
@@ -15,7 +12,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public class TeaDaoImpl extends BaseImpl<TeacherVo> implements TeaDao
+public class TeaDaoImpl extends BaseImpl<TeacherVo> implements TeacherDao
 {
 
     public void doQbc(Criteria dc, BaseQueryModel qm)
