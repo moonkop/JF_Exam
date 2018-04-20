@@ -44,7 +44,7 @@
                         <<form role="form" action="${pageContext.request.contextPath}/tea/login" method="post">
                         <fieldset>
                             <div class="form-group">
-                                <input class="form-control" placeholder="账号" name="teacher_id" type="email" value="0001" autofocus>
+                                <input class="form-control" placeholder="账号" name="teacherId" type="email" value="0001" autofocus>
                             </div>
                             <div class="form-group">
                                 <input class="form-control" placeholder="密码" name="password" type="password" value="123">

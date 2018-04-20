@@ -8,12 +8,73 @@ var uglify = require('gulp-uglify');
 var pkg = require('./package.json');
 var sourcemaps = require('gulp-sourcemaps');
 var extender = require('gulp-html-extend');
-var insert=require('gulp-insert');
-// Set the banner content
+var insert = require('gulp-insert');
+var gulpFilter = require('gulp-filter');
+var clean = require('gulp-clean');
+
+
+
+//gulp.task('jsp', ['copy-to-temp', 'rename-master', 'extend-jsp', 'clean-temp'])
+// gulp.task('jsp1', function () {
+//     gulp.src('templates/**/*.*')
+//         .pipe(gulp.dest('temp/'))
+//         // .pipe(gulp.src('templates/components/masterjsp.html'))
+//         // .pipe(rename('components/master.html'))
+//         // .pipe(gulp.dest('temp/'))
+//         // .pipe(gulp.src('temp/**/*.*'))
+//         // .pipe(extender({annotations: true, verbose: true, root: '/temp/'}))
+//         // .pipe(insert.prepend("<%@ page contentType=\"text/html;charset=UTF-8\" language=\"java\" pageEncoding=\"UTF-8\"%>"))
+//         // .pipe(rename({extname: ".jsp"}))
+//         // .pipe(gulp.dest("dist/jsp"))
+//         // .pipe(gulp.src('temp'))
+//         // .pipe(clean());
+// });
+
+
+gulp.task('copy-to-temp', function () {
+    return gulp.src('templates/**/*.*')
+    //  .pipe(rename('components/master.html'))
+        .pipe(gulp.dest('temp/'))
+})
+gulp.task('rename-master',['copy-to-temp'], function () {
+    return gulp.src('templates/components/masterjsp.html')
+        .pipe(rename('components/master.html'))
+        .pipe(gulp.dest('temp/'))
+})
+gulp.task('extend-jsp',['rename-master'], function () {
+    return gulp.src('temp/**/*.*')
+        .pipe(extender({annotations: true, verbose: true, root: '/temp/'}))
+        .pipe(insert.prepend("<%@ page contentType=\"text/html;charset=UTF-8\" language=\"java\" pageEncoding=\"UTF-8\"%>"))
+        .pipe(rename({extname: ".jsp"}))
+        .pipe(gulp.dest("dist/jsp"))
+});
+gulp.task('jsp',['extend-jsp'], function () {
+    gulp.src('dist/jsp/components')
+        .pipe(clean());
+    return gulp.src('temp')
+        .pipe(clean());
+});
+
+
+
+//generate html form components
+gulp.task('html', function () {
+    const filter = gulpFilter(['**', '!/templates/components'])
+    return gulp.src('templates/**/*.html')
+        .pipe(extender({annotations: true, verbose: true, root: '/templates/'}))
+        .pipe(filter)
+        .pipe(gulp.dest('dist/pages'))
+        .pipe(browserSync.reload({
+            stream: true
+        }))
+})
+
+
+
 
 
 // Compile LESS files from /less into /css
-gulp.task('less', function() {
+gulp.task('less', function () {
     return gulp.src('less/sb-admin-2.less')
         .pipe(sourcemaps.init())
         .pipe(less())
@@ -24,26 +85,11 @@ gulp.task('less', function() {
         }))
 });
 
-gulp.task('html',function () {
-    return gulp.src('templates/**/*.*')
-        .pipe(extender({annotations:true,verbose:true,root:'/templates/'}))
-        .pipe(gulp.dest('dist/pages'))
-        .pipe(browserSync.reload({
-            stream:true
-        }))
-})
-gulp.task('jsp',function () {
-    return gulp.src('dist/pages/**/*.html')
-        .pipe(rename({extname:".jsp"}))
-        .pipe(insert.prepend("<%@ page contentType=\"text/html;charset=UTF-8\" language=\"java\" pageEncoding=\"UTF-8\"%>"))
-        .pipe(gulp.dest("dist/jsp"))
-})
-
 // Minify compiled CSS
-gulp.task('minify-css', ['less'], function() {
+gulp.task('minify-css', ['less'], function () {
     return gulp.src('dist/css/sb-admin-2.css')
-        .pipe(cleanCSS({ compatibility: 'ie8' }))
-        .pipe(rename({ suffix: '.min' }))
+        .pipe(cleanCSS({compatibility: 'ie8'}))
+        .pipe(rename({suffix: '.min'}))
         .pipe(gulp.dest('dist/css'))
         .pipe(browserSync.reload({
             stream: true
@@ -51,7 +97,7 @@ gulp.task('minify-css', ['less'], function() {
 });
 
 // Copy JS to dist
-gulp.task('js', function() {
+gulp.task('js', function () {
     return gulp.src(['js/sb-admin-2.js'])
         .pipe(gulp.dest('dist/js'))
         .pipe(browserSync.reload({
@@ -60,7 +106,7 @@ gulp.task('js', function() {
 })
 
 // Minify JS
-gulp.task('minify-js', ['js'], function() {
+gulp.task('minify-js', ['js'], function () {
     return gulp.src('js/sb-admin-2.js')
         .pipe(uglify(
             {
@@ -68,9 +114,8 @@ gulp.task('minify-js', ['js'], function() {
                 compress: true,//类型：Boolean 默认：true 是否完全压缩
                 preserveComments: 'all' //保留所有注释
             }
-
         ))
-        .pipe(rename({ suffix: '.min' }))
+        .pipe(rename({suffix: '.min'}))
         .pipe(gulp.dest('dist/js'))
         .pipe(browserSync.reload({
             stream: true
@@ -78,7 +123,7 @@ gulp.task('minify-js', ['js'], function() {
 });
 
 // Copy vendor libraries from /bower_components into /vendor
-gulp.task('copy', function() {
+gulp.task('copy', function () {
     gulp.src(['bower_components/bootstrap/dist/**/*', '!**/npm.js', '!**/bootstrap-theme.*', '!**/*.map'])
         .pipe(gulp.dest('vendor/bootstrap'))
 
@@ -118,10 +163,10 @@ gulp.task('copy', function() {
 })
 
 // Run everything
-gulp.task('default', ['minify-css', 'minify-js', 'copy','html','jsp']);
+gulp.task('default', ['minify-css', 'minify-js', 'copy', 'html', 'jsp']);
 
 // Configure the browserSync task
-gulp.task('browserSync', function() {
+gulp.task('browserSync', function () {
     browserSync.init({
         server: {
             baseDir: '.'
@@ -130,7 +175,7 @@ gulp.task('browserSync', function() {
 })
 
 // Dev task with browserSync
-gulp.task('dev', ['browserSync', 'less', 'minify-css', 'js', 'minify-js','html'], function() {
+gulp.task('dev', ['browserSync', 'less', 'minify-css', 'js', 'minify-js', 'html'], function () {
     gulp.watch('less/*.less', ['less']);
     gulp.watch('dist/css/*.css', ['minify-css']);
     gulp.watch('js/*.js', ['minify-js']);
