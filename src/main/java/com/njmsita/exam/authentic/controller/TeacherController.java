@@ -18,7 +18,7 @@ import java.util.List;
 
 @Controller
 @Scope("prototype")
-@RequestMapping("/teacherController")
+@RequestMapping("/tea")
 public class TeacherController extends BaseController
 {
     @Autowired

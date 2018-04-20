@@ -28,8 +28,8 @@ public class BaseController{
 	 *            JSP名称(不加后缀)
 	 * @return 指定JSP页面
 	 */
-	/*@RequestMapping("/{folder}/{jspName}")
+	@RequestMapping("/{folder}/{jspName}")
 	public String redirectJsp(@PathVariable("folder") String folder, @PathVariable("jspName") String jspName) {
-		return folder + "/" + jspName+".jsp";
-	}*/
+		return folder + "/" + jspName;
+	}
 }

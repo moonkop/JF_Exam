@@ -5,9 +5,11 @@ import com.njmsita.exam.manager.service.ebi.ExamEbi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @Scope("prototype")
+@RequestMapping("/exam")
 public class ExamController extends BaseController
 {
     @Autowired

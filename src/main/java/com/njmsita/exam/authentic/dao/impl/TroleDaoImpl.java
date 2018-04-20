@@ -5,6 +5,7 @@ import com.njmsita.exam.authentic.model.TroleModel;
 import com.njmsita.exam.authentic.model.querymodel.TroleQueryModel;
 import com.njmsita.exam.base.BaseImpl;
 import com.njmsita.exam.base.BaseQueryModel;
+import org.hibernate.Criteria;
 import org.hibernate.criterion.DetachedCriteria;
 import org.springframework.stereotype.Repository;
 
@@ -14,7 +15,8 @@ import java.util.List;
 @Repository
 public class TroleDaoImpl extends BaseImpl<TroleModel> implements TroleDao
 {
-    public void doQbc(DetachedCriteria dc, BaseQueryModel qm)
+
+    public void doQbc(Criteria dc, BaseQueryModel qm)
     {
         TroleQueryModel rqm= (TroleQueryModel) qm;
     }

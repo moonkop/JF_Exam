@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @Scope("prototype")
-@RequestMapping("/student")
+@RequestMapping("/stu")
 public class StudentController extends BaseController
 {
     @Autowired
