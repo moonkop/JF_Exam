@@ -30,6 +30,6 @@ public class BaseController{
 	 */
 	/*@RequestMapping("/{folder}/{jspName}")
 	public String redirectJsp(@PathVariable("folder") String folder, @PathVariable("jspName") String jspName) {
-		return folder + "/" + jspName;
+		return folder + "/" + jspName+".jsp";
 	}*/
 }

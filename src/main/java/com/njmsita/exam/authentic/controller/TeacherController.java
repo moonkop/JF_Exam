@@ -56,9 +56,9 @@ public class TeacherController extends BaseController
             }
             loginTea.setLoginRes(sbd.toString());
             session.setAttribute(SysConsts.TEA_LOGIN_TEACHER_OBJECT_NAME,loginTea);
-            return "dist/jsp/login_teacher";
+            return "redirect:dist/pages/index_teacher";
         }
+        return "dist/jsp/login_teacher";
 
-        return "redirect:dist/pages/index_teacher";
     }
 }
