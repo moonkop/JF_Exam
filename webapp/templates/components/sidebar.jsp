@@ -13,7 +13,7 @@
             <!--&lt;!&ndash; /input-group &ndash;&gt;-->
             <!--</li>-->
             <li>
-                <a href="index_teacher.html"><i class="fa fa-dashboard fa-fw"></i> 欢迎页</a>
+                <a href="index_teacher.html"><i class="fa fa-dashboard fa-fw"></i>{something form java</a>
             </li>
             <li>
                 <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> 组卷</a>

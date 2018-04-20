@@ -1,3 +1,5 @@
 target/*
 webapp/node_modules/*
 .idea/*
+webapp/temp/*
+webapp/dist/
