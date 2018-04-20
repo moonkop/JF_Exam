@@ -21,7 +21,13 @@
 <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 <![endif]-->
 <!-- end header.html-->
-
+    <script type="text/javascript">
+        $(function () {
+            $("#commit").click(function () {
+                $("form:first").submit();
+            })
+        });
+    </script>
 </head>
 <body>
 <div class="container">
@@ -35,7 +41,7 @@
                     <h3 class="panel-title">学生登录</h3>
                 </div>
                 <div class="panel-body">
-                    <form role="form">
+                    <form role="form" action="${pageContext.request.contextPath}/stu/login" method="post">
                         <fieldset>
 
                             <div class="form-group">
@@ -50,10 +56,10 @@
                             </div>
 
                             <div class="form-group">
-                                <input class="form-control" placeholder="学号" name="email" type="email" autofocus>
+                                <input class="form-control" placeholder="学号" name="studentId" type="email" value="123" autofocus>
                             </div>
                             <div class="form-group">
-                                <input class="form-control" placeholder="密码" name="password" type="password" value="">
+                                <input class="form-control" placeholder="密码" name="password" type="password" value="123">
                             </div>
                             <div class="checkbox text-right">
                                 <label>
@@ -61,7 +67,7 @@
                                 </label>
                             </div>
                             <!-- Change this to a button or input when using this as a form -->
-                            <a href="/dist/pages/manage/me/detail.html" class="btn btn-lg btn-success btn-block">登录</a>
+                            <a href="javascript:void(0)" id="commit" class="btn btn-lg btn-success btn-block">登录</a>
                         </fieldset>
                     </form>
                 </div>
@@ -70,7 +76,7 @@
     </div>
 </div>
 <div style="position: fixed;bottom:0px;right: 0px;">
-    <a href="/dist/pages/login_teacher.html"> 教师登录</a>
+    <a href="${pageContext.request.contextPath}/tea/login" id="teaLog"> 教师登录</a>
 </div>
 <!-- start footer.html-->
 <script src="/vendor/bootstrap/js/bootstrap.min.js"></script>

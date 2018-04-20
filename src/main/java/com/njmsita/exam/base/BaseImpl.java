@@ -19,14 +19,14 @@ public abstract class BaseImpl<T> implements BaseDao<T> {
 	@Autowired
 	private SessionFactory sessionFactory;
 
+	public Session getCurrentSession(){
+		return this.sessionFactory.getCurrentSession();
+	}
 	private Class<T> entityClass=null;
 	public BaseImpl(){
 		Type genType = getClass().getGenericSuperclass();   
 		Type[] params = ((ParameterizedType) genType).getActualTypeArguments();   
 		entityClass =  (Class)params[0];  
-	}
-	public Session getCurrentSession(){
-		return this.sessionFactory.getCurrentSession();
 	}
 	public void setEntityClass(Class<T> entityClass) {
 		this.entityClass = entityClass;

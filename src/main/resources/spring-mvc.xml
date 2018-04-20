@@ -31,6 +31,11 @@
 
 	<!-- 配置静态资源 -->
 	<mvc:resources location="dist" mapping="dist/**" />
+	<mvc:resources location="js" mapping="js/**" />
+	<mvc:resources location="data" mapping="data/**" />
+	<mvc:resources location="less" mapping="less/**" />
+	<mvc:resources location="vendor" mapping="vendor/**" />
+	<mvc:resources location="templates" mapping="templates/**" />
 
 	<!-- 文件上传 -->
 	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
