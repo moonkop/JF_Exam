@@ -40,11 +40,18 @@
 			<list>
 				<value>classpath:mapping/StudentEntity.hbm.xml</value>
 				<value>classpath:mapping/TeacherVo.hbm.xml</value>
+				<value>classpath:mapping/TresourceVo.hbm.xml</value>
+				<value>classpath:mapping/TresourcetypeVo.hbm.xml</value>
+				<value>classpath:mapping/TroleVo.hbm.xml</value>
 			</list>
 		</property>
 		<property name="annotatedClasses">
 			<list>
+				<value>com.njmsita.exam.authentic.model.StudentEntity</value>
 				<value>com.njmsita.exam.authentic.model.TeacherVo</value>
+				<value>com.njmsita.exam.authentic.model.TresourceVo</value>
+				<value>com.njmsita.exam.authentic.model.TresourcetypeVo</value>
+				<value>com.njmsita.exam.authentic.model.TroleVo</value>
 			</list>
 		</property>
 	</bean>

@@ -6,4 +6,5 @@ import com.njmsita.exam.base.BaseDao;
 
 public interface TeaDao extends BaseDao<TeacherVo>
 {
+    public TeacherVo getTeaByTeaIdAndPwd(String teacherId, String password);
 }

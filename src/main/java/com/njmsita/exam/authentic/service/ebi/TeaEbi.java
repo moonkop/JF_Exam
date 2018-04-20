@@ -6,4 +6,5 @@ import com.njmsita.exam.base.BaseEbi;
 
 public interface TeaEbi extends BaseEbi<TeacherVo>
 {
+    public TeacherVo login(String teacherId, String password, String loginIp);
 }

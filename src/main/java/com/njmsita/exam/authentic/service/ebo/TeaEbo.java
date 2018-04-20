@@ -4,6 +4,7 @@ import com.njmsita.exam.authentic.dao.dao.TeaDao;
 import com.njmsita.exam.authentic.model.TeacherVo;
 import com.njmsita.exam.authentic.service.ebi.TeaEbi;
 import com.njmsita.exam.base.BaseQueryModel;
+import com.njmsita.exam.utils.format.MD5Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,5 +52,16 @@ public class TeaEbo implements TeaEbi
     public Integer getCount(BaseQueryModel qm)
     {
         return teaDao.getCount(qm);
+    }
+
+    public TeacherVo login(String teacherId, String password, String loginIp)
+    {
+        password = MD5Utils.md5(password);
+        TeacherVo loginTea=teaDao.getTeaByTeaIdAndPwd(teacherId,password);
+        if (loginTea!=null){
+            loginTea.setLastLoginTime(System.currentTimeMillis());
+            loginTea.setLastLoginIp(loginIp);
+        }
+        return loginTea;
     }
 }
