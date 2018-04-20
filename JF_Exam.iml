@@ -57,10 +57,10 @@
     <facet type="hibernate" name="Hibernate">
       <configuration>
         <datasource-map>
-          <unit-entry name="sessionFactory" />
+          <unit-entry name="sessionFactory" value="aed41f45-73df-4e16-83a6-c71f93631cab" />
         </datasource-map>
         <naming-strategy-map />
-        <deploymentDescriptor name="hibernate.cfg.xml" url="file://$MODULE_DIR$/src/main/resources/spring-hibernate.xml" />
+        <deploymentDescriptor name="hibernate.cfg.xml" url="file://$MODULE_DIR$/src/main/resources/applicationContext.xml" />
       </configuration>
     </facet>
   </component>
@@ -123,7 +123,6 @@
     <orderEntry type="library" name="Maven: org.springframework:spring-context:3.2.3.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-aop:3.2.3.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-core:3.2.3.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework:spring-expression:3.2.3.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-web:3.2.3.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-orm:3.2.3.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: aopalliance:aopalliance:1.0" level="project" />
@@ -164,6 +163,7 @@
     <orderEntry type="library" name="Maven: org.freemarker:freemarker:2.3.9" level="project" />
     <orderEntry type="library" name="Maven: antlr:antlr:2.7.7" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.6.1" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-expression:3.2.9.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: dom4j:dom4j:1.6.1" level="project" />
     <orderEntry type="library" name="Maven: org.hibernate.common:hibernate-commons-annotations:4.0.1.Final" level="project" />
     <orderEntry type="library" name="Maven: org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.1.Final" level="project" />

@@ -3,7 +3,24 @@
 
 <head>
     <title>SB Admin 2 - Bootstrap Admin Theme</title>
-    <!-- @@include /components/header.html -->
+<!-- start header.html-->
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="">
+<meta name="author" content="">
+
+<link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="/dist/css/sb-admin-2.css" rel="stylesheet">
+<link href="/vendor/morrisjs/morris.css" rel="stylesheet">
+<link href="/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+<script src="/vendor/jquery/jquery.min.js"></script>
+
+<!--[if lt IE 9]>
+<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+<!-- end header.html-->
     <script type="text/javascript">
         $(function () {
             $("#commit").click(function () {
@@ -39,7 +56,7 @@
                             </div>
 
                             <div class="form-group">
-                                <input class="form-control" placeholder="学号" name="email" type="studentId" value="123" autofocus>
+                                <input class="form-control" placeholder="学号" name="email" type="email" value="123" autofocus>
                             </div>
                             <div class="form-group">
                                 <input class="form-control" placeholder="密码" name="password" type="password" value="123">
@@ -59,9 +76,13 @@
     </div>
 </div>
 <div style="position: fixed;bottom:0px;right: 0px;">
-    <a href="${pageContext.request.contextPath}/base/teacher/login_teacher" id="teaLog"> 教师登录</a>
+    <a href="/dist/pages/login_teacher.html"> 教师登录</a>
 </div>
-<!-- @@include /components/footer.html -->
+<!-- start footer.html-->
+<script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="/vendor/metisMenu/metisMenu.min.js"></script>
+<script src="/dist/js/sb-admin-2.js"></script>
+<!-- end footer.html-->
 
 
 </body>

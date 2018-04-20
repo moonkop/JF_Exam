@@ -1,9 +1,26 @@
-<!DOCTYPE html>
+<%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8"%><!DOCTYPE html>
 <html lang="en">
 
 <head>
     <title>SB Admin 2 - Bootstrap Admin Theme</title>
-    <!-- @@include /components/header.html -->
+<!-- start header.html-->
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="">
+<meta name="author" content="">
+
+<link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="/dist/css/sb-admin-2.css" rel="stylesheet">
+<link href="/vendor/morrisjs/morris.css" rel="stylesheet">
+<link href="/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+<script src="/vendor/jquery/jquery.min.js"></script>
+
+<!--[if lt IE 9]>
+<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+<!-- end header.html-->
     <script type="text/javascript">
         $(function () {
             $("#commit").click(function () {
@@ -27,7 +44,7 @@
                         <<form role="form" action="${pageContext.request.contextPath}/tea/login" method="post">
                         <fieldset>
                             <div class="form-group">
-                                <input class="form-control" placeholder="账号" name="teacherId" type="email" value="0001" autofocus>
+                                <input class="form-control" placeholder="账号" name="teacher_id" type="email" value="0001" autofocus>
                             </div>
                             <div class="form-group">
                                 <input class="form-control" placeholder="密码" name="password" type="password" value="123">
@@ -47,7 +64,11 @@
         </div>
     </div>
 
-    <!-- @@include /components/footer.html -->
+<!-- start footer.html-->
+<script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="/vendor/metisMenu/metisMenu.min.js"></script>
+<script src="/dist/js/sb-admin-2.js"></script>
+<!-- end footer.html-->
 
 
 </body>

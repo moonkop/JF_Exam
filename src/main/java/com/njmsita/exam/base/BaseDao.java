@@ -3,20 +3,18 @@ package com.njmsita.exam.base;
 import java.io.Serializable;
 import java.util.List;
 
-import org.springframework.transaction.annotation.Transactional;
-
 
 public interface BaseDao<T> {
 
 	/**
 	 * 保存
-	 * @param t 	模型数据
+	 * @param t    模型数据
 	 */
-	public void save(T t);
+	public Serializable save(T t);
 
 	/**
 	 * 更新
-	 * @param t  	模型数据
+	 * @param t    模型数据
 	 */
 	public void update(T t);
 

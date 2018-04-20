@@ -5,22 +5,23 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 
+import org.hibernate.Criteria;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
-import org.springframework.stereotype.Repository;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.Resource;
+public abstract class BaseImpl<T> implements BaseDao<T> {
 
-public abstract class BaseImpl<T> extends HibernateDaoSupport implements BaseDao<T> {
+	@Autowired
+	private SessionFactory sessionFactory;
 
-	@Resource
-	public void setMySessionFactory(SessionFactory sessionFactory){
-		super.setSessionFactory(sessionFactory);
+	public Session getCurrentSession(){
+		return this.sessionFactory.getCurrentSession();
 	}
-
 	private Class<T> entityClass=null;
 	public BaseImpl(){
 		Type genType = getClass().getGenericSuperclass();   
@@ -30,37 +31,44 @@ public abstract class BaseImpl<T> extends HibernateDaoSupport implements BaseDao
 	public void setEntityClass(Class<T> entityClass) {
 		this.entityClass = entityClass;
 	}
-	public void save(T t) {
-		this.getHibernateTemplate().save(t);
+	public Serializable save(T t) {
+		if (t!=null){
+			return this.getCurrentSession().save(t);
+		}
+		return null;
 	}
 	public void update(T t) {
-		this.getHibernateTemplate().update(t);
+		if (t!=null){
+			this.getCurrentSession().update(t);
+		}
 	}
 	public void delete(T t) {
-		this.getHibernateTemplate().delete(t);
+		if (t!=null){
+			this.getCurrentSession().delete(t);
+		}
 	}
 
 	public List<T> getAll() {
-		
-		DetachedCriteria dc=DetachedCriteria.forClass(entityClass);
-		return this.getHibernateTemplate().findByCriteria(dc);
+		Criteria criteria = this.getCurrentSession().createCriteria(entityClass);
+		return criteria.list();
 	}
 	public T get(Serializable uuid) {
-		return this.getHibernateTemplate().get(entityClass, uuid);
+		return (T) this.getCurrentSession().get(entityClass,uuid);
 	}
 	public List<T> getAll(BaseQueryModel qm, Integer pageNum, Integer pageCount) {
-		DetachedCriteria dc=DetachedCriteria.forClass(entityClass);
-		doQbc(dc, qm);
-		return this.getHibernateTemplate().findByCriteria(dc,(pageNum-1)*pageCount,pageCount);
+		Criteria criteria = this.getCurrentSession().createCriteria(entityClass);
+		doQbc(criteria, qm);
+		criteria.setFirstResult((pageNum-1)*pageCount);
+		criteria.setMaxResults(pageCount);
+		return criteria.list();
+
 	}
 	public Integer getCount(BaseQueryModel qm) {
-		
-		DetachedCriteria dc=DetachedCriteria.forClass(entityClass);
-		doQbc(dc, qm);
-		dc.setProjection(Projections.rowCount());
-		List<Long> lists=this.getHibernateTemplate().findByCriteria(dc);
-		return lists.get(0).intValue();
+		Criteria criteria = this.getCurrentSession().createCriteria(entityClass);
+		doQbc(criteria, qm);
+		criteria.setProjection(Projections.rowCount());
+		return (Integer) criteria.list().get(0);
 	}
 
-	public abstract void doQbc(DetachedCriteria dc,BaseQueryModel qm);
+	public abstract void doQbc(Criteria dc,BaseQueryModel qm);
 }

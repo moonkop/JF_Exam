@@ -1,7 +1,7 @@
 package com.njmsita.exam.authentic.service.ebo;
 
 import com.njmsita.exam.authentic.dao.dao.StudentDao;
-import com.njmsita.exam.authentic.model.StudentModel;
+import com.njmsita.exam.authentic.model.StudentEntity;
 import com.njmsita.exam.authentic.service.ebi.StudentEbi;
 import com.njmsita.exam.base.BaseQueryModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,32 +18,32 @@ public class StudentEbo implements StudentEbi
     @Autowired
     private StudentDao studentDao;
 
-    public void save(StudentModel studentModel)
+    public void save(StudentEntity studentEntity)
     {
-        studentDao.save(studentModel);
+        studentDao.save(studentEntity);
     }
 
-    public void update(StudentModel studentModel)
+    public void update(StudentEntity studentEntity)
     {
-        studentDao.update(studentModel);
+        studentDao.update(studentEntity);
     }
 
-    public void delete(StudentModel studentModel)
+    public void delete(StudentEntity studentEntity)
     {
-        studentDao.delete(studentModel);
+        studentDao.delete(studentEntity);
     }
 
-    public List<StudentModel> getAll()
+    public List<StudentEntity> getAll()
     {
         return studentDao.getAll();
     }
 
-    public StudentModel get(Serializable uuid)
+    public StudentEntity get(Serializable uuid)
     {
         return studentDao.get(uuid);
     }
 
-    public List<StudentModel> getAll(BaseQueryModel qm, Integer pageNum, Integer pageCount)
+    public List<StudentEntity> getAll(BaseQueryModel qm, Integer pageNum, Integer pageCount)
     {
         return studentDao.getAll(qm, pageNum, pageCount);
     }

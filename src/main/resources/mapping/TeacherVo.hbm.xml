@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="com.njmsita.exam.authentic.model.TeacherVo" table="teacher" schema="jf_exam">
+        <id name="id" column="id"/>
+        <property name="teacherId" column="teacher_id"/>
+        <property name="name" column="name"/>
+        <property name="mail" column="mail"/>
+        <property name="idCardNo" column="id_card_no"/>
+        <property name="telephone" column="telephone"/>
+        <property name="password" column="password"/>
+        <property name="lastLoginTime" column="last_login_time"/>
+        <property name="lastLoginIp" column="last_login_ip"/>
+        <property name="createtime" column="createtime"/>
+        <property name="modifytime" column="modifytime"/>
+        <property name="roleId" column="role_id"/>
+    </class>
+</hibernate-mapping>
