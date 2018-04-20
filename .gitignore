@@ -1,5 +1,6 @@
 target/*
 webapp/node_modules/*
-.idea/*
+.idea
 webapp/temp/*
 webapp/dist/
+JF_Exam.iml
