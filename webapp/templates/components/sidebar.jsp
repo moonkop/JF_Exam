@@ -13,7 +13,7 @@
             <!--&lt;!&ndash; /input-group &ndash;&gt;-->
             <!--</li>-->
             <li>
-                <a href="index_teacher.html"><i class="fa fa-dashboard fa-fw"></i> 欢迎页</a>
+                <a href="index_teacher.html"><i class="fa fa-dashboard fa-fw"></i>{something form java</a>
             </li>
             <li>
                 <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> 组卷</a>
@@ -38,6 +38,21 @@
                     </li>
                     <li>
                         <a href="/dist/pages/manage/student/list.html">学生管理</a>
+                    </li>
+                </ul>
+                <!-- /.nav-second-level -->
+            </li>
+            <li>
+                <a href="#"><i class="fa fa-sitemap fa-fw"></i> 题库管理<span class="fa arrow"></span></a>
+                <ul class="nav nav-second-level">
+                    <li>
+                        <a href="/dist/pages/manage/subject/list.html">科目管理</a>
+                    </li>
+                    <li>
+                        <a href="/dist/pages/manage/topic/list.html">知识点管理</a>
+                    </li>
+                    <li>
+                        <a href="/dist/pages/manage/question/list.html">题目管理</a>
                     </li>
                 </ul>
                 <!-- /.nav-second-level -->

@@ -42,6 +42,21 @@
                 </ul>
                 <!-- /.nav-second-level -->
             </li>
+            <li>
+                <a href="#"><i class="fa fa-sitemap fa-fw"></i> 题库管理<span class="fa arrow"></span></a>
+                <ul class="nav nav-second-level">
+                    <li>
+                        <a href="/dist/pages/manage/subject/list.html">科目管理</a>
+                    </li>
+                    <li>
+                        <a href="/dist/pages/manage/topic/list.html">知识点管理</a>
+                    </li>
+                    <li>
+                        <a href="/dist/pages/manage/question/list.html">题目管理</a>
+                    </li>
+                </ul>
+                <!-- /.nav-second-level -->
+            </li>
         </ul>
     </div>
     <!-- /.sidebar-collapse -->

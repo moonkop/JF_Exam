@@ -2,10 +2,6 @@
   <artifact type="exploded-war" name="JF_Exam:war exploded">
     <output-path>$PROJECT_DIR$/target/Peanut</output-path>
     <root id="root">
-      <element id="directory" name="META-INF">
-        <element id="file-copy" path="$PROJECT_DIR$/target/Peanut/META-INF/MANIFEST.MF" />
-      </element>
-      <element id="javaee-facet-resources" facet="JF_Exam/web/Web" />
       <element id="directory" name="WEB-INF">
         <element id="directory" name="classes">
           <element id="module-output" name="JF_Exam" />
@@ -59,7 +55,6 @@
           <element id="library" level="project" name="Maven: org.springframework:spring-context:3.2.3.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework:spring-aop:3.2.3.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework:spring-core:3.2.3.RELEASE" />
-          <element id="library" level="project" name="Maven: org.springframework:spring-expression:3.2.3.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework:spring-web:3.2.3.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework:spring-orm:3.2.3.RELEASE" />
           <element id="library" level="project" name="Maven: aopalliance:aopalliance:1.0" />
@@ -96,6 +91,7 @@
           <element id="library" level="project" name="Maven: org.freemarker:freemarker:2.3.9" />
           <element id="library" level="project" name="Maven: antlr:antlr:2.7.7" />
           <element id="library" level="project" name="Maven: org.slf4j:slf4j-api:1.6.1" />
+          <element id="library" level="project" name="Maven: org.springframework:spring-expression:3.2.9.RELEASE" />
           <element id="library" level="project" name="Maven: dom4j:dom4j:1.6.1" />
           <element id="library" level="project" name="Maven: org.hibernate.common:hibernate-commons-annotations:4.0.1.Final" />
           <element id="library" level="project" name="Maven: org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.1.Final" />
@@ -111,6 +107,10 @@
           <element id="library" level="project" name="Maven: joda-time:joda-time:2.9.6" />
         </element>
       </element>
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/target/Peanut/META-INF/MANIFEST.MF" />
+      </element>
+      <element id="javaee-facet-resources" facet="JF_Exam/web/Web" />
     </root>
   </artifact>
 </component>

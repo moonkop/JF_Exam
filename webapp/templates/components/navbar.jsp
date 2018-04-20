@@ -13,20 +13,20 @@
     <ul class="nav navbar-top-links navbar-right">
         <li class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
-                <i class="fa fa-user fa-fw"></i>徐强<i class="fa fa-caret-down"></i>
+                <i class="fa fa-user fa-fw"></i>{something form java}<i class="fa fa-caret-down"></i>
             </a>
             <ul class="dropdown-menu dropdown-messages">
 
                 <li>
                     <a>
-                        <div>培训机构：管理员</div>
+                        <div>{something form java}</div>
                     </a>
                 </li>
                 <li class="divider"></li>
                 <li>
                     <a class="text-center" href="/dist/pages/manage/me/detail.html">
 
-                    <strong>详细信息</strong>
+                    <strong>{something form java}</strong>
                         <i class="fa fa-angle-right"></i>
                     </a>
                 </li>
