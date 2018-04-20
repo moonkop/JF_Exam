@@ -41,7 +41,7 @@
                         <h3 class="panel-title">教师登录</h3>
                     </div>
                     <div class="panel-body">
-                        <<form role="form" action="${pageContext.request.contextPath}/teacherController/login" method="post">
+                        <<form role="form" action="${pageContext.request.contextPath}/tea/login" method="post">
                         <fieldset>
                             <div class="form-group">
                                 <input class="form-control" placeholder="账号" name="teacher_id" type="email" value="0001" autofocus>

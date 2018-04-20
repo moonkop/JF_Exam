@@ -3,7 +3,7 @@
     <display-name>leave</display-name>
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>classpath:spring.xml,classpath:spring-ehcache.xml,classpath:spring-hibernate.xml,classpath:spring-druid.xml,classpath:spring-tasks.xml,classpath:spring-mail.xml</param-value>
+        <param-value>classpath:applicationContext.xml</param-value>
     </context-param>
     <filter>
         <filter-name>encodingFilter</filter-name>

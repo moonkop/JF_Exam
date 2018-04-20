@@ -10,7 +10,20 @@
   <packaging>war</packaging>
   <name>jf-exam Maven Webapp</name>
   <url>http://www.example.com</url>
-
+  <repositories><!-- 代码库 -->
+    <repository>
+      <id>nexus-aliyun</id>
+      <name>Nexus aliyun</name>
+      <layout>default</layout>
+      <url>http://maven.aliyun.com/nexus/content/groups/public</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </repository>
+  </repositories>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.7</maven.compiler.source>
@@ -186,6 +199,12 @@
       <artifactId>slf4j-api</artifactId>
       <version>1.6.1</version>
     </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-expression</artifactId>
+      <version>3.2.9.RELEASE</version>
+    </dependency>
+
     <dependency>
       <groupId>dom4j</groupId>
       <artifactId>dom4j</artifactId>
