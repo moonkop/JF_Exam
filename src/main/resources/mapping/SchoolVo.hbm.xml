@@ -5,7 +5,9 @@
 <hibernate-mapping>
 
     <class name="com.njmsita.exam.authentic.model.SchoolVo" table="school" schema="jf_exam">
-        <id name="id" column="id"/>
+        <id name="id" column="id">
+            <generator class="assigned"/>
+        </id>
         <property name="name" column="name"/>
     </class>
 </hibernate-mapping>

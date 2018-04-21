@@ -7,6 +7,7 @@ import com.njmsita.exam.authentic.service.ebi.SchoolEbi;
 import com.njmsita.exam.authentic.service.ebi.StudentEbi;
 import com.njmsita.exam.authentic.service.ebi.TeacherEbi;
 import com.njmsita.exam.base.BaseController;
+import com.njmsita.exam.utils.idutil.IdUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -98,7 +99,7 @@ public class ManagerController extends BaseController
      * @param request   HttpServletRequest
      * @return          跳转edit
      */
-    @RequestMapping("toSchoolList")
+    @RequestMapping("add")
     public String edit(SchoolVo school, HttpServletRequest request){
         //判断前台是否传递学校ID
         if(null!=school.getId()){
@@ -106,7 +107,7 @@ public class ManagerController extends BaseController
             school=schoolEbi.get(school.getId());
             request.setAttribute("school",school);
         }
-        return "manager/school/edit";
+        return "redirect:/manager/toSchoolList";
     }
 
     /**
@@ -114,13 +115,15 @@ public class ManagerController extends BaseController
      * @param school
      * @return          跳转学校列表页面
      */
+    @RequestMapping("doAdd")
     public String doAdd(SchoolVo school){
-        if(null!=school.getId()){
-            schoolEbi.save(school);
+        if(null==school.getId()){
+            school.setId(IdUtil.getUUID());
+            schoolEbi.save1(school);
         }else{
             schoolEbi.update(school);
         }
-        return "manager/school/list";
+        return "redirect:/manager/toSchoolList";
     }
     //--------------------------------SchoolManager----------END--------------------------------------------
     //--------------------------------SchoolManager----------END--------------------------------------------

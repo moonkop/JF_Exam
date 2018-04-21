@@ -22,4 +22,8 @@ public class SchoolDaoImpl extends BaseImpl<SchoolVo> implements SchoolDao
         SchoolQueryVo schoolQueryVo = (SchoolQueryVo) qm;
     }
 
+    public void save1(SchoolVo school)
+    {
+        this.getHibernateTemplate().save(school);
+    }
 }

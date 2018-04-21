@@ -5,7 +5,9 @@
 <hibernate-mapping>
 
     <class name="com.njmsita.exam.authentic.model.TresourceVo" table="tresource" schema="jf_exam">
-        <id name="id" column="ID"/>
+        <id name="id" column="ID">
+            <generator class="assigned"/>
+        </id>
         <property name="icon" column="ICON"/>
         <property name="name" column="NAME"/>
         <property name="remark" column="REMARK"/>
