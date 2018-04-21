@@ -9,4 +9,5 @@ import com.njmsita.exam.base.BaseEbi;
  */
 public interface SchoolEbi extends BaseEbi<SchoolVo>
 {
+    public void save1(SchoolVo school);
 }

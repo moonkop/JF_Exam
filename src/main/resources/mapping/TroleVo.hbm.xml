@@ -5,7 +5,9 @@
 <hibernate-mapping>
 
     <class name="com.njmsita.exam.authentic.model.TroleVo" table="trole" schema="jf_exam">
-        <id name="id" column="ID"/>
+        <id name="id" column="ID">
+            <generator class="assigned"/>
+        </id>
         <property name="name" column="NAME"/>
         <property name="remark" column="REMARK"/>
         <property name="seq" column="SEQ"/>

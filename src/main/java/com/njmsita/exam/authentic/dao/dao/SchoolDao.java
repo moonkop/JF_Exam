@@ -11,4 +11,5 @@ import java.util.List;
  */
 public interface SchoolDao extends BaseDao<SchoolVo>
 {
+    public void save1(SchoolVo school);
 }

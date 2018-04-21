@@ -50,4 +50,9 @@ public class SchoolEbo implements SchoolEbi
     {
         schoolDao.update(schoolVo);
     }
+
+    public void save1(SchoolVo school)
+    {
+        schoolDao.save1(school);
+    }
 }
