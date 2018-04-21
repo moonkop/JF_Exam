@@ -28,36 +28,36 @@
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">姓名</label>
                                 <div class="col-sm-8">
-                                    <p class="form-control-static">徐强</p>
+                                    <p class="form-control-static">${me.name}</p>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">身份</label>
                                 <div class="col-sm-8">
-                                    <p class="form-control-static">超级管理员</p>
+                                    <p class="form-control-static">${me.troleVo.name}</p>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">身份证号码</label>
                                 <div class="col-sm-8">
-                                    <p class="form-control-static">320502199705152254</p>
+                                    <p class="form-control-static">${me.idCardNo}</p>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">Email</label>
                                 <div class="col-sm-8">
-                                    <p class="form-control-static">xunqiang@163.com</p>
+                                    <p class="form-control-static">${me.mail}</p>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label  class="col-sm-2 control-label">电话</label>
                                 <div class="col-sm-8">
-                                    <p class="form-control-static">18018018018</p>
+                                    <p class="form-control-static">${me.telephone}</p>
                                 </div>
                             </div>
                         </div>
                         <div class="col-sm-offset-2">
-                            <button class="btn btn-default" onclick="window.location.href= '/dist/pages/manage/me/edit.html'">编辑</button>
+                            <button class="btn btn-default" onclick="window.location.href= '/teacher/edit'">编辑</button>
                         </div>
 
                     </div>

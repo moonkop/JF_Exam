@@ -24,43 +24,43 @@
             <div class="panel-body">
                 <div class="row">
                     <div class="col-lg-12">
-                        <form role="form" class="form-horizontal">
+                        <form role="form" class="form-horizontal" action="/teacher/doEdit">
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">姓名</label>
                                 <div class="col-sm-8">
-                                    <p class="form-control-static">徐强</p>
+                                    <p class="form-control-static">${me.name}</p>
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">身份</label>
                                 <div class="col-sm-8">
-                                    <p class="form-control-static">超级管理员</p>
+                                    <p class="form-control-static">${me.troleVo.name}</p>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">身份证号码</label>
                                 <div class="col-sm-8">
-                                    <p class="form-control-static">320502199705152254</p>
+                                    <p class="form-control-static">${me.idCardNo}</p>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="inputEmail" class="col-sm-2 control-label">Email</label>
                                 <div class="col-sm-8">
-                                    <input type="email" class="form-control" id="inputEmail"
+                                    <input type="email" class="form-control" id="inputEmail" name="mail" value="${me.mail}"
                                            placeholder="请输入Email">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="inputTel" class="col-sm-2 control-label">电话</label>
                                 <div class="col-sm-8">
-                                    <input type="email" class="form-control" id="inputTel"
+                                    <input type="text" class="form-control" id="inputTel" name="telephone" value="${me.telephone}"
                                            placeholder="请输入电话号码">
                                 </div>
                             </div>
                             <div class="col-sm-offset-2">
-                                <button type="submit" class="btn btn-primary">提交</button>
-                                <button type="submit" class="btn btn-default">取消</button>
+                                <input type="submit" class="btn btn-primary" value="提交">
+                                <button class="btn btn-default" onclick="window.location.href='/teacher/detail'" >取消</button>
                             </div>
                         </form>
                     </div>

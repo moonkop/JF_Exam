@@ -56,8 +56,8 @@ gulp.task('jsp',['extend-jsp'], function () {
 });
 
 gulp.task('copy-jsp-to-WEB-INF',['jsp'],function () {
-    return gulp.src('dist/jsp/**/*.*')
-        .pipe(gulp.dest('WEB-INF/jsp'));
+    // return gulp.src('dist/jsp/**/*.*')
+    //     .pipe(gulp.dest('WEB-INF/jsp'));
 })
 
 
