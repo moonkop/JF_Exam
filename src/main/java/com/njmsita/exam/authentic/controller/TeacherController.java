@@ -6,6 +6,7 @@ import com.njmsita.exam.authentic.service.ebi.ResourceEbi;
 import com.njmsita.exam.authentic.service.ebi.RoleEbi;
 import com.njmsita.exam.authentic.service.ebi.TeacherEbi;
 import com.njmsita.exam.utils.consts.SysConsts;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -47,7 +48,9 @@ public class TeacherController
     @RequestMapping("welcome")
     public String towelcome(ModelMap map, HttpSession session)
     {
-        map.addAttribute("teacher",session.getAttribute(SysConsts.TEACHER_LOGIN_TEACHER_OBJECT_NAME)) ;
+        TeacherVo teacherVo = (TeacherVo)session.getAttribute(SysConsts.TEACHER_LOGIN_TEACHER_OBJECT_NAME);
+
+        map.addAttribute("me",teacherVo) ;
         return "index_teacher";
     }
 
@@ -96,6 +99,7 @@ public class TeacherController
             }
             loginTea.setTeacherRes(sbd.toString());
             session.setAttribute(SysConsts.TEACHER_LOGIN_TEACHER_OBJECT_NAME, loginTea);
+            Hibernate.initialize(loginTea.getTroleVo());
             return "redirect:/teacher/welcome";
         }
 
@@ -108,24 +112,26 @@ public class TeacherController
      * 查看个人详细信息
      */
     @RequestMapping("detail")
-    public String detail()
+    public String detail(ModelMap map, HttpSession session)
     {
 
         //前台数据从session中获取
-
-        return "me/detail";
+        TeacherVo teacherVo = (TeacherVo)session.getAttribute(SysConsts.TEACHER_LOGIN_TEACHER_OBJECT_NAME);
+        Hibernate.initialize(teacherVo.getTroleVo());
+        map.addAttribute("me",teacherVo) ;
+        return "/manage/me/detail";
     }
 
     /**
      * 跳转个人信息编辑
      */
     @RequestMapping("edit")
-    public String edit()
+    public String edit(ModelMap map, HttpSession session)
     {
 
         //回显数据在session中获取
 
-        return "me/edit";
+        return "/manage/me/edit";
     }
 
     /**
@@ -149,13 +155,13 @@ public class TeacherController
     /**
      * 退出登陆
      */
-    @RequestMapping("loginOut")
+    @RequestMapping("logout")
     public String loginOut(HttpSession session)
     {
         System.out.println(session.getAttribute(SysConsts.TEACHER_LOGIN_TEACHER_OBJECT_NAME));
         //将session中的已登陆用户至空
         //TODO 有疑问？？？？？？？？
         session.setAttribute(SysConsts.TEACHER_LOGIN_TEACHER_OBJECT_NAME, null);
-        return "teacher/login_teacher";
+        return "redirect:/teacher/login";
     }
 }

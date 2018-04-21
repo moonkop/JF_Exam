@@ -16,21 +16,27 @@
     <ul class="nav navbar-top-links navbar-right">
         <li class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
-                <i class="fa fa-user fa-fw"></i>${teacher.name}<i class="fa fa-caret-down"></i>
+                <i class="fa fa-user fa-fw"></i>${me.name}<i class="fa fa-caret-down"></i>
             </a>
             <ul class="dropdown-menu dropdown-messages">
 
                 <li>
                     <a>
-                        <div>培训机构：管理员</div>
+                        <div>身份：${me.troleVo.name}</div>
                     </a>
                 </li>
                 <li class="divider"></li>
                 <li>
-                    <a class="text-center" href="/dist/pages/manage/me/detail.html">
+                    <a class="text-center" href="/teacher/detail">
 
                     <strong>详细信息</strong>
                         <i class="fa fa-angle-right"></i>
+                    </a>
+                </li>
+                <li class="divider"></li>
+                <li>
+                    <a class="text-center" href="/teacher/logout">
+                        <strong>退出登录</strong>
                     </a>
                 </li>
             </ul>
