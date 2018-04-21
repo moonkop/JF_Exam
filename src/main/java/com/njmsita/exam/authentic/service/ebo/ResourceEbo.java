@@ -21,9 +21,11 @@ public class ResourceEbo implements ResourceEbi
     @Autowired
     private ResourceDao resourceDao;
 
-    public void save(TresourceVo tresourceVo)
+    public boolean save(TresourceVo tresourceVo)
     {
-        resourceDao.save(tresourceVo);
+        Serializable save = resourceDao.save(tresourceVo);
+
+        return save==null?false:true;
     }
 
     public void update(TresourceVo tresourceVo)
@@ -31,10 +33,6 @@ public class ResourceEbo implements ResourceEbi
         resourceDao.update(tresourceVo);
     }
 
-    public void delete(TresourceVo tresourceVo)
-    {
-        resourceDao.delete(tresourceVo);
-    }
 
     public List<TresourceVo> getAll()
     {

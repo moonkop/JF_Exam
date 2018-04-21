@@ -21,9 +21,10 @@ public class RoleEbo implements RoleEbi
     @Autowired
     private RoleDao roleDao;
 
-    public void save(TroleVo troleVo)
+    public boolean save(TroleVo troleVo)
     {
-        roleDao.save(troleVo);
+        Serializable save = roleDao.save(troleVo);
+        return save==null?false:true;
     }
 
     public void update(TroleVo troleVo)
@@ -31,10 +32,6 @@ public class RoleEbo implements RoleEbi
         roleDao.update(troleVo);
     }
 
-    public void delete(TroleVo troleVo)
-    {
-        roleDao.delete(troleVo);
-    }
 
     public List<TroleVo> getAll()
     {

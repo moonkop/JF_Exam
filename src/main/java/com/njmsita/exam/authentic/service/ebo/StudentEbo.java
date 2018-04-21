@@ -21,9 +21,10 @@ public class StudentEbo implements StudentEbi
     @Autowired
     private StudentDao studentDao;
 
-    public void save(StudentEntity studentEntity)
+    public boolean save(StudentEntity studentEntity)
     {
-        studentDao.save(studentEntity);
+        Serializable save = studentDao.save(studentEntity);
+        return save==null?false:true;
     }
 
     public void update(StudentEntity studentEntity)
@@ -31,10 +32,6 @@ public class StudentEbo implements StudentEbi
         studentDao.update(studentEntity);
     }
 
-    public void delete(StudentEntity studentEntity)
-    {
-        studentDao.delete(studentEntity);
-    }
 
     public List<StudentEntity> getAll()
     {

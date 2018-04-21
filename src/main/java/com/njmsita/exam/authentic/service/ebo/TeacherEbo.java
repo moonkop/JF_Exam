@@ -22,9 +22,10 @@ public class TeacherEbo implements TeacherEbi
     @Autowired
     private TeacherDao teaDao;
 
-    public void save(TeacherVo teacherVo)
+    public boolean save(TeacherVo teacherVo)
     {
-        teaDao.save(teacherVo);
+        Serializable save = teaDao.save(teacherVo);
+        return save==null?false:true;
     }
 
     public void update(TeacherVo teacherVo)
@@ -32,10 +33,6 @@ public class TeacherEbo implements TeacherEbi
         teaDao.update(teacherVo);
     }
 
-    public void delete(TeacherVo teacherVo)
-    {
-        teaDao.delete(teacherVo);
-    }
 
     public List<TeacherVo> getAll()
     {

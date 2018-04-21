@@ -6,6 +6,7 @@ import com.njmsita.exam.authentic.service.ebi.ResourceEbi;
 import com.njmsita.exam.authentic.service.ebi.RoleEbi;
 import com.njmsita.exam.authentic.service.ebi.TeacherEbi;
 import com.njmsita.exam.utils.consts.SysConsts;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -29,6 +30,11 @@ public class TeacherController
     private RoleEbi roleEbi;
     @Autowired
     private ResourceEbi resourceEbi;
+
+    /**
+     * 跳转登陆页
+     * @return
+     */
     @RequestMapping("toLogin")
     public String toLogin(){
         return "login_teacher";
@@ -78,6 +84,52 @@ public class TeacherController
 
         //用户信息验证失败
         request.setAttribute("msg","账号或密码不正确！！");
+        return "teacher/login_teacher";
+    }
+
+    /**
+     * 查看个人详细信息
+     */
+    @RequestMapping("detail")
+    public String detail(){
+
+        //前台数据从session中获取
+
+        return "me/detail";
+    }
+
+    /**
+     * 跳转个人信息编辑
+     */
+    @RequestMapping("edit")
+    public String edit(){
+
+        //回显数据在session中获取
+
+        return "me/edit";
+    }
+
+    /**
+     * 个人信息编辑
+     */
+    @RequestMapping("doEdit")
+    public String doEdit(TeacherVo teacherVo,HttpServletRequest request,HttpSession session){
+
+        if (null!=teacherVo){
+
+            teaEbi.update(teacherVo);
+            session.setAttribute(SysConsts.TEACHER_LOGIN_TEACHER_OBJECT_NAME,teacherVo);
+        }
+        return "teacher_index";
+    }
+
+    /**
+     * 退出登陆
+     */
+    @RequestMapping("loginOut")
+    public String loginOut(HttpSession session){
+        //将session中的已登陆用户至空
+        session.setAttribute(SysConsts.TEACHER_LOGIN_TEACHER_OBJECT_NAME,null);
         return "teacher/login_teacher";
     }
 }
