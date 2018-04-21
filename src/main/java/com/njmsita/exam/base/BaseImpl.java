@@ -5,6 +5,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 
+import org.hibernate.FlushMode;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
@@ -33,8 +34,8 @@ public abstract class BaseImpl<T>  extends HibernateDaoSupport implements BaseDa
 		this.getHibernateTemplate().save(t);
 	}
 	public void update(T t) {
-		this.getHibernateTemplate().update(t);
-	}
+        this.getHibernateTemplate().update(t);
+    }
 	public void delete(T t) {
 		this.getHibernateTemplate().delete(t);
 	}

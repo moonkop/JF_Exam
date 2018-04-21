@@ -16,7 +16,9 @@
 		http://www.springframework.org/schema/jee/spring-jee-3.2.xsd
 		">  
 	<!-- 注解事务驱动 -->
-	<tx:annotation-driven transaction-manager="transactionManager"/>	
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+
+	<context:component-scan base-package="com.njmsita.exam"/>
 	
 	<!-- 事务管理器 -->
 	<bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
