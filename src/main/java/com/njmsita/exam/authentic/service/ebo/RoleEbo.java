@@ -21,10 +21,9 @@ public class RoleEbo implements RoleEbi
     @Autowired
     private RoleDao roleDao;
 
-    public boolean save(TroleVo troleVo)
+    public void save(TroleVo troleVo)
     {
-        Serializable save = roleDao.save(troleVo);
-        return save==null?false:true;
+        roleDao.save(troleVo);
     }
 
     public List<TroleVo> getAll()

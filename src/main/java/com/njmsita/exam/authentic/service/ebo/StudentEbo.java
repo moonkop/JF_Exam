@@ -21,10 +21,9 @@ public class StudentEbo implements StudentEbi
     @Autowired
     private StudentDao studentDao;
 
-    public boolean save(StudentEntity studentEntity)
+    public void save(StudentEntity studentEntity)
     {
-        Serializable save = studentDao.save(studentEntity);
-        return save==null?false:true;
+        studentDao.save(studentEntity);
     }
 
     public List<StudentEntity> getAll()

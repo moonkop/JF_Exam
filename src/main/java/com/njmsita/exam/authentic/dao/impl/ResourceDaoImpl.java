@@ -8,6 +8,7 @@ import com.njmsita.exam.base.BaseImpl;
 import com.njmsita.exam.base.BaseQueryModel;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.DetachedCriteria;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -19,18 +20,18 @@ import java.util.List;
 public class ResourceDaoImpl extends BaseImpl<TresourceVo> implements ResourceDao
 {
 
-    public void doQbc(Criteria dc, BaseQueryModel qm)
-    {
-    }
-
 
 
     public List<TresourceVo> getAllByLoginId(String id)
     {
         //查询逻辑：teacher--->role---->resource
         String hql ="select res from TeacherVo tv join tv.troleVo rv join rv.reses res where tv.id=? ";
-        Query query = this.getCurrentSession().createQuery(hql);
-        query.setParameter(0,id);
-        return query.list();
+
+        return (List<TresourceVo>) this.getHibernateTemplate().find(hql,id);
+    }
+
+    public void doQbc(DetachedCriteria dc, BaseQueryModel qm)
+    {
+
     }
 }

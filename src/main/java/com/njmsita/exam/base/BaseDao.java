@@ -10,7 +10,7 @@ public interface BaseDao<T> {
 	 * 保存
 	 * @param t    模型数据
 	 */
-	public Serializable save(T t);
+	public void save(T t);
 
 
 	/**
@@ -25,6 +25,11 @@ public interface BaseDao<T> {
 	 * @return		具体模型数据
 	 */
 	public T get(Serializable uuid);
+
+	/**
+	 * 更新
+	 */
+	public void update(T t);
 
 	/**
 	 * 根据查询条件获取所有

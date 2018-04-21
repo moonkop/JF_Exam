@@ -16,4 +16,5 @@ public interface TeacherDao extends BaseDao<TeacherVo>
      * @return
      */
     public TeacherVo getTeaByTeaIdAndPwd(String teacherId, String password);
+
 }
