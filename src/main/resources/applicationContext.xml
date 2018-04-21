@@ -34,7 +34,7 @@
 				<prop key="hibernate.show_sql">true</prop>
 				<prop key="hibernate.format_sql">false</prop>
 				<prop key="hibernate.hbm2ddl.auto">update</prop>
-				<prop key="hibernate.connection.url">jdbc:mysql://localhost:3306/jf_exam</prop>
+				<prop key="hibernate.connection.url">jdbc:mysql://192.168.1.166:3306/jf_exam</prop>
 				<prop key="hibernate.connection.driver_class">com.mysql.jdbc.Driver</prop>
 			</props>
 		</property>
@@ -59,18 +59,17 @@
 	</bean>
 	
 	<!-- DataSource -->
-	<!--<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-		<property name="driverClassName" value="com.mysql.jdbc.Driver"/>
-		<property name="url" value="jdbc:mysql://localhost:3306/jf_exam"/>
-		<property name="username" value="root"/>
-		<property name="password" value="123"/>
-	</bean>-->
-
-	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
-		<property name="driverClass" value="com.mysql.jdbc.Driver" />
-		<property name="jdbcUrl" value="jdbc:mysql://localhost:3306/jf_exam" />
-		<property name="user" value="root" />
-		<property name="password" value="123" />
-	</bean>
+	<!--<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">-->
+		<!--<property name="driverClassName" value="com.mysql.jdbc.Driver"/>-->
+		<!--<property name="url" value="jdbc:mysql://192.168.1.166:3306/jf_exam"/>-->
+		<!--<property name="username" value="root"/>-->
+		<!--<property name="password" value="root"/>-->
+	<!--</bean>-->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <property name="driverClass" value="com.mysql.jdbc.Driver" />
+        <property name="jdbcUrl" value="jdbc:mysql://192.168.1.166:3306/jf_exam" />
+        <property name="user" value="root" />
+        <property name="password" value="root" />
+    </bean>
 </beans>	
 	

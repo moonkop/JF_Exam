@@ -76,7 +76,7 @@
     </div>
 </div>
 <div style="position: fixed;bottom:0px;right: 0px;">
-    <a href="${pageContext.request.contextPath}/base/teacher/login_teacher" id="teaLog"> 教师登录</a>
+    <a href="/teacher/login" id="teaLog"> 教师登录</a>
 </div>
 <!-- start footer.html-->
 <script src="/vendor/bootstrap/js/bootstrap.min.js"></script>

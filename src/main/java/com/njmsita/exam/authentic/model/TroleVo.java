@@ -1,5 +1,8 @@
 package com.njmsita.exam.authentic.model;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import javax.persistence.*;
 import java.util.Set;
 
