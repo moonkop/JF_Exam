@@ -37,7 +37,7 @@ gulp.task('copy-to-temp', function () {
         .pipe(gulp.dest('temp/'))
 })
 gulp.task('rename-master',['copy-to-temp'], function () {
-    return gulp.src('templates/components/masterjsp.html')
+    return gulp.src('templates/components/master.jsp')
         .pipe(rename('components/master.html'))
         .pipe(gulp.dest('temp/'))
 })
@@ -55,6 +55,10 @@ gulp.task('jsp',['extend-jsp'], function () {
         .pipe(clean());
 });
 
+gulp.task('copy-jsp-to-WEB-INF',['jsp'],function () {
+    return gulp.src('dist/jsp/**/*.*')
+        .pipe(gulp.dest('WEB-INF/jsp'));
+})
 
 
 //generate html form components

@@ -16,6 +16,7 @@
         <property name="lastLoginIp" column="last_login_ip"/>
         <property name="createtime" column="createtime"/>
         <property name="modifytime" column="modifytime"/>
-        <property name="roleId" column="role_id"/>
+
+        <many-to-one name="troleVo" column="role_id" class="com.njmsita.exam.authentic.model.TroleVo"/>
     </class>
 </hibernate-mapping>

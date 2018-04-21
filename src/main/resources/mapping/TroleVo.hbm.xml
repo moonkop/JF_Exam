@@ -9,5 +9,10 @@
         <property name="name" column="NAME"/>
         <property name="remark" column="REMARK"/>
         <property name="seq" column="SEQ"/>
+
+        <set name="reses" table="trole_tresource">
+            <key column="TROLE_ID"></key>
+            <many-to-many column="tresource_id" class="com.njmsita.exam.authentic.model.TresourceVo"/>
+        </set>
     </class>
 </hibernate-mapping>
