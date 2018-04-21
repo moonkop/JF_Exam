@@ -16,4 +16,11 @@ public interface TeacherEbi extends BaseEbi<TeacherVo>
      * @return
      */
     public TeacherVo login(String teacherId, String password, String loginIp);
+
+    /**
+     * 逻辑更新用户数据
+     * @param teacherVo     用户收据
+     * @param l             修改时间
+     */
+    public TeacherVo updateByLogic(TeacherVo teacherVo, long l);
 }

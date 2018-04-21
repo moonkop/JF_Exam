@@ -34,11 +34,6 @@ public abstract class BaseImpl<T> implements BaseDao<T> {
 		}
 		return null;
 	}
-	public void update(T t) {
-		if (t!=null){
-			this.getCurrentSession().update(t);
-		}
-	}
 
 	public List<T> getAll() {
 		Criteria criteria = this.getCurrentSession().createCriteria(entityClass);

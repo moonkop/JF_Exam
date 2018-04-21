@@ -28,11 +28,6 @@ public class ResourceEbo implements ResourceEbi
         return save==null?false:true;
     }
 
-    public void update(TresourceVo tresourceVo)
-    {
-        resourceDao.update(tresourceVo);
-    }
-
 
     public List<TresourceVo> getAll()
     {

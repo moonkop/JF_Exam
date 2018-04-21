@@ -117,7 +117,9 @@ public class TeacherController
 
         if (null!=teacherVo){
 
-            teaEbi.update(teacherVo);
+            //不能直接进行物理更新
+            teacherVo=teaEbi.updateByLogic(teacherVo,System.currentTimeMillis());
+            //重新将数据保存到session用于修改成功后的回显
             session.setAttribute(SysConsts.TEACHER_LOGIN_TEACHER_OBJECT_NAME,teacherVo);
         }
         return "teacher_index";
@@ -128,7 +130,9 @@ public class TeacherController
      */
     @RequestMapping("loginOut")
     public String loginOut(HttpSession session){
+        System.out.println(session.getAttribute(SysConsts.TEACHER_LOGIN_TEACHER_OBJECT_NAME));
         //将session中的已登陆用户至空
+        //TODO 有疑问？？？？？？？？
         session.setAttribute(SysConsts.TEACHER_LOGIN_TEACHER_OBJECT_NAME,null);
         return "teacher/login_teacher";
     }

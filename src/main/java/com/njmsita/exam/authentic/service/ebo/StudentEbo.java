@@ -27,12 +27,6 @@ public class StudentEbo implements StudentEbi
         return save==null?false:true;
     }
 
-    public void update(StudentEntity studentEntity)
-    {
-        studentDao.update(studentEntity);
-    }
-
-
     public List<StudentEntity> getAll()
     {
         return studentDao.getAll();

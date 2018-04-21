@@ -12,11 +12,6 @@ public interface BaseDao<T> {
 	 */
 	public Serializable save(T t);
 
-	/**
-	 * 更新
-	 * @param t    模型数据
-	 */
-	public void update(T t);
 
 	/**
 	 * 获取所有

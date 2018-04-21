@@ -28,11 +28,6 @@ public class TeacherEbo implements TeacherEbi
         return save==null?false:true;
     }
 
-    public void update(TeacherVo teacherVo)
-    {
-        teaDao.update(teacherVo);
-    }
-
 
     public List<TeacherVo> getAll()
     {
@@ -71,5 +66,23 @@ public class TeacherEbo implements TeacherEbi
             loginTea.setLastLoginIp(loginIp);
         }
         return loginTea;
+    }
+
+    public TeacherVo updateByLogic(TeacherVo teacherVo, long l)
+    {
+        System.out.println(teacherVo);
+        TeacherVo temp=null;
+        if(null!=teacherVo.getId()&&"".equals(teacherVo.getId().trim())){
+            temp=teaDao.get(teacherVo.getId());
+            if(null!=temp){
+                temp.setMail(teacherVo.getMail());
+                temp.setIdCardNo(teacherVo.getIdCardNo());
+                temp.setTelephone(teacherVo.getTelephone());
+                temp.setModifytime(l);
+            }
+        }else{
+            //TODO 抛出异常
+        }
+        return temp;
     }
 }

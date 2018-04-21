@@ -14,12 +14,6 @@ public interface BaseEbi<T> {
 	 */
 	public boolean save(T t);
 
-	/**
-	 * 更新
-	 * @param t  	模型数据
-	 */
-	public void update(T t);
-
 
 	/**
 	 * 获取所有

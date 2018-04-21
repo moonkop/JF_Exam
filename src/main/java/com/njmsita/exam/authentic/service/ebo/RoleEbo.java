@@ -27,12 +27,6 @@ public class RoleEbo implements RoleEbi
         return save==null?false:true;
     }
 
-    public void update(TroleVo troleVo)
-    {
-        roleDao.update(troleVo);
-    }
-
-
     public List<TroleVo> getAll()
     {
         return roleDao.getAll();
