@@ -50,7 +50,11 @@
       <version>1.9.13</version>
     </dependency>
 
-
+    <dependency>
+      <groupId>org.apache.shiro</groupId>
+      <artifactId>shiro-all</artifactId>
+      <version>1.2.2</version>
+    </dependency>
 
     <dependency>
       <groupId>org.apache.xmlgraphics</groupId>
@@ -208,23 +212,38 @@
       <version>1.7.5</version>
     </dependency>
 
-      <dependency>
+     <!-- <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>jstl</artifactId>
       <version>1.2</version>
     </dependency>
-      <dependency>
-      <groupId>javax.servlet.jsp</groupId>
-      <artifactId>jsp-api</artifactId>
-      <version>2.2.1-b03</version>
-      <scope>provided</scope>
-    </dependency>
+
       <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>servlet-api</artifactId>
       <version>2.5</version>
       <scope>provided</scope>
+    </dependency>-->
+
+    <!-- 引入jstl包 -->
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>jstl</artifactId>
+      <version>1.2</version>
     </dependency>
+
+    <!-- 引入servlet -->
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>3.1.0</version>
+    </dependency>
+  <dependency>
+    <groupId>javax.servlet.jsp</groupId>
+    <artifactId>jsp-api</artifactId>
+    <version>2.2.1-b03</version>
+    <scope>provided</scope>
+  </dependency>
       <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
@@ -296,11 +315,11 @@
       <artifactId>dom4j</artifactId>
       <version>1.6.1</version>
     </dependency>
-    <dependency>
+    <!--<dependency>
       <groupId>org.javassist</groupId>
       <artifactId>javassist</artifactId>
       <version>3.15.0-GA</version>
-    </dependency>
+    </dependency>-->
     <!--<dependency>
       <groupId>org.jboss.logging</groupId>
       <artifactId>jboss-logging</artifactId>
