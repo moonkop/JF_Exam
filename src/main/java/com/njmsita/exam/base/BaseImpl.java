@@ -6,11 +6,8 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 import org.hibernate.Criteria;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.Projections;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -40,11 +37,6 @@ public abstract class BaseImpl<T> implements BaseDao<T> {
 	public void update(T t) {
 		if (t!=null){
 			this.getCurrentSession().update(t);
-		}
-	}
-	public void delete(T t) {
-		if (t!=null){
-			this.getCurrentSession().delete(t);
 		}
 	}
 

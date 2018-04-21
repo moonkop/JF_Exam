@@ -12,7 +12,7 @@ public interface BaseEbi<T> {
 	 * 保存
 	 * @param t 	模型数据
 	 */
-	public void save(T t);
+	public boolean save(T t);
 
 	/**
 	 * 更新
@@ -20,11 +20,6 @@ public interface BaseEbi<T> {
 	 */
 	public void update(T t);
 
-	/**
-	 * 删除
-	 * @param t   	模型数据
-	 */
-	public void delete(T t);
 
 	/**
 	 * 获取所有
