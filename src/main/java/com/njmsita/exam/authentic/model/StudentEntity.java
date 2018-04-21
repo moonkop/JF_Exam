@@ -2,6 +2,9 @@ package com.njmsita.exam.authentic.model;
 
 import javax.persistence.*;
 
+/**
+ * 学生实体模型
+ */
 @Entity
 @Table(name = "student", schema = "jf_exam", catalog = "")
 public class StudentEntity

@@ -11,6 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * 资源业务层实现类
+ */
 @Service
 @Transactional
 public class ResourceEbo implements ResourceEbi
@@ -52,6 +55,14 @@ public class ResourceEbo implements ResourceEbi
     {
         return resourceDao.getCount(qm);
     }
+
+
+    //------------------------------以上为基本方法--------------------------------------------
+    //------------------------------以上为基本方法--------------------------------------------
+    //------------------------------以上为基本方法--------------------------------------------
+    //------------------------------以上为基本方法--------------------------------------------
+    //------------------------------以上为基本方法--------------------------------------------
+
 
     public List<TresourceVo> getAllByLogin(String id)
     {

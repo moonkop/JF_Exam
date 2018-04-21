@@ -12,6 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * 教师业务成实现类
+ */
 @Service
 @Transactional
 public class TeacherEbo implements TeacherEbi
@@ -54,8 +57,16 @@ public class TeacherEbo implements TeacherEbi
         return teaDao.getCount(qm);
     }
 
+    //------------------------------以上为基本方法--------------------------------------------
+    //------------------------------以上为基本方法--------------------------------------------
+    //------------------------------以上为基本方法--------------------------------------------
+    //------------------------------以上为基本方法--------------------------------------------
+    //------------------------------以上为基本方法--------------------------------------------
+
+
     public TeacherVo login(String teacherId, String password, String loginIp)
     {
+        //密码进行MD5加密
         password = MD5Utils.md5(password);
         TeacherVo loginTea=teaDao.getTeaByTeaIdAndPwd(teacherId,password);
         if (loginTea!=null){

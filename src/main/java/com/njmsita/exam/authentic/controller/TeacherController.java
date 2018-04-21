@@ -15,6 +15,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
+/**
+ * 教师控制器
+ */
 @Controller
 @Scope("prototype")
 @RequestMapping("/teacher")
@@ -22,21 +25,25 @@ public class TeacherController
 {
     @Autowired
     private TeacherEbi teaEbi;
-
     @Autowired
     private RoleEbi roleEbi;
-
     @Autowired
     private ResourceEbi resourceEbi;
-
     @RequestMapping("toLogin")
     public String toLogin(){
         return "login_teacher";
     }
 
+    /**
+     * 教师（管理员）用户登陆
+     * @param teaVo     前端获取教师用户登陆数据
+     * @param request   HttpServletRequest
+     * @param session   HttpSession
+     * @return
+     */
     @RequestMapping("login")
     public String login(TeacherVo teaVo, HttpServletRequest request, HttpSession session){
-        System.out.println(teaVo.getTeacherId()+":"+teaVo.getPassword());
+
         //获取IP地址
         String loginIp=request.getHeader("x-forwarded-for");
         if(loginIp == null || loginIp.length() == 0 || "unknown".equalsIgnoreCase(loginIp)) {
@@ -51,10 +58,14 @@ public class TeacherController
 
         //验证用户名密码
         TeacherVo loginTea=teaEbi.login(teaVo.getTeacherId(),teaVo.getPassword(),loginIp);
+
+        //用户信息验证成功
         if(loginTea!=null){
+
             //用户名密码验证成功获取当前登录人的所有权限
             List<TresourceVo> teacherResources = resourceEbi.getAllByLogin(loginTea.getId());
             StringBuilder sbd=new StringBuilder();
+            //拼接用户资源信息存入登陆用户
             for (TresourceVo resource : teacherResources)
             {
                 sbd.append(resource.getUrl());
@@ -64,6 +75,8 @@ public class TeacherController
             session.setAttribute(SysConsts.TEACHER_LOGIN_TEACHER_OBJECT_NAME,loginTea);
             return "index_teacher";
         }
+
+        //用户信息验证失败
         request.setAttribute("msg","账号或密码不正确！！");
         return "teacher/login_teacher";
     }

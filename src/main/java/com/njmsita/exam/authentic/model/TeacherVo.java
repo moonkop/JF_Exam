@@ -2,6 +2,9 @@ package com.njmsita.exam.authentic.model;
 
 import javax.persistence.*;
 
+/**
+ * 教师实体模型
+ */
 @Entity
 @Table(name = "teacher", schema = "jf_exam", catalog = "")
 public class TeacherVo
@@ -19,7 +22,7 @@ public class TeacherVo
     private Long modifytime;
     private String teacherRes;
 
-    //所拥有的角色
+    //所拥有的角色  n TO  1
     private TroleVo troleVo;
 
     @Id
