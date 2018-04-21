@@ -21,11 +21,10 @@ public class ResourceEbo implements ResourceEbi
     @Autowired
     private ResourceDao resourceDao;
 
-    public boolean save(TresourceVo tresourceVo)
+    public void save(TresourceVo tresourceVo)
     {
-        Serializable save = resourceDao.save(tresourceVo);
+        resourceDao.save(tresourceVo);
 
-        return save==null?false:true;
     }
 
 

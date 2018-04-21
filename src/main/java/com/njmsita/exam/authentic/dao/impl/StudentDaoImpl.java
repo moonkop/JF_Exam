@@ -6,6 +6,7 @@ import com.njmsita.exam.authentic.model.querymodel.StudentQueryModel;
 import com.njmsita.exam.base.BaseImpl;
 import com.njmsita.exam.base.BaseQueryModel;
 import org.hibernate.Criteria;
+import org.hibernate.criterion.DetachedCriteria;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -15,8 +16,9 @@ import org.springframework.stereotype.Repository;
 public class StudentDaoImpl extends BaseImpl<StudentEntity> implements StudentDao
 {
 
-    public void doQbc(Criteria dc, BaseQueryModel qm)
+    public void doQbc(DetachedCriteria dc, BaseQueryModel qm)
     {
         StudentQueryModel sqm= (StudentQueryModel) qm;
     }
+
 }

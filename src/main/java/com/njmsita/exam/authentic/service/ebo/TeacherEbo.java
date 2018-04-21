@@ -22,10 +22,9 @@ public class TeacherEbo implements TeacherEbi
     @Autowired
     private TeacherDao teaDao;
 
-    public boolean save(TeacherVo teacherVo)
+    public void save(TeacherVo teacherVo)
     {
-        Serializable save = teaDao.save(teacherVo);
-        return save==null?false:true;
+        teaDao.save(teacherVo);
     }
 
 
@@ -72,7 +71,7 @@ public class TeacherEbo implements TeacherEbi
     {
         System.out.println(teacherVo);
         TeacherVo temp=null;
-        if(null!=teacherVo.getId()&&"".equals(teacherVo.getId().trim())){
+        if(null!=teacherVo.getId()&&!"".equals(teacherVo.getId().trim())){
             temp=teaDao.get(teacherVo.getId());
             if(null!=temp){
                 temp.setMail(teacherVo.getMail());
