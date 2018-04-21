@@ -12,7 +12,7 @@
 
         <set name="reses" table="trole_tresource">
             <key column="TROLE_ID"></key>
-            <many-to-many column="tresource_id" class="com.njmsita.exam.authentic.model.TresourceVo"/>
+            <many-to-many column="TRESOURCE_ID" class="com.njmsita.exam.authentic.model.TresourceVo"/>
         </set>
     </class>
 </hibernate-mapping>

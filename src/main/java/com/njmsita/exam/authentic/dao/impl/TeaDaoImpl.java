@@ -5,9 +5,6 @@ import com.njmsita.exam.authentic.model.TeacherVo;
 import com.njmsita.exam.authentic.model.querymodel.TeaQueryModel;
 import com.njmsita.exam.base.BaseImpl;
 import com.njmsita.exam.base.BaseQueryModel;
-import org.hibernate.Criteria;
-import org.hibernate.Query;
-import org.hibernate.Transaction;
 import org.hibernate.criterion.DetachedCriteria;
 import org.springframework.stereotype.Repository;
 
