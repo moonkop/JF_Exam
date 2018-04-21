@@ -2,6 +2,9 @@ package com.njmsita.exam.authentic.model;
 
 import javax.persistence.*;
 
+/**
+ * 资源类型实体模型
+ */
 @Entity
 @Table(name = "tresourcetype", schema = "jf_exam", catalog = "")
 public class TresourcetypeVo

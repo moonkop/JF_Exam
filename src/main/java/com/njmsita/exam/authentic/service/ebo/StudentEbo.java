@@ -11,6 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ * 学生业务层实现类
+ */
 @Service
 @Transactional
 public class StudentEbo implements StudentEbi
