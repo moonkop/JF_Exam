@@ -45,4 +45,10 @@ public class RoleEbo implements RoleEbi
     {
         return roleDao.getCount(qm);
     }
+
+    public void update(TroleVo troleVo)
+    {
+        roleDao.update(troleVo);
+
+    }
 }

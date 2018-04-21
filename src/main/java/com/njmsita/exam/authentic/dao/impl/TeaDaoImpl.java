@@ -2,7 +2,7 @@ package com.njmsita.exam.authentic.dao.impl;
 
 import com.njmsita.exam.authentic.dao.dao.TeacherDao;
 import com.njmsita.exam.authentic.model.TeacherVo;
-import com.njmsita.exam.authentic.model.querymodel.TeaQueryModel;
+import com.njmsita.exam.authentic.model.querymodel.TeacherQueryModel;
 import com.njmsita.exam.base.BaseImpl;
 import com.njmsita.exam.base.BaseQueryModel;
 import org.hibernate.criterion.DetachedCriteria;
@@ -19,7 +19,7 @@ public class TeaDaoImpl extends BaseImpl<TeacherVo> implements TeacherDao
 
     public void doQbc(DetachedCriteria dc, BaseQueryModel qm)
     {
-        TeaQueryModel sqm= (TeaQueryModel) qm;
+        TeacherQueryModel sqm= (TeacherQueryModel) qm;
     }
 
     public TeacherVo getTeaByTeaIdAndPwd(String teacherId, String password)

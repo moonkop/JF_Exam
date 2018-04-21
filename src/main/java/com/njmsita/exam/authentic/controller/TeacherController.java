@@ -164,4 +164,6 @@ public class TeacherController
         session.setAttribute(SysConsts.TEACHER_LOGIN_TEACHER_OBJECT_NAME, null);
         return "redirect:/teacher/login";
     }
+
+
 }

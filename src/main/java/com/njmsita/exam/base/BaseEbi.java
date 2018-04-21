@@ -1,5 +1,7 @@
 package com.njmsita.exam.base;
 
+import com.njmsita.exam.authentic.model.SchoolVo;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -41,4 +43,10 @@ public interface BaseEbi<T> {
 	 * @return			数据总量
 	 */
 	public Integer getCount(BaseQueryModel qm);
+
+	/**
+	 * 更新
+	 * @param t  		具体模型数据
+	 */
+    public void update(T t);
 }

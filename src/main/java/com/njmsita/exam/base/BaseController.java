@@ -7,9 +7,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("base")
 public class BaseController{
+
+	//默认页码为 1
 	public Integer pageNum = 1;
+
+	//默认页面容量为 10
 	public Integer pageCount = 10;
+
+	//最大页码数
 	public Integer maxPageNum;
+
+	//数据总量
 	public Integer dataTotal;
 
 	protected void setDataTotal(int dataTotal){
