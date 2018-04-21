@@ -1,10 +1,10 @@
 <component name="ArtifactManager">
-  <artifact type="exploded-war" name="JF_Exam:war exploded">
+  <artifact type="exploded-war" name="jf-exam:war exploded">
     <output-path>$PROJECT_DIR$/target/JF_Exam</output-path>
     <root id="root">
       <element id="directory" name="WEB-INF">
         <element id="directory" name="classes">
-          <element id="module-output" name="JF_Exam" />
+          <element id="module-output" name="jf-exam" />
         </element>
         <element id="directory" name="lib">
           <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-core:2.1.2" />
@@ -115,7 +115,7 @@
       <element id="directory" name="META-INF">
         <element id="file-copy" path="$PROJECT_DIR$/target/JF_Exam/META-INF/MANIFEST.MF" />
       </element>
-      <element id="javaee-facet-resources" facet="JF_Exam/web/Web" />
+      <element id="javaee-facet-resources" facet="jf-exam/web/Web" />
     </root>
   </artifact>
 </component>

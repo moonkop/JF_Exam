@@ -17,47 +17,47 @@ import java.util.List;
 public class TeacherEbo implements TeacherEbi
 {
     @Autowired
-    private TeacherDao teacherDao;
+    private TeacherDao teaDao;
 
     public void save(TeacherVo teacherVo)
     {
-        teacherDao.save(teacherVo);
+        teaDao.save(teacherVo);
     }
 
     public void update(TeacherVo teacherVo)
     {
-        teacherDao.update(teacherVo);
+        teaDao.update(teacherVo);
     }
 
     public void delete(TeacherVo teacherVo)
     {
-        teacherDao.delete(teacherVo);
+        teaDao.delete(teacherVo);
     }
 
     public List<TeacherVo> getAll()
     {
-        return teacherDao.getAll();
+        return teaDao.getAll();
     }
 
     public TeacherVo get(Serializable uuid)
     {
-        return teacherDao.get(uuid);
+        return teaDao.get(uuid);
     }
 
     public List<TeacherVo> getAll(BaseQueryModel qm, Integer pageNum, Integer pageCount)
     {
-        return teacherDao.getAll(qm, pageNum, pageCount);
+        return teaDao.getAll(qm, pageNum, pageCount);
     }
 
     public Integer getCount(BaseQueryModel qm)
     {
-        return teacherDao.getCount(qm);
+        return teaDao.getCount(qm);
     }
 
     public TeacherVo login(String teacherId, String password, String loginIp)
     {
         password = MD5Utils.md5(password);
-        TeacherVo loginTea= teacherDao.getTeaByTeaIdAndPwd(teacherId,password);
+        TeacherVo loginTea=teaDao.getTeaByTeaIdAndPwd(teacherId,password);
         if (loginTea!=null){
             loginTea.setLastLoginTime(System.currentTimeMillis());
             loginTea.setLastLoginIp(loginIp);

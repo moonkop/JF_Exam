@@ -17,7 +17,32 @@ public class TeacherVo
     private String lastLoginIp;
     private Long createtime;
     private Long modifytime;
-    private String roleId;
+    private String teacherRes;
+
+    //所拥有的角色
+    private TroleVo troleVo;
+
+    @Id
+    @Column(name = "roleId")
+    public TroleVo getTroleVo()
+    {
+        return troleVo;
+    }
+
+    public void setTroleVo(TroleVo troleVo)
+    {
+        this.troleVo = troleVo;
+    }
+
+    public String getTeacherRes()
+    {
+        return teacherRes;
+    }
+
+    public void setTeacherRes(String teacherRes)
+    {
+        this.teacherRes = teacherRes;
+    }
 
     @Id
     @Column(name = "id")
@@ -151,18 +176,6 @@ public class TeacherVo
         this.modifytime = modifytime;
     }
 
-    @Basic
-    @Column(name = "role_id")
-    public String getRoleId()
-    {
-        return roleId;
-    }
-
-    public void setRoleId(String roleId)
-    {
-        this.roleId = roleId;
-    }
-
     @Override
     public int hashCode()
     {
@@ -177,7 +190,6 @@ public class TeacherVo
         result = 31 * result + (lastLoginIp != null ? lastLoginIp.hashCode() : 0);
         result = 31 * result + (createtime != null ? createtime.hashCode() : 0);
         result = 31 * result + (modifytime != null ? modifytime.hashCode() : 0);
-        result = 31 * result + (roleId != null ? roleId.hashCode() : 0);
         return result;
     }
 
@@ -202,7 +214,6 @@ public class TeacherVo
             return false;
         if (createtime != null ? !createtime.equals(teacherVo.createtime) : teacherVo.createtime != null) return false;
         if (modifytime != null ? !modifytime.equals(teacherVo.modifytime) : teacherVo.modifytime != null) return false;
-        if (roleId != null ? !roleId.equals(teacherVo.roleId) : teacherVo.roleId != null) return false;
 
         return true;
     }

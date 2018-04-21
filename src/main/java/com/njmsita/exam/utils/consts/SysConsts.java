@@ -67,5 +67,5 @@ public class SysConsts {
 	 * 简历反馈	0.通过 1.不通过 2.待反馈 3.项目暂停
 	 */
 	public static final int RECORD_DEFAULT_RESSTATE = 0;
-	public static final String TEA_LOGIN_TEACHER_OBJECT_NAME ="loginTeacher";
+	public static final String TEACHER_LOGIN_TEACHER_OBJECT_NAME ="loginTeacher";
 }

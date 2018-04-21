@@ -1,6 +1,7 @@
 package com.njmsita.exam.authentic.model;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "trole", schema = "jf_exam", catalog = "")
@@ -10,6 +11,18 @@ public class TroleVo
     private String name;
     private String remark;
     private Integer seq;
+
+    private Set<TresourceVo> reses;
+
+    public Set<TresourceVo> getReses()
+    {
+        return reses;
+    }
+
+    public void setReses(Set<TresourceVo> reses)
+    {
+        this.reses = reses;
+    }
 
     @Id
     @Column(name = "ID")

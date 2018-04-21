@@ -1,6 +1,8 @@
 package com.njmsita.exam.authentic.controller;
 
 import com.njmsita.exam.authentic.model.TeacherVo;
+import com.njmsita.exam.authentic.model.TresourceVo;
+import com.njmsita.exam.authentic.service.ebi.ResourceEbi;
 import com.njmsita.exam.authentic.service.ebi.RoleEbi;
 import com.njmsita.exam.authentic.service.ebi.TeacherEbi;
 import com.njmsita.exam.utils.consts.SysConsts;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 @Controller
 @Scope("prototype")
@@ -18,10 +21,18 @@ import javax.servlet.http.HttpSession;
 public class TeacherController
 {
     @Autowired
-    private TeacherEbi teacherEbi;
+    private TeacherEbi teaEbi;
 
     @Autowired
     private RoleEbi roleEbi;
+
+    @Autowired
+    private ResourceEbi resourceEbi;
+
+    @RequestMapping("toLogin")
+    public String toLogin(){
+        return "login_teacher";
+    }
 
     @RequestMapping("login")
     public String login(TeacherVo teaVo, HttpServletRequest request, HttpSession session){
@@ -37,16 +48,20 @@ public class TeacherController
         if(loginIp == null || loginIp.length() == 0 || "unknown".equalsIgnoreCase(loginIp)) {
             loginIp = request.getRemoteAddr();
         }
-        TeacherVo loginTea= teacherEbi.login(teaVo.getTeacherId(),teaVo.getPassword(),loginIp);
+
+        //验证用户名密码
+        TeacherVo loginTea=teaEbi.login(teaVo.getTeacherId(),teaVo.getPassword(),loginIp);
         if(loginTea!=null){
-//            List<ResModel> resModels = resEbi.getAllByEmp(loginEmp.getUuid());
-//            StringBuilder sbd=new StringBuilder();
-//            for (ResModel resModel : resModels) {
-//                sbd.append(resModel.getUrl());
-//                sbd.append(",");
-//            }
-//            loginEmp.setLogReString(sbd.toString());
-            session.setAttribute(SysConsts.TEA_LOGIN_TEACHER_OBJECT_NAME,loginTea);
+            //用户名密码验证成功获取当前登录人的所有权限
+            List<TresourceVo> teacherResources = resourceEbi.getAllByLogin(loginTea.getId());
+            StringBuilder sbd=new StringBuilder();
+            for (TresourceVo resource : teacherResources)
+            {
+                sbd.append(resource.getUrl());
+                sbd.append(",");
+            }
+            loginTea.setTeacherRes(sbd.toString());
+            session.setAttribute(SysConsts.TEACHER_LOGIN_TEACHER_OBJECT_NAME,loginTea);
             return "index_teacher";
         }
         request.setAttribute("msg","账号或密码不正确！！");

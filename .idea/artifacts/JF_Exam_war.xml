@@ -1,8 +1,8 @@
 <component name="ArtifactManager">
-  <artifact type="war" name="JF_Exam:war">
+  <artifact type="war" name="jf-exam:war">
     <output-path>$PROJECT_DIR$/target</output-path>
     <root id="archive" name="JF_Exam.war">
-      <element id="artifact" artifact-name="JF_Exam:war exploded" />
+      <element id="artifact" artifact-name="jf-exam:war exploded" />
     </root>
   </artifact>
 </component>
