@@ -1,11 +1,5 @@
 target
 webapp/node_modules
-.idea
-.idea/**
-.idea/**/*.*
-.idea/libraries
-.idea/libraries/**
-.idea/libraries/**/*.*
 webapp/temp
 webapp/dist
 JF_Exam.iml
