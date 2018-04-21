@@ -48,6 +48,12 @@ public class ResourceEbo implements ResourceEbi
         return resourceDao.getCount(qm);
     }
 
+    public void update(TresourceVo tresourceVo)
+    {
+        resourceDao.update(tresourceVo);
+
+    }
+
 
     //------------------------------以上为基本方法--------------------------------------------
     //------------------------------以上为基本方法--------------------------------------------

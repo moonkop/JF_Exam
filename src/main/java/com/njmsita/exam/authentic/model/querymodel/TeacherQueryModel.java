@@ -6,6 +6,6 @@ import com.njmsita.exam.base.BaseQueryModel;
 /**
  * 教师查询条件模型
  */
-public class TeaQueryModel extends TeacherVo implements BaseQueryModel
+public class TeacherQueryModel extends TeacherVo implements BaseQueryModel
 {
 }

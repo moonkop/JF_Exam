@@ -45,4 +45,9 @@ public class StudentEbo implements StudentEbi
     {
         return studentDao.getCount(qm);
     }
+
+    public void update(StudentEntity studentEntity)
+    {
+        studentDao.update(studentEntity);
+    }
 }
