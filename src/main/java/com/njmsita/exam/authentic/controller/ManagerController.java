@@ -19,7 +19,7 @@ import java.util.List;
  * 管理控制器
  */
 @Controller
-@RequestMapping("/manager")
+@RequestMapping("/manage")
 public class ManagerController extends BaseController
 {
     @Autowired
@@ -38,7 +38,7 @@ public class ManagerController extends BaseController
     /**
      *跳转教师列表
      */
-    @RequestMapping("toTeacherList")
+    @RequestMapping("teacher")
     public String toTeacherList(int pageNum){
 //        List
 //        List<TeacherVo> teahcerList =teacherEbi.
@@ -68,7 +68,7 @@ public class ManagerController extends BaseController
      * @param schoolQueryVo 该模型存放了学校属性  分页数据  查询条件
      * @return              跳转学校列表页面
      */
-    @RequestMapping("toSchoolList")
+    @RequestMapping("school")
     public String toSchoolList(SchoolQueryVo schoolQueryVo, Model model){
         //调用BaseController的方法设置数据总量及最大页码数
         setDataTotal(schoolEbi.getCount(schoolQueryVo));
