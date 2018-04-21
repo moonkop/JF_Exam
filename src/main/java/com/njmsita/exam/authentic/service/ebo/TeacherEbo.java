@@ -75,12 +75,13 @@ public class TeacherEbo implements TeacherEbi
             temp=teaDao.get(teacherVo.getId());
             if(null!=temp){
                 temp.setMail(teacherVo.getMail());
-                temp.setIdCardNo(teacherVo.getIdCardNo());
+               // temp.setIdCardNo(teacherVo.getIdCardNo());
                 temp.setTelephone(teacherVo.getTelephone());
                 temp.setModifytime(l);
             }
         }else{
             //TODO 抛出异常
+            throw new RuntimeException("未找到该用户");
         }
         return temp;
     }
