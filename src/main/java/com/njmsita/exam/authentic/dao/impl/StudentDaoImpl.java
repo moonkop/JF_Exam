@@ -8,9 +8,6 @@ import com.njmsita.exam.base.BaseQueryModel;
 import org.hibernate.Criteria;
 import org.springframework.stereotype.Repository;
 
-/**
- * 学生持久层实现类
- */
 @Repository
 public class StudentDaoImpl extends BaseImpl<StudentEntity> implements StudentDao
 {

@@ -1,11 +1,7 @@
 package com.njmsita.exam.authentic.model;
 
 import javax.persistence.*;
-import java.util.Set;
 
-/**
- * 角色实体模型
- */
 @Entity
 @Table(name = "trole", schema = "jf_exam", catalog = "")
 public class TroleVo
@@ -14,19 +10,6 @@ public class TroleVo
     private String name;
     private String remark;
     private Integer seq;
-
-    //角色所拥有的资源 n TO m
-    private Set<TresourceVo> reses;
-
-    public Set<TresourceVo> getReses()
-    {
-        return reses;
-    }
-
-    public void setReses(Set<TresourceVo> reses)
-    {
-        this.reses = reses;
-    }
 
     @Id
     @Column(name = "ID")

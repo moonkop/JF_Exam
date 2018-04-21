@@ -11,11 +11,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-/**
- * 教师持久层实现类
- */
 @Repository
-public class TeacherDaoImpl extends BaseImpl<TeacherVo> implements TeacherDao
+public class TeaDaoImpl extends BaseImpl<TeacherVo> implements TeacherDao
 {
 
     public void doQbc(Criteria dc, BaseQueryModel qm)

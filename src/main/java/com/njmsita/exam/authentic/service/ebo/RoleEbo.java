@@ -11,9 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.Serializable;
 import java.util.List;
 
-/**
- * 角色业务层实现类
- */
 @Service
 @Transactional
 public class RoleEbo implements RoleEbi

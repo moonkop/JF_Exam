@@ -10,10 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 
-
-/**
- * 学生控制器
- */
 @Controller
 @Scope("prototype")
 @RequestMapping("/stu")

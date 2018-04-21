@@ -7,9 +7,6 @@ import com.njmsita.exam.base.BaseQueryModel;
 import org.hibernate.Criteria;
 import org.springframework.stereotype.Repository;
 
-/**
- * 角色持久层实现类
- */
 @Repository
 public class RoleDaoImpl extends BaseImpl<TroleVo> implements RoleDao
 {
