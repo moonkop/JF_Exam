@@ -28,33 +28,33 @@
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">姓名</label>
                                 <div class="col-sm-8">
-                                    <p class="form-control-static">${me.name}</p>
+                                    <p class="form-control-static">${loginTeacher.name}</p>
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">身份</label>
                                 <div class="col-sm-8">
-                                    <p class="form-control-static">${me.troleVo.name}</p>
+                                    <p class="form-control-static">${loginTeacher.troleVo.name}</p>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">身份证号码</label>
                                 <div class="col-sm-8">
-                                    <p class="form-control-static">${me.idCardNo}</p>
+                                    <p class="form-control-static">${loginTeacher.idCardNo}</p>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="inputEmail" class="col-sm-2 control-label">Email</label>
                                 <div class="col-sm-8">
-                                    <input type="email" class="form-control" id="inputEmail" name="mail" value="${me.mail}"
+                                    <input type="email" class="form-control" id="inputEmail" name="mail" value="${loginTeacher.mail}"
                                            placeholder="请输入Email">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="inputTel" class="col-sm-2 control-label">电话</label>
                                 <div class="col-sm-8">
-                                    <input type="text" class="form-control" id="inputTel" name="telephone" value="${me.telephone}"
+                                    <input type="text" class="form-control" id="inputTel" name="telephone" value="${loginTeacher.telephone}"
                                            placeholder="请输入电话号码">
                                 </div>
                             </div>

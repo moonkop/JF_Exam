@@ -1,5 +1,11 @@
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8"%>
 
+
+
+<%@ page import="com.njmsita.exam.utils.consts.SysConsts" %>
+<%! String key=SysConsts.TEACHER_LOGIN_TEACHER_OBJECT_NAME;
+%>
 <html lang="en">
 
 <head>
@@ -28,31 +34,31 @@
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">姓名</label>
                                 <div class="col-sm-8">
-                                    <p class="form-control-static">${me.name}</p>
+                                    <p class="form-control-static">${loginTeacher.name}</p>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">身份</label>
                                 <div class="col-sm-8">
-                                    <p class="form-control-static">${me.troleVo.name}</p>
+                                    <p class="form-control-static">${loginTeacher.troleVo.name}</p>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">身份证号码</label>
                                 <div class="col-sm-8">
-                                    <p class="form-control-static">${me.idCardNo}</p>
+                                    <p class="form-control-static">${loginTeacher.idCardNo}</p>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">Email</label>
                                 <div class="col-sm-8">
-                                    <p class="form-control-static">${me.mail}</p>
+                                    <p class="form-control-static">${loginTeacher.mail}</p>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label  class="col-sm-2 control-label">电话</label>
                                 <div class="col-sm-8">
-                                    <p class="form-control-static">${me.telephone}</p>
+                                    <p class="form-control-static">${loginTeacher.telephone}</p>
                                 </div>
                             </div>
                         </div>

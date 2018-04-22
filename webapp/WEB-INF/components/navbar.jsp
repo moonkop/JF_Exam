@@ -16,13 +16,13 @@
     <ul class="nav navbar-top-links navbar-right">
         <li class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
-                <i class="fa fa-user fa-fw"></i>${me.name}<i class="fa fa-caret-down"></i>
+                <i class="fa fa-user fa-fw"></i>${loginTeacher.name}<i class="fa fa-caret-down"></i>
             </a>
             <ul class="dropdown-menu dropdown-messages">
 
                 <li>
                     <a>
-                        <div>身份：${me.troleVo.name}</div>
+                        <div>身份：${loginTeacher.troleVo.name}</div>
                     </a>
                 </li>
                 <li class="divider"></li>

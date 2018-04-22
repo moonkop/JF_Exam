@@ -47,11 +47,8 @@ public class TeacherController
     }
 
     @RequestMapping("welcome")
-    public String towelcome(ModelMap map, HttpSession session)
+    public String towelcome()
     {
-        TeacherVo teacherVo = (TeacherVo) session.getAttribute(SysConsts.TEACHER_LOGIN_TEACHER_OBJECT_NAME);
-
-        map.addAttribute("me", teacherVo);
         return "index_teacher";
     }
 
@@ -113,11 +110,9 @@ public class TeacherController
      * 查看个人详细信息
      */
     @RequestMapping("detail")
-    public String detail(ModelMap map, HttpSession session)
+    public String detail()
     {
         //前台数据从session中获取
-        TeacherVo teacherVo = (TeacherVo) session.getAttribute(SysConsts.TEACHER_LOGIN_TEACHER_OBJECT_NAME);
-        map.addAttribute("me", teacherVo);
         return "/manage/me/detail";
     }
 
@@ -125,12 +120,9 @@ public class TeacherController
      * 跳转个人信息编辑
      */
     @RequestMapping("edit")
-    public String edit(ModelMap map, HttpSession session)
+    public String edit()
     {
         //回显数据在session中获取
-        TeacherVo teacherVo = (TeacherVo) session.getAttribute(SysConsts.TEACHER_LOGIN_TEACHER_OBJECT_NAME);
-        map.addAttribute("me", teacherVo);
-        map.addAttribute("roles", roleEbi.getAll());
         return "/manage/me/edit";
     }
 
@@ -146,11 +138,9 @@ public class TeacherController
             teacherQuery.setId(teacherVo.getId());
             //不能直接进行物理更新
             TeacherVo newteacher = teaEbi.updateByLogic(teacherQuery, System.currentTimeMillis());
-            Hibernate.initialize(newteacher.getTroleVo());
             //重新将数据保存到session用于修改成功后的回显
             session.setAttribute(SysConsts.TEACHER_LOGIN_TEACHER_OBJECT_NAME, newteacher);
         }
-
         return "redirect:/teacher/detail";
     }
 
