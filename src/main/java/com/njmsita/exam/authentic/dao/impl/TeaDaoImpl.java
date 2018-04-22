@@ -30,4 +30,11 @@ public class TeaDaoImpl extends BaseImpl<TeacherVo> implements TeacherDao
         return list.size()>0? (TeacherVo) list.get(0) :null;
     }
 
+    public List<TeacherVo> getAllByRoleId(String id)
+    {
+        //teacher---->role
+        String hql="from TeacherVo tv where tv.troleVo.id=?";
+        return (List<TeacherVo>) this.getHibernateTemplate().find(hql,id);
+    }
+
 }

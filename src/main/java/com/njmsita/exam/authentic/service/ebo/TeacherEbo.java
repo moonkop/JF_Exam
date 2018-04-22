@@ -3,14 +3,14 @@ package com.njmsita.exam.authentic.service.ebo;
 import com.njmsita.exam.authentic.dao.dao.TeacherDao;
 import com.njmsita.exam.authentic.model.TeacherVo;
 import com.njmsita.exam.authentic.model.TroleVo;
+import com.njmsita.exam.authentic.service.ebi.RoleEbi;
 import com.njmsita.exam.authentic.service.ebi.TeacherEbi;
 import com.njmsita.exam.base.BaseQueryVO;
+import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.format.MD5Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.management.relation.Role;
 import java.io.Serializable;
 import java.util.List;
 
@@ -24,7 +24,8 @@ public class TeacherEbo implements TeacherEbi
     @Autowired
     private TeacherDao teaDao;
 
-    //TODO 注入roledao
+    @Autowired
+    private RoleEbi roleEbi;
 
     public void save(TeacherVo teacherVo)
     {
@@ -32,10 +33,8 @@ public class TeacherEbo implements TeacherEbi
         teacherVo.setLastLoginTime(0l);
         teacherVo.setCreatetime(System.currentTimeMillis());
         teacherVo.setModifytime(0l);
-        //TODO 查询教师角色
-        TroleVo role = ;
+        TroleVo role = roleEbi.getByName(SysConsts.TEACHER_ROLE_NAME);
         teacherVo.setTroleVo(role);
-        private TroleVo troleVo;
         teaDao.save(teacherVo);
     }
 
@@ -63,6 +62,11 @@ public class TeacherEbo implements TeacherEbi
     public void update(TeacherVo teacherVo)
     {
         teaDao.update(teacherVo);
+    }
+
+    public void delete(TeacherVo teacherVo)
+    {
+        teaDao.delete(teacherVo);
     }
 
     //------------------------------以上为基本方法--------------------------------------------

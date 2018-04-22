@@ -72,4 +72,15 @@ public class SysConsts {
 	 * 教师登录session常量名
 	 */
 	public static final String TEACHER_LOGIN_TEACHER_OBJECT_NAME ="loginTeacher";
+
+
+	/**
+	 * 教师角色名称
+	 */
+	public static final String TEACHER_ROLE_NAME ="教师";
+
+	/**
+	 * 学生角色名称
+	 */
+	public static final String STUDENT_ROLE_NAME ="学生";
 }

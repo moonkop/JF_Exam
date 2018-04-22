@@ -17,7 +17,6 @@ import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -193,14 +192,9 @@ public class TeacherController extends BaseController
         List<SchoolVo> schoolList = schoolEbi.getAll();
         request.setAttribute("schoolList",schoolList);
 
-        pageCount=pageSize;
         //调用BaseController的方法设置数据总量及最大页码数
+        pageCount=pageSize;
         setDataTotal(teaEbi.getCount(teacherQueryVo));
-
-
-        //存入schoolQueryVo模型中便于页面调用
-        teacherQueryVo.setMaxPageNum(maxPageNum);
-        teacherQueryVo.setDataTotal(dataTotal);
 
         List<TeacherVo> teacherList = teaEbi.getAll(teacherQueryVo, pageNum, pageSize);
         request.setAttribute("teacherList",teacherList);
@@ -246,14 +240,14 @@ public class TeacherController extends BaseController
 
     /**
      * 删除学校
-     * @param  school   需要删除的学校
+     * @param  teacher   需要删除的学校
      * @return          跳转学校列表页面
      */
     @RequestMapping("teacher/delete")
-    public String delete(SchoolVo school){
+    public String delete(TeacherVo teacher){
 
         //TODO 此处进行异常处理  异常描述：若该删除的学校有关联的学生或班级则抛出异常
-        schoolEbi.delete(school);
+        teaEbi.delete(teacher);
 
         return "redirect:/teacher/list";
     }

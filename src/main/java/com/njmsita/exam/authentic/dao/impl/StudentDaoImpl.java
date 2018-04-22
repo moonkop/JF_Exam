@@ -2,6 +2,7 @@ package com.njmsita.exam.authentic.dao.impl;
 
 import com.njmsita.exam.authentic.dao.dao.StudentDao;
 import com.njmsita.exam.authentic.model.StudentVo;
+import com.njmsita.exam.authentic.model.TeacherVo;
 import com.njmsita.exam.authentic.model.querymodel.StudentQueryModel;
 import com.njmsita.exam.base.BaseImpl;
 import com.njmsita.exam.base.BaseQueryVO;
@@ -27,5 +28,11 @@ public class StudentDaoImpl extends BaseImpl<StudentVo> implements StudentDao
         //student---->school
         String hql="from StudentVo sv where sv.school.id=?";
         return (List<StudentVo>) this.getHibernateTemplate().find(hql,id);
+    }
+
+    public List<TeacherVo> getAllByRoleId(String id)
+    {
+        String hql="from StudentVo sv where sv.role.id=?";
+        return (List<TeacherVo>) this.getHibernateTemplate().find(hql,id);
     }
 }

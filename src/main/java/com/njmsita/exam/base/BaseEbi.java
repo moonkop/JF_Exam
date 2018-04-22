@@ -1,5 +1,7 @@
 package com.njmsita.exam.base;
 
+import com.njmsita.exam.authentic.model.TeacherVo;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -45,4 +47,11 @@ public interface BaseEbi<T> {
 	 * @param t  		具体模型数据
 	 */
     public void update(T t);
+
+
+	/**
+	 * 删除
+	 * @param t 		具体模型数据
+	 */
+	public void delete(T t);
 }

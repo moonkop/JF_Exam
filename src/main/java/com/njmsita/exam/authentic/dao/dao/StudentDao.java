@@ -1,6 +1,7 @@
 package com.njmsita.exam.authentic.dao.dao;
 
 import com.njmsita.exam.authentic.model.StudentVo;
+import com.njmsita.exam.authentic.model.TeacherVo;
 import com.njmsita.exam.base.BaseDao;
 
 import java.util.List;
@@ -16,4 +17,12 @@ public interface StudentDao extends BaseDao<StudentVo>
      * @return      学生集合
      */
     public List<StudentVo> getAllBySchoolId(String id);
+
+
+    /**
+     * 根据角色id获取所有学生
+     * @param id    角色id
+     * @return      查询到的所有学生
+     */
+    public List<TeacherVo> getAllByRoleId(String id);
 }

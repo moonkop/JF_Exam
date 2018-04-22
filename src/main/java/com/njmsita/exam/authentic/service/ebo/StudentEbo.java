@@ -50,4 +50,9 @@ public class StudentEbo implements StudentEbi
     {
         studentDao.update(studentEntity);
     }
+
+    public void delete(StudentVo studentVo)
+    {
+        studentDao.delete(studentVo);
+    }
 }

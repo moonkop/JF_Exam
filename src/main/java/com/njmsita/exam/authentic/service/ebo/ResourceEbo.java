@@ -55,6 +55,11 @@ public class ResourceEbo implements ResourceEbi
 
     }
 
+    public void delete(TresourceVo tresourceVo)
+    {
+        resourceDao.delete(tresourceVo);
+    }
+
 
     //------------------------------以上为基本方法--------------------------------------------
     //------------------------------以上为基本方法--------------------------------------------

@@ -61,6 +61,10 @@ public class ManagerController extends BaseController
     @RequestMapping("school/list")
     public String toSchoolList(SchoolQueryVo schoolQueryVo,Integer pageNum,Integer pageSize, Model model){
 
+        //调用BaseController的方法设置数据总量及最大页码数
+        pageCount=pageSize;
+        setDataTotal(schoolEbi.getCount(schoolQueryVo));
+
         //根据查询条件及指定页码查询
         List<SchoolVo> schoolVoList = schoolEbi.getAll(schoolQueryVo,pageNum,pageSize);
         model.addAttribute("schoolVoList",schoolVoList);
@@ -145,6 +149,10 @@ public class ManagerController extends BaseController
     //TODO  异步请求分页，要带上pageNum maxPageNum totalData
     @RequestMapping("role/list")
     public String toRoleList(TroleQueryModel roleQueryVo,Model model,Integer pageNum,Integer pageSize){
+
+        //调用BaseController的方法设置数据总量及最大页码数
+        pageCount=pageSize;
+        setDataTotal(roleEbi.getCount(roleQueryVo));
 
         //根据查询条件及指定页码查询
         List<TroleVo> roleList = roleEbi.getAll(roleQueryVo,pageNum,pageSize);

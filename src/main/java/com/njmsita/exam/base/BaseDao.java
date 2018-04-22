@@ -45,4 +45,10 @@ public interface BaseDao<T> {
 	 */
 	public Integer getCount(BaseQueryVO qm);
 
+	/**
+	 * 删除
+	 * @param t 		具体模型数据
+	 */
+	public void delete(T t);
+
 }

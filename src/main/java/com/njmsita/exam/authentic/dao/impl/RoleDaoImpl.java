@@ -18,4 +18,10 @@ public class RoleDaoImpl extends BaseImpl<TroleVo> implements RoleDao
     {
 
     }
+
+    public TroleVo getByName(String name)
+    {
+        String hql="from TroleVo where name=?";
+        return (TroleVo) this.getHibernateTemplate().find(hql,name);
+    }
 }
