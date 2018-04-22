@@ -1,11 +1,11 @@
 package com.njmsita.exam.manager.service.ebo;
 
+import com.njmsita.exam.base.BaseQueryVO;
 import com.njmsita.exam.manager.dao.dao.SchoolDao;
 import com.njmsita.exam.authentic.dao.dao.StudentDao;
 import com.njmsita.exam.manager.model.SchoolVo;
 import com.njmsita.exam.authentic.model.StudentVo;
 import com.njmsita.exam.manager.service.ebi.SchoolEbi;
-import com.njmsita.exam.base.BaseQueryModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,12 +41,12 @@ public class SchoolEbo implements SchoolEbi
         return schoolDao.get(uuid);
     }
 
-    public List<SchoolVo> getAll(BaseQueryModel qm, Integer pageNum, Integer pageCount)
+    public List<SchoolVo> getAll(BaseQueryVO qm, Integer pageNum, Integer pageCount)
     {
         return schoolDao.getAll(qm, pageNum, pageCount);
     }
 
-    public Integer getCount(BaseQueryModel qm)
+    public Integer getCount(BaseQueryVO qm)
     {
         return schoolDao.getCount(qm);
     }
@@ -68,7 +68,6 @@ public class SchoolEbo implements SchoolEbi
         if(0==students.size()){
             schoolDao.delete(school);
         }else{
-
             //TODO 抛出异常
             System.out.println("这个学校有学生，不能删除");
         }

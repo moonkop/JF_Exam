@@ -4,7 +4,7 @@ import com.njmsita.exam.authentic.dao.dao.TeacherDao;
 import com.njmsita.exam.authentic.model.TeacherVo;
 import com.njmsita.exam.authentic.model.querymodel.TeacherQueryModel;
 import com.njmsita.exam.base.BaseImpl;
-import com.njmsita.exam.base.BaseQueryModel;
+import com.njmsita.exam.base.BaseQueryVO;
 import org.hibernate.criterion.DetachedCriteria;
 import org.springframework.stereotype.Repository;
 
@@ -17,7 +17,7 @@ import java.util.List;
 public class TeaDaoImpl extends BaseImpl<TeacherVo> implements TeacherDao
 {
 
-    public void doQbc(DetachedCriteria dc, BaseQueryModel qm)
+    public void doQbc(DetachedCriteria dc, BaseQueryVO qm)
     {
         TeacherQueryModel sqm= (TeacherQueryModel) qm;
     }
@@ -28,6 +28,13 @@ public class TeaDaoImpl extends BaseImpl<TeacherVo> implements TeacherDao
 
         List list = this.getHibernateTemplate().find(hql,teacherId,password);
         return list.size()>0? (TeacherVo) list.get(0) :null;
+    }
+
+    public List<TeacherVo> getAllByRoleId(String id)
+    {
+        //teacher---->role
+        String hql="from TeacherVo tv where tv.troleVo.id=?";
+        return (List<TeacherVo>) this.getHibernateTemplate().find(hql,id);
     }
 
 }

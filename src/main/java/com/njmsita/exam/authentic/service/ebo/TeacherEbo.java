@@ -2,13 +2,15 @@ package com.njmsita.exam.authentic.service.ebo;
 
 import com.njmsita.exam.authentic.dao.dao.TeacherDao;
 import com.njmsita.exam.authentic.model.TeacherVo;
+import com.njmsita.exam.authentic.model.TroleVo;
+import com.njmsita.exam.authentic.service.ebi.RoleEbi;
 import com.njmsita.exam.authentic.service.ebi.TeacherEbi;
-import com.njmsita.exam.base.BaseQueryModel;
+import com.njmsita.exam.base.BaseQueryVO;
+import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.format.MD5Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.io.Serializable;
 import java.util.List;
 
@@ -22,8 +24,17 @@ public class TeacherEbo implements TeacherEbi
     @Autowired
     private TeacherDao teaDao;
 
+    @Autowired
+    private RoleEbi roleEbi;
+
     public void save(TeacherVo teacherVo)
     {
+        teacherVo.setLastLoginIp("-");
+        teacherVo.setLastLoginTime(0l);
+        teacherVo.setCreatetime(System.currentTimeMillis());
+        teacherVo.setModifytime(0l);
+        TroleVo role = roleEbi.getByName(SysConsts.TEACHER_ROLE_NAME);
+        teacherVo.setTroleVo(role);
         teaDao.save(teacherVo);
     }
 
@@ -38,12 +49,12 @@ public class TeacherEbo implements TeacherEbi
         return teaDao.get(uuid);
     }
 
-    public List<TeacherVo> getAll(BaseQueryModel qm, Integer pageNum, Integer pageCount)
+    public List<TeacherVo> getAll(BaseQueryVO qm, Integer pageNum, Integer pageSize)
     {
-        return teaDao.getAll(qm, pageNum, pageCount);
+        return teaDao.getAll(qm,pageNum,pageSize);
     }
 
-    public Integer getCount(BaseQueryModel qm)
+    public Integer getCount(BaseQueryVO qm)
     {
         return teaDao.getCount(qm);
     }
@@ -51,6 +62,11 @@ public class TeacherEbo implements TeacherEbi
     public void update(TeacherVo teacherVo)
     {
         teaDao.update(teacherVo);
+    }
+
+    public void delete(TeacherVo teacherVo)
+    {
+        teaDao.delete(teacherVo);
     }
 
     //------------------------------以上为基本方法--------------------------------------------

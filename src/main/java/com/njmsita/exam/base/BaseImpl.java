@@ -48,20 +48,12 @@ public abstract class BaseImpl<T>  extends HibernateDaoSupport implements BaseDa
 	public T get(Serializable uuid) {
 		return this.getHibernateTemplate().get(entityClass, uuid);
 	}
-	public List<T> getAll(BaseQueryModel qm, Integer pageNum, Integer pageCount) {
+	public List<T> getAll(BaseQueryVO qm,Integer pageNum,Integer pageSize) {
 		DetachedCriteria dc=DetachedCriteria.forClass(entityClass);
 		doQbc(dc, qm);
-		return (List<T>) this.getHibernateTemplate().findByCriteria(dc,(pageNum-1)*pageCount,pageCount);
+		return (List<T>) this.getHibernateTemplate().findByCriteria(dc,(pageNum-1)*pageSize,pageSize);
 	}
-
-//	public List<T> getAll(BaseQueryVO qm) {
-//		DetachedCriteria dc=DetachedCriteria.forClass(entityClass);
-//		doQbc(dc, qm);
-//		return (List<T>) this.getHibernateTemplate().findByCriteria(dc,(qm.getPageNum()-1)*qm.getPageCount(),qm.getPageCount());
-//	}
-
-
-	public Integer getCount(BaseQueryModel qm) {
+	public Integer getCount(BaseQueryVO qm) {
 
 		DetachedCriteria dc=DetachedCriteria.forClass(entityClass);
 		doQbc(dc, qm);
@@ -70,5 +62,5 @@ public abstract class BaseImpl<T>  extends HibernateDaoSupport implements BaseDa
 		return lists.get(0).intValue();
 	}
 
-	public abstract void doQbc(DetachedCriteria dc,BaseQueryModel qm);
+	public abstract void doQbc(DetachedCriteria dc,BaseQueryVO qm);
 }

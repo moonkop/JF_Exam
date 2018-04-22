@@ -8,7 +8,6 @@ import com.njmsita.exam.base.BaseDao;
  */
 public interface SchoolDao extends BaseDao<SchoolVo>
 {
-    public void save1(SchoolVo school);
 
     public void delete(SchoolVo school);
 }

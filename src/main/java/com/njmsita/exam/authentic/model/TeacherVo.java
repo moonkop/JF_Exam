@@ -1,5 +1,7 @@
 package com.njmsita.exam.authentic.model;
 
+import com.njmsita.exam.base.BaseQueryVO;
+
 import javax.persistence.*;
 
 /**

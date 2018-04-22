@@ -1,5 +1,6 @@
 package com.njmsita.exam.authentic.model;
 
+import com.njmsita.exam.base.BaseQueryVO;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 

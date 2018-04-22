@@ -8,4 +8,16 @@ import com.njmsita.exam.base.BaseEbi;
  */
 public interface RoleEbi extends BaseEbi<TroleVo>
 {
+    /**
+     * 删除
+     * @param roleVo    要删除的角色
+     */
+    public void delete(TroleVo roleVo);
+
+    /**
+     * 根据名称查询角色
+     * @param name      角色名称
+     * @return          查询到的角色
+     */
+    public TroleVo getByName(String name);
 }

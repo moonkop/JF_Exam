@@ -4,15 +4,19 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.njmsita.exam.authentic.model.TeacherVo;
 import com.njmsita.exam.authentic.model.TresourceVo;
 import com.njmsita.exam.authentic.model.TroleVo;
+import com.njmsita.exam.authentic.model.querymodel.TeacherQueryModel;
 import com.njmsita.exam.authentic.service.ebi.ResourceEbi;
 import com.njmsita.exam.authentic.service.ebi.RoleEbi;
 import com.njmsita.exam.authentic.service.ebi.TeacherEbi;
+import com.njmsita.exam.base.BaseController;
+import com.njmsita.exam.manager.model.SchoolVo;
+import com.njmsita.exam.manager.service.ebi.SchoolEbi;
 import com.njmsita.exam.utils.consts.SysConsts;
+import com.njmsita.exam.utils.idutil.IdUtil;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -26,7 +30,7 @@ import java.util.List;
 @Controller
 @Scope("prototype")
 @RequestMapping("/teacher")
-public class TeacherController
+public class TeacherController extends BaseController
 {
     @Autowired
     private TeacherEbi teaEbi;
@@ -34,6 +38,8 @@ public class TeacherController
     private RoleEbi roleEbi;
     @Autowired
     private ResourceEbi resourceEbi;
+    @Autowired
+    private SchoolEbi schoolEbi;
 
     /**
      * 跳转登陆页
@@ -165,4 +171,93 @@ public class TeacherController
     {
         return roleEbi.getAll();
     }
+
+    //------------------------------------------TeacherManager----------------------------------------------
+    //------------------------------------------TeacherManager----------------------------------------------
+    //------------------------------------------TeacherManager----------------------------------------------
+    //------------------------------------------TeacherManager----------------------------------------------
+    //------------------------------------------TeacherManager----------------------------------------------
+    //------------------------------------------TeacherManager----------------------------------------------
+
+    /**
+     * 跳转教师列表页面（分页）
+     * @param teacherQueryVo    该模型存放了教师属性  分页数据  查询条件
+     * @param request
+     * @return
+     */
+    //TODO  异步请求分页
+    @RequestMapping("list")
+    public String toTeacherList(TeacherQueryModel teacherQueryVo ,Integer pageNum,Integer pageSize, HttpServletRequest request){
+        //获取学校列表
+        List<SchoolVo> schoolList = schoolEbi.getAll();
+        request.setAttribute("schoolList",schoolList);
+
+        //调用BaseController的方法设置数据总量及最大页码数
+        pageCount=pageSize;
+        setDataTotal(teaEbi.getCount(teacherQueryVo));
+
+        List<TeacherVo> teacherList = teaEbi.getAll(teacherQueryVo, pageNum, pageSize);
+        request.setAttribute("teacherList",teacherList);
+
+        return "manager/teacher/list";
+    }
+    /**
+     * 跳转教师添加/修改页面
+     *
+     * （此处将添加和修改页面合并，如果前台传递ID则进行修改否则进入添加页面）
+     *
+     * @param teacher    接受前台传递的教师id
+     * @param request   HttpServletRequest
+     * @return          跳转edit
+     */
+    @RequestMapping("add")
+    public String add(TeacherVo teacher, HttpServletRequest request){
+        //判断前台是否传递教师ID
+        if(null!= teacher.getId()){
+            //根据学校ID获取教师完整信息从而进行数据回显
+            teacher =teaEbi.get(teacher.getId());
+            request.setAttribute("teacher", teacher);
+        }
+        return "redirect:/teacher/list";
+    }
+
+    /**
+     * 添加教师
+     * @param teacher    需要添加的信息
+     * @return          跳转教师列表页面
+     */
+    @RequestMapping("doAdd")
+    public String doAdd(TeacherVo teacher){
+        if(null== teacher.getId()){
+            teacher.setId(IdUtil.getUUID());
+            teaEbi.save(teacher);
+        }else{
+            teaEbi.update(teacher);
+        }
+        return "redirect:/teacher/list";
+    }
+
+
+    /**
+     * 删除学校
+     * @param  teacher   需要删除的学校
+     * @return          跳转学校列表页面
+     */
+    @RequestMapping("teacher/delete")
+    public String delete(TeacherVo teacher){
+
+        //TODO 此处进行异常处理  异常描述：若该删除的学校有关联的学生或班级则抛出异常
+        teaEbi.delete(teacher);
+
+        return "redirect:/teacher/list";
+    }
+
+
+    //-------------------------------TeacherManager-----------END-------------------------------------------
+    //-------------------------------TeacherManager-----------END-------------------------------------------
+    //-------------------------------TeacherManager-----------END-------------------------------------------
+    //-------------------------------TeacherManager-----------END-------------------------------------------
+    //-------------------------------TeacherManager-----------END-------------------------------------------
+    //-------------------------------TeacherManager-----------END-------------------------------------------
+
 }

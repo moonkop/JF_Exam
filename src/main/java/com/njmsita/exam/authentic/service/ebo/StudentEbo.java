@@ -3,7 +3,7 @@ package com.njmsita.exam.authentic.service.ebo;
 import com.njmsita.exam.authentic.dao.dao.StudentDao;
 import com.njmsita.exam.authentic.model.StudentVo;
 import com.njmsita.exam.authentic.service.ebi.StudentEbi;
-import com.njmsita.exam.base.BaseQueryModel;
+import com.njmsita.exam.base.BaseQueryVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,12 +36,12 @@ public class StudentEbo implements StudentEbi
         return studentDao.get(uuid);
     }
 
-    public List<StudentVo> getAll(BaseQueryModel qm, Integer pageNum, Integer pageCount)
+    public List<StudentVo> getAll(BaseQueryVO qm, Integer pageNum, Integer pageSize)
     {
-        return studentDao.getAll(qm, pageNum, pageCount);
+        return studentDao.getAll(qm,pageNum,pageSize);
     }
 
-    public Integer getCount(BaseQueryModel qm)
+    public Integer getCount(BaseQueryVO qm)
     {
         return studentDao.getCount(qm);
     }
@@ -49,5 +49,10 @@ public class StudentEbo implements StudentEbi
     public void update(StudentVo studentEntity)
     {
         studentDao.update(studentEntity);
+    }
+
+    public void delete(StudentVo studentVo)
+    {
+        studentDao.delete(studentVo);
     }
 }
