@@ -68,7 +68,8 @@ public class ManagerController extends BaseController
      *
      */
     //TODO  异步请求分页，要带上pageNum maxPageNum totalData
-    @RequestMapping("school/list")
+    //todo 以后将请求方法 doEdit doAdd 之类的写成 edit.do 包括list 现有的已经改好了
+    @RequestMapping("school/list.do")
     public String toSchoolList(SchoolQueryVo schoolQueryVo,Integer pageNum,Integer pageSize, Model model){
 
         //调用BaseController的方法设置数据总量及最大页码数
@@ -82,10 +83,9 @@ public class ManagerController extends BaseController
         return "manage/school/list";
     }
 
-
     //测试方法
     @ResponseBody
-    @RequestMapping("school/listtest")
+    @RequestMapping("school/list1.do")
     public JSON schoolList(SchoolQueryVo schoolQueryVo,Integer pageNum,Integer pageSize)
     {
         List<SchoolVo> rows = schoolEbi.getAll(schoolQueryVo, pageNum, pageSize);
@@ -94,7 +94,12 @@ public class ManagerController extends BaseController
         object.put("total",100);
         return object;
     }
-
+    //测试方法
+    @RequestMapping("school/listtest1")
+    public String toschoolList(SchoolQueryVo schoolQueryVo,Integer pageNum,Integer pageSize)
+    {
+        return "manage/school/list";
+    }
 
 
     /**
