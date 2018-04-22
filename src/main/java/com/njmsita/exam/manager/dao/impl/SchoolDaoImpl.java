@@ -1,10 +1,8 @@
-package com.njmsita.exam.authentic.dao.impl;
+package com.njmsita.exam.manager.dao.impl;
 
-import com.njmsita.exam.authentic.dao.dao.RoleDao;
-import com.njmsita.exam.authentic.dao.dao.SchoolDao;
-import com.njmsita.exam.authentic.model.SchoolVo;
-import com.njmsita.exam.authentic.model.TroleVo;
-import com.njmsita.exam.authentic.model.querymodel.SchoolQueryVo;
+import com.njmsita.exam.manager.dao.dao.SchoolDao;
+import com.njmsita.exam.manager.model.SchoolVo;
+import com.njmsita.exam.manager.model.querymodel.SchoolQueryVo;
 import com.njmsita.exam.base.BaseImpl;
 import com.njmsita.exam.base.BaseQueryModel;
 import org.hibernate.criterion.DetachedCriteria;
@@ -25,5 +23,10 @@ public class SchoolDaoImpl extends BaseImpl<SchoolVo> implements SchoolDao
     public void save1(SchoolVo school)
     {
         this.getHibernateTemplate().save(school);
+    }
+
+    public void delete(SchoolVo school)
+    {
+        this.getHibernateTemplate().delete(school);
     }
 }

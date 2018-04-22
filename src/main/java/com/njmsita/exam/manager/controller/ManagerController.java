@@ -1,9 +1,9 @@
-package com.njmsita.exam.authentic.controller;
+package com.njmsita.exam.manager.controller;
 
 
-import com.njmsita.exam.authentic.model.SchoolVo;
-import com.njmsita.exam.authentic.model.querymodel.SchoolQueryVo;
-import com.njmsita.exam.authentic.service.ebi.SchoolEbi;
+import com.njmsita.exam.manager.model.SchoolVo;
+import com.njmsita.exam.manager.model.querymodel.SchoolQueryVo;
+import com.njmsita.exam.manager.service.ebi.SchoolEbi;
 import com.njmsita.exam.authentic.service.ebi.StudentEbi;
 import com.njmsita.exam.authentic.service.ebi.TeacherEbi;
 import com.njmsita.exam.base.BaseController;
@@ -107,7 +107,7 @@ public class ManagerController extends BaseController
             school=schoolEbi.get(school.getId());
             request.setAttribute("school",school);
         }
-        return "redirect:/manager/toSchoolList";
+        return "redirect:/manage/scholl";
     }
 
     /**
@@ -119,11 +119,26 @@ public class ManagerController extends BaseController
     public String doAdd(SchoolVo school){
         if(null==school.getId()){
             school.setId(IdUtil.getUUID());
-            schoolEbi.save1(school);
+            schoolEbi.save(school);
         }else{
             schoolEbi.update(school);
         }
         return "redirect:/manager/toSchoolList";
+    }
+
+
+    /**
+     * 删除学校
+     * @param  school   需要删除的学校
+     * @return          跳转学校列表页面
+     */
+    @RequestMapping("delete")
+    public String delete(SchoolVo school){
+
+        //TODO 此处进行异常处理  异常描述：若该删除的学校有关联的学生或班级则抛出异常
+        schoolEbi.delete(school);
+
+        return "redirect:/manage/scholl";
     }
     //--------------------------------SchoolManager----------END--------------------------------------------
     //--------------------------------SchoolManager----------END--------------------------------------------

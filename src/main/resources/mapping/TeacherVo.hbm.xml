@@ -19,6 +19,6 @@
         <property name="createtime" column="createtime"/>
         <property name="modifytime" column="modifytime"/>
 
-        <many-to-one name="troleVo" column="role_id" class="com.njmsita.exam.authentic.model.TroleVo"/>
+        <many-to-one name="troleVo" column="role_id" class="com.njmsita.exam.authentic.model.TroleVo" lazy="false"/>
     </class>
 </hibernate-mapping>
