@@ -53,6 +53,14 @@ public abstract class BaseImpl<T>  extends HibernateDaoSupport implements BaseDa
 		doQbc(dc, qm);
 		return (List<T>) this.getHibernateTemplate().findByCriteria(dc,(pageNum-1)*pageCount,pageCount);
 	}
+
+//	public List<T> getAll(BaseQueryVO qm) {
+//		DetachedCriteria dc=DetachedCriteria.forClass(entityClass);
+//		doQbc(dc, qm);
+//		return (List<T>) this.getHibernateTemplate().findByCriteria(dc,(qm.getPageNum()-1)*qm.getPageCount(),qm.getPageCount());
+//	}
+
+
 	public Integer getCount(BaseQueryModel qm) {
 
 		DetachedCriteria dc=DetachedCriteria.forClass(entityClass);

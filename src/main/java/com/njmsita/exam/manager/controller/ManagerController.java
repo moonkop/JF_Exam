@@ -1,6 +1,7 @@
 package com.njmsita.exam.manager.controller;
 
 
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.njmsita.exam.manager.model.SchoolVo;
 import com.njmsita.exam.manager.model.querymodel.SchoolQueryVo;
 import com.njmsita.exam.manager.service.ebi.SchoolEbi;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -36,16 +38,17 @@ public class ManagerController extends BaseController
     //------------------------------------------TeacherManager----------------------------------------------
     //------------------------------------------TeacherManager----------------------------------------------
     //------------------------------------------TeacherManager----------------------------------------------
+
     /**
-     *跳转教师列表
+     * 跳转教师列表
      */
     @RequestMapping("teacher")
-    public String toTeacherList(int pageNum){
+    public String toTeacherList(int pageNum)
+    {
 //        List
 //        List<TeacherVo> teahcerList =teacherEbi.
-        return "manager/teacher/list";
+        return "manage/teacher/list";
     }
-
 
 
     //-------------------------------TeacherManager-----------END-------------------------------------------
@@ -66,17 +69,20 @@ public class ManagerController extends BaseController
 
     /**
      * 跳转学校页面(分页)
+     *
      * @param schoolQueryVo 该模型存放了学校属性  分页数据  查询条件
-     * @return              跳转学校列表页面
+     * @return 跳转学校列表页面
      */
     @RequestMapping("school")
-    public String toSchoolList(SchoolQueryVo schoolQueryVo, Model model){
+    public String toSchoolList(SchoolQueryVo schoolQueryVo, Model model)
+    {
         //调用BaseController的方法设置数据总量及最大页码数
         setDataTotal(schoolEbi.getCount(schoolQueryVo));
 
         //判断前端是否制定页码，若没有则使用默认
-        if(null!=schoolQueryVo.getPageNum()){
-            pageNum=schoolQueryVo.getPageNum();
+        if (null != schoolQueryVo.getPageNum())
+        {
+            pageNum = schoolQueryVo.getPageNum();
         }
 
         //存入schoolQueryVo模型中便于页面调用
@@ -85,60 +91,77 @@ public class ManagerController extends BaseController
 
         //根据查询条件及指定页码查询
         List<SchoolVo> schoolVoList = schoolEbi.getAll(schoolQueryVo, pageNum, pageCount);
-        model.addAttribute("schoolVoList",schoolVoList);
+        model.addAttribute("schoolVoList", schoolVoList);
 
-        return "manager/school/list";
+        return "manage/school/list";
+    }
+
+    @ResponseBody
+    @JsonGetter
+    @RequestMapping("school/list")
+    public List<SchoolVo> schoolList(SchoolQueryVo schoolQueryVo)
+    {
+        return schoolEbi.getAll(schoolQueryVo, schoolQueryVo.getPageNum(), pageCount);
     }
 
     /**
      * 跳转学校添加/修改页面
-     *
+     * <p>
      * （此处将添加和修改页面合并，如果前台传递ID则进行修改否则进入添加页面）
      *
-     * @param school    接受前台传递的学校id
-     * @param request   HttpServletRequest
-     * @return          跳转edit
+     * @param school  接受前台传递的学校id
+     * @param request HttpServletRequest
+     * @return 跳转edit
      */
-    @RequestMapping("add")
-    public String edit(SchoolVo school, HttpServletRequest request){
+    @RequestMapping("school/add")
+    public String edit(SchoolVo school, HttpServletRequest request)
+    {
+
         //判断前台是否传递学校ID
-        if(null!=school.getId()){
+        if (null != school.getId())
+        {
             //根据学校ID获取学校完整信息从而进行数据回显
-            school=schoolEbi.get(school.getId());
-            request.setAttribute("school",school);
+            school = schoolEbi.get(school.getId());
+            request.setAttribute("school", school);
         }
-        return "redirect:/manage/scholl";
+        return "redirect:/manage/school";
     }
 
     /**
      * 添加学校
+     *
      * @param school
-     * @return          跳转学校列表页面
+     * @return 跳转学校列表页面
      */
     @RequestMapping("doAdd")
-    public String doAdd(SchoolVo school){
-        if(null==school.getId()){
+    public String doAdd(SchoolVo school)
+    {
+        if (null == school.getId())
+        {
             school.setId(IdUtil.getUUID());
             schoolEbi.save(school);
-        }else{
+        } else
+        {
             schoolEbi.update(school);
         }
-        return "redirect:/manager/toSchoolList";
+        return "redirect:/manage/toSchoolList";
     }
 
 
     /**
      * 删除学校
-     * @param  school   需要删除的学校
-     * @return          跳转学校列表页面
+     *
+     * @param school 需要删除的学校
+     * @return 跳转学校列表页面
      */
     @RequestMapping("delete")
-    public String delete(SchoolVo school){
+    public String delete(SchoolVo school)
+    {
 
         //TODO 此处进行异常处理  异常描述：若该删除的学校有关联的学生或班级则抛出异常
         schoolEbi.delete(school);
 
-        return "redirect:/manage/scholl";
+        return "redirect:/manage/school";
     }
     //--------------------------------SchoolManager----------END--------------------------------------------
     //--------------------------------SchoolManager----------END--------------------------------------------
