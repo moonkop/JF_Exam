@@ -38,9 +38,10 @@ public class ResourceEbo implements ResourceEbi
         return resourceDao.get(uuid);
     }
 
-    public List<TresourceVo> getAll(BaseQueryVO qm)
+
+    public List<TresourceVo> getAll(BaseQueryVO qm, Integer pageNum, Integer pageSize)
     {
-        return resourceDao.getAll(qm);
+        return resourceDao.getAll(qm,pageNum,pageSize);
     }
 
     public Integer getCount(BaseQueryVO qm)

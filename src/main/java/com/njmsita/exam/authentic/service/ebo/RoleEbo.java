@@ -36,9 +36,9 @@ public class RoleEbo implements RoleEbi
         return roleDao.get(uuid);
     }
 
-    public List<TroleVo> getAll(BaseQueryVO qm)
+    public List<TroleVo> getAll(BaseQueryVO qm, Integer pageNum, Integer pageSize)
     {
-        return roleDao.getAll(qm);
+        return roleDao.getAll(qm,pageNum,pageSize);
     }
 
     public Integer getCount(BaseQueryVO qm)

@@ -36,7 +36,7 @@ public interface BaseDao<T> {
 	 * @param qm		查询条件模型数据
 	 * @return			模型数据集合
 	 */
-	public List<T> getAll(BaseQueryVO qm);
+	public List<T> getAll(BaseQueryVO qm,Integer pageNum,Integer pageSize);
 
 	/**
 	 * 统计查询条件下的数据总量

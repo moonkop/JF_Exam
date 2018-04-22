@@ -50,9 +50,9 @@ public class TeacherEbo implements TeacherEbi
         return teaDao.get(uuid);
     }
 
-    public List<TeacherVo> getAll(BaseQueryVO qm)
+    public List<TeacherVo> getAll(BaseQueryVO qm, Integer pageNum, Integer pageSize)
     {
-        return teaDao.getAll(qm);
+        return teaDao.getAll(qm,pageNum,pageSize);
     }
 
     public Integer getCount(BaseQueryVO qm)

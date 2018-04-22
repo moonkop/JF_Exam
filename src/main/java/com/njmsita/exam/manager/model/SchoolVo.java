@@ -9,7 +9,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "school", schema = "jf_exam", catalog = "")
-public class SchoolVo extends BaseQueryVO
+public class SchoolVo
 {
     private String id;
     private String name;

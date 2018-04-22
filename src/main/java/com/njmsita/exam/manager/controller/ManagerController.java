@@ -45,16 +45,24 @@ public class ManagerController extends BaseController
     //-------------------------------------------SchoolManager----------------------------------------------
 
     /**
-     * 跳转学校页面(分页)
-     * @param schoolQueryVo 该模型存放了学校属性  分页数据  查询条件
-     * @return              跳转学校列表页面
+     *
+     * @param schoolQueryVo   分页数据  查询条件
+     * @return
      */
-    //TODO  异步请求分页
+    /**
+     * 跳转学校页面(分页)
+     * @param schoolQueryVo     该模型存放了学校属性
+     * @param pageNum           页码
+     * @param pageSize          页面大小
+     * @param model
+     * @return                  跳转学校列表页面
+     */
+    //TODO  异步请求分页，要带上pageNum maxPageNum totalData
     @RequestMapping("school/list")
-    public String toSchoolList(SchoolQueryVo schoolQueryVo, Model model){
+    public String toSchoolList(SchoolQueryVo schoolQueryVo,Integer pageNum,Integer pageSize, Model model){
 
         //根据查询条件及指定页码查询
-        List<SchoolVo> schoolVoList = schoolEbi.getAll(schoolQueryVo);
+        List<SchoolVo> schoolVoList = schoolEbi.getAll(schoolQueryVo,pageNum,pageSize);
         model.addAttribute("schoolVoList",schoolVoList);
 
         return "manager/roleVo/list";
@@ -128,16 +136,18 @@ public class ManagerController extends BaseController
 
     /**
      * 跳转角色页面(分页)
-     * @param roleQueryVo   该模型存放了角色属性  分页数据  查询条件
-     * @param model         跳转角色列表页面
+     * @param roleQueryVo       该模型存放了角色属性
+     * @param model
+     * @param pageNum           页码
+     * @param pageSize          页面大小
      * @return
      */
-    //TODO  异步请求分页
+    //TODO  异步请求分页，要带上pageNum maxPageNum totalData
     @RequestMapping("role/list")
-    public String toRoleList(TroleQueryModel roleQueryVo,Model model){
+    public String toRoleList(TroleQueryModel roleQueryVo,Model model,Integer pageNum,Integer pageSize){
 
         //根据查询条件及指定页码查询
-        List<TroleVo> roleList = roleEbi.getAll(roleQueryVo);
+        List<TroleVo> roleList = roleEbi.getAll(roleQueryVo,pageNum,pageSize);
         model.addAttribute("roleList",roleList);
 
         return "manager/role/list";

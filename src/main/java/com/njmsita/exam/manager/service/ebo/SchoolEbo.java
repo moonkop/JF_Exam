@@ -1,5 +1,6 @@
 package com.njmsita.exam.manager.service.ebo;
 
+import com.njmsita.exam.base.BaseQueryVO;
 import com.njmsita.exam.manager.dao.dao.SchoolDao;
 import com.njmsita.exam.authentic.dao.dao.StudentDao;
 import com.njmsita.exam.manager.model.SchoolVo;
@@ -40,12 +41,12 @@ public class SchoolEbo implements SchoolEbi
         return schoolDao.get(uuid);
     }
 
-    public List<SchoolVo> getAll(BaseQueryModel qm, Integer pageNum, Integer pageCount)
+    public List<SchoolVo> getAll(BaseQueryVO qm, Integer pageNum, Integer pageCount)
     {
         return schoolDao.getAll(qm, pageNum, pageCount);
     }
 
-    public Integer getCount(BaseQueryModel qm)
+    public Integer getCount(BaseQueryVO qm)
     {
         return schoolDao.getCount(qm);
     }

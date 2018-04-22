@@ -36,9 +36,9 @@ public class StudentEbo implements StudentEbi
         return studentDao.get(uuid);
     }
 
-    public List<StudentVo> getAll(BaseQueryVO qm)
+    public List<StudentVo> getAll(BaseQueryVO qm, Integer pageNum, Integer pageSize)
     {
-        return studentDao.getAll(qm);
+        return studentDao.getAll(qm,pageNum,pageSize);
     }
 
     public Integer getCount(BaseQueryVO qm)
