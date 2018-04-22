@@ -1,8 +1,7 @@
-package com.njmsita.exam.authentic.model.querymodel;
+package com.njmsita.exam.manager.model.querymodel;
 
-import com.njmsita.exam.authentic.model.SchoolVo;
-import com.njmsita.exam.authentic.model.TeacherVo;
 import com.njmsita.exam.base.BaseQueryModel;
+import com.njmsita.exam.manager.model.SchoolVo;
 
 /**
  * 教师查询条件模型

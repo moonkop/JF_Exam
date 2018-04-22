@@ -1,4 +1,4 @@
-package com.njmsita.exam.authentic.model;
+package com.njmsita.exam.manager.model;
 
 import com.njmsita.exam.base.BaseQueryVO;
 

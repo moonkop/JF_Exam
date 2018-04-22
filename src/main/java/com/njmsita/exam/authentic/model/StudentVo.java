@@ -1,5 +1,7 @@
 package com.njmsita.exam.authentic.model;
 
+import com.njmsita.exam.manager.model.SchoolVo;
+
 import javax.persistence.*;
 
 /**
@@ -7,7 +9,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "student", schema = "jf_exam", catalog = "")
-public class StudentEntity
+public class StudentVo
 {
     private String id;
     private String studentId;
@@ -17,12 +19,39 @@ public class StudentEntity
     private String telephone;
     private String password;
     private Long lastLoginTime;
-    private String schoolId;
     private String classroomId;
     private String lastLoginIp;
     private Long createtime;
     private Long modifytime;
-    private String roleId;
+
+    //所属学校
+    private SchoolVo school;
+    //所拥有的角色
+    private TroleVo role;
+
+    @Basic
+    @Column(name = "school_id")
+    public SchoolVo getSchool()
+    {
+        return school;
+    }
+
+    public void setSchool(SchoolVo school)
+    {
+        this.school = school;
+    }
+
+    @Basic
+    @Column(name = "role_id")
+    public TroleVo getRole()
+    {
+        return role;
+    }
+
+    public void setRole(TroleVo role)
+    {
+        this.role = role;
+    }
 
     @Id
     @Column(name = "id")
@@ -121,18 +150,6 @@ public class StudentEntity
     }
 
     @Basic
-    @Column(name = "school_id")
-    public String getSchoolId()
-    {
-        return schoolId;
-    }
-
-    public void setSchoolId(String schoolId)
-    {
-        this.schoolId = schoolId;
-    }
-
-    @Basic
     @Column(name = "classroom_id")
     public String getClassroomId()
     {
@@ -180,18 +197,6 @@ public class StudentEntity
         this.modifytime = modifytime;
     }
 
-    @Basic
-    @Column(name = "role_id")
-    public String getRoleId()
-    {
-        return roleId;
-    }
-
-    public void setRoleId(String roleId)
-    {
-        this.roleId = roleId;
-    }
-
     @Override
     public int hashCode()
     {
@@ -203,12 +208,10 @@ public class StudentEntity
         result = 31 * result + (telephone != null ? telephone.hashCode() : 0);
         result = 31 * result + (password != null ? password.hashCode() : 0);
         result = 31 * result + (lastLoginTime != null ? lastLoginTime.hashCode() : 0);
-        result = 31 * result + (schoolId != null ? schoolId.hashCode() : 0);
         result = 31 * result + (classroomId != null ? classroomId.hashCode() : 0);
         result = 31 * result + (lastLoginIp != null ? lastLoginIp.hashCode() : 0);
         result = 31 * result + (createtime != null ? createtime.hashCode() : 0);
         result = 31 * result + (modifytime != null ? modifytime.hashCode() : 0);
-        result = 31 * result + (roleId != null ? roleId.hashCode() : 0);
         return result;
     }
 
@@ -218,7 +221,7 @@ public class StudentEntity
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        StudentEntity that = (StudentEntity) o;
+        StudentVo that = (StudentVo) o;
 
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (studentId != null ? !studentId.equals(that.studentId) : that.studentId != null) return false;
@@ -229,12 +232,10 @@ public class StudentEntity
         if (password != null ? !password.equals(that.password) : that.password != null) return false;
         if (lastLoginTime != null ? !lastLoginTime.equals(that.lastLoginTime) : that.lastLoginTime != null)
             return false;
-        if (schoolId != null ? !schoolId.equals(that.schoolId) : that.schoolId != null) return false;
         if (classroomId != null ? !classroomId.equals(that.classroomId) : that.classroomId != null) return false;
         if (lastLoginIp != null ? !lastLoginIp.equals(that.lastLoginIp) : that.lastLoginIp != null) return false;
         if (createtime != null ? !createtime.equals(that.createtime) : that.createtime != null) return false;
         if (modifytime != null ? !modifytime.equals(that.modifytime) : that.modifytime != null) return false;
-        if (roleId != null ? !roleId.equals(that.roleId) : that.roleId != null) return false;
 
         return true;
     }

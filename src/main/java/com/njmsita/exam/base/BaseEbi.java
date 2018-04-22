@@ -1,7 +1,5 @@
 package com.njmsita.exam.base;
 
-import com.njmsita.exam.authentic.model.SchoolVo;
-
 import java.io.Serializable;
 import java.util.List;
 

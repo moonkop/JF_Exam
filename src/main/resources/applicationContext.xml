@@ -40,7 +40,7 @@
 		</property>
 		<property name="mappingLocations">
 			<list>
-				<value>classpath:mapping/StudentEntity.hbm.xml</value>
+				<value>classpath:mapping/StudentVo.hbm.xml</value>
 				<value>classpath:mapping/TeacherVo.hbm.xml</value>
 				<value>classpath:mapping/TresourceVo.hbm.xml</value>
 				<value>classpath:mapping/TresourcetypeVo.hbm.xml</value>
@@ -50,12 +50,12 @@
 		</property>
 		<property name="annotatedClasses">
 			<list>
-				<value>com.njmsita.exam.authentic.model.StudentEntity</value>
+				<value>com.njmsita.exam.authentic.model.StudentVo</value>
 				<value>com.njmsita.exam.authentic.model.TeacherVo</value>
 				<value>com.njmsita.exam.authentic.model.TresourceVo</value>
 				<value>com.njmsita.exam.authentic.model.TresourcetypeVo</value>
 				<value>com.njmsita.exam.authentic.model.TroleVo</value>
-				<value>com.njmsita.exam.authentic.model.SchoolVo</value>
+				<value>com.njmsita.exam.manager.model.SchoolVo</value>
 			</list>
 		</property>
 	</bean>
