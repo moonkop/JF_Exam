@@ -8,11 +8,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("base")
 public class BaseController{
 
-	//默认页码为 1
-	public Integer pageNum = 1;
 
 	//默认页面容量为 10
-	public Integer pageCount = 10;
+	public Integer pageCount;
 
 	//最大页码数
 	public Integer maxPageNum;

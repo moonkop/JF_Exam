@@ -5,7 +5,6 @@ import com.njmsita.exam.authentic.dao.dao.StudentDao;
 import com.njmsita.exam.manager.model.SchoolVo;
 import com.njmsita.exam.authentic.model.StudentVo;
 import com.njmsita.exam.manager.service.ebi.SchoolEbi;
-import com.njmsita.exam.base.BaseQueryModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,7 +67,6 @@ public class SchoolEbo implements SchoolEbi
         if(0==students.size()){
             schoolDao.delete(school);
         }else{
-
             //TODO 抛出异常
             System.out.println("这个学校有学生，不能删除");
         }

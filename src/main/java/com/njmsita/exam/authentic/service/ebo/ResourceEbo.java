@@ -3,7 +3,7 @@ package com.njmsita.exam.authentic.service.ebo;
 import com.njmsita.exam.authentic.dao.dao.ResourceDao;
 import com.njmsita.exam.authentic.model.TresourceVo;
 import com.njmsita.exam.authentic.service.ebi.ResourceEbi;
-import com.njmsita.exam.base.BaseQueryModel;
+import com.njmsita.exam.base.BaseQueryVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,12 +38,12 @@ public class ResourceEbo implements ResourceEbi
         return resourceDao.get(uuid);
     }
 
-    public List<TresourceVo> getAll(BaseQueryModel qm, Integer pageNum, Integer pageCount)
+    public List<TresourceVo> getAll(BaseQueryVO qm)
     {
-        return resourceDao.getAll(qm, pageNum, pageCount);
+        return resourceDao.getAll(qm);
     }
 
-    public Integer getCount(BaseQueryModel qm)
+    public Integer getCount(BaseQueryVO qm)
     {
         return resourceDao.getCount(qm);
     }

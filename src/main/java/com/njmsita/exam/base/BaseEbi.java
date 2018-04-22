@@ -29,18 +29,16 @@ public interface BaseEbi<T> {
 	/**
 	 * 根据查询条件获取所有
 	 * @param qm		查询条件模型数据
-	 * @param pageNum	页码
-	 * @param pageCount	页容量
 	 * @return			模型数据集合
 	 */
-	public List<T> getAll(BaseQueryModel qm, Integer pageNum,Integer pageCount);
+	public List<T> getAll(BaseQueryVO qm);
 
 	/**
 	 * 统计查询条件下的数据总量
 	 * @param qm		查询条件模型数据
 	 * @return			数据总量
 	 */
-	public Integer getCount(BaseQueryModel qm);
+	public Integer getCount(BaseQueryVO qm);
 
 	/**
 	 * 更新

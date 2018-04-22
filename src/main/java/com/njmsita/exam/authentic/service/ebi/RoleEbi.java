@@ -8,4 +8,5 @@ import com.njmsita.exam.base.BaseEbi;
  */
 public interface RoleEbi extends BaseEbi<TroleVo>
 {
+    public void delete(TroleVo roleVo);
 }

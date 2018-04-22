@@ -4,7 +4,6 @@ import com.njmsita.exam.manager.dao.dao.SchoolDao;
 import com.njmsita.exam.manager.model.SchoolVo;
 import com.njmsita.exam.manager.model.querymodel.SchoolQueryVo;
 import com.njmsita.exam.base.BaseImpl;
-import com.njmsita.exam.base.BaseQueryModel;
 import org.hibernate.criterion.DetachedCriteria;
 import org.springframework.stereotype.Repository;
 

@@ -2,13 +2,15 @@ package com.njmsita.exam.authentic.service.ebo;
 
 import com.njmsita.exam.authentic.dao.dao.TeacherDao;
 import com.njmsita.exam.authentic.model.TeacherVo;
+import com.njmsita.exam.authentic.model.TroleVo;
 import com.njmsita.exam.authentic.service.ebi.TeacherEbi;
-import com.njmsita.exam.base.BaseQueryModel;
+import com.njmsita.exam.base.BaseQueryVO;
 import com.njmsita.exam.utils.format.MD5Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.management.relation.Role;
 import java.io.Serializable;
 import java.util.List;
 
@@ -22,8 +24,18 @@ public class TeacherEbo implements TeacherEbi
     @Autowired
     private TeacherDao teaDao;
 
+    //TODO 注入roledao
+
     public void save(TeacherVo teacherVo)
     {
+        teacherVo.setLastLoginIp("-");
+        teacherVo.setLastLoginTime(0l);
+        teacherVo.setCreatetime(System.currentTimeMillis());
+        teacherVo.setModifytime(0l);
+        //TODO 查询教师角色
+        TroleVo role = ;
+        teacherVo.setTroleVo(role);
+        private TroleVo troleVo;
         teaDao.save(teacherVo);
     }
 
@@ -38,12 +50,12 @@ public class TeacherEbo implements TeacherEbi
         return teaDao.get(uuid);
     }
 
-    public List<TeacherVo> getAll(BaseQueryModel qm, Integer pageNum, Integer pageCount)
+    public List<TeacherVo> getAll(BaseQueryVO qm)
     {
-        return teaDao.getAll(qm, pageNum, pageCount);
+        return teaDao.getAll(qm);
     }
 
-    public Integer getCount(BaseQueryModel qm)
+    public Integer getCount(BaseQueryVO qm)
     {
         return teaDao.getCount(qm);
     }

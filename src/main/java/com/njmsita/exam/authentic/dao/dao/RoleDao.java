@@ -9,4 +9,5 @@ import com.njmsita.exam.base.BaseDao;
  */
 public interface RoleDao extends BaseDao<TroleVo>
 {
+    public void delete(TroleVo roleVo);
 }
