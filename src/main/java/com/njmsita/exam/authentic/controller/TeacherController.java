@@ -60,7 +60,7 @@ public class TeacherController
      * @param session HttpSession
      * @return
      */
-    @RequestMapping("dologin")
+    @RequestMapping("login.do")
     public String login(TeacherVo teaVo, HttpServletRequest request, HttpSession session)
     {
 
@@ -129,7 +129,7 @@ public class TeacherController
     /**
      * 个人信息编辑
      */
-    @RequestMapping("doEdit")
+    @RequestMapping("edit.do")
     public String doEdit(TeacherVo teacherQuery, HttpServletRequest request, HttpSession session)
     {
         TeacherVo teacherVo = (TeacherVo) session.getAttribute(SysConsts.TEACHER_LOGIN_TEACHER_OBJECT_NAME);

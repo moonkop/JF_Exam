@@ -3,6 +3,14 @@
  * version: 1.12.1
  * https://github.com/wenzhixin/bootstrap-table/
  */
+
+.fixed-table-container tbody .cursor{
+    padding-left:15px;
+  cursor:pointer;
+}
+.fixed-table-container tbody td{
+    text-align:center;
+}
 .fixed-table-container thead th .th-inner {
     text-align: center!important;
 }
@@ -11,6 +19,14 @@ body .bootstrap-table .table thead>tr>th {
     font-weight: 700;
     color: #6e7d8f;
 }
+//----userconfig------------end//
+
+
+
+
+
+
+
 .bootstrap-table .table {
     margin-bottom: 0 !important;
     border-bottom: 1px solid #dddddd;

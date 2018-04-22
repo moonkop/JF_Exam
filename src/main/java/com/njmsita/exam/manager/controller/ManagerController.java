@@ -9,6 +9,8 @@ import com.njmsita.exam.authentic.service.ebi.StudentEbi;
 import com.njmsita.exam.authentic.service.ebi.TeacherEbi;
 import com.njmsita.exam.base.BaseController;
 import com.njmsita.exam.utils.idutil.IdUtil;
+import net.sf.json.JSON;
+import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -71,8 +73,13 @@ public class ManagerController extends BaseController
      * 跳转学校页面(分页)
      *
      * @param schoolQueryVo 该模型存放了学校属性  分页数据  查询条件
-     * @return 跳转学校列表页面
+     * @return JSON{
+     *     rows: 内容（list）
+     *     total: 查询结果总数
+     * }
+     *
      */
+    //todo json格式类似于下面的方法 rows 为内容 total为总数量
     @RequestMapping("school")
     public String toSchoolList(SchoolQueryVo schoolQueryVo, Model model)
     {
@@ -96,13 +103,20 @@ public class ManagerController extends BaseController
         return "manage/school/list";
     }
 
+
+    //test
     @ResponseBody
-    @JsonGetter
     @RequestMapping("school/list")
-    public List<SchoolVo> schoolList(SchoolQueryVo schoolQueryVo)
+    public JSON schoolList(SchoolQueryVo schoolQueryVo)
     {
-        return schoolEbi.getAll(schoolQueryVo, schoolQueryVo.getPageNum(), pageCount);
+        List<SchoolVo> rows = schoolEbi.getAll(schoolQueryVo, schoolQueryVo.getPageNum(), pageCount);
+        JSONObject object = new JSONObject();
+        object.put("rows", rows);
+        object.put("total",100);
+        return object;
     }
+
+
 
     /**
      * 跳转学校添加/修改页面
@@ -113,7 +127,7 @@ public class ManagerController extends BaseController
      * @param request HttpServletRequest
      * @return 跳转edit
      */
-    @RequestMapping("school/add")
+    @RequestMapping("school/edit")
     public String edit(SchoolVo school, HttpServletRequest request)
     {
 
@@ -133,7 +147,7 @@ public class ManagerController extends BaseController
      * @param school
      * @return 跳转学校列表页面
      */
-    @RequestMapping("doAdd")
+    @RequestMapping("school/edit.do")
     public String doAdd(SchoolVo school)
     {
         if (null == school.getId())
@@ -154,7 +168,7 @@ public class ManagerController extends BaseController
      * @param school 需要删除的学校
      * @return 跳转学校列表页面
      */
-    @RequestMapping("delete")
+    @RequestMapping("school/delete.do")
     public String delete(SchoolVo school)
     {
 

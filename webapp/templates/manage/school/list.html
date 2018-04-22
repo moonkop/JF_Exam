@@ -21,18 +21,35 @@
             学校管理
         </h3>
         <div class="table-btns">
-            <a class="btn btn-primary"  href="add.html"> 添加学校</a>
+            <a class="btn btn-primary" href="add.html"> 添加学校</a>
         </div>
         <script src="/vendor/bootstrap-table/bootstrap-table.js"></script>
-        <script src="/webapp/vendor/bootstrap-table/bootstrap-table.js"></script>
-
         <script>
-            var $table;
+
+
             $(document).ready(
                 function () {
+                    queryParams1 = function (params) {
+                        var temp = {   //这里的键的名字和控制器的变量名必须一直，这边改动，控制器也需要改成一样的
+                            pageNum: params.offset / params.limit,   //页面大小
+                            pageSize: params.limit
+                        };
+                        return temp;
+                    }
+                    var $table;
+
                     $table = $("#table");
                     $table.bootstrapTable(
                         {
+                            queryParams: queryParams1,
+                            url: 'http://localhost:8080/manage/school/list',
+                            method: 'get',
+                            cache: false,
+                            pagination: true,
+                            sidePagination: "server",
+                            pageNumber: 1,
+                            pageSize: 10,                       //每页的记录行数（*）
+                            pageList: [10, 25, 50, 100],
                             columns: [
                                 {
                                     field: 'id',
@@ -49,29 +66,14 @@
                                     field: 'action',
                                     title: '操作',
                                     cardVisible: false,
-                                 //   events: operateEvents,
+                                    //   events: operateEvents,
                                     formatter: function (value, row, index) {
                                         var html = '';
-                                        if (row.viewAble == true)
-                                        {
-                                            html += '<i class="fa fa-search del js-view  pr10 cursor" title="预览"></i>'
-                                        }
-                                        if (row.editAble == true)
-                                        {
-                                            html += '<i class="fa fa-pencil edit js-edit pr10 cursor " title="修改"></i>';
-                                        }
-                                        if (row.replyAble == true)
-                                        {
-                                            html += '<i class="fa fa-check del js-reply  pr10 cursor" title="审核"></i>';
-                                        }
-                                        if (row.summaryAble == true)
-                                        {
-                                            html += '<i class="fa fa-comment del js-summary  pr10 cursor" title="总结"></i>';
-                                        }
-                                        if (row.deleteAble == true)
-                                        {
-                                            html += '<i class="fa fa-trash del js-del  pr10 cursor" title="删除"></i>';
-                                        }
+
+                                        html += '<i class="fa fa-search del js-view cursor" title="预览"></i>';
+                                        html += '<i class="fa fa-pencil edit js-edit cursor " title="修改"></i>';
+                                        html += '<i class="fa fa-trash del js-del cursor" title="删除"></i>';
+
                                         return html;
                                     }
                                 }
@@ -90,7 +92,8 @@
                     // }();
 
                 }
-            );
+            )
+            ;
         </script>
 
         <table id="table">
