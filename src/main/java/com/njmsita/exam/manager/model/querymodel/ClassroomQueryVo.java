@@ -1,12 +1,13 @@
 package com.njmsita.exam.manager.model.querymodel;
 
 import com.njmsita.exam.base.BaseQueryVO;
+import com.njmsita.exam.manager.model.ClassroomVo;
 import com.njmsita.exam.manager.model.SchoolVo;
 
 /**
- * 学校查询条件模型
+ * 班级查询条件模型
  */
-public class SchoolQueryVo extends SchoolVo implements BaseQueryVO
+public class ClassroomQueryVo extends ClassroomVo implements BaseQueryVO
 {
 
 }

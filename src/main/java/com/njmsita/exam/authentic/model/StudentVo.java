@@ -1,5 +1,6 @@
 package com.njmsita.exam.authentic.model;
 
+import com.njmsita.exam.manager.model.ClassroomVo;
 import com.njmsita.exam.manager.model.SchoolVo;
 
 import javax.persistence.*;
@@ -19,15 +20,52 @@ public class StudentVo
     private String telephone;
     private String password;
     private Long lastLoginTime;
-    private String classroomId;
     private String lastLoginIp;
     private Long createtime;
     private Long modifytime;
+    private String studentRes;
+    private Integer gender;
 
     //所属学校
     private SchoolVo school;
     //所拥有的角色
     private TroleVo role;
+    //所属班级
+    private ClassroomVo classroom;
+
+    @Basic
+    @Column(name = "gender")
+    public Integer getGender()
+    {
+        return gender;
+    }
+
+    public void setGender(Integer gender)
+    {
+        this.gender = gender;
+    }
+
+    @Basic
+    @Column(name="classroom_id")
+    public ClassroomVo getClassroom()
+    {
+        return classroom;
+    }
+
+    public void setClassroom(ClassroomVo classroom)
+    {
+        this.classroom = classroom;
+    }
+
+    public String getStudentRes()
+    {
+        return studentRes;
+    }
+
+    public void setStudentRes(String studentRes)
+    {
+        this.studentRes = studentRes;
+    }
 
     @Basic
     @Column(name = "school_id")
@@ -150,18 +188,6 @@ public class StudentVo
     }
 
     @Basic
-    @Column(name = "classroom_id")
-    public String getClassroomId()
-    {
-        return classroomId;
-    }
-
-    public void setClassroomId(String classroomId)
-    {
-        this.classroomId = classroomId;
-    }
-
-    @Basic
     @Column(name = "last_login_ip")
     public String getLastLoginIp()
     {
@@ -208,7 +234,6 @@ public class StudentVo
         result = 31 * result + (telephone != null ? telephone.hashCode() : 0);
         result = 31 * result + (password != null ? password.hashCode() : 0);
         result = 31 * result + (lastLoginTime != null ? lastLoginTime.hashCode() : 0);
-        result = 31 * result + (classroomId != null ? classroomId.hashCode() : 0);
         result = 31 * result + (lastLoginIp != null ? lastLoginIp.hashCode() : 0);
         result = 31 * result + (createtime != null ? createtime.hashCode() : 0);
         result = 31 * result + (modifytime != null ? modifytime.hashCode() : 0);
@@ -232,7 +257,6 @@ public class StudentVo
         if (password != null ? !password.equals(that.password) : that.password != null) return false;
         if (lastLoginTime != null ? !lastLoginTime.equals(that.lastLoginTime) : that.lastLoginTime != null)
             return false;
-        if (classroomId != null ? !classroomId.equals(that.classroomId) : that.classroomId != null) return false;
         if (lastLoginIp != null ? !lastLoginIp.equals(that.lastLoginIp) : that.lastLoginIp != null) return false;
         if (createtime != null ? !createtime.equals(that.createtime) : that.createtime != null) return false;
         if (modifytime != null ? !modifytime.equals(that.modifytime) : that.modifytime != null) return false;

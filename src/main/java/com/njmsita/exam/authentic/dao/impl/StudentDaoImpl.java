@@ -35,4 +35,35 @@ public class StudentDaoImpl extends BaseImpl<StudentVo> implements StudentDao
         String hql="from StudentVo sv where sv.role.id=?";
         return (List<TeacherVo>) this.getHibernateTemplate().find(hql,id);
     }
+
+    public StudentVo getTeaByStuIdAndPwdFromSchool(String studentId, String password, String schoolId)
+    {
+        String hql="from StudentVo where studentId=? and password=? and school.id=?";
+
+        List<StudentVo> list = (List<StudentVo>) this.getHibernateTemplate().find(hql,studentId,password,schoolId);
+        return list.size()>0? list.get(0) :null;
+    }
+
+    public List<StudentVo> getAllByClassroomId(String id)
+    {
+        //student---->school
+        String hql="from StudentVo sv where sv.classroom.id=?";
+        return (List<StudentVo>) this.getHibernateTemplate().find(hql,id);
+    }
+
+    public StudentVo getByStudentIdToSchool(String studentId, String schoolId)
+    {
+        String hql="from StudentVo where studentId=? and school.id=?";
+        List<StudentVo> list= (List<StudentVo>) this.getHibernateTemplate().find(hql,studentId,schoolId);
+        return list.size()>0?list.get(0):null;
+    }
+
+    public void bulkInput(List<StudentVo> students)
+    {
+        for (StudentVo student : students)
+        {
+            this.getHibernateTemplate().save(student);
+        }
+    }
+
 }

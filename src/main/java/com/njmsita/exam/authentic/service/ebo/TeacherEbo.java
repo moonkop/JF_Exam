@@ -1,5 +1,6 @@
 package com.njmsita.exam.authentic.service.ebo;
 
+import com.njmsita.exam.authentic.dao.dao.RoleDao;
 import com.njmsita.exam.authentic.dao.dao.TeacherDao;
 import com.njmsita.exam.authentic.model.TeacherVo;
 import com.njmsita.exam.authentic.model.TroleVo;
@@ -30,7 +31,7 @@ public class TeacherEbo implements TeacherEbi
     private TeacherDao teaDao;
 
     @Autowired
-    private RoleEbi roleEbi;
+    private RoleDao roleDao;
 
     public void save(TeacherVo teacherVo)
     {
@@ -42,7 +43,7 @@ public class TeacherEbo implements TeacherEbi
             teacherVo.setCreatetime(System.currentTimeMillis());
             teacherVo.setPassword(MD5Utils.md5(teacherVo.getPassword()));
             teacherVo.setModifytime(0l);
-            TroleVo role = roleEbi.getByName(SysConsts.TEACHER_ROLE_NAME);
+            TroleVo role = roleDao.getByName(SysConsts.TEACHER_ROLE_NAME);
             teacherVo.setTroleVo(role);
             teaDao.save(teacherVo);
         }else{
@@ -174,7 +175,7 @@ public class TeacherEbo implements TeacherEbi
                 //默认密码为工号
                 temp.setPassword(MD5Utils.md5(temp.getTeacherId()));
                 temp.setId(IdUtil.getUUID());
-                TroleVo role = roleEbi.getByName(SysConsts.TEACHER_ROLE_NAME);
+                TroleVo role = roleDao.getByName(SysConsts.TEACHER_ROLE_NAME);
                 temp.setTroleVo(role);
 
                 teachers.add(temp);

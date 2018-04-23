@@ -36,7 +36,7 @@
 				<prop key="hibernate.hbm2ddl.auto">update</prop>
 				<prop key="hibernate.connection.url">jdbc:mysql://localhost:3306/jf_exam</prop>
 				<prop key="hibernate.connection.driver_class">com.mysql.jdbc.Driver</prop>
-			</props>
+            </props>
 		</property>
 		<property name="mappingLocations">
 			<list>
@@ -46,7 +46,8 @@
 				<value>classpath:mapping/TresourcetypeVo.hbm.xml</value>
 				<value>classpath:mapping/TroleVo.hbm.xml</value>
 				<value>classpath:mapping/SchoolVo.hbm.xml</value>
-			</list>
+                <value>classpath:mapping/ClassroomVo.hbm.xml</value>
+            </list>
 		</property>
 		<property name="annotatedClasses">
 			<list>
@@ -56,7 +57,8 @@
 				<value>com.njmsita.exam.authentic.model.TresourcetypeVo</value>
 				<value>com.njmsita.exam.authentic.model.TroleVo</value>
 				<value>com.njmsita.exam.manager.model.SchoolVo</value>
-			</list>
+                <value>com.njmsita.exam.manager.model.ClassroomVo</value>
+            </list>
 		</property>
 	</bean>
 	

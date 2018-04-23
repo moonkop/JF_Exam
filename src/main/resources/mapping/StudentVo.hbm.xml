@@ -15,13 +15,16 @@
         <property name="telephone" column="telephone"/>
         <property name="password" column="password"/>
         <property name="lastLoginTime" column="last_login_time"/>
-        <property name="classroomId" column="classroom_id"/>
         <property name="lastLoginIp" column="last_login_ip"/>
         <property name="createtime" column="createtime"/>
         <property name="modifytime" column="modifytime"/>
+        <property name="gender" column="gender"/>
 
-        <many-to-one name="school" column="school_id" class="com.njmsita.exam.manager.model.SchoolVo"/>
 
-        <many-to-one name="role" column="role_id" class="com.njmsita.exam.authentic.model.TroleVo"/>
+        <many-to-one name="school" column="school_id" class="com.njmsita.exam.manager.model.SchoolVo" lazy="false"/>
+
+        <many-to-one name="role" column="role_id" class="com.njmsita.exam.authentic.model.TroleVo" lazy="false"/>
+
+        <many-to-one name="classroom" column="classroom_id" class="com.njmsita.exam.manager.model.ClassroomVo" lazy="false"/>
     </class>
 </hibernate-mapping>
