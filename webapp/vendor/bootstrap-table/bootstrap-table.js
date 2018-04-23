@@ -510,6 +510,46 @@
 
     BootstrapTable.LOCALES = {};
 
+
+    BootstrapTable.LOCALES['zh-CN'] = BootstrapTable.LOCALES.zh = {
+        formatLoadingMessage: function () {
+            return '拼命加载中……';
+        },
+        formatRecordsPerPage: function (pageNumber) {
+            return sprintf('每页显示%s条', pageNumber);
+        },
+        formatShowingRows: function (pageFrom, pageTo, totalRows) {
+            return sprintf('正显示%s到%s条，共%s条', pageFrom, pageTo, totalRows);
+        },
+        formatDetailPagination: function (totalRows) {
+            return sprintf('Showing %s rows', totalRows);
+        },
+        formatSearch: function () {
+            return 'Search';
+        },
+        formatNoMatches: function () {
+            return '没有找到结果';
+        },
+        formatPaginationSwitch: function () {
+            return 'Hide/Show pagination';
+        },
+        formatRefresh: function () {
+            return 'Refresh';
+        },
+        formatToggle: function () {
+            return 'Toggle';
+        },
+        formatFullscreen: function () {
+            return 'Fullscreen';
+        },
+        formatColumns: function () {
+            return 'Columns';
+        },
+        formatAllRows: function () {
+            return 'All';
+        }
+    };
+
     BootstrapTable.LOCALES['en-US'] = BootstrapTable.LOCALES.en = {
         formatLoadingMessage: function () {
             return 'Loading, please wait...';
@@ -1604,7 +1644,7 @@
                 }
 
                 // when data is empty, hide the pagination
-                this.$pagination[this.getData().length ? 'show' : 'hide']();
+             //   this.$pagination[this.getData().length ? 'show' : 'hide']();
             }
 
             if (!this.options.paginationLoop) {
@@ -2095,6 +2135,7 @@
             };
 
             if (this.options.pagination && this.options.sidePagination === 'server') {
+                params.pageNumber=this.options.pageNumber;
                 params.offset = this.options.pageSize === this.options.formatAllRows() ?
                     0 : this.options.pageSize * (this.options.pageNumber - 1);
                 params.limit = this.options.pageSize === this.options.formatAllRows() ?

@@ -41,7 +41,7 @@
                     {
                         $.ajax(
                             {
-                                url: 'manage/school/delete.do?id=' + row.id,
+                                url: '/manage/school/delete.do?id=' + row.id,
                                 type: "post",
                                 success:function(res)
                                 {
@@ -66,6 +66,7 @@
                     $table = $("#table");
                     $table.bootstrapTable(
                         {
+                            locale:'zh-CN',
                             queryParams: queryParams,
                             url: '/manage/school/list1.do',
                             method: 'get',

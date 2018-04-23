@@ -147,7 +147,7 @@ public class TeacherController extends BaseController
             //重新将数据保存到session用于修改成功后的回显
             session.setAttribute(SysConsts.TEACHER_LOGIN_TEACHER_OBJECT_NAME, newteacher);
         }
-        return "redirect:/teacher/detail";
+        return "redirect:/manage/detail";
     }
 
     /**

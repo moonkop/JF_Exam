@@ -91,7 +91,7 @@ public class ManagerController extends BaseController
         List<SchoolVo> rows = schoolEbi.getAll(schoolQueryVo, pageNum, pageSize);
         JSONObject object = new JSONObject();
         object.put("rows", rows);
-        object.put("total",100);
+        object.put("total",schoolEbi.getCount(schoolQueryVo));
         return object;
     }
 
@@ -128,7 +128,7 @@ public class ManagerController extends BaseController
         }
        // return "redirect:/manage/roleVo/list";
         // fixme 这些个rolevo是什么鬼
-        return "redirect:/manage/school";
+        return "/manage/school/edit";
     }
 
     /**
@@ -147,7 +147,7 @@ public class ManagerController extends BaseController
         {
             schoolEbi.update(school);
         }
-        return "redirect:/manage/roleVo/list";
+        return "redirect:/manage/school";
     }
 
 
