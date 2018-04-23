@@ -23,5 +23,18 @@ public interface TeacherDao extends BaseDao<TeacherVo>
      * @param id            角色id
      * @return              查询到的所有教师
      */
-    public List<TeacherVo> getAllByRoleId(String id);
+    public List<TeacherVo> getAllByRoleId(String roleId);
+
+    /**
+     * 根据教师id查找教师
+     * @param teacherId     教师id
+     * @return              查询到的所有教师
+     */
+    public TeacherVo getByTeacherId(String teacherId);
+
+    /**
+     * 批量导入教师信息
+     * @param teachers
+     */
+    public void bulkInput(List<TeacherVo> teachers);
 }

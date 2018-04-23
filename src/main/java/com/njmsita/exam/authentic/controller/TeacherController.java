@@ -13,15 +13,21 @@ import com.njmsita.exam.manager.model.SchoolVo;
 import com.njmsita.exam.manager.service.ebi.SchoolEbi;
 import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.idutil.IdUtil;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.swing.plaf.multi.MultiFileChooserUI;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -239,17 +245,33 @@ public class TeacherController extends BaseController
 
 
     /**
-     * 删除学校
-     * @param  teacher   需要删除的学校
-     * @return          跳转学校列表页面
+     * 删除教师
+     * @param  teacher   需要删除的教师
+     * @return          跳转教师列表页面
      */
-    @RequestMapping("teacher/delete")
+    @RequestMapping("delete")
     public String delete(TeacherVo teacher){
-
-        //TODO 此处进行异常处理  异常描述：若该删除的学校有关联的学生或班级则抛出异常
-        teaEbi.delete(teacher);
-
+            teaEbi.delete(teacher);
         return "redirect:/teacher/list";
+    }
+
+    @RequestMapping("inputXls")
+    public String inputXls(MultipartFile teacherInfo){
+        if(teacherInfo!=null){
+            if(SysConsts.INFO_BULK_INPUT_FILE_CONTENT_TYPE.equals(teacherInfo.getContentType())){
+
+                try
+                {
+                    HSSFWorkbook workbook = new HSSFWorkbook(teacherInfo.getInputStream());
+                    HSSFSheet sheet=workbook.getSheetAt(0);
+                    teaEbi.bulkInputBySheet(sheet);
+                } catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return "redirect:/teacher/list?pageNum=1&pageSize=10";
     }
 
 
