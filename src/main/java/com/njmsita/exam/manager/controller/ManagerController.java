@@ -94,9 +94,13 @@ public class ManagerController extends BaseController
         object.put("total",100);
         return object;
     }
-    //测试方法
-    @RequestMapping("school/listtest1")
-    public String toschoolList(SchoolQueryVo schoolQueryVo,Integer pageNum,Integer pageSize)
+
+    /**
+     * 跳转到学校管理页面
+     * @return 跳转学校管理
+     */
+    @RequestMapping("school")
+    public String toschoolList()
     {
         return "manage/school/list";
     }

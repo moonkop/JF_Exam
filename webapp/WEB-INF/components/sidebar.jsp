@@ -36,10 +36,16 @@
                 <a href="#"><i class="fa fa-sitemap fa-fw"></i> 用户管理<span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level">
                     <li>
-                        <a href="/dist/pages/manage/teacher/list.html">教师管理</a>
+                        <a href="/manage/teacher">教师管理</a>
                     </li>
                     <li>
-                        <a href="/dist/pages/manage/student/list.html">学生管理</a>
+                        <a href="/manage/school">学校管理</a>
+                    </li>
+                    <li>
+                        <a href="/manage/classroom">班级管理</a>
+                    </li>
+                    <li>
+                        <a href="/manage/student">学生管理</a>
                     </li>
                 </ul>
                 <!-- /.nav-second-level -->
