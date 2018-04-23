@@ -226,9 +226,6 @@ public class TeacherController extends BaseController
     //TODO  异步请求分页
     @RequestMapping("manage/list")
     public String toTeacherList(TeacherQueryModel teacherQueryVo ,Integer pageNum,Integer pageSize, HttpServletRequest request){
-        //获取学校列表
-        List<SchoolVo> schoolList = schoolEbi.getAll();   //fixme 这边的schoolList是筛选用吗？
-        request.setAttribute("schoolList",schoolList);
 
         //调用BaseController的方法设置数据总量及最大页码数
         pageCount=pageSize;
