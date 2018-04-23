@@ -83,12 +83,16 @@ public class ManagerController extends BaseController
         List<SchoolVo> rows = schoolEbi.getAll(schoolQueryVo, pageNum, pageSize);
         JSONObject object = new JSONObject();
         object.put("rows", rows);
-        object.put("total",100);
+        object.put("total",schoolEbi.getCount(schoolQueryVo));
         return object;
     }
-    //测试方法
-    @RequestMapping("school/listtest1")
-    public String toschoolList(SchoolQueryVo schoolQueryVo,Integer pageNum,Integer pageSize)
+
+    /**
+     * 跳转到学校管理页面
+     * @return 跳转学校管理
+     */
+    @RequestMapping("school")
+    public String toschoolList()
     {
         return "manage/school/list";
     }
@@ -115,7 +119,7 @@ public class ManagerController extends BaseController
         }
        // return "redirect:/manage/roleVo/list";
         // fixme 这些个rolevo是什么鬼
-        return "redirect:/manage/school";
+        return "/manage/school/edit";
     }
 
     /**
@@ -126,7 +130,7 @@ public class ManagerController extends BaseController
     @RequestMapping("school/edit.do")
     public String doAdd(SchoolVo school)
     {
-        if (null == school.getId())
+        if (null == school.getId()||"".equals(school.getId())) //fixed empty
         {
             //todo 不能插入重复名学校
             school.setId(IdUtil.getUUID());
@@ -135,7 +139,7 @@ public class ManagerController extends BaseController
         {
             schoolEbi.update(school);
         }
-        return "redirect:/manage/roleVo/list";
+        return "redirect:/manage/school";
     }
 
 

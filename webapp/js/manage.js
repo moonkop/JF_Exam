@@ -1,6 +1,6 @@
 queryParams = function (params) {
     var temp = {
-        pageNum: params.offset / params.limit,
+        pageNum: params.pageNumber,
         pageSize: params.limit
     };
     return temp;

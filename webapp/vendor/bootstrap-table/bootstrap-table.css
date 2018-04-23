@@ -4,28 +4,9 @@
  * https://github.com/wenzhixin/bootstrap-table/
  */
 
-.fixed-table-container tbody .cursor{
-    padding-left:15px;
-  cursor:pointer;
-}
-.fixed-table-container tbody td{
-    text-align:center;
-}
-.fixed-table-container thead th .th-inner {
-    text-align: center!important;
-}
-body .bootstrap-table .table thead>tr>th {
-    background-color: #f8f8f9;
-    font-weight: 700;
-    color: #6e7d8f;
-}
-//----userconfig------------end//
 
 
-
-
-
-
+/***********user config***********/
 
 .bootstrap-table .table {
     margin-bottom: 0 !important;
@@ -336,6 +317,6 @@ div.fixed-table-scroll-outer {
     top: 0;
     left: 0;
     z-index: 1050;
-    width: 100%!important;
+    width: 100% !important;
     background: #FFF;
 }
