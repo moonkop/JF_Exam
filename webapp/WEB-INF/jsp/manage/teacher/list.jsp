@@ -15,19 +15,6 @@
 
     <div id="page-wrapper">
         <!-- start content -->
-        <script>
-            $(document).ready(
-                function () {
-
-                    $(".js-view").on("click", function () {
-                        window.location.href = "/dist/pages/manage/teacher/detail.html"
-                    })
-                    $(".js-edit").on("click", function () {
-                        window.location.href = "/dist/pages/manage/teacher/edit.html"
-                    })
-                }
-            )
-        </script>
 
         <div class="row">
             <div class="col-lg-12">
@@ -35,7 +22,7 @@
                     教师管理
                 </h3>
                 <div class="table-btns">
-                    <a class="btn btn-primary" href="/manage/teacher/edit"> 添加教师</a>
+                    <a class="btn btn-primary" href="/teacher/manage/edit"> 添加教师</a>
                     <button class="btn btn-default"> 批量导入教师</button>
                 </div>
 
@@ -44,17 +31,17 @@
 
                     window.operateEvents = {
                         'click .js-edit': function (e, value, row, index) {
-                            window.location.href = "/manage/teacher/edit?id=" + row.id;
+                            window.location.href = "/teacher/manage/edit?id=" + row.id;
                         },
                         'click .js-view': function (e, value, row, index) {
-                            window.location.href = "/manage/teacher/detail?id=" + row.id;
+                            window.location.href = "/teacher/manage/detail?id=" + row.id;
                         },
                         'click .js-del': function (e, value, row, index) {
                             if (confirm("确定要删除吗？") == true)
                             {
                                 $.ajax(
                                     {
-                                        url: '/manage/teacher/delete.do?id=' + row.id,
+                                        url: '/teacher/manage/delete.do?id=' + row.id,
                                         type: "post",
                                         success: function (res) {
                                             OnResult(res);
@@ -79,7 +66,7 @@
                                 {
                                     locale: 'zh-CN',
                                     queryParams: queryParams,
-                                    url: '/manage/teacher/list.do',
+                                    url: '/teacher/manage/list.do',
                                     method: 'get',
                                     cache: false,
                                     pagination: true,

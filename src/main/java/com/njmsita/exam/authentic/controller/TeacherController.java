@@ -13,6 +13,7 @@ import com.njmsita.exam.manager.model.SchoolVo;
 import com.njmsita.exam.manager.model.querymodel.SchoolQueryVo;
 import com.njmsita.exam.manager.service.ebi.SchoolEbi;
 import com.njmsita.exam.utils.consts.SysConsts;
+import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.idutil.IdUtil;
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
@@ -22,6 +23,7 @@ import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -188,6 +190,33 @@ public class TeacherController extends BaseController
     //------------------------------------------TeacherManager----------------------------------------------
     //------------------------------------------TeacherManager----------------------------------------------
 
+
+    /**
+     * 教师主页面 即list 页面           路径为 /teacher/manage        jsp位置为 manage/teacher/list
+     * 教师修改/添加页面 即edit页面      路径为 /teacher/manage/edit   jsp位置为 manage/teacher/edit
+     * 教师修改/添加操作 即edit.do操作   路径为 /teacher/manage/edit.do
+     * 教师详情页面      即detail页面   路径为  /teacher/manage/detail   jsp位置为 manage/teacher/detail
+     * 教师删除         即delete.do操作 路径为 /teacher/manage/delete.do
+     * 教师批量导入操作  即import.do操作 路径为 /teacher/manage/import.do
+     */
+
+    @RequestMapping("manage")
+    public String toTeacherList()
+    {
+        return "manage/teacher/list";
+    }
+
+    @RequestMapping("manage/detail")
+    public String toTeacherDetail(TeacherQueryModel teacherQueryModel, ModelMap modelMap)
+    {
+//        if (StringUtil.isEmpty(teacherQueryModel.getId()))
+//        {
+//
+//        }
+        TeacherVo teacherVo= teaEbi.get(teacherQueryModel.getId());
+        modelMap.put("teacher", teacherVo);
+        return "manage/teacher/detail";
+    }
     /**
      * 跳转教师列表页面（分页）
      * @param teacherQueryVo    该模型存放了教师属性  分页数据  查询条件
@@ -195,10 +224,10 @@ public class TeacherController extends BaseController
      * @return
      */
     //TODO  异步请求分页
-    @RequestMapping("list")
+    @RequestMapping("manage/list")
     public String toTeacherList(TeacherQueryModel teacherQueryVo ,Integer pageNum,Integer pageSize, HttpServletRequest request){
         //获取学校列表
-        List<SchoolVo> schoolList = schoolEbi.getAll();
+        List<SchoolVo> schoolList = schoolEbi.getAll();   //fixme 这边的schoolList是筛选用吗？
         request.setAttribute("schoolList",schoolList);
 
         //调用BaseController的方法设置数据总量及最大页码数
@@ -210,6 +239,19 @@ public class TeacherController extends BaseController
 
         return "manager/teacher/list";
     }
+    //测试方法
+    @ResponseBody
+    @RequestMapping("manage/list.do")
+    public JSON schoolList(TeacherQueryModel teacherQueryVo,Integer pageNum,Integer pageSize)
+    {
+        List<TeacherVo> rows = teaEbi.getAll(teacherQueryVo, pageNum, pageSize);
+        JSONObject object = new JSONObject();
+        object.put("rows", rows);
+        object.put("total",schoolEbi.getCount(teacherQueryVo));
+        return object;
+    }
+
+
     /**
      * 跳转教师添加/修改页面
      *
@@ -219,7 +261,8 @@ public class TeacherController extends BaseController
      * @param request   HttpServletRequest
      * @return          跳转edit
      */
-    @RequestMapping("add")
+    //todo 以后添加和修改放一起的时候统一写edit 不用add
+    @RequestMapping("manage/edit")
     public String add(TeacherVo teacher, HttpServletRequest request){
         //判断前台是否传递教师ID
         if(null!= teacher.getId()){
@@ -227,7 +270,7 @@ public class TeacherController extends BaseController
             teacher =teaEbi.get(teacher.getId());
             request.setAttribute("teacher", teacher);
         }
-        return "redirect:/teacher/list";
+        return "redirect:/manage";
     }
 
     /**
@@ -235,15 +278,15 @@ public class TeacherController extends BaseController
      * @param teacher    需要添加的信息
      * @return          跳转教师列表页面
      */
-    @RequestMapping("doAdd")
+    @RequestMapping("manage/edit.do")
     public String doAdd(TeacherVo teacher){
-        if(null== teacher.getId()){
+        if(null== teacher.getId()||"".equals(teacher.getId())){
             teacher.setId(IdUtil.getUUID());
             teaEbi.save(teacher);
         }else{
             teaEbi.update(teacher);
         }
-        return "redirect:/teacher/list";
+        return "redirect:/manage";
     }
 
 
@@ -252,13 +295,13 @@ public class TeacherController extends BaseController
      * @param  teacher   需要删除的教师
      * @return          跳转教师列表页面
      */
-    @RequestMapping("delete")
+    @RequestMapping("manage/delete.do")
     public String delete(TeacherVo teacher){
             teaEbi.delete(teacher);
         return "redirect:/teacher/list";
     }
 
-    @RequestMapping("inputXls")
+    @RequestMapping("manage/import.do")
     public String inputXls(MultipartFile teacherInfo){
         if(teacherInfo!=null){
             if(SysConsts.INFO_BULK_INPUT_FILE_CONTENT_TYPE.equals(teacherInfo.getContentType())){

@@ -15,4 +15,9 @@ public class StringUtil {
 		return newString;
 	}
 
+	public static boolean isEmpty(String string)
+	{
+		return string==null||string.isEmpty();
+	}
+
 }
