@@ -22,7 +22,7 @@
             学校管理
         </h3>
         <div class="table-btns">
-            <a class="btn btn-primary" href="add.html"> 添加学校</a>
+            <a class="btn btn-primary" href="/manage/school/edit"> 添加学校</a>
         </div>
         <script src="/vendor/bootstrap-table/bootstrap-table.js"></script>
         <script>

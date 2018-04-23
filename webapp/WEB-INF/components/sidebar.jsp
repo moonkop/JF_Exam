@@ -47,6 +47,9 @@
                     <li>
                         <a href="/manage/student">学生管理</a>
                     </li>
+                    <li>
+                        <a href="/manage/role">角色管理</a>
+                    </li>
                 </ul>
                 <!-- /.nav-second-level -->
             </li>

@@ -139,7 +139,7 @@ public class ManagerController extends BaseController
     @RequestMapping("school/edit.do")
     public String doAdd(SchoolVo school)
     {
-        if (null == school.getId())
+        if (null == school.getId()||"".equals(school.getId())) //fixed empty
         {
             school.setId(IdUtil.getUUID());
             schoolEbi.save(school);
