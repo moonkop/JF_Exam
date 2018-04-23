@@ -7,6 +7,8 @@ import com.njmsita.exam.base.BaseQueryVO;
 import org.hibernate.criterion.DetachedCriteria;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * 角色持久层实现类
  */
@@ -22,6 +24,7 @@ public class RoleDaoImpl extends BaseImpl<TroleVo> implements RoleDao
     public TroleVo getByName(String name)
     {
         String hql="from TroleVo where name=?";
-        return (TroleVo) this.getHibernateTemplate().find(hql,name);
+        List<TroleVo> list= (List<TroleVo>) this.getHibernateTemplate().find(hql,name);
+        return list.size()>0?list.get(0):null;
     }
 }

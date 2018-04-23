@@ -2,6 +2,7 @@ package com.njmsita.exam.authentic.service.ebi;
 
 import com.njmsita.exam.authentic.model.TeacherVo;
 import com.njmsita.exam.base.BaseEbi;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 
 /**
  * 教师业务层接口
@@ -18,9 +19,16 @@ public interface TeacherEbi extends BaseEbi<TeacherVo>
     public TeacherVo login(String teacherId, String password, String loginIp);
 
     /**
-     * 逻辑更新用户数据
+     * 用户个人逻辑更新用户数据
      * @param teacherVo     用户收据
      * @param l             修改时间
      */
     public TeacherVo updateByLogic(TeacherVo teacherVo, long l);
+
+    /**
+     * 根据表格批量导入教师信息
+     * @param sheet         表格
+     */
+    public void bulkInputBySheet(HSSFSheet sheet);
+
 }

@@ -1,6 +1,7 @@
 package com.njmsita.exam.authentic.model;
 
 import com.njmsita.exam.base.BaseQueryVO;
+import com.njmsita.exam.manager.model.SchoolVo;
 
 import javax.persistence.*;
 
@@ -23,9 +24,9 @@ public class TeacherVo
     private Long createtime;
     private Long modifytime;
     private String teacherRes;
+    private Integer gender;
     //所拥有的角色  n TO  1
     private TroleVo troleVo;
-
 
     public TroleVo getTroleVo()
     {
@@ -48,6 +49,7 @@ public class TeacherVo
     }
 
 
+
     @Id
     @Column(name = "id")
     public String getId()
@@ -58,6 +60,18 @@ public class TeacherVo
     public void setId(String id)
     {
         this.id = id;
+    }
+
+    @Basic
+    @Column(name = "gender")
+    public Integer getGender()
+    {
+        return gender;
+    }
+
+    public void setGender(Integer gender)
+    {
+        this.gender = gender;
     }
 
     @Basic

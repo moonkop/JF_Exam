@@ -37,4 +37,21 @@ public class TeaDaoImpl extends BaseImpl<TeacherVo> implements TeacherDao
         return (List<TeacherVo>) this.getHibernateTemplate().find(hql,id);
     }
 
+    public TeacherVo getByTeacherId(String teacherId)
+    {
+        String hql="from TeacherVo where teacherId=?";
+        List<TeacherVo> list= (List<TeacherVo>) this.getHibernateTemplate().find(hql,teacherId);
+        return list.size()>0?list.get(0):null;
+    }
+
+    public void bulkInput(List<TeacherVo> teachers)
+    {
+
+        for (TeacherVo teacher : teachers)
+        {
+            this.getHibernateTemplate().save(teacher);
+        }
+
+    }
+
 }

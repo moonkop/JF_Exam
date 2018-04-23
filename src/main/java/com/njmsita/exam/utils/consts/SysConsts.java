@@ -83,4 +83,19 @@ public class SysConsts {
 	 * 学生角色名称
 	 */
 	public static final String STUDENT_ROLE_NAME ="学生";
+
+	/**
+	 * 批量导入文件类型
+	 */
+	public static final String INFO_BULK_INPUT_FILE_CONTENT_TYPE="application/vnd.ms-excel";
+
+	/**
+	 * 性别  男
+	 */
+	public static final String INFO_TEACHER_OR_SUTDENT_GENDER_MALE="男";
+
+	/**
+	 * 性别  女
+	 */
+	public static final String INFO_TEACHER_OR_SUTDENT_GENDER_FEMALE="女";
 }

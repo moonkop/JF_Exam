@@ -30,10 +30,6 @@ import java.util.List;
 public class ManagerController extends BaseController
 {
     @Autowired
-    private TeacherEbi teacherEbi;
-    @Autowired
-    private StudentEbi studentEbi;
-    @Autowired
     private SchoolEbi schoolEbi;
     @Autowired
     private RoleEbi roleEbi;
@@ -48,11 +44,6 @@ public class ManagerController extends BaseController
     //-------------------------------------------SchoolManager----------------------------------------------
     //-------------------------------------------SchoolManager----------------------------------------------
 
-    /**
-     *
-     * @param schoolQueryVo   分页数据  查询条件
-     * @return
-     */
     /**
      * 跳转学校页面(分页)
      * @param schoolQueryVo     该模型存放了学校属性
@@ -69,6 +60,7 @@ public class ManagerController extends BaseController
      */
     //TODO  异步请求分页，要带上pageNum maxPageNum totalData
     //todo 以后将请求方法 doEdit doAdd 之类的写成 edit.do 包括list 现有的已经改好了
+    //TODO 请求转发问题，没有pageNum   pageSize参数
     @RequestMapping("school/list.do")
     public String toSchoolList(SchoolQueryVo schoolQueryVo,Integer pageNum,Integer pageSize, Model model){
 
@@ -123,7 +115,6 @@ public class ManagerController extends BaseController
         if(null!=school.getId()){
             //根据学校ID获取学校完整信息从而进行数据回显
             school=schoolEbi.get(school.getId());
-            //request.setAttribute("roleVo",school);
             request.setAttribute("school", school);
         }
        // return "redirect:/manage/roleVo/list";
@@ -141,6 +132,7 @@ public class ManagerController extends BaseController
     {
         if (null == school.getId()||"".equals(school.getId())) //fixed empty
         {
+            //todo 不能插入重复名学校
             school.setId(IdUtil.getUUID());
             schoolEbi.save(school);
         } else
@@ -162,7 +154,10 @@ public class ManagerController extends BaseController
     {
 
         //TODO 此处进行异常处理  异常描述：若该删除的学校有关联的学生或班级则抛出异常
-        schoolEbi.delete(school);
+        if(null!=school.getId()){
+
+            schoolEbi.delete(school);
+        }
 
         return "redirect:/manage/school";
       //  return "redirect:/manage/roleVo/list";
@@ -234,6 +229,7 @@ public class ManagerController extends BaseController
     @RequestMapping("role/doAdd")
     public String roleDoAdd(TroleVo roleVo){
         if(null== roleVo.getId()){
+            //todo 不能插入重复名学校
             roleVo.setId(IdUtil.getUUID());
             roleEbi.save(roleVo);
         }else{
@@ -251,7 +247,10 @@ public class ManagerController extends BaseController
     @RequestMapping("role/delete")
     public String roleDelete(TroleVo roleVo){
 
-        roleEbi.delete(roleVo);
+        if(null!=roleVo.getId()){
+
+            roleEbi.delete(roleVo);
+        }
 
         return "redirect:/manage/role/list";
     }
