@@ -15,6 +15,7 @@ import com.njmsita.exam.manager.service.ebi.SchoolEbi;
 import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.exception.FormatException;
 import com.njmsita.exam.utils.exception.OperationException;
+import com.njmsita.exam.utils.format.CustomerJsonSerializer;
 import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.idutil.IdUtil;
 import net.sf.json.JSON;
@@ -215,66 +216,76 @@ public class TeacherController extends BaseController
 //        {
 //
 //        }
-        TeacherVo teacherVo= teaEbi.get(teacherQueryModel.getId());
+        TeacherVo teacherVo = teaEbi.get(teacherQueryModel.getId());
         modelMap.put("teacher", teacherVo);
         return "manage/teacher/detail";
     }
+
     /**
      * 跳转教师列表页面（分页）
-     * @param teacherQueryVo    该模型存放了教师属性  分页数据  查询条件
+     *
+     * @param teacherQueryVo 该模型存放了教师属性  分页数据  查询条件
      * @param request
      * @return
      */
     //TODO  异步请求分页
     @RequestMapping("manage/list")
-    public String toTeacherList(TeacherQueryModel teacherQueryVo ,Integer pageNum,Integer pageSize, HttpServletRequest request){
+    public String toTeacherList(TeacherQueryModel teacherQueryVo, Integer pageNum, Integer pageSize, HttpServletRequest request)
+    {
 
         //调用BaseController的方法设置数据总量及最大页码数
-        pageCount=pageSize;
+        pageCount = pageSize;
         setDataTotal(teaEbi.getCount(teacherQueryVo));
 
         List<TeacherVo> teacherList = teaEbi.getAll(teacherQueryVo, pageNum, pageSize);
-        request.setAttribute("teacherList",teacherList);
+        request.setAttribute("teacherList", teacherList);
 
         return "manager/teacher/list";
     }
+
     //测试方法
     @ResponseBody
     @RequestMapping("manage/list.do")
-    public JSON schoolList(TeacherQueryModel teacherQueryVo,Integer pageNum,Integer pageSize)
+    public JSON schoolList(TeacherQueryModel teacherQueryVo, Integer pageNum, Integer pageSize)
     {
-        List<TeacherVo> rows = teaEbi.getAll(teacherQueryVo, pageNum, pageSize);
+        CustomerJsonSerializer serializer = new CustomerJsonSerializer(TeacherVo.class, "name,id,teacherId", null);
         JSONObject object = new JSONObject();
-        object.put("rows", rows);
-        object.put("total",schoolEbi.getCount(teacherQueryVo));
+        object.put("rows", serializer.toJson(teaEbi.getAll(teacherQueryVo, pageNum, pageSize)));
+        object.put("total", teaEbi.getCount(teacherQueryVo));
         return object;
     }
 
 
     /**
      * 跳转教师添加/修改页面
-     *
+     * <p>
      * （此处将添加和修改页面合并，如果前台传递ID则进行修改否则进入添加页面）
      *
-     * @param teacher    接受前台传递的教师id
-     * @param request   HttpServletRequest
-     * @return          跳转edit
+     * @param teacher 接受前台传递的教师id
+     * @param request HttpServletRequest
+     * @return 跳转edit
      */
     //todo 以后添加和修改放一起的时候统一写edit 不用add
     @RequestMapping("manage/edit")
-    public String add(TeacherVo teacher, HttpServletRequest request){
+    public String add(TeacherVo teacher, HttpServletRequest request)
+    {
         //判断前台是否传递教师ID
         if(null!= teacher.getId()&&!"".equals(teacher.getTeacherId().trim())){
-            teacher =teaEbi.get(teacher.getId());
+            //根据学校ID获取教师完整信息从而进行数据回显
+            teacher = teaEbi.get(teacher.getId());
+            List<TroleVo> troleVolist = roleEbi.getAll();
+            request.setAttribute("roles", troleVolist);
             request.setAttribute("teacher", teacher);
+
         }
-        return "redirect:/manage";
+        return "manage/teacher/edit";
     }
 
     /**
      * 添加教师
-     * @param teacher    需要添加的信息
-     * @return          跳转教师列表页面
+     *
+     * @param teacher 需要添加的信息
+     * @return 跳转教师列表页面
      */
     @RequestMapping("manage/edit.do")
     public String doAdd(TeacherVo teacher) throws OperationException
@@ -282,7 +293,8 @@ public class TeacherController extends BaseController
         if(null== teacher.getId()||"".equals(teacher.getId().trim())){
             teacher.setId(IdUtil.getUUID());
             teaEbi.save(teacher);
-        }else{
+        } else
+        {
             teaEbi.update(teacher);
         }
         return "redirect:/manage";
@@ -291,8 +303,9 @@ public class TeacherController extends BaseController
 
     /**
      * 删除教师
-     * @param  teacher   需要删除的教师
-     * @return          跳转教师列表页面
+     *
+     * @param teacher 需要删除的教师
+     * @return 跳转教师列表页面
      */
     @RequestMapping("manage/delete.do")
     public String delete(TeacherVo teacher) throws OperationException
@@ -308,7 +321,7 @@ public class TeacherController extends BaseController
             if(SysConsts.INFO_BULK_INPUT_FILE_CONTENT_TYPE.equals(teacherInfo.getContentType())){
 
                 HSSFWorkbook workbook = new HSSFWorkbook(teacherInfo.getInputStream());
-                HSSFSheet sheet=workbook.getSheetAt(0);
+                HSSFSheet sheet = workbook.getSheetAt(0);
                 teaEbi.bulkInputBySheet(sheet);
             }
         }

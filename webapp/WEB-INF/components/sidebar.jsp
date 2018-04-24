@@ -36,7 +36,7 @@
                 <a href="#"><i class="fa fa-sitemap fa-fw"></i> 用户管理<span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level">
                     <li>
-                        <a href="/manage/teacher">教师管理</a>
+                        <a href="/teacher/manage">教师管理</a>
                     </li>
                     <li>
                         <a href="/manage/school">学校管理</a>

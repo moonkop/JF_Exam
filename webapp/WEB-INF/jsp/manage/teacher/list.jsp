@@ -25,7 +25,7 @@
                     <a class="btn btn-primary" href="/teacher/manage/edit"> 添加教师</a>
                     <button class="btn btn-default"> 批量导入教师</button>
                 </div>
-
+                <script src="/vendor/bootstrap-table/bootstrap-table.js"></script>
                 <script>
 
 
@@ -88,14 +88,14 @@
 
                                         },
                                         {
-                                            field: 'teacher_id',
+                                            field: 'teacherId',
                                             title: '工号',
                                             cardVisible: false
 
                                         },
                                         {
                                             field: 'role',
-                                            title: '权限',
+                                            title: '身份',
                                             cardVisible: false
 
                                         },
@@ -121,7 +121,7 @@
                     )
                     ;
                 </script>
-                <table id="table">
+                <table id="table"/>
 
             </div>
 
