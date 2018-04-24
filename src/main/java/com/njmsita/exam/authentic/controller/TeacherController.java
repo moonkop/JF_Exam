@@ -272,9 +272,12 @@ public class TeacherController extends BaseController
         {
             //根据学校ID获取教师完整信息从而进行数据回显
             teacher = teaEbi.get(teacher.getId());
+            List<TroleVo> troleVolist = roleEbi.getAll();
+            request.setAttribute("roles", troleVolist);
             request.setAttribute("teacher", teacher);
+
         }
-        return "redirect:/manage";
+        return "manage/teacher/edit";
     }
 
     /**

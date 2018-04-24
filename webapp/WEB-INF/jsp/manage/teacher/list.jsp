@@ -121,7 +121,7 @@
                     )
                     ;
                 </script>
-                <table id="table">
+                <table id="table"/>
 
             </div>
 
