@@ -45,4 +45,12 @@ public class ClassroomDaoImpl extends BaseImpl<ClassroomVo> implements Classroom
         return list.size()>0?list.get(0):null;
     }
 
+    public ClassroomVo getByClassroomIdFromSchool(String classroomId, String schoolId)
+    {
+        //classroom---->school
+        String hql="from ClassroomVo where id=? and schoolVo.id=?";
+        List<ClassroomVo> list= (List<ClassroomVo>) this.getHibernateTemplate().find(hql,classroomId,schoolId);
+        return list.size()>0?list.get(0):null;
+    }
+
 }

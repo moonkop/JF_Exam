@@ -35,11 +35,5 @@ public interface StudentEbi extends BaseEbi<StudentVo>
      */
     public void bulkInputBySheet(HSSFSheet sheet, String schoolId) throws OperationException, FormatException;
 
-    /**
-     * 添加学生到指定学校
-     * @param studentVo     学生信息
-     * @param schoolId      学校id
-     */
-    public void save(StudentVo studentVo, String schoolId) throws OperationException;
 
 }

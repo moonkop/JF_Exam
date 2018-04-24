@@ -42,7 +42,13 @@ public class TeacherEbo implements TeacherEbi
             teacherVo.setLastLoginIp("-");
             teacherVo.setLastLoginTime(0l);
             teacherVo.setCreatetime(System.currentTimeMillis());
-            teacherVo.setPassword(MD5Utils.md5(teacherVo.getPassword()));
+
+            //密码不设默认为空
+            if(teacherVo.getPassword()==null||teacherVo.getPassword().trim().equals("")){
+                teacherVo.setPassword(MD5Utils.md5(teacherVo.getTeacherId()));
+            }else{
+                teacherVo.setPassword(MD5Utils.md5(teacherVo.getPassword()));
+            }
             teacherVo.setModifytime(0l);
             TroleVo role = roleDao.getByName(SysConsts.TEACHER_ROLE_NAME);
             teacherVo.setTroleVo(role);
@@ -79,8 +85,8 @@ public class TeacherEbo implements TeacherEbi
      */
     public void update(TeacherVo teacherVo) throws OperationException
     {
-        if(teaDao.getByTeacherId(teacherVo.getTeacherId())==null){
-            TeacherVo temp=teaDao.get(teacherVo.getId());
+        TeacherVo temp=teaDao.get(teacherVo.getId());
+        if(temp!=null){
             temp.setTeacherId(teacherVo.getTeacherId());
             temp.setName(teacherVo.getName());
             temp.setMail(teacherVo.getMail());
@@ -89,7 +95,7 @@ public class TeacherEbo implements TeacherEbi
             temp.setPassword(MD5Utils.md5(teacherVo.getPassword()));
             temp.setModifytime(System.currentTimeMillis());
         }else{
-            throw new OperationException("对不起，当前系统已存在职工号为："+teacherVo.getTeacherId()+"的教师。请勿重复操作！");
+            throw new OperationException("对不起，当前系统不存在职工号为："+teacherVo.getTeacherId()+"的教师。请勿非法作！");
         }
     }
 
@@ -149,42 +155,49 @@ public class TeacherEbo implements TeacherEbi
             //跳过标题行
             if (rowNum==0||rowNum==1)
                 continue;
-            //如果id为空则不录入该行
-            if(null!=row.getCell(0).getStringCellValue()&&!
-                    "".equals(row.getCell(0).getStringCellValue())){
+            try
+            {
+                //如果id为空则不录入该行
+                if(null!=row.getCell(1)&&null!=row.getCell(1).getStringCellValue()&&!
+                        "".equals(row.getCell(1).getStringCellValue())){
 
-                //读取表中数据
-                TeacherVo temp=new TeacherVo();
-                temp.setTeacherId(row.getCell(0).getStringCellValue());
-                temp.setName(row.getCell(1).getStringCellValue());
-                temp.setMail(row.getCell(3).getStringCellValue());
-                temp.setIdCardNo(row.getCell(4).getStringCellValue());
-                temp.setTelephone(row.getCell(5).getStringCellValue());
+                    //批量导入数据读取及校验
+                    TeacherVo temp=setTeacher(row);
 
-                //设置性别
-                if(SysConsts.INFO_TEACHER_OR_SUTDENT_GENDER_MALE.equals(row.getCell(2).getStringCellValue())){
-                    temp.setGender(0);
-                }else if (SysConsts.INFO_TEACHER_OR_SUTDENT_GENDER_FEMALE.equals(row.getCell(2).getStringCellValue())){
-                    temp.setGender(1);
-                }else{
-                    temp.setGender(null);
+                    //设置初始信息
+                    temp.setLastLoginIp("-");
+                    temp.setLastLoginTime(0l);
+                    temp.setCreatetime(System.currentTimeMillis());
+                    //默认密码为工号
+                    temp.setPassword(MD5Utils.md5(temp.getTeacherId()));
+                    temp.setId(IdUtil.getUUID());
+                    TroleVo role = roleDao.getByName(SysConsts.TEACHER_ROLE_NAME);
+                    temp.setTroleVo(role);
+
+                    teachers.add(temp);
                 }
-
-                //设置初始信息
-                temp.setLastLoginIp("-");
-                temp.setLastLoginTime(0l);
-                temp.setCreatetime(System.currentTimeMillis());
-                //默认密码为工号
-                temp.setPassword(MD5Utils.md5(temp.getTeacherId()));
-                temp.setId(IdUtil.getUUID());
-                TroleVo role = roleDao.getByName(SysConsts.TEACHER_ROLE_NAME);
-                temp.setTroleVo(role);
-
-                teachers.add(temp);
+            }catch (IllegalStateException e){
+                throw new OperationException("表中数据格式错误，请核对后重试");
             }
         }
 
-        //遍历检查是否有有教师编号已存在,并且表格中不能有重复教师id
+        //验证表格中是否有重复学号信息，以及数据库中是否已经存在数据
+        distinct(teachers);
+
+        //没有重复教师职工号重复
+        teaDao.bulkInput(teachers);
+    }
+
+
+    /**
+     * 验证表格中是否有重复学号信息，以及数据库中是否已经存在数据
+     * @param teachers              教师信息集合
+     * @throws OperationException
+     * @throws FormatException
+     */
+    private void distinct(List<TeacherVo> teachers) throws OperationException, FormatException
+    {
+        //遍历检查是否有职工号已存在的学生,并且表格中不能有重复
         for (int i=0;i<teachers.size()-1;i++)
         {
             if (null!=teaDao.getByTeacherId(teachers.get(i).getTeacherId())){
@@ -193,12 +206,77 @@ public class TeacherEbo implements TeacherEbi
             for (int j=i+1;j<teachers.size();j++)
             {
                 if(teachers.get(j).getTeacherId().equals(teachers.get(i).getTeacherId())){
-                    throw new FormatException("对不起，表格中存在重复职工号："+teachers.get(i).getTeacherId()+"。请核对后重新导入");
+                    throw new FormatException("对不起，表格中存在重复学号："+teachers.get(i).getTeacherId()+"。请核对后重新导入");
                 }
             }
         }
-
-        //没有重复教师职工号重复
-        teaDao.bulkInput(teachers);
     }
+
+    /**
+     * 批量导入数据读取及校验
+     * @param row      行数据
+     * @return
+     * @throws FormatException
+     */
+    private TeacherVo setTeacher(Row row) throws FormatException
+    {
+        TeacherVo temp=new TeacherVo();
+        int rowNum=row.getRowNum();
+
+
+        String teacherId="";
+        String name="";
+        String idCardNo="";
+        String telephone="";
+        String mail="";
+
+        //读取数据
+        if(row.getCell(1)!=null){
+            teacherId=row.getCell(1).getStringCellValue();
+        }
+        if(row.getCell(2)!=null){
+            name=row.getCell(2).getStringCellValue();
+        }
+        if(row.getCell(4)!=null){
+            mail=row.getCell(4).getStringCellValue();
+        }
+        if(row.getCell(5)!=null){
+            idCardNo=row.getCell(5).getStringCellValue();
+        }
+        if(row.getCell(6)!=null){
+            telephone=row.getCell(6).getStringCellValue();
+        }
+
+        //属性校验
+        if(idCardNo.length()>18){
+            throw new FormatException("表格中第"+(rowNum+1)+"行的“身份证号”属性格式错误，请核对后重新导入！");
+        }
+        if(telephone.length()>11){
+            throw new FormatException("表格中第"+(rowNum+1)+"行的“手机号”属性格式错误，请核对后重新导入！");
+        }
+        if(name==null||name.trim().equals("")){
+            throw new FormatException("表格中第"+(rowNum+1)+"行的“姓名”属性为空，请核对后重新导入！");
+        }
+        if(teacherId==null||teacherId.trim().equals("")){
+            throw new FormatException("表格中第"+(rowNum+1)+"行的“职工号”属性为空，请核对后重新导入！");
+        }
+        //设置性别
+        if(SysConsts.INFO_TEACHER_OR_SUTDENT_GENDER_MALE.equals(row.getCell(3).getStringCellValue())){
+            temp.setGender(0);
+        }else if (SysConsts.INFO_TEACHER_OR_SUTDENT_GENDER_FEMALE.equals(row.getCell(3).getStringCellValue())){
+            temp.setGender(1);
+        }else{
+            throw new FormatException("表格中第"+(rowNum+1)+"行的“性别”属性格式错误，请核对后重新导入！");
+        }
+
+        //属性设置
+        temp.setTeacherId(teacherId);
+        temp.setName(name);
+        temp.setIdCardNo(idCardNo);
+        temp.setMail(mail);
+        temp.setTelephone(telephone);
+
+        return temp;
+    }
+    
 }

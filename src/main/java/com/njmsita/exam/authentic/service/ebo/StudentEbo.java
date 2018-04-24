@@ -6,7 +6,9 @@ import com.njmsita.exam.authentic.model.StudentVo;
 import com.njmsita.exam.authentic.model.TroleVo;
 import com.njmsita.exam.authentic.service.ebi.StudentEbi;
 import com.njmsita.exam.base.BaseQueryVO;
+import com.njmsita.exam.manager.dao.dao.ClassroomDao;
 import com.njmsita.exam.manager.dao.dao.SchoolDao;
+import com.njmsita.exam.manager.model.ClassroomVo;
 import com.njmsita.exam.manager.model.SchoolVo;
 import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.exception.FormatException;
@@ -36,10 +38,40 @@ public class StudentEbo implements StudentEbi
     private RoleDao roleDao;
     @Autowired
     private SchoolDao schoolDao;
+    @Autowired
+    private ClassroomDao classroomDao;
 
-    public void save(StudentVo studentEntity)
+    public void save(StudentVo studentEntity) throws OperationException
     {
-        studentDao.save(studentEntity);
+        SchoolVo schoolVo=schoolDao.get(studentEntity.getSchool().getId());
+        StudentVo studentTemp=studentDao.getByStudentIdFromSchool(studentEntity.getStudentId(),schoolVo.getId());
+        if (schoolVo!=null){
+            if(studentTemp==null){
+
+                //没有设置密码默认为学号
+                if(null==studentEntity.getPassword()||"".equals(studentEntity.getPassword().trim())){
+                    studentEntity.setPassword(MD5Utils.md5(studentEntity.getStudentId()));
+                }
+
+                //没有传递班级id则设置为空
+                if(studentEntity.getClassroom().getId()!=null
+                        && !studentEntity.getClassroom().getId().equals("")){
+                    ClassroomVo classroomVo = classroomDao.get(studentEntity.getClassroom().getId());
+                    studentEntity.setClassroom(classroomVo);
+                }
+                studentEntity.setLastLoginIp("-");
+                studentEntity.setLastLoginTime(0l);
+                studentEntity.setCreatetime(System.currentTimeMillis());
+                studentEntity.setModifytime(0l);
+                TroleVo role=roleDao.getByName(SysConsts.STUDENT_ROLE_NAME);
+                studentEntity.setRole(role);
+                studentDao.save(studentEntity);
+            }else{
+                throw new OperationException("对不起，当前学校:"+schoolVo.getName()+"已存在学号为："+studentEntity.getStudentId()+"的学生。请勿重复操作！");
+            }
+        }else{
+            throw new OperationException("当前学校不存在，请不要进行非法操作！");
+        }
     }
 
     public List<StudentVo> getAll()
@@ -65,14 +97,37 @@ public class StudentEbo implements StudentEbi
     public void update(StudentVo studentVo) throws OperationException
     {
         SchoolVo schoolVo=schoolDao.get(studentVo.getSchool().getId());
-        if(null!=schoolVo){
-            if(null!=studentVo.getId()&&!"".equals(studentVo.getId().trim())){
-                studentDao.update(studentVo);
+        ClassroomVo classroomVo=null;
+        if(studentVo.getClassroom().getId()!=null&&!"".equals(studentVo.getClassroom().getId())){
+            classroomVo=classroomDao.get(studentVo.getClassroom().getId());
+            if(classroomVo==null){
+                throw new OperationException("对不起！没有对应的班级，请不要进行非法操作！");
+            }
+        }
+
+        if (schoolVo!=null){
+            StudentVo temp=studentDao.get(studentVo.getId());
+            if(temp!=null){
+                if(studentDao.getByStudentIdFromSchool(studentVo.getStudentId(),schoolVo.getId()).getId().equals(studentVo.getId())){
+                    temp.setStudentId(studentVo.getStudentId());
+                    temp.setName(studentVo.getName());
+                    temp.setMail(studentVo.getMail());
+                    temp.setIdCardNo(studentVo.getIdCardNo());
+                    temp.setTelephone(studentVo.getTelephone());
+                    if(studentVo.getPassword()!=null){
+                        temp.setPassword(MD5Utils.md5(studentVo.getPassword()));
+                    }
+                    temp.setModifytime(System.currentTimeMillis());
+                    temp.setSchool(schoolVo);
+                    temp.setClassroom(classroomVo);
+                }else{
+                    throw new OperationException("对不起，当前学校:"+schoolVo.getName()+"已存在学号为："+studentVo.getStudentId()+"的学生。请勿重复操作！");
+                }
             }else{
-                throw new OperationException("请不要进行非法操作");
+                throw new OperationException("对不起，当前选择的学校不存在学号为："+studentVo.getStudentId()+"的学生。请勿非法作！");
             }
         }else{
-            throw new OperationException("请不要进行非法操作");
+            throw new OperationException("当前学校不存在，请不要进行非法操作！");
         }
     }
 
@@ -114,8 +169,7 @@ public class StudentEbo implements StudentEbi
             if(null!=temp){
                 temp.setMail(studentVo.getMail());
                 temp.setName(studentVo.getName());
-                temp.setClassroom(studentVo.getClassroom());
-                // temp.setIdCardNo(teacherVo.getIdCardNo());
+
                 temp.setTelephone(studentVo.getTelephone());
                 temp.setModifytime(l);
             }else{
@@ -125,28 +179,12 @@ public class StudentEbo implements StudentEbi
         return temp;
     }
 
-
-    public void save(StudentVo studentVo, String schoolId) throws OperationException
-    {
-
-        StudentVo temp=studentDao.getByStudentIdFromSchool(studentVo.getStudentId(),schoolId);
-        if(temp==null){
-            studentVo.setLastLoginIp("-");
-            studentVo.setLastLoginTime(0l);
-            studentVo.setCreatetime(System.currentTimeMillis());
-            studentVo.setPassword(MD5Utils.md5(studentVo.getStudentId()));
-            studentVo.setModifytime(0l);
-            TroleVo role = roleDao.getByName(SysConsts.STUDENT_ROLE_NAME);
-            studentVo.setRole(role);
-            studentDao.save(studentVo);
-        }else{
-            SchoolVo schoolVo= schoolDao.get(schoolId);
-            throw new OperationException("对不起，当前学校:"+schoolVo.getName()+"已存在学号为："+studentVo.getStudentId()+"的学生。请勿重复操作！");
-        }
-    }
-
     public void bulkInputBySheet(HSSFSheet sheet, String schoolId) throws OperationException, FormatException
     {
+        SchoolVo schoolVo=schoolDao.get(schoolId);
+        if(schoolVo==null){
+            throw new OperationException("不存在当前选择的学校，请勿非法操作！");
+        }
         List<StudentVo> students=new ArrayList<StudentVo>();
         for (Row row : sheet)
         {
@@ -154,46 +192,54 @@ public class StudentEbo implements StudentEbi
             //跳过标题行
             if (rowNum==0||rowNum==1)
                 continue;
-            //如果id为空则不录入该行
-            if(null!=row.getCell(0).getStringCellValue()&&!
-                    "".equals(row.getCell(0).getStringCellValue())){
+            try
+            {
+                //如果id为空则不录入该行
+                if(null!=row.getCell(1)&&null!=row.getCell(1).getStringCellValue()&&!
+                        "".equals(row.getCell(1).getStringCellValue())){
 
-                //读取表中数据
-                StudentVo temp=new StudentVo();
-                temp.setStudentId(row.getCell(1).getStringCellValue());
-                temp.setName(row.getCell(2).getStringCellValue());
-                temp.setMail(row.getCell(6).getStringCellValue());
-                temp.setIdCardNo(row.getCell(4).getStringCellValue());
-                temp.setTelephone(row.getCell(5).getStringCellValue());
+                    //读取表中数据并进行校验和属性设置
+                    StudentVo temp=setStudent(row);
 
-                //设置性别
-                if(SysConsts.INFO_TEACHER_OR_SUTDENT_GENDER_MALE.equals(row.getCell(2).getStringCellValue())){
-                    temp.setGender(0);
-                }else if (SysConsts.INFO_TEACHER_OR_SUTDENT_GENDER_FEMALE.equals(row.getCell(2).getStringCellValue())){
-                    temp.setGender(1);
-                }else{
-                    temp.setGender(null);
+                    //设置初始信息
+                    temp.setLastLoginIp("-");
+                    temp.setLastLoginTime(0l);
+                    temp.setCreatetime(System.currentTimeMillis());
+                    temp.setModifytime(0l);
+                    temp.setSchool(schoolVo);
+                    //默认密码为工号
+                    temp.setPassword(MD5Utils.md5(temp.getStudentId()));
+                    temp.setId(IdUtil.getUUID());
+                    TroleVo role = roleDao.getByName(SysConsts.STUDENT_ROLE_NAME);
+                    temp.setRole(role);
+
+                    students.add(temp);
                 }
-
-                //设置初始信息
-                temp.setLastLoginIp("-");
-                temp.setLastLoginTime(0l);
-                temp.setCreatetime(System.currentTimeMillis());
-                //默认密码为工号
-                temp.setPassword(MD5Utils.md5(temp.getStudentId()));
-                temp.setId(IdUtil.getUUID());
-                TroleVo role = roleDao.getByName(SysConsts.STUDENT_ROLE_NAME);
-                temp.setRole(role);
-
-                students.add(temp);
+            }catch (IllegalStateException e){
+                throw new OperationException("表中数据格式错误，请核对后重试");
             }
         }
 
+        //验证表格中是否有重复学号信息，以及数据库中是否已经存在数据
+        distinct(students,schoolVo);
+
+        //没有学号重复
+        studentDao.bulkInput(students);
+    }
+
+    /**
+     * 验证表格中是否有重复学号信息，以及数据库中是否已经存在数据
+     * @param students              学生信息集合
+     * @param schoolVo              所属学校
+     * @throws OperationException
+     * @throws FormatException
+     */
+    private void distinct(List<StudentVo> students, SchoolVo schoolVo) throws OperationException, FormatException
+    {
         //遍历检查在指定学校中是否有学号已存在的学生,并且表格中不能有重复学号
         for (int i=0;i<students.size()-1;i++)
         {
-            if (null!=studentDao.getByStudentIdFromSchool(students.get(i).getStudentId(),schoolId)){
-                SchoolVo schoolVo= schoolDao.get(schoolId);
+            if (null!=studentDao.getByStudentIdFromSchool(students.get(i).getStudentId(),schoolVo.getId())){
                 throw new OperationException("对不起，当前学校:"+schoolVo.getName()+"已存在学号为："+students.get(i).getStudentId()+"的学生。请勿重复操作！");
             }
             for (int j=i+1;j<students.size();j++)
@@ -203,8 +249,71 @@ public class StudentEbo implements StudentEbi
                 }
             }
         }
+    }
 
-        //没有学号重复
-        studentDao.bulkInput(students);
+    /**
+     * 批量导入数据读取及校验
+     * @param row      行数据
+     * @return
+     * @throws FormatException
+     */
+    private StudentVo setStudent(Row row) throws FormatException
+    {
+        StudentVo temp=new StudentVo();
+        int rowNum=row.getRowNum();
+
+        String studentId="";
+        String name="";
+        String idCardNo="";
+        String telephone="";
+        String mail="";
+
+        //读取数据
+        if(row.getCell(1)!=null){
+            studentId=row.getCell(1).getStringCellValue();
+        }
+        if(row.getCell(2)!=null){
+            name=row.getCell(2).getStringCellValue();
+        }
+        if(row.getCell(4)!=null){
+            idCardNo=row.getCell(4).getStringCellValue();
+        }
+        if(row.getCell(5)!=null){
+            telephone=row.getCell(5).getStringCellValue();
+        }
+        if(row.getCell(6)!=null){
+            mail=row.getCell(6).getStringCellValue();
+        }
+
+        //属性校验
+        if(idCardNo.length()>18){
+            throw new FormatException("表格中第"+(rowNum+1)+"行的“身份证号”属性格式错误，请核对后重新导入！");
+        }
+        if(telephone.length()>11){
+            throw new FormatException("表格中第"+(rowNum+1)+"行的“手机号”属性格式错误，请核对后重新导入！");
+        }
+        if(name==null||name.trim().equals("")){
+            throw new FormatException("表格中第"+(rowNum+1)+"行的“姓名”属性为空，请核对后重新导入！");
+        }
+        if(studentId==null||studentId.trim().equals("")){
+            throw new FormatException("表格中第"+(rowNum+1)+"行的“学号”属性为空，请核对后重新导入！");
+        }
+        //设置性别
+        if(SysConsts.INFO_TEACHER_OR_SUTDENT_GENDER_MALE.equals(row.getCell(3).getStringCellValue())){
+            temp.setGender(0);
+        }else if (SysConsts.INFO_TEACHER_OR_SUTDENT_GENDER_FEMALE.equals(row.getCell(3).getStringCellValue())){
+            temp.setGender(1);
+        }else{
+            throw new FormatException("表格中第"+(rowNum+1)+"行的“性别”属性格式错误，请核对后重新导入！");
+        }
+
+        //属性设置
+        temp.setStudentId(studentId);
+        temp.setName(name);
+        temp.setIdCardNo(idCardNo);
+        temp.setMail(mail);
+        temp.setTelephone(telephone);
+
+        return temp;
     }
 }

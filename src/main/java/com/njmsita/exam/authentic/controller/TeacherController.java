@@ -264,8 +264,7 @@ public class TeacherController extends BaseController
     @RequestMapping("manage/edit")
     public String add(TeacherVo teacher, HttpServletRequest request){
         //判断前台是否传递教师ID
-        if(null!= teacher.getId()){
-            //根据学校ID获取教师完整信息从而进行数据回显
+        if(null!= teacher.getId()&&!"".equals(teacher.getTeacherId().trim())){
             teacher =teaEbi.get(teacher.getId());
             request.setAttribute("teacher", teacher);
         }
@@ -280,7 +279,7 @@ public class TeacherController extends BaseController
     @RequestMapping("manage/edit.do")
     public String doAdd(TeacherVo teacher) throws OperationException
     {
-        if(null== teacher.getId()||"".equals(teacher.getId())){
+        if(null== teacher.getId()||"".equals(teacher.getId().trim())){
             teacher.setId(IdUtil.getUUID());
             teaEbi.save(teacher);
         }else{
@@ -298,7 +297,7 @@ public class TeacherController extends BaseController
     @RequestMapping("manage/delete.do")
     public String delete(TeacherVo teacher) throws OperationException
     {
-            teaEbi.delete(teacher);
+        teaEbi.delete(teacher);
         return "redirect:/teacher/list";
     }
 

@@ -32,4 +32,12 @@ public interface ClassroomDao extends BaseDao<ClassroomVo>
      * @return
      */
     public ClassroomVo findByNameFrom(String name, String schoolId);
+
+    /**
+     * 根据班级id从指定学校中查找
+     * @param classroomId   班级id
+     * @param schoolId      学校id
+     * @return
+     */
+    public ClassroomVo getByClassroomIdFromSchool(String classroomId, String schoolId);
 }
