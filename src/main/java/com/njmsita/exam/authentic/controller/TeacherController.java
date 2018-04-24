@@ -13,6 +13,8 @@ import com.njmsita.exam.manager.model.SchoolVo;
 import com.njmsita.exam.manager.model.querymodel.SchoolQueryVo;
 import com.njmsita.exam.manager.service.ebi.SchoolEbi;
 import com.njmsita.exam.utils.consts.SysConsts;
+import com.njmsita.exam.utils.exception.FormatException;
+import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.idutil.IdUtil;
 import net.sf.json.JSON;
@@ -147,7 +149,7 @@ public class TeacherController extends BaseController
      * 个人信息编辑
      */
     @RequestMapping("edit.do")
-    public String doEdit(TeacherVo teacherQuery, HttpServletRequest request, HttpSession session)
+    public String doEdit(TeacherVo teacherQuery, HttpServletRequest request, HttpSession session) throws OperationException
     {
         TeacherVo teacherVo = (TeacherVo) session.getAttribute(SysConsts.TEACHER_LOGIN_TEACHER_OBJECT_NAME);
         if (null != teacherQuery)
@@ -276,7 +278,8 @@ public class TeacherController extends BaseController
      * @return          跳转教师列表页面
      */
     @RequestMapping("manage/edit.do")
-    public String doAdd(TeacherVo teacher){
+    public String doAdd(TeacherVo teacher) throws OperationException
+    {
         if(null== teacher.getId()||"".equals(teacher.getId())){
             teacher.setId(IdUtil.getUUID());
             teaEbi.save(teacher);
@@ -293,25 +296,21 @@ public class TeacherController extends BaseController
      * @return          跳转教师列表页面
      */
     @RequestMapping("manage/delete.do")
-    public String delete(TeacherVo teacher){
+    public String delete(TeacherVo teacher) throws OperationException
+    {
             teaEbi.delete(teacher);
         return "redirect:/teacher/list";
     }
 
     @RequestMapping("manage/import.do")
-    public String inputXls(MultipartFile teacherInfo){
+    public String inputXls(MultipartFile teacherInfo) throws FormatException, OperationException, IOException
+    {
         if(teacherInfo!=null){
             if(SysConsts.INFO_BULK_INPUT_FILE_CONTENT_TYPE.equals(teacherInfo.getContentType())){
 
-                try
-                {
-                    HSSFWorkbook workbook = new HSSFWorkbook(teacherInfo.getInputStream());
-                    HSSFSheet sheet=workbook.getSheetAt(0);
-                    teaEbi.bulkInputBySheet(sheet);
-                } catch (IOException e)
-                {
-                    e.printStackTrace();
-                }
+                HSSFWorkbook workbook = new HSSFWorkbook(teacherInfo.getInputStream());
+                HSSFSheet sheet=workbook.getSheetAt(0);
+                teaEbi.bulkInputBySheet(sheet);
             }
         }
         return "redirect:/teacher/list?pageNum=1&pageSize=10";

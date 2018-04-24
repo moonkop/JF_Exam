@@ -51,7 +51,7 @@ public class StudentDaoImpl extends BaseImpl<StudentVo> implements StudentDao
         return (List<StudentVo>) this.getHibernateTemplate().find(hql,id);
     }
 
-    public StudentVo getByStudentIdToSchool(String studentId, String schoolId)
+    public StudentVo getByStudentIdFromSchool(String studentId, String schoolId)
     {
         String hql="from StudentVo where studentId=? and school.id=?";
         List<StudentVo> list= (List<StudentVo>) this.getHibernateTemplate().find(hql,studentId,schoolId);

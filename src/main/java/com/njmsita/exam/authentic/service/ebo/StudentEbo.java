@@ -129,7 +129,7 @@ public class StudentEbo implements StudentEbi
     public void save(StudentVo studentVo, String schoolId) throws OperationException
     {
 
-        StudentVo temp=studentDao.getByStudentIdToSchool(studentVo.getStudentId(),schoolId);
+        StudentVo temp=studentDao.getByStudentIdFromSchool(studentVo.getStudentId(),schoolId);
         if(temp==null){
             studentVo.setLastLoginIp("-");
             studentVo.setLastLoginTime(0l);
@@ -144,26 +144,6 @@ public class StudentEbo implements StudentEbi
             throw new OperationException("对不起，当前学校:"+schoolVo.getName()+"已存在学号为："+studentVo.getStudentId()+"的学生。请勿重复操作！");
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     public void bulkInputBySheet(HSSFSheet sheet, String schoolId) throws OperationException, FormatException
     {
@@ -212,7 +192,7 @@ public class StudentEbo implements StudentEbi
         //遍历检查在指定学校中是否有学号已存在的学生,并且表格中不能有重复学号
         for (int i=0;i<students.size()-1;i++)
         {
-            if (null!=studentDao.getByStudentIdToSchool(students.get(i).getStudentId(),schoolId)){
+            if (null!=studentDao.getByStudentIdFromSchool(students.get(i).getStudentId(),schoolId)){
                 SchoolVo schoolVo= schoolDao.get(schoolId);
                 throw new OperationException("对不起，当前学校:"+schoolVo.getName()+"已存在学号为："+students.get(i).getStudentId()+"的学生。请勿重复操作！");
             }

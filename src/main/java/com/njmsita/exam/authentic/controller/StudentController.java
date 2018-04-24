@@ -276,33 +276,6 @@ public class StudentController extends BaseController
         return "redirect:/student/list";
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @RequestMapping("inputXls")
     public String inputXls(MultipartFile studentInfo,String schoolId) throws FormatException, OperationException
     {
