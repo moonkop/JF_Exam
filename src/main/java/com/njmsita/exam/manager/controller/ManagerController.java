@@ -4,12 +4,16 @@ package com.njmsita.exam.manager.controller;
 import com.njmsita.exam.authentic.model.TroleVo;
 import com.njmsita.exam.authentic.model.querymodel.TroleQueryModel;
 import com.njmsita.exam.authentic.service.ebi.RoleEbi;
+import com.njmsita.exam.manager.model.ClassroomVo;
 import com.njmsita.exam.manager.model.SchoolVo;
+import com.njmsita.exam.manager.model.querymodel.ClassroomQueryVo;
 import com.njmsita.exam.manager.model.querymodel.SchoolQueryVo;
+import com.njmsita.exam.manager.service.ebi.ClassroomEbi;
 import com.njmsita.exam.manager.service.ebi.SchoolEbi;
 import com.njmsita.exam.authentic.service.ebi.StudentEbi;
 import com.njmsita.exam.authentic.service.ebi.TeacherEbi;
 import com.njmsita.exam.base.BaseController;
+import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.idutil.IdUtil;
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
@@ -33,7 +37,8 @@ public class ManagerController extends BaseController
     private SchoolEbi schoolEbi;
     @Autowired
     private RoleEbi roleEbi;
-
+    @Autowired
+    private ClassroomEbi classroomEbi;
 
 //======================================================================================================================
 
@@ -118,7 +123,6 @@ public class ManagerController extends BaseController
             request.setAttribute("school", school);
         }
        // return "redirect:/manage/roleVo/list";
-        // fixme 这些个rolevo是什么鬼
         return "/manage/school/edit";
     }
 
@@ -128,11 +132,10 @@ public class ManagerController extends BaseController
      * @return          跳转学校列表页面
      */
     @RequestMapping("school/edit.do")
-    public String doAdd(SchoolVo school)
+    public String doAdd(SchoolVo school) throws OperationException
     {
         if (null == school.getId()||"".equals(school.getId())) //fixed empty
         {
-            //todo 不能插入重复名学校
             school.setId(IdUtil.getUUID());
             schoolEbi.save(school);
         } else
@@ -150,10 +153,9 @@ public class ManagerController extends BaseController
      * @return 跳转学校列表页面
      */
     @RequestMapping("school/delete.do")
-    public String schoolDelete(SchoolVo school)
+    public String schoolDelete(SchoolVo school) throws OperationException
     {
 
-        //TODO 此处进行异常处理  异常描述：若该删除的学校有关联的学生或班级则抛出异常
         if(null!=school.getId()){
 
             schoolEbi.delete(school);
@@ -212,9 +214,9 @@ public class ManagerController extends BaseController
      */
     @RequestMapping("role/add")
     public String roleEdit(TroleVo roleVo, HttpServletRequest request){
-        //判断前台是否传递学校ID
+        //判断前台是否传递角色ID
         if(null!= roleVo.getId()){
-            //根据学校ID获取学校完整信息从而进行数据回显
+            //根据角色ID获取角色完整信息从而进行数据回显
             roleVo =roleEbi.get(roleVo.getId());
             request.setAttribute("roleVo", roleVo);
         }
@@ -227,9 +229,9 @@ public class ManagerController extends BaseController
      * @return          跳转角色列表页面
      */
     @RequestMapping("role/doAdd")
-    public String roleDoAdd(TroleVo roleVo){
+    public String roleDoAdd(TroleVo roleVo) throws OperationException
+    {
         if(null== roleVo.getId()){
-            //todo 不能插入重复名学校
             roleVo.setId(IdUtil.getUUID());
             roleEbi.save(roleVo);
         }else{
@@ -245,7 +247,8 @@ public class ManagerController extends BaseController
      * @return          跳转角色列表页面
      */
     @RequestMapping("role/delete")
-    public String roleDelete(TroleVo roleVo){
+    public String roleDelete(TroleVo roleVo) throws OperationException
+    {
 
         if(null!=roleVo.getId()){
 
@@ -261,4 +264,98 @@ public class ManagerController extends BaseController
     //-----------------------------------RoleManager-----------END------------------------------------------
     //-----------------------------------RoleManager-----------END------------------------------------------
     //-----------------------------------RoleManager-----------END------------------------------------------
+
+//======================================================================================================================
+
+    //-----------------------------------------------ClassroomManager--------------------------------------------
+    //-----------------------------------------------ClassroomManager--------------------------------------------
+    //-----------------------------------------------ClassroomManager--------------------------------------------
+    //-----------------------------------------------ClassroomManager--------------------------------------------
+    //-----------------------------------------------ClassroomManager--------------------------------------------
+    //-----------------------------------------------ClassroomManager--------------------------------------------
+
+    /**
+     * 跳转班级页面(分页)
+     * @param classroomQueryVo  该模型存放了班级属性
+     * @param model
+     * @param pageNum           页码
+     * @param pageSize          页面大小
+     * @return
+     */
+    //TODO  异步请求分页，要带上pageNum maxPageNum totalData
+    @RequestMapping("classroom/list")
+    public String toClassroomList(ClassroomQueryVo classroomQueryVo, Model model, Integer pageNum, Integer pageSize){
+
+        //调用BaseController的方法设置数据总量及最大页码数
+        pageCount=pageSize;
+        setDataTotal(classroomEbi.getCount(classroomQueryVo));
+
+        //根据查询条件和指定的页码查询
+        List<ClassroomVo> classroomList = classroomEbi.getAll(classroomQueryVo,pageNum,pageSize);
+        model.addAttribute("classroomList",classroomList);
+
+        return "manager/classroom/list";
+    }
+
+    /**
+     * 跳转班级添加/修改页面
+     *
+     * （此处将添加和修改页面合并，如果前台传递ID则进行修改否则进入添加页面）
+     *
+     * @param classroomVo       接受前台传递的班级id
+     * @param request           HttpServletRequest
+     * @return                  跳转edit
+     */
+    @RequestMapping("classroom/add")
+    public String classroomEdit(ClassroomVo classroomVo, HttpServletRequest request){
+        //判断前台是否传递班级ID
+        if(null!= classroomVo.getId()){
+            //根据班级ID获取班级完整信息从而进行数据回显
+            classroomVo =classroomEbi.get(classroomVo.getId());
+            request.setAttribute("classroomVo", classroomVo);
+        }
+        return "redirect:/manage/classroom/list";
+    }
+
+    /**
+     * 添加班级
+     * @param classroomVo       需要添加的信息(必须包含学校id)
+     * @return                  跳转班级列表页面
+     */
+    @RequestMapping("classroom/doAdd")
+    public String classroomDoAdd(ClassroomVo classroomVo) throws OperationException
+    {
+        if(null== classroomVo.getId()){
+            classroomVo.setId(IdUtil.getUUID());
+            classroomEbi.save(classroomVo);
+        }else{
+            classroomEbi.update(classroomVo);
+        }
+        return "redirect:/manager/classroom/list";
+    }
+
+
+    /**
+     * 删除班级
+     * @param  classroomVo   需要删除的班级
+     * @return          跳转班级列表页面
+     */
+    @RequestMapping("classroom/delete")
+    public String classroomDelete(ClassroomVo classroomVo) throws OperationException
+    {
+
+        if(null!=classroomVo.getId()){
+
+            classroomEbi.delete(classroomVo);
+        }
+
+        return "redirect:/manage/classroom/list";
+    }
+
+    //-----------------------------------ClassroomManager-----------END------------------------------------------
+    //-----------------------------------ClassroomManager-----------END------------------------------------------
+    //-----------------------------------ClassroomManager-----------END------------------------------------------
+    //-----------------------------------ClassroomManager-----------END------------------------------------------
+    //-----------------------------------ClassroomManager-----------END------------------------------------------
+    //-----------------------------------ClassroomManager-----------END------------------------------------------
 }

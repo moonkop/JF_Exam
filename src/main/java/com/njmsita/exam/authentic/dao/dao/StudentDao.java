@@ -49,7 +49,7 @@ public interface StudentDao extends BaseDao<StudentVo>
      * @param schoolId      学校id
      * @return              查询到的所有学生
      */
-    public StudentVo getByStudentIdToSchool(String studentId, String schoolId);
+    public StudentVo getByStudentIdFromSchool(String studentId, String schoolId);
 
     /**
      * 批量导入学生信息

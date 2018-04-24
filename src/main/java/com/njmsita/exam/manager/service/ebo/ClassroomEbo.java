@@ -4,8 +4,11 @@ import com.njmsita.exam.authentic.dao.dao.StudentDao;
 import com.njmsita.exam.authentic.model.StudentVo;
 import com.njmsita.exam.base.BaseQueryVO;
 import com.njmsita.exam.manager.dao.dao.ClassroomDao;
+import com.njmsita.exam.manager.dao.dao.SchoolDao;
 import com.njmsita.exam.manager.model.ClassroomVo;
+import com.njmsita.exam.manager.model.SchoolVo;
 import com.njmsita.exam.manager.service.ebi.ClassroomEbi;
+import com.njmsita.exam.utils.exception.OperationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,13 +25,20 @@ public class ClassroomEbo implements ClassroomEbi
 {
     @Autowired
     private ClassroomDao classroomDao;
+    @Autowired
+    private SchoolDao schoolDao;
 
     @Autowired
     private StudentDao studentDao;
 
-    public void save(ClassroomVo classroomVo)
+    public void save(ClassroomVo classroomVo) throws OperationException
     {
-        classroomDao.save(classroomVo);
+        if(null==classroomDao.findByNameFrom(classroomVo.getName(),classroomVo.getSchoolVo().getId())){
+            classroomDao.save(classroomVo);
+        }else{
+            SchoolVo schoolVo=schoolDao.get(classroomVo.getSchoolVo().getId());
+            throw new OperationException("当前学校名为："+schoolVo.getName()+"的学校已存在班级名为："+classroomVo.getName()+"的班级，请勿重复操作");
+        }
     }
 
     public List<ClassroomVo> getAll()
@@ -51,9 +61,14 @@ public class ClassroomEbo implements ClassroomEbi
         return classroomDao.getCount(qm);
     }
 
-    public void update(ClassroomVo classroomVo)
+    public void update(ClassroomVo classroomVo) throws OperationException
     {
-        classroomDao.update(classroomVo);
+        if(null==classroomDao.findByNameFrom(classroomVo.getName(),classroomVo.getSchoolVo().getId())){
+            classroomDao.update(classroomVo);
+        }else{
+            SchoolVo schoolVo=schoolDao.get(classroomVo.getSchoolVo().getId());
+            throw new OperationException("当前学校名为："+schoolVo.getName()+"的学校已存在班级名为："+classroomVo.getName()+"的班级，请勿重复操作");
+        }
     }
 
     //-----------------------------------以上为基本操作-------------------------------------
@@ -62,14 +77,13 @@ public class ClassroomEbo implements ClassroomEbi
     //-----------------------------------以上为基本操作-------------------------------------
     //-----------------------------------以上为基本操作-------------------------------------
 
-    public void delete(ClassroomVo classroomVo)
+    public void delete(ClassroomVo classroomVo) throws OperationException
     {
         List<StudentVo> students=studentDao.getAllByClassroomId(classroomVo.getId());
         if(0==students.size()){
             classroomDao.delete(classroomVo);
         }else{
-            //TODO 抛出异常
-            System.out.println("这个班级有学生，不能删除");
+            throw new OperationException("该班级有关联的学生，不能执行该操作");
         }
 
     }
