@@ -2,6 +2,7 @@ package com.njmsita.exam.authentic.service.ebi;
 
 import com.njmsita.exam.authentic.model.TroleVo;
 import com.njmsita.exam.base.BaseEbi;
+import com.njmsita.exam.utils.exception.OperationException;
 
 /**
  * 角色业务层接口
@@ -12,7 +13,7 @@ public interface RoleEbi extends BaseEbi<TroleVo>
      * 删除
      * @param roleVo    要删除的角色
      */
-    public void delete(TroleVo roleVo);
+    public void delete(TroleVo roleVo) throws OperationException;
 
     /**
      * 根据名称查询角色

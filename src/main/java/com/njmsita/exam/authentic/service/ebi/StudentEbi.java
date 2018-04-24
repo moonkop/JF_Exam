@@ -2,6 +2,8 @@ package com.njmsita.exam.authentic.service.ebi;
 
 import com.njmsita.exam.authentic.model.StudentVo;
 import com.njmsita.exam.base.BaseEbi;
+import com.njmsita.exam.utils.exception.FormatException;
+import com.njmsita.exam.utils.exception.OperationException;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 
 /**
@@ -24,19 +26,20 @@ public interface StudentEbi extends BaseEbi<StudentVo>
      * @param studentVo     用户收据
      * @param l             修改时间
      */
-    public StudentVo updateByLogic(StudentVo studentVo, long l);
+    public StudentVo updateByLogic(StudentVo studentVo, long l) throws OperationException;
 
     /**
      * 根据表格批量导入学生信息
      * @param sheet         表格
      * @param schoolId
      */
-    public void bulkInputBySheet(HSSFSheet sheet, String schoolId);
+    public void bulkInputBySheet(HSSFSheet sheet, String schoolId) throws OperationException, FormatException;
 
     /**
      * 添加学生到指定学校
      * @param studentVo     学生信息
      * @param schoolId      学校id
      */
-    public void save(StudentVo studentVo, String schoolId);
+    public void save(StudentVo studentVo, String schoolId) throws OperationException;
+
 }

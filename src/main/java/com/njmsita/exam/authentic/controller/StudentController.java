@@ -16,6 +16,8 @@ import com.njmsita.exam.manager.model.SchoolVo;
 import com.njmsita.exam.manager.service.ebi.ClassroomEbi;
 import com.njmsita.exam.manager.service.ebi.SchoolEbi;
 import com.njmsita.exam.utils.consts.SysConsts;
+import com.njmsita.exam.utils.exception.FormatException;
+import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.idutil.IdUtil;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -152,7 +154,7 @@ public class StudentController extends BaseController
      * 个人信息编辑
      */
     @RequestMapping("edit.do")
-    public String doEdit(StudentVo studentVo, String classroomId, HttpServletRequest request, HttpSession session)
+    public String doEdit(StudentVo studentVo, String classroomId, HttpServletRequest request, HttpSession session) throws OperationException
     {
         StudentVo studentLogin = (StudentVo) session.getAttribute(SysConsts.STUDENT_LOGIN_TEACHER_OBJECT_NAME);
         if (null != studentVo)
@@ -251,7 +253,8 @@ public class StudentController extends BaseController
      * @return              跳转学生列表页面
      */
     @RequestMapping("doAdd")
-    public String doAdd(StudentVo studentVo,String schoolId){
+    public String doAdd(StudentVo studentVo,String schoolId) throws OperationException
+    {
         if(null== studentVo.getId()){
             studentVo.setId(IdUtil.getUUID());
             studentEbi.save(studentVo,schoolId);
@@ -267,7 +270,8 @@ public class StudentController extends BaseController
      * @return              跳转学生列表页面
      */
     @RequestMapping("delete")
-    public String delete(StudentVo studentVo){
+    public String delete(StudentVo studentVo) throws OperationException
+    {
         studentEbi.delete(studentVo);
         return "redirect:/student/list";
     }
@@ -300,7 +304,8 @@ public class StudentController extends BaseController
 
 
     @RequestMapping("inputXls")
-    public String inputXls(MultipartFile studentInfo,String schoolId){
+    public String inputXls(MultipartFile studentInfo,String schoolId) throws FormatException, OperationException
+    {
         if(studentInfo!=null){
             if(SysConsts.INFO_BULK_INPUT_FILE_CONTENT_TYPE.equals(studentInfo.getContentType())){
 

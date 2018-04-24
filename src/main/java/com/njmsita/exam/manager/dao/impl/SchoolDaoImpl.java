@@ -27,4 +27,11 @@ public class SchoolDaoImpl extends BaseImpl<SchoolVo> implements SchoolDao
         this.getHibernateTemplate().delete(school);
     }
 
+    public SchoolVo findByName(String name)
+    {
+        String hql="from SchoolVo where name=?";
+        List<SchoolVo> list= (List<SchoolVo>) this.getHibernateTemplate().find(hql,name);
+        return list.size()>0?list.get(0):null;
+    }
+
 }

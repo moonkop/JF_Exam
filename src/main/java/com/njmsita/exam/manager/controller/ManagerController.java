@@ -10,6 +10,7 @@ import com.njmsita.exam.manager.service.ebi.SchoolEbi;
 import com.njmsita.exam.authentic.service.ebi.StudentEbi;
 import com.njmsita.exam.authentic.service.ebi.TeacherEbi;
 import com.njmsita.exam.base.BaseController;
+import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.idutil.IdUtil;
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
@@ -118,7 +119,6 @@ public class ManagerController extends BaseController
             request.setAttribute("school", school);
         }
        // return "redirect:/manage/roleVo/list";
-        // fixme 这些个rolevo是什么鬼
         return "/manage/school/edit";
     }
 
@@ -128,11 +128,10 @@ public class ManagerController extends BaseController
      * @return          跳转学校列表页面
      */
     @RequestMapping("school/edit.do")
-    public String doAdd(SchoolVo school)
+    public String doAdd(SchoolVo school) throws OperationException
     {
         if (null == school.getId()||"".equals(school.getId())) //fixed empty
         {
-            //todo 不能插入重复名学校
             school.setId(IdUtil.getUUID());
             schoolEbi.save(school);
         } else
@@ -150,10 +149,9 @@ public class ManagerController extends BaseController
      * @return 跳转学校列表页面
      */
     @RequestMapping("school/delete.do")
-    public String schoolDelete(SchoolVo school)
+    public String schoolDelete(SchoolVo school) throws OperationException
     {
 
-        //TODO 此处进行异常处理  异常描述：若该删除的学校有关联的学生或班级则抛出异常
         if(null!=school.getId()){
 
             schoolEbi.delete(school);
@@ -227,7 +225,8 @@ public class ManagerController extends BaseController
      * @return          跳转角色列表页面
      */
     @RequestMapping("role/doAdd")
-    public String roleDoAdd(TroleVo roleVo){
+    public String roleDoAdd(TroleVo roleVo) throws OperationException
+    {
         if(null== roleVo.getId()){
             //todo 不能插入重复名学校
             roleVo.setId(IdUtil.getUUID());
@@ -245,7 +244,8 @@ public class ManagerController extends BaseController
      * @return          跳转角色列表页面
      */
     @RequestMapping("role/delete")
-    public String roleDelete(TroleVo roleVo){
+    public String roleDelete(TroleVo roleVo) throws OperationException
+    {
 
         if(null!=roleVo.getId()){
 

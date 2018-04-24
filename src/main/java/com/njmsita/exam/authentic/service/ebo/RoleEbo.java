@@ -9,6 +9,7 @@ import com.njmsita.exam.authentic.model.TroleVo;
 import com.njmsita.exam.authentic.service.ebi.RoleEbi;
 import com.njmsita.exam.base.BaseQueryVO;
 import com.njmsita.exam.manager.model.SchoolVo;
+import com.njmsita.exam.utils.exception.OperationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,9 +31,13 @@ public class RoleEbo implements RoleEbi
     @Autowired
     private StudentDao studentDao;
 
-    public void save(TroleVo troleVo)
+    public void save(TroleVo troleVo) throws OperationException
     {
-        roleDao.save(troleVo);
+        if(null==roleDao.getByName(troleVo.getName())){
+            roleDao.save(troleVo);
+        }else{
+            throw new OperationException("对不起，当前角色:"+troleVo.getName()+"已存在。请勿重复操作！");
+        }
     }
 
     public List<TroleVo> getAll()
@@ -61,15 +66,14 @@ public class RoleEbo implements RoleEbi
 
     }
 
-    public void delete(TroleVo roleVo)
+    public void delete(TroleVo roleVo) throws OperationException
     {
         List<TeacherVo> teachers=teacherDao.getAllByRoleId(roleVo.getId());
         List<TeacherVo> students=studentDao.getAllByRoleId(roleVo.getId());
         if(0==teachers.size()&&students.size()==0){
             roleDao.delete(roleVo);
         }else{
-            //TODO 抛出异常
-            System.out.println("这个角色有关联的用户，不能删除");
+            throw new OperationException("该角色有关联的用户，不能删除");
         }
 
     }

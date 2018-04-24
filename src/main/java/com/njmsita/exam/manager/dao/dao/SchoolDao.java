@@ -10,4 +10,6 @@ public interface SchoolDao extends BaseDao<SchoolVo>
 {
 
     public void delete(SchoolVo school);
+
+    public SchoolVo findByName(String name);
 }

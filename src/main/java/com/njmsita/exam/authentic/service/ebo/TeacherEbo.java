@@ -8,6 +8,8 @@ import com.njmsita.exam.authentic.service.ebi.RoleEbi;
 import com.njmsita.exam.authentic.service.ebi.TeacherEbi;
 import com.njmsita.exam.base.BaseQueryVO;
 import com.njmsita.exam.utils.consts.SysConsts;
+import com.njmsita.exam.utils.exception.FormatException;
+import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.format.MD5Utils;
 import com.njmsita.exam.utils.idutil.IdUtil;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -33,9 +35,8 @@ public class TeacherEbo implements TeacherEbi
     @Autowired
     private RoleDao roleDao;
 
-    public void save(TeacherVo teacherVo)
+    public void save(TeacherVo teacherVo) throws OperationException
     {
-        //todo 不能添加重复教师id
         TeacherVo temp=teaDao.getByTeacherId(teacherVo.getTeacherId());
         if(temp==null){
             teacherVo.setLastLoginIp("-");
@@ -47,7 +48,7 @@ public class TeacherEbo implements TeacherEbi
             teacherVo.setTroleVo(role);
             teaDao.save(teacherVo);
         }else{
-            //todo 抛出异常
+            throw new OperationException("对不起，当前系统已存在职工号为："+teacherVo.getTeacherId()+"的教师。请勿重复操作！");
         }
     }
 
@@ -76,7 +77,7 @@ public class TeacherEbo implements TeacherEbi
      * 管理员更新
      * @param teacherVo
      */
-    public void update(TeacherVo teacherVo)
+    public void update(TeacherVo teacherVo) throws OperationException
     {
         if(teaDao.getByTeacherId(teacherVo.getTeacherId())==null){
             TeacherVo temp=teaDao.get(teacherVo.getId());
@@ -87,6 +88,8 @@ public class TeacherEbo implements TeacherEbi
             temp.setTelephone(teacherVo.getTelephone());
             temp.setPassword(MD5Utils.md5(teacherVo.getPassword()));
             temp.setModifytime(System.currentTimeMillis());
+        }else{
+            throw new OperationException("对不起，当前系统已存在职工号为："+teacherVo.getTeacherId()+"的教师。请勿重复操作！");
         }
     }
 
@@ -120,7 +123,7 @@ public class TeacherEbo implements TeacherEbi
      * @param l             修改时间
      * @return
      */
-    public TeacherVo updateByLogic(TeacherVo teacherVo, long l)
+    public TeacherVo updateByLogic(TeacherVo teacherVo, long l) throws OperationException
     {
         TeacherVo temp=null;
         if(null!=teacherVo.getId()&&!"".equals(teacherVo.getId().trim())){
@@ -132,13 +135,12 @@ public class TeacherEbo implements TeacherEbi
                 temp.setModifytime(l);
             }
         }else{
-            //TODO 抛出异常
-            throw new RuntimeException("未找到该用户");
+            throw new OperationException("请不要进行非法操作！");
         }
         return temp;
     }
 
-    public void bulkInputBySheet(HSSFSheet sheet)
+    public void bulkInputBySheet(HSSFSheet sheet) throws OperationException, FormatException
     {
         List<TeacherVo> teachers=new ArrayList<TeacherVo>();
         for (Row row : sheet)
@@ -186,18 +188,12 @@ public class TeacherEbo implements TeacherEbi
         for (int i=0;i<teachers.size()-1;i++)
         {
             if (null!=teaDao.getByTeacherId(teachers.get(i).getTeacherId())){
-                //TODO  重复教师编号抛出异常
-                System.out.println("职工号为："+teachers.get(i).getTeacherId()+"的教师已存在");
-                //没有异常暂时用return代替
-                return;
+                throw new OperationException("对不起，职工号为："+teachers.get(i).getTeacherId()+"的教师已存在。请勿重复操作！");
             }
             for (int j=i+1;j<teachers.size();j++)
             {
                 if(teachers.get(j).getTeacherId().equals(teachers.get(i).getTeacherId())){
-                    //TODO  重复教师编号抛出异常
-                    System.out.println("表格中存在重复职工号："+teachers.get(i).getTeacherId());
-                    //没有异常暂时用return代替
-                    return;
+                    throw new FormatException("对不起，表格中存在重复职工号："+teachers.get(i).getTeacherId()+"。请核对后重新导入");
                 }
             }
         }

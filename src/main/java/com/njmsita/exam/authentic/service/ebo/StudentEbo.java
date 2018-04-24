@@ -6,7 +6,11 @@ import com.njmsita.exam.authentic.model.StudentVo;
 import com.njmsita.exam.authentic.model.TroleVo;
 import com.njmsita.exam.authentic.service.ebi.StudentEbi;
 import com.njmsita.exam.base.BaseQueryVO;
+import com.njmsita.exam.manager.dao.dao.SchoolDao;
+import com.njmsita.exam.manager.model.SchoolVo;
 import com.njmsita.exam.utils.consts.SysConsts;
+import com.njmsita.exam.utils.exception.FormatException;
+import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.format.MD5Utils;
 import com.njmsita.exam.utils.idutil.IdUtil;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -30,6 +34,8 @@ public class StudentEbo implements StudentEbi
     private StudentDao studentDao;
     @Autowired
     private RoleDao roleDao;
+    @Autowired
+    private SchoolDao schoolDao;
 
     public void save(StudentVo studentEntity)
     {
@@ -56,9 +62,18 @@ public class StudentEbo implements StudentEbi
         return studentDao.getCount(qm);
     }
 
-    public void update(StudentVo studentEntity)
+    public void update(StudentVo studentVo) throws OperationException
     {
-        studentDao.update(studentEntity);
+        SchoolVo schoolVo=schoolDao.get(studentVo.getSchool().getId());
+        if(null!=schoolVo){
+            if(null!=studentVo.getId()&&!"".equals(studentVo.getId().trim())){
+                studentDao.update(studentVo);
+            }else{
+                throw new OperationException("请不要进行非法操作");
+            }
+        }else{
+            throw new OperationException("请不要进行非法操作");
+        }
     }
 
     public void delete(StudentVo studentVo)
@@ -91,7 +106,7 @@ public class StudentEbo implements StudentEbi
      * @param l             修改时间
      * @return
      */
-    public StudentVo updateByLogic(StudentVo studentVo, long l)
+    public StudentVo updateByLogic(StudentVo studentVo, long l) throws OperationException
     {
         StudentVo temp=null;
         if(null!=studentVo.getId()&&!"".equals(studentVo.getId().trim())){
@@ -104,17 +119,16 @@ public class StudentEbo implements StudentEbi
                 temp.setTelephone(studentVo.getTelephone());
                 temp.setModifytime(l);
             }else{
-                //TODO 抛出异常
+                throw new OperationException("请不要进行非法操作！");
             }
         }
         return temp;
     }
 
 
-    public void save(StudentVo studentVo, String schoolId)
+    public void save(StudentVo studentVo, String schoolId) throws OperationException
     {
 
-        //todo 不能添加重复学生id  根据学校判断
         StudentVo temp=studentDao.getByStudentIdToSchool(studentVo.getStudentId(),schoolId);
         if(temp==null){
             studentVo.setLastLoginIp("-");
@@ -126,7 +140,8 @@ public class StudentEbo implements StudentEbi
             studentVo.setRole(role);
             studentDao.save(studentVo);
         }else{
-            //todo 抛出异常
+            SchoolVo schoolVo= schoolDao.get(schoolId);
+            throw new OperationException("对不起，当前学校:"+schoolVo.getName()+"已存在学号为："+studentVo.getStudentId()+"的学生。请勿重复操作！");
         }
     }
 
@@ -150,7 +165,7 @@ public class StudentEbo implements StudentEbi
 
 
 
-    public void bulkInputBySheet(HSSFSheet sheet, String schoolId)
+    public void bulkInputBySheet(HSSFSheet sheet, String schoolId) throws OperationException, FormatException
     {
         List<StudentVo> students=new ArrayList<StudentVo>();
         for (Row row : sheet)
@@ -198,18 +213,13 @@ public class StudentEbo implements StudentEbi
         for (int i=0;i<students.size()-1;i++)
         {
             if (null!=studentDao.getByStudentIdToSchool(students.get(i).getStudentId(),schoolId)){
-                //TODO  重复学号抛出异常  根据学校判断
-                System.out.println("学号为："+students.get(i).getStudentId()+"的学生已存在");
-                //没有异常暂时用return代替
-                return;
+                SchoolVo schoolVo= schoolDao.get(schoolId);
+                throw new OperationException("对不起，当前学校:"+schoolVo.getName()+"已存在学号为："+students.get(i).getStudentId()+"的学生。请勿重复操作！");
             }
             for (int j=i+1;j<students.size();j++)
             {
                 if(students.get(j).getStudentId().equals(students.get(i).getStudentId())){
-                    //TODO  表中重复学号抛出异常
-                    System.out.println("表格中存在重复学号i："+students.get(i).getStudentId());
-                    //没有异常暂时用return代替
-                    return;
+                    throw new FormatException("对不起，表格中存在重复学号："+students.get(i).getStudentId()+"。请核对后重新导入");
                 }
             }
         }

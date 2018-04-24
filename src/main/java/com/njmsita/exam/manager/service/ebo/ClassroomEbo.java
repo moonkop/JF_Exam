@@ -6,6 +6,7 @@ import com.njmsita.exam.base.BaseQueryVO;
 import com.njmsita.exam.manager.dao.dao.ClassroomDao;
 import com.njmsita.exam.manager.model.ClassroomVo;
 import com.njmsita.exam.manager.service.ebi.ClassroomEbi;
+import com.njmsita.exam.utils.exception.OperationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,14 +63,13 @@ public class ClassroomEbo implements ClassroomEbi
     //-----------------------------------以上为基本操作-------------------------------------
     //-----------------------------------以上为基本操作-------------------------------------
 
-    public void delete(ClassroomVo classroomVo)
+    public void delete(ClassroomVo classroomVo) throws OperationException
     {
         List<StudentVo> students=studentDao.getAllByClassroomId(classroomVo.getId());
         if(0==students.size()){
             classroomDao.delete(classroomVo);
         }else{
-            //TODO 抛出异常
-            System.out.println("这个班级有学生，不能删除");
+            throw new OperationException("该班级有关联的学生，不能执行该操作");
         }
 
     }

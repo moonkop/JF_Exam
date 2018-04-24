@@ -1,11 +1,14 @@
 package com.njmsita.exam.manager.service.ebo;
 
 import com.njmsita.exam.base.BaseQueryVO;
+import com.njmsita.exam.manager.dao.dao.ClassroomDao;
 import com.njmsita.exam.manager.dao.dao.SchoolDao;
 import com.njmsita.exam.authentic.dao.dao.StudentDao;
+import com.njmsita.exam.manager.model.ClassroomVo;
 import com.njmsita.exam.manager.model.SchoolVo;
 import com.njmsita.exam.authentic.model.StudentVo;
 import com.njmsita.exam.manager.service.ebi.SchoolEbi;
+import com.njmsita.exam.utils.exception.OperationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,9 +29,16 @@ public class SchoolEbo implements SchoolEbi
     @Autowired
     private StudentDao studentDao;
 
-    public void save(SchoolVo schoolVo)
+    @Autowired
+    private ClassroomDao classroomDao;
+
+    public void save(SchoolVo schoolVo) throws OperationException
     {
-        schoolDao.save(schoolVo);
+        if(null==schoolDao.findByName(schoolVo.getName())){
+            schoolDao.save(schoolVo);
+        }else{
+            throw new OperationException("当前学校名为："+schoolVo.getName()+"的学校已存在，请勿重复操作");
+        }
     }
 
     public List<SchoolVo> getAll()
@@ -51,9 +61,13 @@ public class SchoolEbo implements SchoolEbi
         return schoolDao.getCount(qm);
     }
 
-    public void update(SchoolVo schoolVo)
+    public void update(SchoolVo schoolVo) throws OperationException
     {
-        schoolDao.update(schoolVo);
+        if(null==schoolDao.findByName(schoolVo.getName())){
+            schoolDao.update(schoolVo);
+        }else{
+            throw new OperationException("当前学校名为："+schoolVo.getName()+"的学校已存在，请勿重复操作");
+        }
     }
 
     //-----------------------------------以上为基本操作-------------------------------------
@@ -62,15 +76,16 @@ public class SchoolEbo implements SchoolEbi
     //-----------------------------------以上为基本操作-------------------------------------
     //-----------------------------------以上为基本操作-------------------------------------
 
-    public void delete(SchoolVo school)
+    public void delete(SchoolVo school) throws OperationException
     {
         List<StudentVo> students=studentDao.getAllBySchoolId(school.getId());
-        //TODO 如果这个学校下有班级也不能删除
-        if(0==students.size()){
+        List<ClassroomVo> classrooms=classroomDao.getAllBySchoolId(school.getId());
+
+        //当且仅当该学校下没有任何学生和班级时才可以删除
+        if(0==students.size()&&classrooms.size()==0){
             schoolDao.delete(school);
         }else{
-            //TODO 抛出异常
-            System.out.println("这个学校有学生，不能删除");
+            throw new OperationException("该学校有关联的学生或班级，不能进行删除操作！");
         }
 
     }
