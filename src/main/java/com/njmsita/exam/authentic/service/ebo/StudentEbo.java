@@ -14,6 +14,7 @@ import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.exception.FormatException;
 import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.format.MD5Utils;
+import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.idutil.IdUtil;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.usermodel.Row;
@@ -44,37 +45,78 @@ public class StudentEbo implements StudentEbi
 
     public void save(StudentVo studentEntity) throws OperationException
     {
-        SchoolVo schoolVo=schoolDao.get(studentEntity.getSchool().getId());
-        StudentVo studentTemp=studentDao.getByStudentIdFromSchool(studentEntity.getStudentId(),schoolVo.getId());
-        if (schoolVo!=null){
-            if(studentTemp==null){
+        SchoolVo schoolVo = schoolDao.get(studentEntity.getSchool().getId());
+        StudentVo studentTemp = studentDao.getByStudentIdFromSchool(studentEntity.getStudentId(), schoolVo.getId());
+        if (schoolVo == null)
+        {
+            throw new OperationException("当前学校不存在，请不要进行非法操作！");
+
+        }
+        if (studentTemp != null)
+        {
+            throw new OperationException("对不起，当前学校:" + schoolVo.getName() + "已存在学号为：" + studentEntity.getStudentId() + "的学生。请勿重复操作！");
+        }
+
+        //没有设置密码默认为学号
+        if (StringUtil.isEmpty(studentEntity.getPassword()))
+        {
+            studentEntity.setPassword(MD5Utils.md5(studentEntity.getStudentId()));
+        }else {
+            studentEntity.setPassword(MD5Utils.md5(studentEntity.getPassword()));
+        }
+
+        //没有传递班级id则设置为空
+        if (studentEntity.getClassroom().getId() != null
+                && !studentEntity.getClassroom().getId().equals(""))
+        {
+            ClassroomVo classroomVo = classroomDao.get(studentEntity.getClassroom().getId());
+            studentEntity.setClassroom(classroomVo);
+        }
+        studentEntity.setLastLoginIp("-");
+        studentEntity.setLastLoginTime(0l);
+        studentEntity.setCreatetime(System.currentTimeMillis());
+        studentEntity.setModifytime(0l);
+        TroleVo role = roleDao.getByName(SysConsts.STUDENT_ROLE_NAME);
+        studentEntity.setRole(role);
+        studentDao.save(studentEntity);
+
+
+
+        /*
+          if (schoolVo != null)
+        {
+            if (studentTemp == null)
+            {
 
                 //没有设置密码默认为学号
-                if(null==studentEntity.getPassword()||"".equals(studentEntity.getPassword().trim())){
+                if (null == studentEntity.getPassword() || "".equals(studentEntity.getPassword().trim()))
+                {
                     studentEntity.setPassword(MD5Utils.md5(studentEntity.getStudentId()));
-                }else{
-                    studentEntity.setPassword(MD5Utils.md5(studentEntity.getPassword()));
                 }
 
                 //没有传递班级id则设置为空
-                if(studentEntity.getClassroom().getId()!=null && !studentEntity.getClassroom().getId().equals("")){
+                if (studentEntity.getClassroom().getId() != null
+                        && !studentEntity.getClassroom().getId().equals(""))
+                {
                     ClassroomVo classroomVo = classroomDao.get(studentEntity.getClassroom().getId());
                     studentEntity.setClassroom(classroomVo);
                 }
-
                 studentEntity.setLastLoginIp("-");
                 studentEntity.setLastLoginTime(0l);
                 studentEntity.setCreatetime(System.currentTimeMillis());
                 studentEntity.setModifytime(0l);
-                TroleVo role=roleDao.getByName(SysConsts.STUDENT_ROLE_NAME);
+                TroleVo role = roleDao.getByName(SysConsts.STUDENT_ROLE_NAME);
                 studentEntity.setRole(role);
                 studentDao.save(studentEntity);
-            }else{
-                throw new OperationException("对不起，当前学校:"+schoolVo.getName()+"已存在学号为："+studentEntity.getStudentId()+"的学生。请勿重复操作！");
+            } else
+            {
+                throw new OperationException("对不起，当前学校:" + schoolVo.getName() + "已存在学号为：" + studentEntity.getStudentId() + "的学生。请勿重复操作！");
             }
-        }else{
+        } else
+        {
             throw new OperationException("当前学校不存在，请不要进行非法操作！");
         }
+        */
     }
 
     public List<StudentVo> getAll()
@@ -89,7 +131,7 @@ public class StudentEbo implements StudentEbi
 
     public List<StudentVo> getAll(BaseQueryVO qm, Integer pageNum, Integer pageSize)
     {
-        return studentDao.getAll(qm,pageNum,pageSize);
+        return studentDao.getAll(qm, pageNum, pageSize);
     }
 
     public Integer getCount(BaseQueryVO qm)
@@ -99,16 +141,53 @@ public class StudentEbo implements StudentEbi
 
     public void update(StudentVo studentVo) throws OperationException
     {
-        SchoolVo schoolVo=schoolDao.get(studentVo.getSchool().getId());
-        ClassroomVo classroomVo=null;
-        if(studentVo.getClassroom().getId()!=null&&!"".equals(studentVo.getClassroom().getId())){
-            classroomVo=classroomDao.get(studentVo.getClassroom().getId());
-            if(classroomVo==null){
+        SchoolVo schoolVo = schoolDao.get(studentVo.getSchool().getId());
+        ClassroomVo classroomVo = null;
+        if (!StringUtil.isEmpty(studentVo.getClassroom().getId()))
+        {
+            classroomVo = classroomDao.get(studentVo.getClassroom().getId());
+            if (classroomVo == null)
+            {
                 throw new OperationException("对不起！没有对应的班级，请不要进行非法操作！");
             }
         }
+        if (schoolVo == null)
+        {
+            throw new OperationException("当前学校不存在，请不要进行非法操作！");
+        }
+//将要被修改的学生
+        StudentVo studentToEdit = studentDao.get(studentVo.getId());
 
-        if (schoolVo!=null){
+        if (studentToEdit == null)
+        {
+            throw new OperationException("未找到id为" + studentVo.getId() + "的学生。请勿非法操作！");
+        }
+        //从中取出的student 若有 且 若id与要修改的相同 则取出的是同一名学生 可以进行修改
+        //若不同 则取出的是与将要传入的数据相同的学生信息一致的另一名学生 则代表有冲突 不能进行修改
+        //若从中没有取出student  则没有冲突 可以修改
+        StudentVo studentHasSameStudentIDAndSchool= studentDao.getByStudentIdFromSchool(studentVo.getStudentId(), schoolVo.getId());
+        if (studentHasSameStudentIDAndSchool!=null&&!studentHasSameStudentIDAndSchool.getId().equals(studentVo.getId()))
+        {
+            throw new OperationException("对不起，当前学校:" + schoolVo.getName() + "已存在学号为：" + studentVo.getStudentId() + "的学生。请勿重复操作！");
+        }
+        studentToEdit.setRole(studentVo.getRole());
+        studentToEdit.setStudentId(studentVo.getStudentId());
+        studentToEdit.setName(studentVo.getName());
+        studentToEdit.setMail(studentVo.getMail());
+        studentToEdit.setIdCardNo(studentVo.getIdCardNo());
+        studentToEdit.setTelephone(studentVo.getTelephone());
+        if (studentVo.getPassword() != null)
+        {
+            studentToEdit.setPassword(MD5Utils.md5(studentVo.getPassword()));
+        }
+        studentToEdit.setModifytime(System.currentTimeMillis());
+        studentToEdit.setSchool(schoolVo);
+        studentToEdit.setClassroom(classroomVo);
+
+
+        /*
+        *
+        *      if (schoolVo!=null){
             StudentVo temp=studentDao.get(studentVo.getId());
             if(temp!=null){
                 if(studentDao.getByStudentIdFromSchool(studentVo.getStudentId(),schoolVo.getId()).getId().equals(studentVo.getId())){
@@ -132,6 +211,10 @@ public class StudentEbo implements StudentEbi
         }else{
             throw new OperationException("当前学校不存在，请不要进行非法操作！");
         }
+        *
+        * */
+
+
     }
 
     public void delete(StudentVo studentVo)

@@ -79,30 +79,29 @@
                                             field: 'id',
                                             title: '序号',
                                             visible: false,
-                                            cardVisible: false
+
                                         },
                                         {
                                             field: 'name',
                                             title: '姓名',
-                                            cardVisible: false
+
 
                                         },
                                         {
                                             field: 'teacherId',
                                             title: '工号',
-                                            cardVisible: false
+
 
                                         },
                                         {
                                             field: 'role',
                                             title: '身份',
-                                            cardVisible: false
+
 
                                         },
                                         {
                                             field: 'action',
                                             title: '操作',
-                                            cardVisible: false,
                                             events: operateEvents,
                                             formatter: function (value, row, index) {
                                                 var html = '';

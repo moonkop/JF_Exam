@@ -33,7 +33,7 @@
                 <a href="#"><i class="fa fa-edit fa-fw"></i> 批改</a>
             </li>
             <li>
-                <a href="#"><i class="fa fa-sitemap fa-fw"></i> 用户管理<span class="fa arrow"></span></a>
+                <a href="#"><i class="fa fa-sitemap fa-fw"></i> 系统管理<span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level">
                     <li>
                         <a href="/teacher/manage">教师管理</a>
@@ -45,10 +45,13 @@
                         <a href="/manage/classroom">班级管理</a>
                     </li>
                     <li>
-                        <a href="/manage/student">学生管理</a>
+                        <a href="/student/manage">学生管理</a>
                     </li>
                     <li>
                         <a href="/manage/role">角色管理</a>
+                    </li>
+                    <li>
+                        <a href="/manage/resource">资源管理</a>
                     </li>
                 </ul>
                 <!-- /.nav-second-level -->

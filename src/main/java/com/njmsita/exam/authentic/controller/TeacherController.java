@@ -17,6 +17,7 @@ import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.exception.FormatException;
 import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.format.CustomerJsonSerializer;
+import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.idutil.IdUtil;
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
@@ -227,7 +228,7 @@ public class TeacherController extends BaseController
      * @param request
      * @return
      */
-    //TODO  异步请求分页
+    //TODO fixed  异步请求分页 在下面
     @RequestMapping("manage/list")
     public String toTeacherList(TeacherQueryModel teacherQueryVo, Integer pageNum, Integer pageSize, HttpServletRequest request)
     {
@@ -242,14 +243,12 @@ public class TeacherController extends BaseController
         return "manager/teacher/list";
     }
 
-    //测试方法
     @ResponseBody
     @RequestMapping("manage/list.do")
     public JsonNode schoolList(TeacherQueryModel teacherQueryVo, Integer pageNum, Integer pageSize)
     {
         CustomerJsonSerializer serializer = new CustomerJsonSerializer(TeacherVo.class, "name,id,teacherId", null);
         List<TeacherVo> list = teaEbi.getAll(teacherQueryVo, pageNum, pageSize);
-
         List<ObjectNode> rowsList = new ArrayList<>();
         ObjectNode result = CustomerJsonSerializer.getDefaultMapper().createObjectNode();
         for (TeacherVo teacherVo : list)
@@ -281,7 +280,8 @@ public class TeacherController extends BaseController
         List<TroleVo> troleVolist = roleEbi.getAll();
         request.setAttribute("roles", troleVolist);
         //判断前台是否传递教师ID
-        if(null!= teacher.getId()&&!"".equals(teacher.getTeacherId().trim())){
+        if (!StringUtil.isEmpty(teacher.getId()))
+        {
             //根据学校ID获取教师完整信息从而进行数据回显
             teacher = teaEbi.get(teacher.getId());
             request.setAttribute("teacher", teacher);
@@ -300,9 +300,9 @@ public class TeacherController extends BaseController
     public String doAdd(TeacherVo teacher, String roleID) throws OperationException
     {
         teacher.setTroleVo(roleEbi.get(roleID));
-        if(null== teacher.getId()||"".equals(teacher.getId().trim()))
+        if (null == teacher.getId() || "".equals(teacher.getId().trim()))
 
-            {
+        {
             teacher.setId(IdUtil.getUUID());
             teaEbi.save(teacher);
         } else
@@ -342,7 +342,12 @@ public class TeacherController extends BaseController
         return "redirect:/teacher/list?pageNum=1&pageSize=10";
     }
 
-
+    @RequestMapping("manage/resetPassword.do")
+    public String resetPassword(TeacherVo teacherVo)
+    {
+        //todo 重置密码
+        return "";
+    }
     //-------------------------------TeacherManager-----------END-------------------------------------------
     //-------------------------------TeacherManager-----------END-------------------------------------------
     //-------------------------------TeacherManager-----------END-------------------------------------------

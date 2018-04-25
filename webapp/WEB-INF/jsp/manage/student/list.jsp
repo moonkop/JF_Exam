@@ -1,101 +1,138 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 
 <html lang="en">
 
 <head>
     <title>学生管理</title>
-    <%@include file="/WEB-INF/components/header.jsp"%>
+    <%@include file="/WEB-INF/components/header.jsp" %>
 </head>
 
 <body>
 
 <div id="wrapper">
-    <%@include file="/WEB-INF/components/navbar.jsp"%>
-    <%@include file="/WEB-INF/components/sidebar.jsp"%>
+    <%@include file="/WEB-INF/components/navbar.jsp" %>
+    <%@include file="/WEB-INF/components/sidebar.jsp" %>
 
     <div id="page-wrapper">
-<!-- start content -->
-<script>
-    $(document).ready(
-        function () {
+        <!-- start content -->
 
-            $(".js-view").on("click",function () {
-                window.location.href="/dist/pages/manage/student/detail.html"
-            })
-            $(".js-edit").on("click",function () {
-                window.location.href="/dist/pages/manage/student/edit.html"
-            })
-        }
-    )
-</script>
+        <div class="row">
+            <div class="col-lg-12">
+                <h3>
+                    学生管理
+                </h3>
+                <div class="table-btns">
+                    <a class="btn btn-primary" href="/student/manage/edit"> 添加学生</a>
+                    <button class="btn btn-default"> 批量导入学生</button>
+                </div>
+                <script src="/vendor/bootstrap-table/bootstrap-table.js"></script>
+                <script>
 
-<div class="row">
-    <div class="col-lg-12">
-        <h3>
-            学生管理
-        </h3>
-        <div class="table-btns">
-            <a class="btn btn-primary" href="add.html"> 添加学生</a>
-            <button class="btn btn-default"> 批量导入学生</button>
+
+                    window.operateEvents = {
+                        'click .js-edit': function (e, value, row, index) {
+                            window.location.href = "/student/manage/edit?id=" + row.id;
+                        },
+                        'click .js-view': function (e, value, row, index) {
+                            window.location.href = "/student/manage/detail?id=" + row.id;
+                        },
+                        'click .js-del': function (e, value, row, index) {
+                            if (confirm("确定要删除吗？") == true)
+                            {
+                                $.ajax(
+                                    {
+                                        url: '/student/manage/delete.do?id=' + row.id,
+                                        type: "post",
+                                        success: function (res) {
+                                            OnResult(res);
+                                            $("#table").bootstrapTable('refresh');
+                                            //未测试
+                                        }
+                                    }
+                                );
+
+                            }
+                        }
+                    };
+
+
+                    $(document).ready(
+                        function () {
+
+                            var $table;
+
+                            $table = $("#table");
+                            $table.bootstrapTable(
+                                {
+                                    locale: 'zh-CN',
+                                    queryParams: queryParams,
+                                    url: '/student/manage/list.do',
+                                    method: 'get',
+                                    cache: false,
+                                    pagination: true,
+                                    sidePagination: "server",
+                                    pageNumber: 1,
+                                    pageSize: 10,                       //每页的记录行数（*）
+                                    pageList: [10, 25, 50, 100],
+                                    columns: [
+                                        {
+                                            field: 'id',
+                                            title: '序号',
+                                            visible: false,
+
+                                        },
+                                        {
+                                            field: 'school',
+                                            title: '学校'
+                                        },
+                                        {
+                                            field: 'classroom',
+                                            title: '班级'
+
+                                        },
+                                        {
+                                            field: 'name',
+                                            title: '姓名'
+                                        },
+                                        {
+                                            field: 'studentId',
+                                            title: '学号'
+                                        },
+                                        {
+                                            field: 'role',
+                                            title: '身份'
+                                        },
+                                        {
+                                            field: 'action',
+                                            title: '操作',
+                                            events: operateEvents,
+                                            formatter: function (value, row, index) {
+                                                var html = '';
+
+                                                html += '<i class="fa fa-search del js-view cursor" title="预览"></i>';
+                                                html += '<i class="fa fa-pencil edit js-edit cursor " title="修改"></i>';
+                                                html += '<i class="fa fa-trash del js-del cursor" title="删除"></i>';
+
+                                                return html;
+                                            }
+                                        }
+                                    ]
+                                }
+                            );
+                        }
+                    )
+                    ;
+                </script>
+                <table id="table"/>
+
+            </div>
+
         </div>
 
-
-        <table class="table table-striped table-bordered table-hover">
-            <thead>
-            <tr>
-                <th>学校</th>
-                <th>学号</th>
-                <th>姓名</th>
-                <th>班级</th>
-                <th>操作</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td>机蜂夏令营</td>
-                <td>215110</td>
-                <td>张甜甜</td>
-                <td>机蜂培训</td>
-                <td>
-                    <a class="fa fa-search js-view" title="预览"></a>
-                    <a class="fa fa-pencil js-edit" title="修改"></a>
-                    <a class="fa fa-trash js-del" title="删除"></a>
-                </td>
-            </tr>
-            <tr>
-                <td>机蜂夏令营</td>
-                <td>215111</td>
-                <td>刘丹丹</td>
-                <td>机蜂培训</td>
-                <td>
-                    <a class="fa fa-search js-view" title="预览"></a>
-                    <a class="fa fa-pencil js-edit" title="修改"></a>
-                    <a class="fa fa-trash js-del" title="删除"></a>
-                </td>
-            </tr>
-            <tr>
-                <td>机蜂夏令营</td>
-                <td>215112</td>
-                <td>黄婷婷</td>
-                <td>清华大学</td>
-                <td>
-                    <a class="fa fa-search js-view" title="预览"></a>
-                    <a class="fa fa-pencil js-edit" title="修改"></a>
-                    <a class="fa fa-trash js-del" title="删除"></a>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-
-
-    </div>
-
-</div>
-
-<!-- end content -->
+        <!-- end content -->
     </div>
 </div>
-<%@include file="/WEB-INF/components/footer.jsp"%>
+<%@include file="/WEB-INF/components/footer.jsp" %>
 </body>
 
 </html>
