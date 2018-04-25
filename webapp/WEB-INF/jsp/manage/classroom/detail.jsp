@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>学校管理 - 详情</title>
+    <title>班级管理 - 详情</title>
     <%@include file="/WEB-INF/components/header.jsp"%>
 </head>
 
@@ -18,7 +18,7 @@
 <div class="row">
     <div class="col-lg-12">
         <h3>
-            学校管理 - 详细信息
+            班级管理 - 详细信息
         </h3>
         <div class="panel panel-primary main-panel">
             <div class="panel-body">
@@ -26,14 +26,20 @@
                     <div class="col-lg-12">
                         <div class="form-horizontal">
                             <div class="form-group">
-                                <label class="col-sm-2 control-label">学校</label>
+                                <label class="col-sm-2 control-label">所属学校</label>
                                 <div class="col-sm-8">
-                                    <p class="form-control-static">${school.name}</p>
+                                    <p class="form-control-static">${classroom.schoolVo.name}</p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">班级</label>
+                                <div class="col-sm-8">
+                                    <p class="form-control-static">${classroom.name}</p>
                                 </div>
                             </div>
                         
                             <div class="col-sm-offset-2">
-                                <a class="btn btn-default" href="/student/manage/edit?id=${school.id}">编辑</a>
+                                <a class="btn btn-default" href="/student/manage/edit?id=${classroom.id}">编辑</a>
                             </div>
                         </div>
                     </div>

@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -71,7 +72,7 @@ public class SystemManagerController extends BaseController
      * }
      *
      */
-    //TODO  异步请求分页，要带上pageNum maxPageNum totalData
+
     //todo 以后将请求方法 doEdit doAdd 之类的写成 edit.do 包括list 现有的已经改好了
     //TODO 请求转发问题，没有pageNum   pageSize参数
     @RequestMapping("school/list.do")
@@ -203,7 +204,7 @@ public class SystemManagerController extends BaseController
      * @param pageSize          页面大小
      * @return
      */
-    //TODO  异步请求分页，要带上pageNum maxPageNum totalData
+
     @RequestMapping("role/list")
     public String toRoleList(TroleQueryModel roleQueryModel,Model model,Integer pageNum,Integer pageSize){
 
@@ -302,6 +303,33 @@ public class SystemManagerController extends BaseController
     //-----------------------------------------------ClassroomManager--------------------------------------------
     //-----------------------------------------------ClassroomManager--------------------------------------------
 
+    @RequestMapping("classroom")
+    public String toClassroomList()
+    {
+        return "/manage/classroom/list";
+    }
+
+
+    @ResponseBody
+    @RequestMapping("classroom/list.do")
+    public JsonNode classroomList(ClassroomQueryModel classroomQueryModel, Integer pageNum, Integer pageSize)
+    {
+        CustomerJsonSerializer serializer=new CustomerJsonSerializer(ClassroomVo.class,"id,name",null);
+        ObjectNode result= CustomerJsonSerializer.getDefaultMapper().createObjectNode();
+        List<ClassroomVo> classroomList = classroomEbi.getAll(classroomQueryModel,pageNum,pageSize);
+        List<ObjectNode> rows = new ArrayList<>();
+        for(ClassroomVo classroomVo: classroomList)
+        {
+            ObjectNode node = serializer.toJson_ObjectNode(classroomVo);
+            node.put("school", classroomVo.getSchoolVo().getName());
+            rows.add(node);
+        }
+        result.put("rows", CustomerJsonSerializer.toJson_JsonNode1(rows));
+        result.put("total",classroomEbi.getCount(classroomQueryModel));
+        return result;
+
+    }
+
     /**
      * 跳转班级页面(分页)
      * @param classroomQueryModel  该模型存放了班级属性
@@ -310,7 +338,7 @@ public class SystemManagerController extends BaseController
      * @param pageSize          页面大小
      * @return
      */
-    //TODO  异步请求分页，要带上pageNum maxPageNum totalData
+
     @RequestMapping("classroom/list")
     public String toClassroomList(ClassroomQueryModel classroomQueryModel, Model model, Integer pageNum, Integer pageSize){
 
@@ -334,7 +362,7 @@ public class SystemManagerController extends BaseController
      * @param request           HttpServletRequest
      * @return                  跳转edit
      */
-    @RequestMapping("classroom/add")
+    @RequestMapping("classroom/edit")
     public String classroomEdit(ClassroomVo classroomVo, HttpServletRequest request){
         //判断前台是否传递班级ID
         if(null!= classroomVo.getId()&&!"".equals(classroomVo.getId().trim())){
@@ -342,7 +370,7 @@ public class SystemManagerController extends BaseController
             classroomVo =classroomEbi.get(classroomVo.getId());
             request.setAttribute("classroomVo", classroomVo);
         }
-        return "redirect:/manage/classroom/list";
+        return "/manage/classroom/edit";
     }
 
     /**
@@ -350,7 +378,7 @@ public class SystemManagerController extends BaseController
      * @param classroomVo       需要添加的信息(必须包含学校id)
      * @return                  跳转班级列表页面
      */
-    @RequestMapping("classroom/doAdd")
+    @RequestMapping("classroom/edit.do")
     public String classroomDoAdd(ClassroomVo classroomVo) throws OperationException
     {
         if(null== classroomVo.getId()||"".equals(classroomVo.getId().trim())){
@@ -359,7 +387,7 @@ public class SystemManagerController extends BaseController
         }else{
             classroomEbi.update(classroomVo);
         }
-        return "redirect:/manager/classroom/list";
+        return "redirect:/manager/classroom";
     }
 
 
@@ -413,7 +441,6 @@ public class SystemManagerController extends BaseController
      * @param pageSize          页面大小
      * @return
      */
-    //TODO  异步请求分页，要带上pageNum maxPageNum totalData
     @RequestMapping("resource/list")
     public String toresourceList(ResourceQueryModel resourceQueryModel, Model model, Integer pageNum, Integer pageSize){
 

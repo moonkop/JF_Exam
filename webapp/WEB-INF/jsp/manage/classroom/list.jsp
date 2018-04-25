@@ -19,10 +19,10 @@
 <div class="row">
     <div class="col-lg-12">
         <h3>
-            学校管理
+            班级管理
         </h3>
         <div class="table-btns">
-            <a class="btn btn-primary" href="/manage/school/edit"> 添加学校</a>
+            <a class="btn btn-primary" href="/manage/classroom/edit"> 添加班级</a>
         </div>
         <script src="/vendor/bootstrap-table/bootstrap-table.js"></script>
         <script>
@@ -31,17 +31,17 @@
 
             window.operateEvents = {
                 'click .js-edit': function (e, value, row, index) {
-                    window.location.href = "/manage/school/edit?id=" + row.id;
+                    window.location.href = "/manage/classroom/edit?id=" + row.id;
                 },
                 'click .js-view': function (e, value, row, index) {
-                    window.location.href = "/manage/school/detail?id=" + row.id;
+                    window.location.href = "/manage/classroom/detail?id=" + row.id;
                 },
                 'click .js-del': function (e, value, row, index) {
                     if (confirm("确定要删除吗？") == true)
                     {
                         $.ajax(
                             {
-                                url: '/manage/school/delete.do?id=' + row.id,
+                                url: '/manage/classroom/delete.do?id=' + row.id,
                                 type: "post",
                                 success:function(res)
                                 {
@@ -68,7 +68,7 @@
                         {
                             locale:'zh-CN',
                             queryParams: queryParams,
-                            url: '/manage/school/list1.do',
+                            url: '/manage/classroom/list.do',
                             method: 'get',
                             cache: false,
                             pagination: true,
@@ -80,15 +80,19 @@
                                 {
                                     field: 'id',
                                     title: '序号',
-                                    visible: false
-
+                                    visible: false,
+                                },
+                                {
+                                    field: 'school',
+                                    title: '所属学校',
                                 },
                                 {
                                     field: 'name',
-                                    title: '学校名称'
+                                    title: '班级名称',
                                 }, {
                                     field: 'action',
                                     title: '操作',
+
                                     events: operateEvents,
                                     formatter: function (value, row, index) {
                                         var html = '';

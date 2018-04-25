@@ -79,41 +79,32 @@
                                             field: 'id',
                                             title: '序号',
                                             visible: false,
-                                            cardVisible: false
+
                                         },
                                         {
                                             field: 'school',
-                                            title: '学校',
-                                            cardVisible: false
+                                            title: '学校'
                                         },
                                         {
                                             field: 'classroom',
-                                            title: '班级',
-                                            cardVisible: false
+                                            title: '班级'
 
                                         },
                                         {
                                             field: 'name',
-                                            title: '姓名',
-                                            cardVisible: false
-
+                                            title: '姓名'
                                         },
                                         {
                                             field: 'studentId',
-                                            title: '学号',
-                                            cardVisible: false
-
+                                            title: '学号'
                                         },
                                         {
                                             field: 'role',
-                                            title: '身份',
-                                            cardVisible: false
-
+                                            title: '身份'
                                         },
                                         {
                                             field: 'action',
                                             title: '操作',
-                                            cardVisible: false,
                                             events: operateEvents,
                                             formatter: function (value, row, index) {
                                                 var html = '';
