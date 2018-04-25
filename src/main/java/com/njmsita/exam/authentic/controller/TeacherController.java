@@ -12,11 +12,14 @@ import com.njmsita.exam.authentic.service.ebi.ResourceEbi;
 import com.njmsita.exam.authentic.service.ebi.RoleEbi;
 import com.njmsita.exam.authentic.service.ebi.TeacherEbi;
 import com.njmsita.exam.base.BaseController;
+import com.njmsita.exam.manager.model.SchoolVo;
+import com.njmsita.exam.manager.model.querymodel.SchoolQueryVo;
 import com.njmsita.exam.manager.service.ebi.SchoolEbi;
 import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.exception.FormatException;
 import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.format.CustomerJsonSerializer;
+import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.idutil.IdUtil;
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
@@ -33,6 +36,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.swing.plaf.multi.MultiFileChooserUI;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -281,8 +286,7 @@ public class TeacherController extends BaseController
         List<TroleVo> troleVolist = roleEbi.getAll();
         request.setAttribute("roles", troleVolist);
         //判断前台是否传递教师ID
-        if (null != teacher.getId())
-        {
+        if(null!= teacher.getId()&&!"".equals(teacher.getTeacherId().trim())){
             //根据学校ID获取教师完整信息从而进行数据回显
             teacher = teaEbi.get(teacher.getId());
             request.setAttribute("teacher", teacher);
@@ -301,8 +305,9 @@ public class TeacherController extends BaseController
     public String doAdd(TeacherVo teacher, String roleID) throws OperationException
     {
         teacher.setTroleVo(roleEbi.get(roleID));
-        if (null == teacher.getId() || "".equals(teacher.getId()))
-        {
+        if(null== teacher.getId()||"".equals(teacher.getId().trim()))
+
+            {
             teacher.setId(IdUtil.getUUID());
             teaEbi.save(teacher);
         } else

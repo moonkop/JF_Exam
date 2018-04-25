@@ -207,7 +207,7 @@ public class StudentController extends BaseController
      */
     //TODO  异步请求分页
     @RequestMapping("list")
-    public String toTeacherList(StudentQueryModel studentQueryModel , Integer pageNum, Integer pageSize, HttpServletRequest request){
+    public String toStudentList(StudentQueryModel studentQueryModel , Integer pageNum, Integer pageSize, HttpServletRequest request){
         //获取学校列表
         List<SchoolVo> schoolList = schoolEbi.getAll();
         //获取班级列表
@@ -237,8 +237,8 @@ public class StudentController extends BaseController
      */
     @RequestMapping("add")
     public String add(StudentVo studentVo, HttpServletRequest request){
-        //判断前台是否传递教师ID
-        if(null!= studentVo.getId()){
+        //判断前台是否传递学生ID
+        if(null!= studentVo.getId()&&!"".equals(studentVo.getId().trim())){
             //根据学校ID获取学生完整信息从而进行数据回显
             studentVo =studentEbi.get(studentVo.getId());
             request.setAttribute("studentVo", studentVo);
@@ -249,19 +249,18 @@ public class StudentController extends BaseController
     /**
      * 添加学生
      * @param studentVo     需要添加的信息
-     * @param schoolId      所属学校id
      * @return              跳转学生列表页面
      */
     @RequestMapping("doAdd")
-    public String doAdd(StudentVo studentVo,String schoolId) throws OperationException
+    public String doAdd(StudentVo studentVo) throws OperationException
     {
-        if(null== studentVo.getId()){
+        if(null== studentVo.getId()||"".equals(studentVo.getStudentId().trim())){
             studentVo.setId(IdUtil.getUUID());
-            studentEbi.save(studentVo,schoolId);
+            studentEbi.save(studentVo);
         }else{
             studentEbi.update(studentVo);
         }
-        return "redirect:/teacher/list";
+        return "redirect:/student/list";
     }
 
     /**
@@ -277,20 +276,14 @@ public class StudentController extends BaseController
     }
 
     @RequestMapping("inputXls")
-    public String inputXls(MultipartFile studentInfo,String schoolId) throws FormatException, OperationException
+    public String inputXls(MultipartFile studentInfo,String schoolId) throws FormatException, OperationException, IOException
     {
         if(studentInfo!=null){
             if(SysConsts.INFO_BULK_INPUT_FILE_CONTENT_TYPE.equals(studentInfo.getContentType())){
 
-                try
-                {
                     HSSFWorkbook workbook = new HSSFWorkbook(studentInfo.getInputStream());
                     HSSFSheet sheet=workbook.getSheetAt(0);
                     studentEbi.bulkInputBySheet(sheet,schoolId);
-                } catch (IOException e)
-                {
-                    e.printStackTrace();
-                }
             }
         }
         return "redirect:/student/list?pageNum=1&pageSize=10";
