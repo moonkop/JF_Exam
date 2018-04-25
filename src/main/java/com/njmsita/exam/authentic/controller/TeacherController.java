@@ -1,6 +1,9 @@
 package com.njmsita.exam.authentic.controller;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.njmsita.exam.authentic.model.TeacherVo;
 import com.njmsita.exam.authentic.model.TresourceVo;
 import com.njmsita.exam.authentic.model.TroleVo;
@@ -9,14 +12,11 @@ import com.njmsita.exam.authentic.service.ebi.ResourceEbi;
 import com.njmsita.exam.authentic.service.ebi.RoleEbi;
 import com.njmsita.exam.authentic.service.ebi.TeacherEbi;
 import com.njmsita.exam.base.BaseController;
-import com.njmsita.exam.manager.model.SchoolVo;
-import com.njmsita.exam.manager.model.querymodel.SchoolQueryVo;
 import com.njmsita.exam.manager.service.ebi.SchoolEbi;
 import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.exception.FormatException;
 import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.format.CustomerJsonSerializer;
-import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.idutil.IdUtil;
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
@@ -33,9 +33,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.swing.plaf.multi.MultiFileChooserUI;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -246,13 +245,23 @@ public class TeacherController extends BaseController
     //测试方法
     @ResponseBody
     @RequestMapping("manage/list.do")
-    public JSON schoolList(TeacherQueryModel teacherQueryVo, Integer pageNum, Integer pageSize)
+    public JsonNode schoolList(TeacherQueryModel teacherQueryVo, Integer pageNum, Integer pageSize)
     {
         CustomerJsonSerializer serializer = new CustomerJsonSerializer(TeacherVo.class, "name,id,teacherId", null);
-        JSONObject object = new JSONObject();
-        object.put("rows", serializer.toJson(teaEbi.getAll(teacherQueryVo, pageNum, pageSize)));
-        object.put("total", teaEbi.getCount(teacherQueryVo));
-        return object;
+        List<TeacherVo> list = teaEbi.getAll(teacherQueryVo, pageNum, pageSize);
+
+        List<ObjectNode> rowsList = new ArrayList<>();
+        ObjectNode result = CustomerJsonSerializer.getDefaultMapper().createObjectNode();
+        for (TeacherVo teacherVo : list)
+        {
+            ObjectNode obj = serializer.toJson_ObjectNode(teacherVo);
+            obj.put("role", teacherVo.getTroleVo().getName());
+            rowsList.add(obj);
+        }
+        JsonNode resultRows = CustomerJsonSerializer.toJson_JsonNode1(rowsList);
+        result.put("rows", resultRows);
+        result.put("total", teaEbi.getCount(teacherQueryVo));
+        return result;
     }
 
 
@@ -269,13 +278,13 @@ public class TeacherController extends BaseController
     @RequestMapping("manage/edit")
     public String add(TeacherVo teacher, HttpServletRequest request)
     {
+        List<TroleVo> troleVolist = roleEbi.getAll();
+        request.setAttribute("roles", troleVolist);
         //判断前台是否传递教师ID
         if (null != teacher.getId())
         {
             //根据学校ID获取教师完整信息从而进行数据回显
             teacher = teaEbi.get(teacher.getId());
-            List<TroleVo> troleVolist = roleEbi.getAll();
-            request.setAttribute("roles", troleVolist);
             request.setAttribute("teacher", teacher);
 
         }
@@ -289,16 +298,18 @@ public class TeacherController extends BaseController
      * @return 跳转教师列表页面
      */
     @RequestMapping("manage/edit.do")
-    public String doAdd(TeacherVo teacher) throws OperationException
+    public String doAdd(TeacherVo teacher, String roleID) throws OperationException
     {
-        if(null== teacher.getId()||"".equals(teacher.getId())){
+        teacher.setTroleVo(roleEbi.get(roleID));
+        if (null == teacher.getId() || "".equals(teacher.getId()))
+        {
             teacher.setId(IdUtil.getUUID());
             teaEbi.save(teacher);
         } else
         {
             teaEbi.update(teacher);
         }
-        return "redirect:/manage";
+        return "redirect:/teacher/manage";
     }
 
 
@@ -311,15 +322,17 @@ public class TeacherController extends BaseController
     @RequestMapping("manage/delete.do")
     public String delete(TeacherVo teacher) throws OperationException
     {
-            teaEbi.delete(teacher);
+        teaEbi.delete(teacher);
         return "redirect:/teacher/list";
     }
 
     @RequestMapping("manage/import.do")
     public String inputXls(MultipartFile teacherInfo) throws FormatException, OperationException, IOException
     {
-        if(teacherInfo!=null){
-            if(SysConsts.INFO_BULK_INPUT_FILE_CONTENT_TYPE.equals(teacherInfo.getContentType())){
+        if (teacherInfo != null)
+        {
+            if (SysConsts.INFO_BULK_INPUT_FILE_CONTENT_TYPE.equals(teacherInfo.getContentType()))
+            {
 
                 HSSFWorkbook workbook = new HSSFWorkbook(teacherInfo.getInputStream());
                 HSSFSheet sheet = workbook.getSheetAt(0);

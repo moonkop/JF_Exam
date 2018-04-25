@@ -1,11 +1,11 @@
 package com.njmsita.exam.utils.format;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
-
 /**
  * depend on jackson
  *
@@ -17,6 +17,11 @@ public class CustomerJsonSerializer
     static final String DYNC_INCLUDE = "DYNC_INCLUDE";
     static final String DYNC_FILTER = "DYNC_FILTER";
     ObjectMapper mapper = new ObjectMapper();
+
+    public static ObjectMapper getDefaultMapper()
+    {
+        return new ObjectMapper();
+    }
 
     public CustomerJsonSerializer(Class<?> clazz, String include, String filter)
     {
@@ -38,11 +43,11 @@ public class CustomerJsonSerializer
         } else if (filter != null && filter.length() > 0)
         {
             mapper.setFilters(new SimpleFilterProvider().addFilter(DYNC_FILTER, SimpleBeanPropertyFilter.serializeAllExcept(filter.split(","))));
-            mapper.addMixInAnnotations(clazz,DynamicFilter.class);
+            mapper.addMixInAnnotations(clazz, DynamicFilter.class);
         }
     }
 
-    public String toJson(Object object)
+    public String toJsonString(Object object)
     {
         try
         {
@@ -54,8 +59,80 @@ public class CustomerJsonSerializer
             ex.printStackTrace();
         }
         return "";
+    }
+
+    public static String toJsonString_static(Object object)
+    {
+        try
+        {
+            ObjectMapper mapper = new ObjectMapper();
+            return mapper.writeValueAsString(object);
+
+        } catch (Exception ex)
+        {
+
+            ex.printStackTrace();
+        }
+        return "";
 
     }
+
+
+    public ObjectNode toJson_ObjectNode(Object object)
+    {
+        try
+        {
+            ObjectNode node = mapper.valueToTree(object);
+            return node;
+
+        } catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+    public static JsonNode toJson_ObjectNode1(Object object)
+    {
+        try
+        {
+            JsonNode node = getDefaultMapper().valueToTree(object);
+            return node;
+
+        } catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    public  JsonNode toJson_JsonNode(Object object)
+    {
+        try
+        {
+            JsonNode node = mapper.valueToTree(object);
+            return node;
+
+        } catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    public static JsonNode toJson_JsonNode1(Object object)
+    {
+        try
+        {
+            JsonNode node = getDefaultMapper().valueToTree(object);
+            return node;
+
+        } catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
 
     @JsonFilter(DYNC_FILTER)
     interface DynamicFilter
