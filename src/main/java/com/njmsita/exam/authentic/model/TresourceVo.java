@@ -1,6 +1,7 @@
 package com.njmsita.exam.authentic.model;
 
 import javax.persistence.*;
+import java.util.Set;
 
 /**
  * 资源实体模型
@@ -15,6 +16,61 @@ public class TresourceVo
     private String remark;
     private Integer seq;
     private String url;
+
+    private TresourcetypeVo resourcetype;
+
+    //拥有的子类
+    private Set<TresourceVo> childs;
+    //所属父类
+    private TresourceVo parent;
+
+    public Set<TroleVo> getRoles()
+    {
+        return roles;
+    }
+
+    public void setRoles(Set<TroleVo> roles)
+    {
+        this.roles = roles;
+    }
+
+    //所对应的角色
+    private Set<TroleVo> roles;
+
+
+    public Set<TresourceVo> getChilds()
+    {
+        return childs;
+    }
+
+    public void setChilds(Set<TresourceVo> childs)
+    {
+        this.childs = childs;
+    }
+
+    @Basic
+    @Column(name = "pid")
+    public TresourceVo getParent()
+    {
+        return parent;
+    }
+
+    public void setParent(TresourceVo parent)
+    {
+        this.parent = parent;
+    }
+
+    @Basic
+    @Column(name = "tresourcetype_id")
+    public TresourcetypeVo getResourcetype()
+    {
+        return resourcetype;
+    }
+
+    public void setResourcetype(TresourcetypeVo resourcetype)
+    {
+        this.resourcetype = resourcetype;
+    }
 
     @Id
     @Column(name = "ID")

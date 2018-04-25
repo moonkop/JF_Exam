@@ -7,7 +7,7 @@ import com.njmsita.exam.manager.model.SchoolVo;
 /**
  * 班级查询条件模型
  */
-public class ClassroomQueryVo extends ClassroomVo implements BaseQueryVO
+public class ClassroomQueryModel extends ClassroomVo implements BaseQueryVO
 {
 
 }

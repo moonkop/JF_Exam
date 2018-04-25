@@ -6,7 +6,7 @@ import com.njmsita.exam.manager.model.SchoolVo;
 /**
  * 学校查询条件模型
  */
-public class SchoolQueryVo extends SchoolVo implements BaseQueryVO
+public class SchoolQueryModel extends SchoolVo implements BaseQueryVO
 {
 
 }

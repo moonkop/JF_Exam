@@ -1,7 +1,6 @@
 package com.njmsita.exam.authentic.dao.dao;
 
 import com.njmsita.exam.authentic.model.TresourceVo;
-import com.njmsita.exam.authentic.model.TroleVo;
 import com.njmsita.exam.base.BaseDao;
 
 import java.util.List;
@@ -17,4 +16,12 @@ public interface ResourceDao extends BaseDao<TresourceVo>
      * @return
      */
     public List<TresourceVo> getAllByLoginId(String id);
+
+    /**
+     * 根据名称或url进行查找
+     * @param name      名称
+     * @param url       路径
+     * @return
+     */
+    public TresourceVo getByNameOrUrl(String name, String url);
 }

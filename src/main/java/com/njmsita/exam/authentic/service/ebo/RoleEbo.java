@@ -1,10 +1,12 @@
 package com.njmsita.exam.authentic.service.ebo;
 
+import com.njmsita.exam.authentic.dao.dao.ResourceDao;
 import com.njmsita.exam.authentic.dao.dao.RoleDao;
 import com.njmsita.exam.authentic.dao.dao.StudentDao;
 import com.njmsita.exam.authentic.dao.dao.TeacherDao;
 import com.njmsita.exam.authentic.model.StudentVo;
 import com.njmsita.exam.authentic.model.TeacherVo;
+import com.njmsita.exam.authentic.model.TresourceVo;
 import com.njmsita.exam.authentic.model.TroleVo;
 import com.njmsita.exam.authentic.service.ebi.RoleEbi;
 import com.njmsita.exam.base.BaseQueryVO;
@@ -15,7 +17,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 角色业务层实现类
@@ -30,14 +34,16 @@ public class RoleEbo implements RoleEbi
     private TeacherDao teacherDao;
     @Autowired
     private StudentDao studentDao;
+    @Autowired
+    private ResourceDao resourceDao;
 
-    public void save(TroleVo troleVo) throws OperationException
+    /**
+     * 废弃
+     * @param troleVo
+     */
+    public void save(TroleVo troleVo)
     {
-        if(null==roleDao.getByName(troleVo.getName())){
-            roleDao.save(troleVo);
-        }else{
-            throw new OperationException("对不起，当前角色:"+troleVo.getName()+"已存在。请勿重复操作！");
-        }
+        roleDao.save(troleVo);
     }
 
     public List<TroleVo> getAll()
@@ -60,6 +66,10 @@ public class RoleEbo implements RoleEbi
         return roleDao.getCount(qm);
     }
 
+    /**
+     * 废弃
+     * @param troleVo
+     */
     public void update(TroleVo troleVo)
     {
         roleDao.update(troleVo);
@@ -87,5 +97,37 @@ public class RoleEbo implements RoleEbi
     public TroleVo getByName(String name)
     {
         return roleDao.getByName(name);
+    }
+
+    public void save(TroleVo troleVo, String[] resourceIds) throws OperationException
+    {
+        if(null!=roleDao.getByName(troleVo.getName())){
+            throw new OperationException("对不起，当前角色:"+troleVo.getName()+"已存在。请勿重复操作！");
+        }
+        bindingReses(troleVo,resourceIds);
+        roleDao.save(troleVo);
+    }
+
+    public void update(TroleVo troleVo, String[] resourceIds) throws OperationException
+    {
+        if(null!=roleDao.getByName(troleVo.getName())){
+            throw new OperationException("对不起，当前角色:"+troleVo.getName()+"已存在。请勿重复操作！");
+        }
+        bindingReses(troleVo,resourceIds);
+        roleDao.update(troleVo);
+    }
+
+    private void bindingReses(TroleVo troleVo, String[] resourceIds) throws OperationException
+    {
+        Set<TresourceVo> resourceSet=new HashSet<>();
+        for (String resourceId : resourceIds)
+        {
+            TresourceVo temp=resourceDao.get(resourceId);
+            if(temp==null){
+                throw new OperationException("您所选的资源中有部分不存在，请勿非法操作");
+            }
+            resourceSet.add(temp);
+        }
+        troleVo.setReses(resourceSet);
     }
 }

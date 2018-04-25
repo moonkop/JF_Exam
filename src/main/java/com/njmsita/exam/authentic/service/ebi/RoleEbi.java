@@ -21,4 +21,19 @@ public interface RoleEbi extends BaseEbi<TroleVo>
      * @return          查询到的角色
      */
     public TroleVo getByName(String name);
+
+    /**
+     * 保存
+     * @param roleVo        角色信息
+     * @param resourceIds   拥有的资源id
+     */
+    public void save(TroleVo roleVo, String[] resourceIds) throws OperationException;
+
+    /**
+     * 更新
+     * @param roleVo        角色信息
+     * @param resourceIds   拥有的资源id
+     */
+    public void update(TroleVo roleVo, String[] resourceIds) throws OperationException;
+
 }

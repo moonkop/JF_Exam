@@ -222,20 +222,19 @@ public class StudentEbo implements StudentEbi
         studentDao.delete(studentVo);
     }
 
-//--------------------------------------------以上为基本方法------------------------------------------
-//--------------------------------------------以上为基本方法------------------------------------------
-//--------------------------------------------以上为基本方法------------------------------------------
-//--------------------------------------------以上为基本方法------------------------------------------
-//--------------------------------------------以上为基本方法------------------------------------------
-//--------------------------------------------以上为基本方法------------------------------------------
+    //--------------------------------------------以上为基本方法------------------------------------------
+    //--------------------------------------------以上为基本方法------------------------------------------
+    //--------------------------------------------以上为基本方法------------------------------------------
+    //--------------------------------------------以上为基本方法------------------------------------------
+    //--------------------------------------------以上为基本方法------------------------------------------
+    //--------------------------------------------以上为基本方法------------------------------------------
 
     public StudentVo login(String studentId, String password, String schoolId, String loginIp)
     {
         //密码进行MD5加密
         password = MD5Utils.md5(password);
-        StudentVo loginStudent = studentDao.getTeaByStuIdAndPwdFromSchool(studentId, password, schoolId);
-        if (loginStudent != null)
-        {
+        StudentVo loginStudent=studentDao.getTeaByStuIdAndPwdFromSchool(studentId,password,schoolId);
+        if (loginStudent!=null){
             loginStudent.setLastLoginTime(System.currentTimeMillis());
             loginStudent.setLastLoginIp(loginIp);
         }
@@ -244,26 +243,22 @@ public class StudentEbo implements StudentEbi
 
     /**
      * 用户个人信息编辑
-     *
-     * @param studentVo 用户数据
-     * @param l         修改时间
+     * @param studentVo     用户数据
+     * @param l             修改时间
      * @return
      */
     public StudentVo updateByLogic(StudentVo studentVo, long l) throws OperationException
     {
-        StudentVo temp = null;
-        if (null != studentVo.getId() && !"".equals(studentVo.getId().trim()))
-        {
-            temp = studentDao.get(studentVo.getId());
-            if (null != temp)
-            {
+        StudentVo temp=null;
+        if(null!=studentVo.getId()&&!"".equals(studentVo.getId().trim())){
+            temp=studentDao.get(studentVo.getId());
+            if(null!=temp){
                 temp.setMail(studentVo.getMail());
                 temp.setName(studentVo.getName());
 
                 temp.setTelephone(studentVo.getTelephone());
                 temp.setModifytime(l);
-            } else
-            {
+            }else{
                 throw new OperationException("请不要进行非法操作！");
             }
         }
@@ -272,27 +267,25 @@ public class StudentEbo implements StudentEbi
 
     public void bulkInputBySheet(HSSFSheet sheet, String schoolId) throws OperationException, FormatException
     {
-        SchoolVo schoolVo = schoolDao.get(schoolId);
-        if (schoolVo == null)
-        {
+        SchoolVo schoolVo=schoolDao.get(schoolId);
+        if(schoolVo==null){
             throw new OperationException("不存在当前选择的学校，请勿非法操作！");
         }
-        List<StudentVo> students = new ArrayList<StudentVo>();
+        List<StudentVo> students=new ArrayList<StudentVo>();
         for (Row row : sheet)
         {
-            int rowNum = row.getRowNum();
+            int rowNum=row.getRowNum();
             //跳过标题行
-            if (rowNum == 0 || rowNum == 1)
+            if (rowNum==0||rowNum==1)
                 continue;
             try
             {
                 //如果id为空则不录入该行
-                if (null != row.getCell(1) && null != row.getCell(1).getStringCellValue() && !
-                        "".equals(row.getCell(1).getStringCellValue()))
-                {
+                if(null!=row.getCell(1)&&null!=row.getCell(1).getStringCellValue()&&!
+                        "".equals(row.getCell(1).getStringCellValue())){
 
                     //读取表中数据并进行校验和属性设置
-                    StudentVo temp = setStudent(row);
+                    StudentVo temp=setStudent(row);
 
                     //设置初始信息
                     temp.setLastLoginIp("-");
@@ -308,14 +301,13 @@ public class StudentEbo implements StudentEbi
 
                     students.add(temp);
                 }
-            } catch (IllegalStateException e)
-            {
+            }catch (IllegalStateException e){
                 throw new OperationException("表中数据格式错误，请核对后重试");
             }
         }
 
         //验证表格中是否有重复学号信息，以及数据库中是否已经存在数据
-        distinct(students, schoolVo);
+        distinct(students,schoolVo);
 
         //没有学号重复
         studentDao.bulkInput(students);
@@ -323,27 +315,23 @@ public class StudentEbo implements StudentEbi
 
     /**
      * 验证表格中是否有重复学号信息，以及数据库中是否已经存在数据
-     *
-     * @param students 学生信息集合
-     * @param schoolVo 所属学校
+     * @param students              学生信息集合
+     * @param schoolVo              所属学校
      * @throws OperationException
      * @throws FormatException
      */
-    private void distinct(List<StudentVo> students, SchoolVo schoolVo) throws
-            OperationException, FormatException
+    private void distinct(List<StudentVo> students, SchoolVo schoolVo) throws OperationException, FormatException
     {
         //遍历检查在指定学校中是否有学号已存在的学生,并且表格中不能有重复学号
-        for (int i = 0; i < students.size() - 1; i++)
+        for (int i=0;i<students.size()-1;i++)
         {
-            if (null != studentDao.getByStudentIdFromSchool(students.get(i).getStudentId(), schoolVo.getId()))
-            {
-                throw new OperationException("对不起，当前学校:" + schoolVo.getName() + "已存在学号为：" + students.get(i).getStudentId() + "的学生。请勿重复操作！");
+            if (null!=studentDao.getByStudentIdFromSchool(students.get(i).getStudentId(),schoolVo.getId())){
+                throw new OperationException("对不起，当前学校:"+schoolVo.getName()+"已存在学号为："+students.get(i).getStudentId()+"的学生。请勿重复操作！");
             }
-            for (int j = i + 1; j < students.size(); j++)
+            for (int j=i+1;j<students.size();j++)
             {
-                if (students.get(j).getStudentId().equals(students.get(i).getStudentId()))
-                {
-                    throw new FormatException("对不起，表格中存在重复学号：" + students.get(i).getStudentId() + "。请核对后重新导入");
+                if(students.get(j).getStudentId().equals(students.get(i).getStudentId())){
+                    throw new FormatException("对不起，表格中存在重复学号："+students.get(i).getStudentId()+"。请核对后重新导入");
                 }
             }
         }
@@ -351,71 +339,58 @@ public class StudentEbo implements StudentEbi
 
     /**
      * 批量导入数据读取及校验
-     *
-     * @param row 行数据
+     * @param row      行数据
      * @return
      * @throws FormatException
      */
     private StudentVo setStudent(Row row) throws FormatException
     {
-        StudentVo temp = new StudentVo();
-        int rowNum = row.getRowNum();
+        StudentVo temp=new StudentVo();
+        int rowNum=row.getRowNum();
 
-        String studentId = "";
-        String name = "";
-        String idCardNo = "";
-        String telephone = "";
-        String mail = "";
+        String studentId="";
+        String name="";
+        String idCardNo="";
+        String telephone="";
+        String mail="";
 
         //读取数据
-        if (row.getCell(1) != null)
-        {
-            studentId = row.getCell(1).getStringCellValue();
+        if(row.getCell(1)!=null){
+            studentId=row.getCell(1).getStringCellValue();
         }
-        if (row.getCell(2) != null)
-        {
-            name = row.getCell(2).getStringCellValue();
+        if(row.getCell(2)!=null){
+            name=row.getCell(2).getStringCellValue();
         }
-        if (row.getCell(4) != null)
-        {
-            idCardNo = row.getCell(4).getStringCellValue();
+        if(row.getCell(4)!=null){
+            idCardNo=row.getCell(4).getStringCellValue();
         }
-        if (row.getCell(5) != null)
-        {
-            telephone = row.getCell(5).getStringCellValue();
+        if(row.getCell(5)!=null){
+            telephone=row.getCell(5).getStringCellValue();
         }
-        if (row.getCell(6) != null)
-        {
-            mail = row.getCell(6).getStringCellValue();
+        if(row.getCell(6)!=null){
+            mail=row.getCell(6).getStringCellValue();
         }
 
         //属性校验
-        if (idCardNo.length() > 18)
-        {
-            throw new FormatException("表格中第" + (rowNum + 1) + "行的“身份证号”属性格式错误，请核对后重新导入！");
+        if(idCardNo.length()>18){
+            throw new FormatException("表格中第"+(rowNum+1)+"行的“身份证号”属性格式错误，请核对后重新导入！");
         }
-        if (telephone.length() > 11)
-        {
-            throw new FormatException("表格中第" + (rowNum + 1) + "行的“手机号”属性格式错误，请核对后重新导入！");
+        if(telephone.length()>11){
+            throw new FormatException("表格中第"+(rowNum+1)+"行的“手机号”属性格式错误，请核对后重新导入！");
         }
-        if (name == null || name.trim().equals(""))
-        {
-            throw new FormatException("表格中第" + (rowNum + 1) + "行的“姓名”属性为空，请核对后重新导入！");
+        if(name==null||name.trim().equals("")){
+            throw new FormatException("表格中第"+(rowNum+1)+"行的“姓名”属性为空，请核对后重新导入！");
         }
-        if (studentId == null || studentId.trim().equals(""))
-        {
-            throw new FormatException("表格中第" + (rowNum + 1) + "行的“学号”属性为空，请核对后重新导入！");
+        if(studentId==null||studentId.trim().equals("")){
+            throw new FormatException("表格中第"+(rowNum+1)+"行的“学号”属性为空，请核对后重新导入！");
         }
         //设置性别
-        if (SysConsts.INFO_TEACHER_OR_SUTDENT_GENDER_MALE.equals(row.getCell(3).getStringCellValue()))
-        {
+        if(SysConsts.INFO_TEACHER_OR_SUTDENT_GENDER_MALE.equals(row.getCell(3).getStringCellValue())){
             temp.setGender(0);
-        } else if (SysConsts.INFO_TEACHER_OR_SUTDENT_GENDER_FEMALE.equals(row.getCell(3).getStringCellValue()))
-        {
+        }else if (SysConsts.INFO_TEACHER_OR_SUTDENT_GENDER_FEMALE.equals(row.getCell(3).getStringCellValue())){
             temp.setGender(1);
-        } else
-        {
-            throw new FormatException("表格中第" + (rowNum + 1) + "行的“性别”属性格式错误，请核对后重新导入！");
+        }else{
+            throw new FormatException("表格中第"+(rowNum+1)+"行的“性别”属性格式错误，请核对后重新导入！");
         }
 
         //属性设置

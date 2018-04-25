@@ -13,5 +13,18 @@
         <property name="remark" column="REMARK"/>
         <property name="seq" column="SEQ"/>
         <property name="url" column="URL"/>
+
+        <many-to-one name="resourcetype" column="tresourcetype_id" class="com.njmsita.exam.authentic.model.TresourcetypeVo" lazy="false"/>
+        <many-to-one name="parent" column="pid" class="com.njmsita.exam.authentic.model.TresourceVo" lazy="false"/>
+
+        <set name="childs" cascade="delete" inverse="true">
+            <key column="pid"></key>
+            <one-to-many class="com.njmsita.exam.authentic.model.TresourceVo"/>
+        </set>
+
+        <set name="roles" table="trole_tresource" lazy="false">
+            <key column="tresource_id"></key>
+            <many-to-many column="trole_id" class="com.njmsita.exam.authentic.model.TroleVo"/>
+        </set>
     </class>
 </hibernate-mapping>
