@@ -2,8 +2,13 @@ package com.njmsita.exam.authentic.model;
 
 import com.njmsita.exam.manager.model.ClassroomVo;
 import com.njmsita.exam.manager.model.SchoolVo;
+import com.njmsita.exam.utils.validate.validategroup.AddGroup;
+import com.njmsita.exam.utils.validate.validategroup.EditGroup;
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 /**
  * 学生实体模型
@@ -13,8 +18,11 @@ import javax.persistence.*;
 public class StudentVo
 {
     private String id;
+    @NotEmpty(message = "学号不能为空",groups = {AddGroup.class, EditGroup.class})
     private String studentId;
+    @NotNull(message = "姓名不能为空")
     private String name;
+    @Email(message = "邮箱不合法")
     private String mail;
     private String idCardNo;
     private String telephone;
@@ -24,6 +32,7 @@ public class StudentVo
     private Long createtime;
     private Long modifytime;
     private String studentRes;
+    @NotNull(message = "性别不能为空")
     private Integer gender;
 
     //所属学校

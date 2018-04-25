@@ -33,7 +33,7 @@
 				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
 				<prop key="hibernate.show_sql">true</prop>
 				<prop key="hibernate.format_sql">false</prop>
-				<prop key="hibernate.connection.url">jdbc:mysql://localhost:3306/jf_exam</prop>
+				<prop key="hibernate.connection.url">jdbc:mysql://192.168.1.166:3306/jf_exam</prop>
 				<prop key="hibernate.connection.driver_class">com.mysql.jdbc.Driver</prop>
             </props>
 		</property>
@@ -46,6 +46,9 @@
 				<value>classpath:mapping/TroleVo.hbm.xml</value>
 				<value>classpath:mapping/SchoolVo.hbm.xml</value>
                 <value>classpath:mapping/ClassroomVo.hbm.xml</value>
+                <value>classpath:mapping/QuestionVo.hbm.xml</value>
+                <value>classpath:mapping/QuestionTypeVo.hbm.xml</value>
+                <value>classpath:mapping/SubjectVo.hbm.xml</value>
             </list>
 		</property>
 		<property name="annotatedClasses">
@@ -57,6 +60,9 @@
 				<value>com.njmsita.exam.authentic.model.TroleVo</value>
 				<value>com.njmsita.exam.manager.model.SchoolVo</value>
                 <value>com.njmsita.exam.manager.model.ClassroomVo</value>
+                <value>com.njmsita.exam.manager.model.QuestionVo</value>
+                <value>com.njmsita.exam.manager.model.QuestionTypeVo</value>
+                <value>com.njmsita.exam.manager.model.SubjectVo</value>
             </list>
 		</property>
 	</bean>

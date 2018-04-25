@@ -25,12 +25,17 @@ import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 
@@ -53,6 +58,7 @@ public class StudentController extends BaseController
     private SchoolEbi schoolEbi;
     @Autowired
     private ClassroomEbi classroomEbi;
+    private ObjectError error;
 
 
     /**
@@ -252,8 +258,17 @@ public class StudentController extends BaseController
      * @return              跳转学生列表页面
      */
     @RequestMapping("doAdd")
-    public String doAdd(StudentVo studentVo) throws OperationException
+    public String doAdd(@Validated StudentVo studentVo, BindingResult bindingResult) throws OperationException
     {
+        if(bindingResult.hasErrors()){
+            List<ObjectError> errors=bindingResult.getAllErrors();
+            List<FieldError> list =bindingResult.getFieldErrors();
+            for (FieldError fieldError : list)
+            {
+                System.out.println(fieldError.getField()+":"+fieldError.getDefaultMessage());
+            }
+
+        }
         if(null== studentVo.getId()||"".equals(studentVo.getStudentId().trim())){
             studentVo.setId(IdUtil.getUUID());
             studentEbi.save(studentVo);
