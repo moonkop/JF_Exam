@@ -1,17 +1,18 @@
 package com.njmsita.exam.manager.controller;
 
 
+import com.njmsita.exam.authentic.model.TresourceVo;
 import com.njmsita.exam.authentic.model.TroleVo;
+import com.njmsita.exam.authentic.model.querymodel.ResourceQueryModel;
 import com.njmsita.exam.authentic.model.querymodel.TroleQueryModel;
+import com.njmsita.exam.authentic.service.ebi.ResourceEbi;
 import com.njmsita.exam.authentic.service.ebi.RoleEbi;
 import com.njmsita.exam.manager.model.ClassroomVo;
 import com.njmsita.exam.manager.model.SchoolVo;
-import com.njmsita.exam.manager.model.querymodel.ClassroomQueryVo;
-import com.njmsita.exam.manager.model.querymodel.SchoolQueryVo;
+import com.njmsita.exam.manager.model.querymodel.ClassroomQueryModel;
+import com.njmsita.exam.manager.model.querymodel.SchoolQueryModel;
 import com.njmsita.exam.manager.service.ebi.ClassroomEbi;
 import com.njmsita.exam.manager.service.ebi.SchoolEbi;
-import com.njmsita.exam.authentic.service.ebi.StudentEbi;
-import com.njmsita.exam.authentic.service.ebi.TeacherEbi;
 import com.njmsita.exam.base.BaseController;
 import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.idutil.IdUtil;
@@ -24,14 +25,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
- * 管理控制器
+ * 系统管理控制器
  */
 @Controller
 @RequestMapping("/manage")
-public class ManagerController extends BaseController
+public class SystemManagerController extends BaseController
 {
     @Autowired
     private SchoolEbi schoolEbi;
@@ -39,6 +42,8 @@ public class ManagerController extends BaseController
     private RoleEbi roleEbi;
     @Autowired
     private ClassroomEbi classroomEbi;
+    @Autowired
+    private ResourceEbi resourceEbi;
 
 //======================================================================================================================
 
@@ -51,7 +56,7 @@ public class ManagerController extends BaseController
 
     /**
      * 跳转学校页面(分页)
-     * @param schoolQueryVo     该模型存放了学校属性
+     * @param schoolQueryModel     该模型存放了学校属性
      * @param pageNum           页码
      * @param pageSize          页面大小
      * @param model
@@ -67,14 +72,14 @@ public class ManagerController extends BaseController
     //todo 以后将请求方法 doEdit doAdd 之类的写成 edit.do 包括list 现有的已经改好了
     //TODO 请求转发问题，没有pageNum   pageSize参数
     @RequestMapping("school/list.do")
-    public String toSchoolList(SchoolQueryVo schoolQueryVo,Integer pageNum,Integer pageSize, Model model){
+    public String toSchoolList(SchoolQueryModel schoolQueryModel, Integer pageNum, Integer pageSize, Model model){
 
         //调用BaseController的方法设置数据总量及最大页码数
         pageCount=pageSize;
-        setDataTotal(schoolEbi.getCount(schoolQueryVo));
+        setDataTotal(schoolEbi.getCount(schoolQueryModel));
 
         //根据查询条件及指定页码查询
-        List<SchoolVo> schoolVoList = schoolEbi.getAll(schoolQueryVo,pageNum,pageSize);
+        List<SchoolVo> schoolVoList = schoolEbi.getAll(schoolQueryModel,pageNum,pageSize);
         model.addAttribute("schoolVoList",schoolVoList);
 
         return "manage/school/list";
@@ -83,12 +88,12 @@ public class ManagerController extends BaseController
     //测试方法
     @ResponseBody
     @RequestMapping("school/list1.do")
-    public JSON schoolList(SchoolQueryVo schoolQueryVo,Integer pageNum,Integer pageSize)
+    public JSON schoolList(SchoolQueryModel schoolQueryModel, Integer pageNum, Integer pageSize)
     {
-        List<SchoolVo> rows = schoolEbi.getAll(schoolQueryVo, pageNum, pageSize);
+        List<SchoolVo> rows = schoolEbi.getAll(schoolQueryModel, pageNum, pageSize);
         JSONObject object = new JSONObject();
         object.put("rows", rows);
-        object.put("total",schoolEbi.getCount(schoolQueryVo));
+        object.put("total",schoolEbi.getCount(schoolQueryModel));
         return object;
     }
 
@@ -117,7 +122,7 @@ public class ManagerController extends BaseController
     {
 
         //判断前台是否传递学校ID
-        if(null!=school.getId()){
+        if(null!=school.getId()&&!"".equals(school.getId().trim())){
             //根据学校ID获取学校完整信息从而进行数据回显
             school=schoolEbi.get(school.getId());
             request.setAttribute("school", school);
@@ -156,7 +161,7 @@ public class ManagerController extends BaseController
     public String schoolDelete(SchoolVo school) throws OperationException
     {
 
-        if(null!=school.getId()){
+        if(null!=school.getId()&&!"".equals(school.getId().trim())){
 
             schoolEbi.delete(school);
         }
@@ -182,7 +187,7 @@ public class ManagerController extends BaseController
 
     /**
      * 跳转角色页面(分页)
-     * @param roleQueryVo       该模型存放了角色属性
+     * @param roleQueryModel       该模型存放了角色属性
      * @param model
      * @param pageNum           页码
      * @param pageSize          页面大小
@@ -190,14 +195,14 @@ public class ManagerController extends BaseController
      */
     //TODO  异步请求分页，要带上pageNum maxPageNum totalData
     @RequestMapping("role/list")
-    public String toRoleList(TroleQueryModel roleQueryVo,Model model,Integer pageNum,Integer pageSize){
+    public String toRoleList(TroleQueryModel roleQueryModel,Model model,Integer pageNum,Integer pageSize){
 
         //调用BaseController的方法设置数据总量及最大页码数
         pageCount=pageSize;
-        setDataTotal(roleEbi.getCount(roleQueryVo));
+        setDataTotal(roleEbi.getCount(roleQueryModel));
 
         //根据查询条件及指定页码查询
-        List<TroleVo> roleList = roleEbi.getAll(roleQueryVo,pageNum,pageSize);
+        List<TroleVo> roleList = roleEbi.getAll(roleQueryModel,pageNum,pageSize);
         model.addAttribute("roleList",roleList);
 
         return "manager/role/list";
@@ -214,11 +219,24 @@ public class ManagerController extends BaseController
      */
     @RequestMapping("role/add")
     public String roleEdit(TroleVo roleVo, HttpServletRequest request){
+        //获取所有资源
+        Set<TresourceVo> allReses=new HashSet<>(resourceEbi.getAll());
+        request.setAttribute("allReses",allReses);
+
         //判断前台是否传递角色ID
-        if(null!= roleVo.getId()){
+        if(null!= roleVo.getId()&&!"".equals(roleVo.getId().trim())){
             //根据角色ID获取角色完整信息从而进行数据回显
             roleVo =roleEbi.get(roleVo.getId());
             request.setAttribute("roleVo", roleVo);
+
+            //获取当前角色已拥有资源
+            Set<TresourceVo> roleReses=roleVo.getReses();
+            request.setAttribute("roleReses",roleReses);
+
+            //获取当前角色未拥有资源
+            Set<TresourceVo> otherReses=roleVo.getReses();
+            otherReses.removeAll(roleReses);
+            request.setAttribute("otherReses",otherReses);
         }
         return "redirect:/manage/role/list";
     }
@@ -229,13 +247,13 @@ public class ManagerController extends BaseController
      * @return          跳转角色列表页面
      */
     @RequestMapping("role/doAdd")
-    public String roleDoAdd(TroleVo roleVo) throws OperationException
+    public String roleDoAdd(TroleVo roleVo,String[] resourceIds) throws OperationException
     {
-        if(null== roleVo.getId()){
+        if(null== roleVo.getId()||"".equals(roleVo.getId().trim())){
             roleVo.setId(IdUtil.getUUID());
-            roleEbi.save(roleVo);
+            roleEbi.save(roleVo,resourceIds);
         }else{
-            roleEbi.update(roleVo);
+            roleEbi.update(roleVo,resourceIds);
         }
         return "redirect:/manager/role/list";
     }
@@ -250,7 +268,7 @@ public class ManagerController extends BaseController
     public String roleDelete(TroleVo roleVo) throws OperationException
     {
 
-        if(null!=roleVo.getId()){
+        if(null!=roleVo.getId()&&!"".equals(roleVo.getId().trim())){
 
             roleEbi.delete(roleVo);
         }
@@ -276,7 +294,7 @@ public class ManagerController extends BaseController
 
     /**
      * 跳转班级页面(分页)
-     * @param classroomQueryVo  该模型存放了班级属性
+     * @param classroomQueryModel  该模型存放了班级属性
      * @param model
      * @param pageNum           页码
      * @param pageSize          页面大小
@@ -284,14 +302,14 @@ public class ManagerController extends BaseController
      */
     //TODO  异步请求分页，要带上pageNum maxPageNum totalData
     @RequestMapping("classroom/list")
-    public String toClassroomList(ClassroomQueryVo classroomQueryVo, Model model, Integer pageNum, Integer pageSize){
+    public String toClassroomList(ClassroomQueryModel classroomQueryModel, Model model, Integer pageNum, Integer pageSize){
 
         //调用BaseController的方法设置数据总量及最大页码数
         pageCount=pageSize;
-        setDataTotal(classroomEbi.getCount(classroomQueryVo));
+        setDataTotal(classroomEbi.getCount(classroomQueryModel));
 
         //根据查询条件和指定的页码查询
-        List<ClassroomVo> classroomList = classroomEbi.getAll(classroomQueryVo,pageNum,pageSize);
+        List<ClassroomVo> classroomList = classroomEbi.getAll(classroomQueryModel,pageNum,pageSize);
         model.addAttribute("classroomList",classroomList);
 
         return "manager/classroom/list";
@@ -309,7 +327,7 @@ public class ManagerController extends BaseController
     @RequestMapping("classroom/add")
     public String classroomEdit(ClassroomVo classroomVo, HttpServletRequest request){
         //判断前台是否传递班级ID
-        if(null!= classroomVo.getId()){
+        if(null!= classroomVo.getId()&&!"".equals(classroomVo.getId().trim())){
             //根据班级ID获取班级完整信息从而进行数据回显
             classroomVo =classroomEbi.get(classroomVo.getId());
             request.setAttribute("classroomVo", classroomVo);
@@ -325,7 +343,7 @@ public class ManagerController extends BaseController
     @RequestMapping("classroom/doAdd")
     public String classroomDoAdd(ClassroomVo classroomVo) throws OperationException
     {
-        if(null== classroomVo.getId()){
+        if(null== classroomVo.getId()||"".equals(classroomVo.getId().trim())){
             classroomVo.setId(IdUtil.getUUID());
             classroomEbi.save(classroomVo);
         }else{
@@ -358,4 +376,98 @@ public class ManagerController extends BaseController
     //-----------------------------------ClassroomManager-----------END------------------------------------------
     //-----------------------------------ClassroomManager-----------END------------------------------------------
     //-----------------------------------ClassroomManager-----------END------------------------------------------
+    
+//======================================================================================================================
+
+    //-----------------------------------------------ResourceManager--------------------------------------------
+    //-----------------------------------------------ResourceManager--------------------------------------------
+    //-----------------------------------------------ResourceManager--------------------------------------------
+    //-----------------------------------------------ResourceManager--------------------------------------------
+    //-----------------------------------------------ResourceManager--------------------------------------------
+    //-----------------------------------------------ResourceManager--------------------------------------------
+
+    /**
+     * 跳转资源页面(分页)
+     * @param resourceQueryModel  该模型存放了资源属性
+     * @param model
+     * @param pageNum           页码
+     * @param pageSize          页面大小
+     * @return
+     */
+    //TODO  异步请求分页，要带上pageNum maxPageNum totalData
+    @RequestMapping("resource/list")
+    public String toresourceList(ResourceQueryModel resourceQueryModel, Model model, Integer pageNum, Integer pageSize){
+
+        //调用BaseController的方法设置数据总量及最大页码数
+        pageCount=pageSize;
+        setDataTotal(resourceEbi.getCount(resourceQueryModel));
+
+        //根据查询条件和指定的页码查询
+        List<TresourceVo> resourceList = resourceEbi.getAll(resourceQueryModel,pageNum,pageSize);
+        model.addAttribute("resourceList",resourceList);
+
+        return "manager/resource/list";
+    }
+
+    /**
+     * 跳转资源添加/修改页面
+     *
+     * （此处将添加和修改页面合并，如果前台传递ID则进行修改否则进入添加页面）
+     *
+     * @param tresourceVo       接受前台传递的资源id
+     * @param request           HttpServletRequest
+     * @return                  跳转edit
+     */
+    @RequestMapping("resource/add")
+    public String resourceEdit(TresourceVo tresourceVo, HttpServletRequest request){
+        //判断前台是否传递资源ID
+        if(null!= tresourceVo.getId()&&!"".equals(tresourceVo.getId().trim())){
+            //根据资源ID获取资源完整信息从而进行数据回显
+            tresourceVo =resourceEbi.get(tresourceVo.getId());
+            request.setAttribute("tresourceVo", tresourceVo);
+        }
+        return "redirect:/manage/resource/list";
+    }
+
+    /**
+     * 添加资源
+     * @param tresourceVo       需要添加的信息(必须包含学校id)
+     * @return                  跳转资源列表页面
+     */
+    @RequestMapping("resource/doAdd")
+    public String resourceDoAdd(TresourceVo tresourceVo) throws OperationException
+    {
+        if(null== tresourceVo.getId()||"".equals(tresourceVo.getId().trim())){
+            tresourceVo.setId(IdUtil.getUUID());
+            resourceEbi.save(tresourceVo);
+        }else{
+            resourceEbi.update(tresourceVo);
+        }
+        return "redirect:/manager/resource/list";
+    }
+
+
+    /**
+     * 删除资源
+     * @param  tresourceVo   需要删除的资源
+     * @return          跳转资源列表页面
+     */
+    @RequestMapping("resource/delete")
+    public String resourceDelete(TresourceVo tresourceVo) throws OperationException
+    {
+
+        if(null!= tresourceVo.getId()&&!"".equals(tresourceVo.getId().trim())){
+
+            resourceEbi.delete(tresourceVo);
+        }
+
+        return "redirect:/manage/resource/list";
+    }
+
+    //-----------------------------------resourceManager-----------END------------------------------------------
+    //-----------------------------------resourceManager-----------END------------------------------------------
+    //-----------------------------------resourceManager-----------END------------------------------------------
+    //-----------------------------------resourceManager-----------END------------------------------------------
+    //-----------------------------------resourceManager-----------END------------------------------------------
+    //-----------------------------------resourceManager-----------END------------------------------------------
 }

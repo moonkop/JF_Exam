@@ -20,6 +20,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import sun.security.provider.MD5;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -51,14 +52,16 @@ public class StudentEbo implements StudentEbi
                 //没有设置密码默认为学号
                 if(null==studentEntity.getPassword()||"".equals(studentEntity.getPassword().trim())){
                     studentEntity.setPassword(MD5Utils.md5(studentEntity.getStudentId()));
+                }else{
+                    studentEntity.setPassword(MD5Utils.md5(studentEntity.getPassword()));
                 }
 
                 //没有传递班级id则设置为空
-                if(studentEntity.getClassroom().getId()!=null
-                        && !studentEntity.getClassroom().getId().equals("")){
+                if(studentEntity.getClassroom().getId()!=null && !studentEntity.getClassroom().getId().equals("")){
                     ClassroomVo classroomVo = classroomDao.get(studentEntity.getClassroom().getId());
                     studentEntity.setClassroom(classroomVo);
                 }
+
                 studentEntity.setLastLoginIp("-");
                 studentEntity.setLastLoginTime(0l);
                 studentEntity.setCreatetime(System.currentTimeMillis());

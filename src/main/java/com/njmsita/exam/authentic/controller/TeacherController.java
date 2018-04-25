@@ -9,14 +9,11 @@ import com.njmsita.exam.authentic.service.ebi.ResourceEbi;
 import com.njmsita.exam.authentic.service.ebi.RoleEbi;
 import com.njmsita.exam.authentic.service.ebi.TeacherEbi;
 import com.njmsita.exam.base.BaseController;
-import com.njmsita.exam.manager.model.SchoolVo;
-import com.njmsita.exam.manager.model.querymodel.SchoolQueryVo;
 import com.njmsita.exam.manager.service.ebi.SchoolEbi;
 import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.exception.FormatException;
 import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.format.CustomerJsonSerializer;
-import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.idutil.IdUtil;
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
@@ -33,8 +30,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.swing.plaf.multi.MultiFileChooserUI;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 
