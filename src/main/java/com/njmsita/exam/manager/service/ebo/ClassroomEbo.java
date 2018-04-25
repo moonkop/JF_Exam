@@ -87,4 +87,10 @@ public class ClassroomEbo implements ClassroomEbi
         }
 
     }
+
+    @Override
+    public List<ClassroomVo> getAllBySchoolId(String id)
+    {
+        return classroomDao.getAllBySchoolId(id);
+    }
 }

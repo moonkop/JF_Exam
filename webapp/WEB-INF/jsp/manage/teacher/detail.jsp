@@ -28,41 +28,41 @@
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">账号</label>
                                 <div class="col-sm-8">
-                                    <p class="form-control-static">caiji001</p>
+                                    <p class="form-control-static">${teacher.teacherId}</p>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">姓名</label>
                                 <div class="col-sm-8">
-                                    <p class="form-control-static">夏岩</p>
+                                    <p class="form-control-static">${teacher.name}</p>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">身份</label>
                                 <div class="col-sm-8">
-                                    <p class="form-control-static">教师</p>
+                                    <p class="form-control-static">${teacher.troleVo.name}</p>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">身份证号码</label>
                                 <div class="col-sm-8">
-                                    <p class="form-control-static">320503197110070521</p>
+                                    <p class="form-control-static">${teacher.idCardNo}</p>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">Email</label>
                                 <div class="col-sm-8">
-                                    <p class="form-control-static">xiayan@qq.com</p>
+                                    <p class="form-control-static">${teacher.mail}</p>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">电话</label>
                                 <div class="col-sm-8">
-                                    <p class="form-control-static">18015151516</p>
+                                    <p class="form-control-static">${teacher.telephone}</p>
                                 </div>
                             </div>
                             <div class="col-sm-offset-2">
-                                <button class="btn btn-default">编辑</button>
+                                <a class="btn btn-default" href="/teacher/manage/edit?id=${teacher.id}">编辑</a>
                                 <button class="btn btn-default">重置密码</button>
                             </div>
                         </div>

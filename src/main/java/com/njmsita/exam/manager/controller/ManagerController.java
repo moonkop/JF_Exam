@@ -1,6 +1,8 @@
 package com.njmsita.exam.manager.controller;
 
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.njmsita.exam.authentic.model.TroleVo;
 import com.njmsita.exam.authentic.model.querymodel.TroleQueryModel;
 import com.njmsita.exam.authentic.service.ebi.RoleEbi;
@@ -14,6 +16,7 @@ import com.njmsita.exam.authentic.service.ebi.StudentEbi;
 import com.njmsita.exam.authentic.service.ebi.TeacherEbi;
 import com.njmsita.exam.base.BaseController;
 import com.njmsita.exam.utils.exception.OperationException;
+import com.njmsita.exam.utils.format.CustomerJsonSerializer;
 import com.njmsita.exam.utils.idutil.IdUtil;
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
@@ -97,9 +100,16 @@ public class ManagerController extends BaseController
      * @return 跳转学校管理
      */
     @RequestMapping("school")
-    public String toschoolList()
+    public String toSchoolList()
     {
         return "manage/school/list";
+    }
+    @RequestMapping("school/detail")
+    public String toSchoodetail(String id ,HttpServletRequest request)
+    {
+        SchoolVo schoolVo=  schoolEbi.get(id);
+        request.setAttribute("school", schoolVo);
+        return "manage/school/detail";
     }
 
 
@@ -350,6 +360,15 @@ public class ManagerController extends BaseController
         }
 
         return "redirect:/manage/classroom/list";
+    }
+
+    @ResponseBody
+    @RequestMapping("getClassroomBySchoolID.do")
+    public JsonNode getClassroomBySchoolID(String id)
+    {
+        CustomerJsonSerializer serializer = new CustomerJsonSerializer(ClassroomVo.class, "id,name", null);
+        return serializer.toJson_JsonNode(classroomEbi.getAllBySchoolId(id));
+
     }
 
     //-----------------------------------ClassroomManager-----------END------------------------------------------

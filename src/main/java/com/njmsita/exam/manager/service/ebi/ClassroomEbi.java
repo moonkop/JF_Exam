@@ -5,6 +5,8 @@ import com.njmsita.exam.manager.model.ClassroomVo;
 import com.njmsita.exam.manager.model.SchoolVo;
 import com.njmsita.exam.utils.exception.OperationException;
 
+import java.util.List;
+
 /**
  * 业务层接口
  */
@@ -16,4 +18,6 @@ public interface ClassroomEbi extends BaseEbi<ClassroomVo>
      * @param classroomVo   需要删除的班级
      */
     public void delete(ClassroomVo classroomVo) throws OperationException;
+
+    public List<ClassroomVo> getAllBySchoolId(String id);
 }
