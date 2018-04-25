@@ -26,7 +26,10 @@
                     <div class="panel-body">
                         <div class="row">
                             <div class="col-lg-12">
-                                <form role="form" class="form-horizontal">
+                                <form role="form" class="form-horizontal" action="/teacher/manage/edit.do" method="post">
+
+                                            <input type="text" class="form-control" id="id" name="id" style="display: none"
+                                                   value="${teacher.id}">
                                     <div class="form-group">
                                         <label class="col-sm-2 control-label">账号</label>
                                         <div class="col-sm-8">
@@ -46,7 +49,7 @@
                                     <div class="form-group">
                                         <label class="col-sm-2 control-label">姓名</label>
                                         <div class="col-sm-8">
-                                            <input type="text" class="form-control" id="name"
+                                            <input type="text" class="form-control" id="name" name="name"
                                                    value="${teacher.name}">
                                         </div>
                                     </div>
@@ -54,7 +57,7 @@
                                         <label for="selectRole" class="col-sm-2 control-label">身份</label>
 
                                         <div class="col-sm-8">
-                                            <select name="troleVo" id="selectRole" class="form-control">
+                                            <select name="roleID" id="selectRole" class="form-control">
                                                 <c:forEach items="${requestScope.roles}" var="role">
                                                     <option value="${role.id}"
                                                             <c:if test="${teacher.troleVo==role}">selected</c:if>   >
