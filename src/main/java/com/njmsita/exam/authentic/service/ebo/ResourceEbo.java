@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * 资源业务层实现类
  */
-@Service
+@Service("resourceEbi")
 @Transactional
 public class ResourceEbo implements ResourceEbi
 {

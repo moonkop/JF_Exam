@@ -22,6 +22,7 @@ import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.idutil.IdUtil;
 import com.njmsita.exam.utils.validate.validategroup.AddGroup;
 import com.njmsita.exam.utils.validate.validategroup.EditGroup;
+import com.njmsita.exam.utils.validate.validategroup.StudentAddGroup;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -317,7 +318,7 @@ public class StudentController extends BaseController
      * @return 跳转学生列表页面
      */
     @RequestMapping("manage/edit.do")
-    public String doAdd(@Validated(value = {AddGroup.class}) StudentVo studentVo, BindingResult bindingResult,
+    public String doAdd(@Validated(value = {StudentAddGroup.class}) StudentVo studentVo, BindingResult bindingResult,
                         HttpServletRequest request) throws OperationException
     {
         if (bindingResult.hasErrors())
