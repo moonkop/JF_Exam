@@ -2,6 +2,7 @@ package com.njmsita.exam.manager.controller;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.BooleanNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.njmsita.exam.authentic.model.TresourceVo;
 import com.njmsita.exam.authentic.model.TroleVo;
@@ -23,6 +24,7 @@ import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.idutil.IdUtil;
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
+import org.apache.cxf.common.util.ReflectionInvokationHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -224,6 +226,14 @@ public class SystemManagerController extends BaseController
         return result;
     }
 
+    @ResponseBody
+    @RequestMapping("roleResource/tree.do")
+    public JsonNode roleResourceList(boolean edit)
+    {
+        CustomerJsonSerializer serializer = new CustomerJsonSerializer(TroleVo.class, "id,name", null);
+        return null;
+
+    }
 
 
     @RequestMapping("role")

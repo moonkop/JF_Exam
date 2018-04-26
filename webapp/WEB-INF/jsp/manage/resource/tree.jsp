@@ -45,7 +45,7 @@
                         function getResourceTree()
                         {
                             $.ajax({
-                                url: 'http://localhost:8080/manage/resource/tree.do',
+                                url: '/manage/resource/tree.do',
                                 success: function (res) {
                                     $('#jstree').jstree({
 
