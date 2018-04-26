@@ -13,7 +13,6 @@ var gulpFilter = require('gulp-filter');
 var clean = require('gulp-clean');
 
 
-
 //gulp.task('jsp', ['copy-to-temp', 'rename-master', 'extend-jsp', 'clean-temp'])
 // gulp.task('jsp1', function () {
 //     gulp.src('templates/**/*.*')
@@ -48,18 +47,17 @@ gulp.task('extend-jsp', function () {
         .pipe(rename({extname: ".jsp"}))
         .pipe(gulp.dest("dist/jsp"))
 });
-gulp.task('clean-up-temp',function()
-{
+gulp.task('clean-up-temp', function () {
     gulp.src('dist/jsp/components')
         .pipe(clean());
     return gulp.src('temp')
         .pipe(clean());
 })
-gulp.task('jsp',gulp.series('copy-to-temp','rename-master','extend-jsp','clean-up-temp'));
+gulp.task('jsp', gulp.series('copy-to-temp', 'rename-master', 'extend-jsp', 'clean-up-temp'));
 
-gulp.task('copy-jsp-to-WEB-INF',gulp.series('jsp'),function () {
-     return gulp.src('dist/jsp/**/*.*')
-         .pipe(gulp.dest('WEB-INF/jsp',{override:false}));
+gulp.task('copy-jsp-to-WEB-INF', gulp.series('jsp'), function () {
+    return gulp.src('dist/jsp/**/*.*')
+        .pipe(gulp.dest('WEB-INF/jsp', {override: false}));
 })
 
 
@@ -76,9 +74,6 @@ gulp.task('html', function () {
 })
 
 
-
-
-
 // Compile LESS files from /less into /css
 gulp.task('less', function () {
     return gulp.src('less/sb-admin-2.less')
@@ -92,7 +87,7 @@ gulp.task('less', function () {
 });
 
 // Minify compiled CSS
-gulp.task('minify-css', gulp.series('less'), function () {
+gulp.task('minify-css', function () {
     return gulp.src('dist/css/sb-admin-2.css')
         .pipe(cleanCSS({compatibility: 'ie8'}))
         .pipe(rename({suffix: '.min'}))
@@ -112,7 +107,7 @@ gulp.task('js', function () {
 })
 
 // Minify JS
-gulp.task('minify-js',gulp.series('js'), function () {
+gulp.task('minify-js', function () {
     return gulp.src('js/sb-admin-2.js')
         .pipe(uglify(
             {
@@ -139,16 +134,24 @@ gulp.task('browserSync', function () {
         },
     })
 })
-
-// Dev task with browserSync
-gulp.task('dev', gulp.parallel('browserSync', 'less', 'minify-css', 'js', 'minify-js', 'html'), function () {
-    gulp.watch('less/*.less', ['less']);
-    gulp.watch('dist/css/*.css', ['minify-css']);
-    gulp.watch('js/*.js', ['minify-js']);
-    gulp.watch('templates/**/*.*', ['html']);
+gulp.task("reload", function () {
+    console.log("changed");
+    browserSync.reload();
+})
+gulp.task("watch", function () {
+    console.log("watching");
+    gulp.watch('less/*.less', gulp.series('less'));
+    gulp.watch('dist/css/*.css', gulp.series('minify-css'));
+    gulp.watch('js/*.js', gulp.series("minify-js"));
+    gulp.watch('templates/**/*.*', gulp.series('html'));
     // Reloads the browser whenever HTML or JS files change
-    gulp.watch('dist/js/*.js', browserSync.reload);
-    gulp.watch('dist/css/*.css', browserSync.reload);
-    gulp.watch('dist/pages/*.*', browserSync.reload);
+    gulp.watch('dist/js/*.js', gulp.series('reload'));
+    gulp.watch('dist/css/*.css', gulp.series('reload'));
+    gulp.watch('dist/pages/*.*', gulp.series('reload'));
 
-});
+})
+// Dev task with browserSync
+gulp.task('dev',
+    gulp.series( 'less', 'minify-css', 'js', 'minify-js', 'html','browserSync')
+   );
+
