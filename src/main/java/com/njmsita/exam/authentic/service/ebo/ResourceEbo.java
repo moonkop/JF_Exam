@@ -29,6 +29,9 @@ public class ResourceEbo implements ResourceEbi
     public void save(TresourceVo tresourceVo) throws OperationException
     {
         infoValidate(tresourceVo);
+        if(resourceDao.getByNameOrUrl(tresourceVo.getName(),tresourceVo.getUrl()).size()>0){
+            throw new OperationException("资源名称或URL已存在，请核对后重试");
+        }
         resourceDao.save(tresourceVo);
 
     }
@@ -58,6 +61,9 @@ public class ResourceEbo implements ResourceEbi
     public void update(TresourceVo tresourceVo) throws OperationException
     {
         infoValidate(tresourceVo);
+        if(resourceDao.getByNameOrUrl(tresourceVo.getName(),tresourceVo.getUrl()).size()>1){
+            throw new OperationException("资源名称或URL已存在，请核对后重试");
+        }
         resourceDao.update(tresourceVo);
 
     }
@@ -99,9 +105,6 @@ public class ResourceEbo implements ResourceEbi
         TresourceVo parent=resourceDao.get(tresourceVo.getParent().getId());
         if(parent==null){
             throw new OperationException("所选父资源不存在，请不要进行非法操作！");
-        }
-        if(resourceDao.getByNameOrUrl(tresourceVo.getName(),tresourceVo.getUrl())!=null){
-            throw new OperationException("资源名称或URL已存在，请核对后重试");
         }
         if(tresourceVo.getResourcetype().getId()==null||"".equals(tresourceVo.getResourcetype().getId())){
             throw new OperationException("没有选择资源类型，请不要进行非法操作！");

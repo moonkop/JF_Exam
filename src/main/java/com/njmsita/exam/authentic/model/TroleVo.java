@@ -1,8 +1,11 @@
 package com.njmsita.exam.authentic.model;
 
 import com.njmsita.exam.base.BaseQueryVO;
+import com.njmsita.exam.utils.validate.validategroup.AddGroup;
+import com.njmsita.exam.utils.validate.validategroup.EditGroup;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -14,9 +17,14 @@ import java.util.Set;
 @Table(name = "trole", schema = "jf_exam", catalog = "")
 public class TroleVo
 {
+    @NotEmpty(message = "{id.notempty}",groups = {EditGroup.class})
     private String id;
+
+    @NotEmpty(message = "{name.notempty}",groups = {AddGroup.class, EditGroup.class})
     private String name;
     private String remark;
+
+    @NotEmpty(message = "{seq.notempty}",groups = {AddGroup.class, EditGroup.class})
     private Integer seq;
 
     //角色所拥有的资源 n TO m

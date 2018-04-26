@@ -2,45 +2,63 @@ package com.njmsita.exam.authentic.model;
 
 import com.njmsita.exam.manager.model.ClassroomVo;
 import com.njmsita.exam.manager.model.SchoolVo;
-import com.njmsita.exam.utils.validate.validategroup.AddGroup;
+import com.njmsita.exam.utils.validate.annotation.IDCardNoValifatorAnnocation;
+import com.njmsita.exam.utils.validate.annotation.TelephoneValidatorAnnotation;
+import com.njmsita.exam.utils.validate.validategroup.StudentAddGroup;
 import com.njmsita.exam.utils.validate.validategroup.EditGroup;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 /**
  * 学生实体模型
  */
 @Entity
-@Table(name = "student", schema = "jf_exam", catalog = "")
+@Table(name = "student", schema = "jf_exam")
 public class StudentVo
 {
+    @NotEmpty(message = "{id.notempty}",groups = {EditGroup.class})
     private String id;
-    @NotEmpty(message = "学号不能为空",groups = {AddGroup.class, EditGroup.class})
+
+    @NotEmpty(message = "{student.id.notempty}",groups = {StudentAddGroup.class, EditGroup.class})
     private String studentId;
-    @NotNull(message = "姓名不能为空")
+
+    @NotEmpty(message = "{student.or.teacher.name.notempty}",groups = {StudentAddGroup.class, EditGroup.class})
     private String name;
-    @Email(message = "邮箱不合法")
+
+    @Email(message = "{email.formar.error}",groups = {StudentAddGroup.class,EditGroup.class})
     private String mail;
+
+    @IDCardNoValifatorAnnocation(groups = {StudentAddGroup.class,EditGroup.class})
     private String idCardNo;
+
+    @TelephoneValidatorAnnotation(groups = {StudentAddGroup.class,EditGroup.class})
     private String telephone;
+
     private String password;
     private Long lastLoginTime;
     private String lastLoginIp;
     private Long createtime;
     private Long modifytime;
     private String studentRes;
-    @NotNull(message = "性别不能为空")
+
+    @NotNull(message = "{gender.notempty}",groups = {StudentAddGroup.class, EditGroup.class})
     private Integer gender;
 
     //所属学校
+    @Valid
     private SchoolVo school;
+
+    //所属班级
+    @Valid
+    private ClassroomVo classroom;
+
     //所拥有的角色
     private TroleVo role;
-    //所属班级
-    private ClassroomVo classroom;
+
 
     @Basic
     @Column(name = "gender")

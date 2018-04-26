@@ -39,6 +39,7 @@ public class TeacherEbo implements TeacherEbi
 
     public void save(TeacherVo teacherVo) throws OperationException
     {
+        checkGender(teacherVo);
         TeacherVo temp = teaDao.getByTeacherId(teacherVo.getTeacherId());
         if (temp == null)
         {
@@ -90,6 +91,7 @@ public class TeacherEbo implements TeacherEbi
      */
     public void update(TeacherVo teacherVo) throws OperationException
     {
+        checkGender(teacherVo);
         TeacherVo temp=teaDao.get(teacherVo.getId());
         if(temp!=null){
             temp.setTeacherId(teacherVo.getTeacherId());
@@ -296,4 +298,10 @@ public class TeacherEbo implements TeacherEbi
         return temp;
     }
 
+    private void checkGender(TeacherVo teacherVo) throws OperationException
+    {
+        if(teacherVo.getGender()!=0&&teacherVo.getGender()!=1){
+            throw new OperationException("性别格式错误，请不要进行非法操作");
+        }
+    }
 }

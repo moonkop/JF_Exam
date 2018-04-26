@@ -6,6 +6,7 @@ import javax.persistence.*;
 @Table(name = "question_type", schema = "jf_exam", catalog = "")
 public class QuestionTypeVo
 {
+
     private byte id;
     private String name;
     private Double score;

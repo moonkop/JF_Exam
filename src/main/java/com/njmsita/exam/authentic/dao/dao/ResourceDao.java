@@ -23,5 +23,5 @@ public interface ResourceDao extends BaseDao<TresourceVo>
      * @param url       路径
      * @return
      */
-    public TresourceVo getByNameOrUrl(String name, String url);
+    public List<TresourceVo> getByNameOrUrl(String name, String url);
 }

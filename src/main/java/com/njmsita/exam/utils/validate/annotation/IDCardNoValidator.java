@@ -1,5 +1,7 @@
 package com.njmsita.exam.utils.validate.annotation;
 
+import com.njmsita.exam.utils.format.StringUtil;
+
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.text.ParseException;
@@ -10,7 +12,7 @@ import java.util.Date;
 public class IDCardNoValidator implements ConstraintValidator<IDCardNoValifatorAnnocation,String>
 {
 
-    private static String cityCode[] = { "11", "12", "13", "14", "15", "21",
+    private  String cityCode[] = { "11", "12", "13", "14", "15", "21",
             "22", "23", "31", "32", "33", "34", "35", "36", "37", "41", "42",
             "43", "44", "45", "46", "50", "51", "52", "53", "54", "61", "62",
             "63", "64", "65", "71", "81", "82", "91" };
@@ -18,7 +20,7 @@ public class IDCardNoValidator implements ConstraintValidator<IDCardNoValifatorA
     /**
      * 每位加权因子
      */
-    private static int power[] = { 7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5,
+    private  int power[] = { 7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5,
             8, 4, 2 };
 
     /**
@@ -27,7 +29,7 @@ public class IDCardNoValidator implements ConstraintValidator<IDCardNoValifatorA
      * @param idcard 身份证
      * @return 合法返回true，否则返回false
      */
-    public static boolean isValidatedAllIdcard(String idcard) {
+    public  boolean isValidatedAllIdcard(String idcard) {
         if (idcard == null || "".equals(idcard)) {
             return false;
         }
@@ -37,7 +39,7 @@ public class IDCardNoValidator implements ConstraintValidator<IDCardNoValifatorA
         return validate18Idcard(idcard);
     }
 
-    public static boolean validate18Idcard(String idcard) {
+    public  boolean validate18Idcard(String idcard) {
         if (idcard == null) {
             return false;
         }
@@ -111,7 +113,7 @@ public class IDCardNoValidator implements ConstraintValidator<IDCardNoValifatorA
      * @param idcard
      * @return
      */
-    public static boolean validate15IDCard(String idcard) {
+    public  boolean validate15IDCard(String idcard) {
         if (idcard == null) {
             return false;
         }
@@ -156,7 +158,7 @@ public class IDCardNoValidator implements ConstraintValidator<IDCardNoValifatorA
      * @param idcard
      * @return
      */
-    public static String convertIdcarBy15bit(String idcard) {
+    public  String convertIdcarBy15bit(String idcard) {
         if (idcard == null) {
             return null;
         }
@@ -226,7 +228,7 @@ public class IDCardNoValidator implements ConstraintValidator<IDCardNoValifatorA
      * @param provinceid
      * @return 合法返回TRUE，否则返回FALSE
      */
-    private static boolean checkProvinceid(String provinceid) {
+    private  boolean checkProvinceid(String provinceid) {
         for (String id : cityCode) {
             if (id.equals(provinceid)) {
                 return true;
@@ -241,7 +243,7 @@ public class IDCardNoValidator implements ConstraintValidator<IDCardNoValifatorA
      * @param str
      * @return
      */
-    private static boolean isDigital(String str) {
+    private  boolean isDigital(String str) {
         return str.matches("^[0-9]*$");
     }
 
@@ -251,7 +253,7 @@ public class IDCardNoValidator implements ConstraintValidator<IDCardNoValifatorA
      * @param bit
      * @return
      */
-    private static int getPowerSum(int[] bit) {
+    private  int getPowerSum(int[] bit) {
 
         int sum = 0;
 
@@ -275,7 +277,7 @@ public class IDCardNoValidator implements ConstraintValidator<IDCardNoValifatorA
      * @param sum17
      * @return 校验位
      */
-    private static String getCheckCodeBySum(int sum17) {
+    private  String getCheckCodeBySum(int sum17) {
         String checkCode = null;
         switch (sum17 % 11) {
             case 10:
@@ -322,7 +324,7 @@ public class IDCardNoValidator implements ConstraintValidator<IDCardNoValifatorA
      * @return
      * @throws NumberFormatException
      */
-    private static int[] converCharToInt(char[] c) throws NumberFormatException {
+    private  int[] converCharToInt(char[] c) throws NumberFormatException {
         int[] a = new int[c.length];
         int k = 0;
         for (char temp : c) {
@@ -331,16 +333,6 @@ public class IDCardNoValidator implements ConstraintValidator<IDCardNoValifatorA
         return a;
     }
 
-    public static void main(String[] args) throws Exception {
-        String idcard15 = "130321860311519";
-        String idcard18 = "210102198617083732";//
-        // 15位身份证
-        System.out.println(isValidatedAllIdcard(idcard15));
-        // 18位身份证
-        System.out.println(isValidatedAllIdcard(idcard18));
-        // 15位身份证转18位身份证
-        System.out.println(convertIdcarBy15bit(idcard15));
-    }
 
     private int len15;
     private int len18;
@@ -352,6 +344,9 @@ public class IDCardNoValidator implements ConstraintValidator<IDCardNoValifatorA
 
     public boolean isValid(String number, ConstraintValidatorContext constraintValidatorContext)
     {
+        if(StringUtil.isEmpty(number)){
+            return true;
+        }
         if (number.length()==len15 || number.length()==len18 ){
             return isValidatedAllIdcard(number);
         }
@@ -359,7 +354,7 @@ public class IDCardNoValidator implements ConstraintValidator<IDCardNoValifatorA
         constraintValidatorContext.disableDefaultConstraintViolation();
         //重新添加错误提示语句
         constraintValidatorContext
-                .buildConstraintViolationWithTemplate("请输入15位或18为身份证号码").addConstraintViolation();
+                .buildConstraintViolationWithTemplate("请输入15位或18位身份证号码").addConstraintViolation();
         return false;
     }
 }

@@ -1,5 +1,9 @@
 package com.njmsita.exam.authentic.model;
 
+import com.njmsita.exam.utils.validate.validategroup.AddGroup;
+import com.njmsita.exam.utils.validate.validategroup.EditGroup;
+import org.hibernate.validator.constraints.NotEmpty;
+
 import javax.persistence.*;
 
 /**
@@ -9,7 +13,10 @@ import javax.persistence.*;
 @Table(name = "tresourcetype", schema = "jf_exam", catalog = "")
 public class TresourcetypeVo
 {
+    @NotEmpty(message = "{id.notempty}",groups = {EditGroup.class})
     private String id;
+
+    @NotEmpty(message = "{name.notempty}",groups = {AddGroup.class, EditGroup.class})
     private String name;
 
     @Id
