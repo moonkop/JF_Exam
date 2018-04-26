@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8"%>
 
 <html lang="en">
@@ -27,17 +28,18 @@
                         <form role="form" class="form-horizontal" action="/manage/classroom/edit.do">
                             <div class="form-group" style="display:none">
                                 <input type="text" class="form-control" id="id" name="id" style="display: none"
-                                       value="${school.id}">
+                                       value="${classroom.id}">
                             </div>
 
                             <div class="form-group">
                                 <label for="selectSchool" class="col-sm-2 control-label">学校</label>
 
                                 <div class="col-sm-8">
-                                    <select name="schoolID" id="selectSchool" class="form-control">
+                                    <select name="schoolVo.id" id="selectSchool" class="form-control">
                                         <c:forEach items="${requestScope.schools}" var="school">
                                             <option value="${school.id}"
-                                                    <c:if test="${student.school==school}">selected</c:if>   >
+                                                    <c:if test="${classroom.schoolVo==school}">selected</c:if>
+                                            >
                                                     ${school.name}
                                             </option>
                                         </c:forEach>

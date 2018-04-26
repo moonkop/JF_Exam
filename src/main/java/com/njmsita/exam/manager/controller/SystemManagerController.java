@@ -350,7 +350,7 @@ public class SystemManagerController extends BaseController
         List<ClassroomVo> classroomList = classroomEbi.getAll(classroomQueryModel,pageNum,pageSize);
         model.addAttribute("classroomList",classroomList);
 
-        return "manager/classroom/list";
+        return "manage/classroom/list";
     }
 
     /**
@@ -364,11 +364,12 @@ public class SystemManagerController extends BaseController
      */
     @RequestMapping("classroom/edit")
     public String classroomEdit(ClassroomVo classroomVo, HttpServletRequest request){
+        request.setAttribute("schools", schoolEbi.getAll());
         //判断前台是否传递班级ID
         if(null!= classroomVo.getId()&&!"".equals(classroomVo.getId().trim())){
             //根据班级ID获取班级完整信息从而进行数据回显
             classroomVo =classroomEbi.get(classroomVo.getId());
-            request.setAttribute("classroomVo", classroomVo);
+            request.setAttribute("classroom", classroomVo);
         }
         return "/manage/classroom/edit";
     }
@@ -387,7 +388,7 @@ public class SystemManagerController extends BaseController
         }else{
             classroomEbi.update(classroomVo);
         }
-        return "redirect:/manager/classroom";
+        return "redirect:/manage/classroom";
     }
 
 
