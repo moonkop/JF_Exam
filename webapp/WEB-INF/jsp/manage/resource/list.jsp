@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>学校管理</title>
+    <title>学生管理</title>
     <%@include file="/WEB-INF/components/header.jsp"%>
 </head>
 
@@ -19,10 +19,10 @@
 <div class="row">
     <div class="col-lg-12">
         <h3>
-            学校管理
+            资源管理
         </h3>
         <div class="table-btns">
-            <a class="btn btn-primary" href="/manage/school/edit"> 添加学校</a>
+            <a class="btn btn-primary" href="/manage/resource/edit"> 添加资源</a>
         </div>
         <script src="/vendor/bootstrap-table/bootstrap-table.js"></script>
         <script>
@@ -31,17 +31,17 @@
 
             window.operateEvents = {
                 'click .js-edit': function (e, value, row, index) {
-                    window.location.href = "/manage/school/edit?id=" + row.id;
+                    window.location.href = "/manage/resource/edit?id=" + row.id;
                 },
                 'click .js-view': function (e, value, row, index) {
-                    window.location.href = "/manage/school/detail?id=" + row.id;
+                    window.location.href = "/manage/resource/detail?id=" + row.id;
                 },
                 'click .js-del': function (e, value, row, index) {
                     if (confirm("确定要删除吗？") == true)
                     {
                         $.ajax(
                             {
-                                url: '/manage/school/delete.do?id=' + row.id,
+                                url: '/manage/resource/delete.do?id=' + row.id,
                                 type: "post",
                                 success:function(res)
                                 {
@@ -68,7 +68,7 @@
                         {
                             locale:'zh-CN',
                             queryParams: queryParams,
-                            url: '/manage/school/list1.do',
+                            url: '/manage/resource/list.do',
                             method: 'get',
                             cache: false,
                             pagination: true,
@@ -80,15 +80,28 @@
                                 {
                                     field: 'id',
                                     title: '序号',
-                                    visible: false
-
+                                    visible: false,
+                                },
+                                {
+                                    field: 'type',
+                                    title: '资源类型',
                                 },
                                 {
                                     field: 'name',
-                                    title: '学校名称'
-                                }, {
+                                    title: '资源名称',
+                                },
+                                {
+                                    field: 'url',
+                                    title: '资源路径',
+                                },
+                                {
+                                    field: 'remark',
+                                    title: '备注',
+                                },
+                                {
                                     field: 'action',
                                     title: '操作',
+
                                     events: operateEvents,
                                     formatter: function (value, row, index) {
                                         var html = '';

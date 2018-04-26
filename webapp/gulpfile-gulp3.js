@@ -55,10 +55,10 @@ gulp.task('jsp',['extend-jsp'], function () {
         .pipe(clean());
 });
 
-gulp.task('copy-jsp-to-WEB-INF',['jsp'],function () {
-     return gulp.src('dist/jsp/**/*.*')
-         .pipe(gulp.dest('WEB-INF/jsp',{override:false}));
-})
+// gulp.task('copy-jsp-to-WEB-INF',['jsp'],function () {
+//      return gulp.src('dist/jsp/**/*.*')
+//          .pipe(gulp.dest('WEB-INF/jsp',{override:false}));
+// })
 
 
 //generate html form components

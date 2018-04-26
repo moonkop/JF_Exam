@@ -33,7 +33,9 @@ public class ClassroomEbo implements ClassroomEbi
 
     public void save(ClassroomVo classroomVo) throws OperationException
     {
-        if(null==classroomDao.findByNameFrom(classroomVo.getName(),classroomVo.getSchoolVo().getId())){
+        if(
+                null==classroomDao.findByNameFrom(classroomVo.getName(),classroomVo.getSchoolVo().getId())
+                ){
             classroomDao.save(classroomVo);
         }else{
             SchoolVo schoolVo=schoolDao.get(classroomVo.getSchoolVo().getId());
