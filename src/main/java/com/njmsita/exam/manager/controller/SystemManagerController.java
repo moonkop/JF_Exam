@@ -22,12 +22,16 @@ import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.format.CustomerJsonSerializer;
 import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.idutil.IdUtil;
+import com.njmsita.exam.utils.validate.validategroup.AddGroup;
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
-import org.apache.cxf.common.util.ReflectionInvokationHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -157,8 +161,20 @@ public class SystemManagerController extends BaseController
      * @return 跳转学校列表页面
      */
     @RequestMapping("school/edit.do")
-    public String doAdd(SchoolVo school) throws OperationException
+    public String doAdd(@Validated(value = {AddGroup.class}) SchoolVo school,BindingResult bindingResult,
+                        HttpServletRequest request) throws OperationException
     {
+        if (bindingResult.hasErrors())
+        {
+            List<FieldError> list = bindingResult.getFieldErrors();
+            for (FieldError fieldError : list)
+            {
+                //校验信息，key=属性名+Error
+                request.setAttribute(fieldError.getField()+"Error",fieldError.getDefaultMessage());
+            }
+            request.setAttribute("school",school);
+            return "/manage/me/edit";
+        }
         if (null == school.getId() || "".equals(school.getId())) //fixed empty
         {
             school.setId(IdUtil.getUUID());
@@ -259,7 +275,6 @@ public class SystemManagerController extends BaseController
      *
      * @return
      */
-
     @RequestMapping("role/list")
     public String toRoleList(TroleQueryModel roleQueryModel, Model model, Integer pageNum, Integer pageSize)
     {
@@ -319,8 +334,20 @@ public class SystemManagerController extends BaseController
      * @return 跳转角色列表页面
      */
     @RequestMapping("role/edit.do")
-    public String roleDoAdd(TroleVo roleVo, String[] resourceIds) throws OperationException
+    public String roleDoAdd(@Validated(value = {AddGroup.class})TroleVo roleVo,BindingResult bindingResult,String[] resourceIds,
+                            HttpServletRequest request) throws OperationException
     {
+        if (bindingResult.hasErrors())
+        {
+            List<FieldError> list = bindingResult.getFieldErrors();
+            for (FieldError fieldError : list)
+            {
+                //校验信息，key=属性名+Error
+                request.setAttribute(fieldError.getField()+"Error",fieldError.getDefaultMessage());
+            }
+            request.setAttribute("resourceIds",resourceIds);
+            return "/manage/me/edit";
+        }
         if (null == roleVo.getId() || "".equals(roleVo.getId().trim()))
         {
             roleVo.setId(IdUtil.getUUID());
@@ -433,8 +460,7 @@ public class SystemManagerController extends BaseController
      * @return 跳转edit
      */
     @RequestMapping("classroom/edit")
-    public String classroomEdit(ClassroomVo classroomVo, HttpServletRequest request)
-    {
+    public String classroomEdit(ClassroomVo classroomVo, HttpServletRequest request){
         request.setAttribute("schools", schoolEbi.getAll());
         //判断前台是否传递班级ID
         if (null != classroomVo.getId() && !"".equals(classroomVo.getId().trim()))
@@ -454,8 +480,21 @@ public class SystemManagerController extends BaseController
      * @return 跳转班级列表页面
      */
     @RequestMapping("classroom/edit.do")
-    public String classroomDoAdd(ClassroomVo classroomVo) throws OperationException
+    public String classroomDoAdd(@Validated(value={AddGroup.class})ClassroomVo classroomVo, BindingResult bindingResult,
+                                 HttpServletRequest request) throws OperationException
     {
+
+        if (bindingResult.hasErrors())
+        {
+            List<FieldError> list = bindingResult.getFieldErrors();
+            for (FieldError fieldError : list)
+            {
+                //校验信息，key=属性名+Error
+                request.setAttribute(fieldError.getField()+"Error",fieldError.getDefaultMessage());
+            }
+            request.setAttribute("classroomVo",classroomVo);
+            return "/manage/me/edit";
+        }
         if (null == classroomVo.getId() || "".equals(classroomVo.getId().trim()))
         {
             classroomVo.setId(IdUtil.getUUID());
@@ -614,10 +653,7 @@ public class SystemManagerController extends BaseController
     public String resourceEdit(TresourceVo tresourceVo, HttpServletRequest request)
     {
         //判断前台是否传递资源ID
-        request.setAttribute("types", resourcetypeEbi.getAll());
-
-        if (!StringUtil.isEmpty(tresourceVo.getId()))
-        {
+        request.setAttribute("types", resourcetypeEbi.getAll());if(!StringUtil.isEmpty(tresourceVo.getId())){
             //根据资源ID获取资源完整信息从而进行数据回显
             tresourceVo = resourceEbi.get(tresourceVo.getId());
             request.setAttribute("parent", resourceEbi.get(tresourceVo.getParent().getId()));
@@ -626,7 +662,6 @@ public class SystemManagerController extends BaseController
         {
             //如果待编辑资源为空 则会传进来parent.id
             request.setAttribute("parent", resourceEbi.get(tresourceVo.getParent().getId()));
-
         }
         return "/manage/resource/edit";
     }
@@ -639,8 +674,21 @@ public class SystemManagerController extends BaseController
      * @return 跳转资源列表页面
      */
     @RequestMapping("resource/edit.do")
-    public String resourceDoAdd(TresourceVo tresourceVo) throws OperationException
+    public String resourceDoAdd(@Validated(value = {AddGroup.class})TresourceVo tresourceVo, BindingResult bindingResult,
+                                HttpServletRequest request) throws OperationException
     {
+
+        if (bindingResult.hasErrors())
+        {
+            List<FieldError> list = bindingResult.getFieldErrors();
+            for (FieldError fieldError : list)
+            {
+                //校验信息，key=属性名+Error
+                request.setAttribute(fieldError.getField()+"Error",fieldError.getDefaultMessage());
+            }
+            request.setAttribute("tresourceVo",tresourceVo);
+            return "/manage/me/edit";
+        }
         if (null == tresourceVo.getId() || "".equals(tresourceVo.getId().trim()))
         {
             tresourceVo.setId(IdUtil.getUUID());

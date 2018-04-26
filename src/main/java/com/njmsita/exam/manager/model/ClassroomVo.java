@@ -1,12 +1,20 @@
 package com.njmsita.exam.manager.model;
 
+import com.njmsita.exam.utils.validate.validategroup.AddGroup;
+import com.njmsita.exam.utils.validate.validategroup.EditGroup;
+import com.njmsita.exam.utils.validate.validategroup.StudentAddGroup;
+import org.hibernate.validator.constraints.NotEmpty;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "classroom", schema = "jf_exam", catalog = "")
 public class ClassroomVo
 {
+    @NotEmpty(message = "{student.update.classroom.notempty}",groups = {EditGroup.class, StudentAddGroup.class})
     private String id;
+
+    @NotEmpty(message = "{name.notempty}",groups = {AddGroup.class, EditGroup.class})
     private String name;
     //所属学校
     private SchoolVo schoolVo;

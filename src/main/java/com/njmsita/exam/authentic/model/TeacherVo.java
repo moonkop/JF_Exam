@@ -2,8 +2,15 @@ package com.njmsita.exam.authentic.model;
 
 import com.njmsita.exam.base.BaseQueryVO;
 import com.njmsita.exam.manager.model.SchoolVo;
+import com.njmsita.exam.utils.validate.annotation.IDCardNoValifatorAnnocation;
+import com.njmsita.exam.utils.validate.annotation.TelephoneValidatorAnnotation;
+import com.njmsita.exam.utils.validate.validategroup.AddGroup;
+import com.njmsita.exam.utils.validate.validategroup.EditGroup;
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 /**
  * 教师实体模型
@@ -12,11 +19,22 @@ import javax.persistence.*;
 @Table(name = "teacher", schema = "jf_exam")
 public class TeacherVo
 {
+    @NotEmpty(message = "{id.notempty}",groups = {EditGroup.class})
     private String id;
+
+    @NotEmpty(message = "{teacher.id.notempty}",groups = {AddGroup.class, EditGroup.class})
     private String teacherId;
+
+    @NotEmpty(message = "{student.or.teacher.name.notempty}",groups = {AddGroup.class, EditGroup.class})
     private String name;
+
+    @Email(message = "{email.formar.error}",groups = {AddGroup.class,EditGroup.class})
     private String mail;
+
+    @IDCardNoValifatorAnnocation(groups = {AddGroup.class,EditGroup.class})
     private String idCardNo;
+
+    @TelephoneValidatorAnnotation(groups = {AddGroup.class,EditGroup.class})
     private String telephone;
     private String password;
     private Long lastLoginTime;
@@ -24,6 +42,8 @@ public class TeacherVo
     private Long createtime;
     private Long modifytime;
     private String teacherRes;
+
+    @NotNull(message = "{gender.notempty}",groups = {AddGroup.class, EditGroup.class})
     private Integer gender;
     //所拥有的角色  n TO  1
     private TroleVo troleVo;

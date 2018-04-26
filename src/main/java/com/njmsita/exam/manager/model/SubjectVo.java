@@ -1,29 +1,22 @@
 package com.njmsita.exam.manager.model;
 
-import com.njmsita.exam.utils.validate.validategroup.AddGroup;
-import org.hibernate.validator.constraints.NotEmpty;
-
 import javax.persistence.*;
 
-/**
- * 学校实体模型
- */
 @Entity
-@Table(name = "school", schema = "jf_exam", catalog = "")
-public class SchoolVo
+@Table(name = "subject", schema = "jf_exam", catalog = "")
+public class SubjectVo
 {
-    @NotEmpty(message = "{student.add.update.school.notempty}",groups = {AddGroup.class})
-    private String id;
+    private byte id;
     private String name;
 
     @Id
     @Column(name = "id")
-    public String getId()
+    public byte getId()
     {
         return id;
     }
 
-    public void setId(String id)
+    public void setId(byte id)
     {
         this.id = id;
     }
@@ -43,7 +36,7 @@ public class SchoolVo
     @Override
     public int hashCode()
     {
-        int result = id != null ? id.hashCode() : 0;
+        int result = (int) id;
         result = 31 * result + (name != null ? name.hashCode() : 0);
         return result;
     }
@@ -54,10 +47,10 @@ public class SchoolVo
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        SchoolVo schoolVo = (SchoolVo) o;
+        SubjectVo subjectVo = (SubjectVo) o;
 
-        if (id != null ? !id.equals(schoolVo.id) : schoolVo.id != null) return false;
-        if (name != null ? !name.equals(schoolVo.name) : schoolVo.name != null) return false;
+        if (id != subjectVo.id) return false;
+        if (name != null ? !name.equals(subjectVo.name) : subjectVo.name != null) return false;
 
         return true;
     }

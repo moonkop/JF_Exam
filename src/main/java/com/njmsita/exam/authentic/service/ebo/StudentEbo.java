@@ -45,13 +45,15 @@ public class StudentEbo implements StudentEbi
 
     public void save(StudentVo studentEntity) throws OperationException
     {
+        checkGender(studentEntity);
+
         SchoolVo schoolVo = schoolDao.get(studentEntity.getSchool().getId());
-        StudentVo studentTemp = studentDao.getByStudentIdFromSchool(studentEntity.getStudentId(), schoolVo.getId());
         if (schoolVo == null)
         {
             throw new OperationException("当前学校不存在，请不要进行非法操作！");
 
         }
+        StudentVo studentTemp = studentDao.getByStudentIdFromSchool(studentEntity.getStudentId(), schoolVo.getId());
         if (studentTemp != null)
         {
             throw new OperationException("对不起，当前学校:" + schoolVo.getName() + "已存在学号为：" + studentEntity.getStudentId() + "的学生。请勿重复操作！");
@@ -72,6 +74,8 @@ public class StudentEbo implements StudentEbi
             ClassroomVo classroomVo = classroomDao.get(studentEntity.getClassroom().getId());
             studentEntity.setClassroom(classroomVo);
         }
+
+
         studentEntity.setLastLoginIp("-");
         studentEntity.setLastLoginTime(0l);
         studentEntity.setCreatetime(System.currentTimeMillis());
@@ -141,6 +145,8 @@ public class StudentEbo implements StudentEbi
 
     public void update(StudentVo studentVo) throws OperationException
     {
+        checkGender(studentVo);
+
         SchoolVo schoolVo = schoolDao.get(studentVo.getSchool().getId());
         ClassroomVo classroomVo = null;
         if (!StringUtil.isEmpty(studentVo.getClassroom().getId()))
@@ -401,5 +407,17 @@ public class StudentEbo implements StudentEbi
         temp.setTelephone(telephone);
 
         return temp;
+    }
+
+    /**
+     * 校验性别
+     * @param studentEntity
+     * @throws OperationException
+     */
+    private void checkGender(StudentVo studentEntity) throws OperationException
+    {
+        if (studentEntity.getGender()!=0&&studentEntity.getGender()!=1){
+            throw new OperationException("性别格式错误，请不要进行非法操作");
+        }
     }
 }

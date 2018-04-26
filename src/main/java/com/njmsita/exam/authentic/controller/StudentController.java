@@ -1,14 +1,11 @@
 package com.njmsita.exam.authentic.controller;
 
-import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.njmsita.exam.authentic.model.StudentVo;
 import com.njmsita.exam.authentic.model.TeacherVo;
 import com.njmsita.exam.authentic.model.TresourceVo;
-import com.njmsita.exam.authentic.model.TroleVo;
 import com.njmsita.exam.authentic.model.querymodel.StudentQueryModel;
-import com.njmsita.exam.authentic.model.querymodel.TeacherQueryModel;
 import com.njmsita.exam.authentic.service.ebi.ResourceEbi;
 import com.njmsita.exam.authentic.service.ebi.RoleEbi;
 import com.njmsita.exam.authentic.service.ebi.StudentEbi;
@@ -23,12 +20,17 @@ import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.format.CustomerJsonSerializer;
 import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.idutil.IdUtil;
+import com.njmsita.exam.utils.validate.validategroup.AddGroup;
+import com.njmsita.exam.utils.validate.validategroup.EditGroup;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -58,6 +60,7 @@ public class StudentController extends BaseController
     private SchoolEbi schoolEbi;
     @Autowired
     private ClassroomEbi classroomEbi;
+    private ObjectError error;
 
 
     /**
@@ -160,8 +163,19 @@ public class StudentController extends BaseController
      * 个人信息编辑
      */
     @RequestMapping("edit.do")
-    public String doEdit(StudentVo studentVo, String classroomId, HttpServletRequest request, HttpSession session) throws OperationException
+    public String doEdit(@Validated(value = {EditGroup.class}) StudentVo studentVo, BindingResult bindingResult, String classroomId, HttpServletRequest request, HttpSession session) throws OperationException
     {
+        if (bindingResult.hasErrors())
+        {
+            List<FieldError> list = bindingResult.getFieldErrors();
+            for (FieldError fieldError : list)
+            {
+                //校验信息，key=属性名+Error
+                request.setAttribute(fieldError.getField()+"Error",fieldError.getDefaultMessage());
+            }
+            request.setAttribute("studentVo",studentVo);
+            return "/manage/me/edit";
+        }
         StudentVo studentLogin = (StudentVo) session.getAttribute(SysConsts.STUDENT_LOGIN_TEACHER_OBJECT_NAME);
         if (null != studentVo)
         {
@@ -250,7 +264,7 @@ public class StudentController extends BaseController
         for (StudentVo studentVo : sutdentList)
         {
             ObjectNode obj = serializer.toJson_ObjectNode(studentVo);
-            if(studentVo.getRole()!=null)
+            if (studentVo.getRole() != null)
             {
                 obj.put("role", studentVo.getRole().getName());
             }
@@ -269,7 +283,6 @@ public class StudentController extends BaseController
         result.put("rows", resultRows);
         result.put("total", studentEbi.getCount(studentQueryModel));
         return result;
-
     }
 
     /**
@@ -304,23 +317,27 @@ public class StudentController extends BaseController
      * @return 跳转学生列表页面
      */
     @RequestMapping("manage/edit.do")
-    public String doAdd(StudentVo studentVo, String classroomID, String schoolID,String roleID) throws OperationException
+    public String doAdd(@Validated(value = {AddGroup.class}) StudentVo studentVo, BindingResult bindingResult,
+                        HttpServletRequest request) throws OperationException
     {
-        SchoolVo schoolVo = schoolEbi.get(schoolID);
-        ClassroomVo classroomVo = classroomEbi.get(classroomID);
-        TroleVo troleVo = roleEbi.get(roleID);
-        studentVo.setRole(troleVo);
-        studentVo.setClassroom(classroomVo);
-        studentVo.setSchool(schoolVo);
-
-        if (!StringUtil.isEmpty(studentVo.getId()))
+        if (bindingResult.hasErrors())
         {
+            List<FieldError> list = bindingResult.getFieldErrors();
+            for (FieldError fieldError : list)
+            {
+                //校验信息，key=属性名+Error
+                request.setAttribute(fieldError.getField() + "Error" ,fieldError.getDefaultMessage());
+            }
+            request.setAttribute("studentVo",studentVo);
+            return "/manage/student/edit";
+        }
 
-            studentEbi.update(studentVo);
-        } else
+        if (null == studentVo.getId() || "".equals(studentVo.getStudentId().trim()))
         {
             studentVo.setId(IdUtil.getUUID());
             studentEbi.save(studentVo);
+        }else {
+            studentEbi.update(studentVo);
         }
         return "redirect:/student/manage";
     }

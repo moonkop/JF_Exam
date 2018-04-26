@@ -19,6 +19,8 @@ import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.format.CustomerJsonSerializer;
 import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.idutil.IdUtil;
+import com.njmsita.exam.utils.validate.validategroup.AddGroup;
+import com.njmsita.exam.utils.validate.validategroup.EditGroup;
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -28,6 +30,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -150,8 +155,19 @@ public class TeacherController extends BaseController
      * 个人信息编辑
      */
     @RequestMapping("edit.do")
-    public String doEdit(TeacherVo teacherQuery, HttpServletRequest request, HttpSession session) throws OperationException
+    public String doEdit(@Validated(value = {EditGroup.class}) TeacherVo teacherQuery, BindingResult bindingResult, HttpServletRequest request, HttpSession session) throws OperationException
     {
+        if (bindingResult.hasErrors())
+        {
+            List<FieldError> list = bindingResult.getFieldErrors();
+            for (FieldError fieldError : list)
+            {
+                //校验信息，key=属性名+Error
+                request.setAttribute(fieldError.getField()+"Error",fieldError.getDefaultMessage());
+            }
+            request.setAttribute("teacherQuery",teacherQuery);
+            return "/manage/me/edit";
+        }
         TeacherVo teacherVo = (TeacherVo) session.getAttribute(SysConsts.TEACHER_LOGIN_TEACHER_OBJECT_NAME);
         if (null != teacherQuery)
         {
@@ -297,11 +313,21 @@ public class TeacherController extends BaseController
      * @return 跳转教师列表页面
      */
     @RequestMapping("manage/edit.do")
-    public String doAdd(TeacherVo teacher, String roleID) throws OperationException
+    public String doAdd(@Validated(value = {AddGroup.class}) TeacherVo teacher, BindingResult bindingResult,
+                        HttpServletRequest request) throws OperationException
     {
-        teacher.setTroleVo(roleEbi.get(roleID));
+        if (bindingResult.hasErrors())
+        {
+            List<FieldError> list = bindingResult.getFieldErrors();
+            for (FieldError fieldError : list)
+            {
+                //校验信息，key=属性名+Error
+                request.setAttribute(fieldError.getField()+"Error",fieldError.getDefaultMessage());
+            }
+            request.setAttribute("teacher",teacher);
+            return "/manage/me/edit";
+        }
         if (null == teacher.getId() || "".equals(teacher.getId().trim()))
-
         {
             teacher.setId(IdUtil.getUUID());
             teaEbi.save(teacher);

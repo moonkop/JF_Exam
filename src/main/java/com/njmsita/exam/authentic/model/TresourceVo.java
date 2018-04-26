@@ -1,5 +1,9 @@
 package com.njmsita.exam.authentic.model;
 
+import com.njmsita.exam.utils.validate.validategroup.AddGroup;
+import com.njmsita.exam.utils.validate.validategroup.EditGroup;
+import org.hibernate.validator.constraints.NotEmpty;
+
 import javax.persistence.*;
 import java.util.Set;
 
@@ -10,18 +14,26 @@ import java.util.Set;
 @Table(name = "tresource", schema = "jf_exam", catalog = "")
 public class TresourceVo
 {
+    @NotEmpty(message = "{id.notempty}",groups = {EditGroup.class})
     private String id;
     private String icon;
+
+    @NotEmpty(message = "{name.notempty}",groups = {AddGroup.class, EditGroup.class})
     private String name;
     private String remark;
+
+    @NotEmpty(message = "{seq.notempty}",groups = {AddGroup.class, EditGroup.class})
     private Integer seq;
+
+    @NotEmpty(message = "{url.notempty}",groups = {AddGroup.class, EditGroup.class})
     private String url;
 
+    //所属资源类型 n TO 1
     private TresourcetypeVo resourcetype;
 
-    //拥有的子类
+    //拥有的子类 1 TO n
     private Set<TresourceVo> childs;
-    //所属父类
+    //所属父类  n TO 1
     private TresourceVo parent;
 
     public Set<TroleVo> getRoles()

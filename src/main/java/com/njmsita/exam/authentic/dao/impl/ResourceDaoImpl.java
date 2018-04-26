@@ -26,11 +26,11 @@ public class ResourceDaoImpl extends BaseImpl<TresourceVo> implements ResourceDa
         return (List<TresourceVo>) this.getHibernateTemplate().find(hql,id);
     }
 
-    public TresourceVo getByNameOrUrl(String name, String url)
+    public List<TresourceVo> getByNameOrUrl(String name, String url)
     {
         String hql="from TresourceVo where name=? or url=?";
         List<TresourceVo> list = (List<TresourceVo>) this.getHibernateTemplate().find(hql,name,url);
-        return list.size()>0?list.get(0):null;
+        return list;
     }
 
     public void doQbc(DetachedCriteria dc, BaseQueryVO qm)
