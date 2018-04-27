@@ -33,6 +33,51 @@
                                             <p class="form-control-static">${role.name}</p>
                                         </div>
                                     </div>
+                                    <div id="jstree">
+
+                                    </div>
+                                    <script type="text/javascript">
+                                        // AJAX异步拉取数据
+                                        var treeData = null;
+                                        var jstree = null;
+
+                                        function getJstree()
+                                        {
+                                            if (jstree == null)
+                                            {
+                                                return jstree = $.jstree.reference("#jstree");
+                                            }
+                                            return jstree;
+                                        }
+
+                                        $(document).ready(function () {
+                                            function getResourceTree()
+                                            {
+                                                $.ajax({
+                                                    url: '/manage/roleResource/tree.do?edit=0&id=${role.id}',
+                                                    success: function (res) {
+                                                        $('#jstree').jstree({
+                                                            'core': {
+                                                                'data': res
+                                                            }
+                                                        });
+                                                        setTimeout(function () {
+                                                            $('#jstree').jstree().open_all();
+                                                        }, 100);
+                                                    }
+                                                })
+                                            }
+
+                                            getResourceTree();
+
+                                        })
+
+
+                                    </script>
+
+
+
+
                                     <div class="col-sm-offset-2">
                                         <a class="btn btn-default" href="/student/manage/edit?id=${role.id}">编辑</a>
                                     </div>

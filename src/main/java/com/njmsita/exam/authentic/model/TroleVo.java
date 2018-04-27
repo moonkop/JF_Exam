@@ -8,6 +8,7 @@ import org.hibernate.annotations.FetchMode;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 /**
@@ -24,7 +25,7 @@ public class TroleVo
     private String name;
     private String remark;
 
-    @NotEmpty(message = "{seq.notempty}",groups = {AddGroup.class, EditGroup.class})
+    @NotNull(message = "{seq.notempty}",groups = {AddGroup.class, EditGroup.class})
     private Integer seq;
 
     //角色所拥有的资源 n TO m

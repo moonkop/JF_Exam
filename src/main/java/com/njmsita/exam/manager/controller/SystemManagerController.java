@@ -25,6 +25,7 @@ import com.njmsita.exam.utils.idutil.IdUtil;
 import com.njmsita.exam.utils.validate.validategroup.AddGroup;
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
+import org.apache.taglibs.standard.tag.common.core.ForEachSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -161,7 +162,7 @@ public class SystemManagerController extends BaseController
      * @return 跳转学校列表页面
      */
     @RequestMapping("school/edit.do")
-    public String doAdd(@Validated(value = {AddGroup.class}) SchoolVo school,BindingResult bindingResult,
+    public String doAdd(@Validated(value = {AddGroup.class}) SchoolVo school, BindingResult bindingResult,
                         HttpServletRequest request) throws OperationException
     {
         if (bindingResult.hasErrors())
@@ -170,9 +171,9 @@ public class SystemManagerController extends BaseController
             for (FieldError fieldError : list)
             {
                 //校验信息，key=属性名+Error
-                request.setAttribute(fieldError.getField()+"Error",fieldError.getDefaultMessage());
+                request.setAttribute(fieldError.getField() + "Error", fieldError.getDefaultMessage());
             }
-            request.setAttribute("school",school);
+            request.setAttribute("school", school);
             return "/manage/me/edit";
         }
         if (null == school.getId() || "".equals(school.getId())) //fixed empty
@@ -244,10 +245,45 @@ public class SystemManagerController extends BaseController
 
     @ResponseBody
     @RequestMapping("roleResource/tree.do")
-    public JsonNode roleResourceList(boolean edit)
+    public List<ObjectNode> roleResourceList(TroleVo troleVo, boolean edit)
     {
-        CustomerJsonSerializer serializer = new CustomerJsonSerializer(TroleVo.class, "id,name", null);
-        return null;
+        troleVo = roleEbi.get(troleVo.getId());
+        List<ObjectNode> rows = new ArrayList<>();
+        Set<TresourceVo> roleReses = troleVo.getReses();
+        List<TresourceVo> allResources = resourceEbi.getAll();
+
+
+        for (TresourceVo tresourceVo : allResources)
+        {
+            ObjectNode node = CustomerJsonSerializer.getDefaultMapper().createObjectNode();
+
+            boolean haveResource = roleReses.contains(tresourceVo);
+            //如果是编辑 则传回所有资源 如果不是 则传回拥有的资源
+            //如果不是编辑 且角色资源没有拥有这个资源 则不传回这个资源
+            if (!edit && !haveResource)
+            {
+                continue;
+            }
+            if (edit && haveResource)
+            {
+                node.put("state", CustomerJsonSerializer.getDefaultMapper().createObjectNode().put("selected", "true"));
+            }
+            if (tresourceVo.getParent() != null)
+            {
+                node.put("parent", tresourceVo.getParent().getId());
+            } else
+            {
+                node.put("parent", "#");
+            }
+            node.put("id", tresourceVo.getId())
+                    .put("text", tresourceVo.getName() + "    " + tresourceVo.getUrl());
+            rows.add(node);
+        }
+
+
+
+
+        return rows;
 
     }
 
@@ -312,7 +348,7 @@ public class SystemManagerController extends BaseController
         {
             //根据角色ID获取角色完整信息从而进行数据回显
             roleVo = roleEbi.get(roleVo.getId());
-            request.setAttribute("roleVo", roleVo);
+            request.setAttribute("role", roleVo);
 
             //获取当前角色已拥有资源
             Set<TresourceVo> roleReses = roleVo.getReses();
@@ -323,7 +359,7 @@ public class SystemManagerController extends BaseController
             otherReses.removeAll(roleReses);
             request.setAttribute("otherReses", otherReses);
         }
-        return "redirect:/manage/role/list";
+        return "/manage/role/edit";
     }
 
     /**
@@ -334,7 +370,7 @@ public class SystemManagerController extends BaseController
      * @return 跳转角色列表页面
      */
     @RequestMapping("role/edit.do")
-    public String roleDoAdd(@Validated(value = {AddGroup.class})TroleVo roleVo,BindingResult bindingResult,String[] resourceIds,
+    public String roleDoAdd(@Validated(value = {AddGroup.class}) TroleVo roleVo, BindingResult bindingResult, String[] resourceIds,
                             HttpServletRequest request) throws OperationException
     {
         if (bindingResult.hasErrors())
@@ -343,9 +379,9 @@ public class SystemManagerController extends BaseController
             for (FieldError fieldError : list)
             {
                 //校验信息，key=属性名+Error
-                request.setAttribute(fieldError.getField()+"Error",fieldError.getDefaultMessage());
+                request.setAttribute(fieldError.getField() + "Error", fieldError.getDefaultMessage());
             }
-            request.setAttribute("resourceIds",resourceIds);
+            request.setAttribute("resourceIds", resourceIds);
             return "/manage/me/edit";
         }
         if (null == roleVo.getId() || "".equals(roleVo.getId().trim()))
@@ -460,7 +496,8 @@ public class SystemManagerController extends BaseController
      * @return 跳转edit
      */
     @RequestMapping("classroom/edit")
-    public String classroomEdit(ClassroomVo classroomVo, HttpServletRequest request){
+    public String classroomEdit(ClassroomVo classroomVo, HttpServletRequest request)
+    {
         request.setAttribute("schools", schoolEbi.getAll());
         //判断前台是否传递班级ID
         if (null != classroomVo.getId() && !"".equals(classroomVo.getId().trim()))
@@ -480,7 +517,7 @@ public class SystemManagerController extends BaseController
      * @return 跳转班级列表页面
      */
     @RequestMapping("classroom/edit.do")
-    public String classroomDoAdd(@Validated(value={AddGroup.class})ClassroomVo classroomVo, BindingResult bindingResult,
+    public String classroomDoAdd(@Validated(value = {AddGroup.class}) ClassroomVo classroomVo, BindingResult bindingResult,
                                  HttpServletRequest request) throws OperationException
     {
 
@@ -490,9 +527,9 @@ public class SystemManagerController extends BaseController
             for (FieldError fieldError : list)
             {
                 //校验信息，key=属性名+Error
-                request.setAttribute(fieldError.getField()+"Error",fieldError.getDefaultMessage());
+                request.setAttribute(fieldError.getField() + "Error", fieldError.getDefaultMessage());
             }
-            request.setAttribute("classroomVo",classroomVo);
+            request.setAttribute("classroomVo", classroomVo);
             return "/manage/me/edit";
         }
         if (null == classroomVo.getId() || "".equals(classroomVo.getId().trim()))
@@ -596,11 +633,10 @@ public class SystemManagerController extends BaseController
     public List<ObjectNode> resourceTree()
     {
         List<TresourceVo> list = resourceEbi.getAll();
-        CustomerJsonSerializer serializer = new CustomerJsonSerializer(TresourceVo.class, "id,url,remark", null);
         List<ObjectNode> rows = new ArrayList<>();
         for (TresourceVo tresourceVo : list)
         {
-            ObjectNode node = serializer.toJson_ObjectNode(tresourceVo);
+            ObjectNode node = CustomerJsonSerializer.getDefaultMapper().createObjectNode();
             if (tresourceVo.getParent() != null)
             {
                 node.put("parent", tresourceVo.getParent().getId());
@@ -608,6 +644,7 @@ public class SystemManagerController extends BaseController
             {
                 node.put("parent", "#");
             }
+            node.put("id", tresourceVo.getId());
             node.put("text", tresourceVo.getName() + "    " + tresourceVo.getUrl());
             rows.add(node);
         }
@@ -653,16 +690,17 @@ public class SystemManagerController extends BaseController
     public String resourceEdit(TresourceVo tresourceVo, HttpServletRequest request)
     {
         //判断前台是否传递资源ID
-        request.setAttribute("types", resourcetypeEbi.getAll());if(!StringUtil.isEmpty(tresourceVo.getId())){
+        request.setAttribute("types", resourcetypeEbi.getAll());
+        if (!StringUtil.isEmpty(tresourceVo.getId()))
+        {
             //根据资源ID获取资源完整信息从而进行数据回显
             tresourceVo = resourceEbi.get(tresourceVo.getId());
             request.setAttribute("parent", resourceEbi.get(tresourceVo.getParent().getId()));
             request.setAttribute("resource", tresourceVo);
-        } else
-        {
-            //如果待编辑资源为空 则会传进来parent.id
-            request.setAttribute("parent", resourceEbi.get(tresourceVo.getParent().getId()));
         }
+        //如果待编辑资源为空 则会传进来parent.id
+        request.setAttribute("parent", resourceEbi.get(tresourceVo.getParent().getId()));
+
         return "/manage/resource/edit";
     }
 
@@ -674,7 +712,7 @@ public class SystemManagerController extends BaseController
      * @return 跳转资源列表页面
      */
     @RequestMapping("resource/edit.do")
-    public String resourceDoAdd(@Validated(value = {AddGroup.class})TresourceVo tresourceVo, BindingResult bindingResult,
+    public String resourceDoAdd(@Validated(value = {AddGroup.class}) TresourceVo tresourceVo, BindingResult bindingResult,
                                 HttpServletRequest request) throws OperationException
     {
 
@@ -684,9 +722,9 @@ public class SystemManagerController extends BaseController
             for (FieldError fieldError : list)
             {
                 //校验信息，key=属性名+Error
-                request.setAttribute(fieldError.getField()+"Error",fieldError.getDefaultMessage());
+                request.setAttribute(fieldError.getField() + "Error", fieldError.getDefaultMessage());
             }
-            request.setAttribute("tresourceVo",tresourceVo);
+            request.setAttribute("tresourceVo", tresourceVo);
             return "/manage/me/edit";
         }
         if (null == tresourceVo.getId() || "".equals(tresourceVo.getId().trim()))
