@@ -1,10 +1,13 @@
 package com.njmsita.exam.authentic.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.njmsita.exam.utils.validate.validategroup.AddGroup;
 import com.njmsita.exam.utils.validate.validategroup.EditGroup;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 /**
@@ -12,6 +15,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "tresource", schema = "jf_exam", catalog = "")
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class,property = "id")
 public class TresourceVo
 {
     @NotEmpty(message = "{id.notempty}",groups = {EditGroup.class})
@@ -22,7 +26,7 @@ public class TresourceVo
     private String name;
     private String remark;
 
-    @NotEmpty(message = "{seq.notempty}",groups = {AddGroup.class, EditGroup.class})
+    @NotNull(message = "{seq.notempty}",groups = {AddGroup.class, EditGroup.class})
     private Integer seq;
 
     @NotEmpty(message = "{url.notempty}",groups = {AddGroup.class, EditGroup.class})

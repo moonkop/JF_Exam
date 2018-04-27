@@ -1,5 +1,6 @@
 package com.njmsita.exam.utils.exception;
 
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -34,6 +35,7 @@ public class UnifyExceptionResoler implements HandlerExceptionResolver
         try
         {
             //TODO 定义错误码500 页面
+            response.setStatus(500);
             request.getRequestDispatcher("/WEB-INF/jsp/error/500.jsp").forward(request,response);
         } catch (ServletException e)
         {

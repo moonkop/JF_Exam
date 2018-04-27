@@ -34,6 +34,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
@@ -370,7 +371,7 @@ public class SystemManagerController extends BaseController
      * @return 跳转角色列表页面
      */
     @RequestMapping("role/edit.do")
-    public String roleDoAdd(@Validated(value = {AddGroup.class}) TroleVo roleVo, BindingResult bindingResult, String[] resourceIds,
+    public String roleDoAdd(@Validated(value = {AddGroup.class}) TroleVo roleVo, BindingResult bindingResult, @RequestParam(value = "resourceIds[]") String[] resourceIds,
                             HttpServletRequest request) throws OperationException
     {
         if (bindingResult.hasErrors())
@@ -729,6 +730,7 @@ public class SystemManagerController extends BaseController
         }
         if (null == tresourceVo.getId() || "".equals(tresourceVo.getId().trim()))
         {
+            //todo 能不能让这个id用户定义 不用uuid呢
             tresourceVo.setId(IdUtil.getUUID());
             resourceEbi.save(tresourceVo);
         } else

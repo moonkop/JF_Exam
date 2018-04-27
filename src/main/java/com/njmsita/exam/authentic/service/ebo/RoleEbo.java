@@ -112,7 +112,8 @@ public class RoleEbo implements RoleEbi
     {
         TroleVo temp=roleDao.getByName(troleVo.getName());
         if(null!=temp){
-            if(temp.getId()!=troleVo.getId()){
+       //     if(temp.getId()!=troleVo.getId()){
+            if(!temp.getId().equals(troleVo.getId())){
                 throw new OperationException("对不起，当前角色:"+troleVo.getName()+"已存在。请勿重复操作！");
             }
         }

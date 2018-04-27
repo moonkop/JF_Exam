@@ -247,7 +247,9 @@ public class StudentController extends BaseController
     @RequestMapping("manage/list.do")
     public JsonNode StudentList(StudentQueryModel studentQueryModel, Integer pageNum, Integer pageSize)
     {
-        CustomerJsonSerializer serializer = new CustomerJsonSerializer(TeacherVo.class, "name,id,studentId", null);
+        CustomerJsonSerializer serializer = new CustomerJsonSerializer(StudentVo.class,
+                "name,id,studentId",
+                null);
         List<StudentVo> sutdentList = studentEbi.getAll(studentQueryModel, pageNum, pageSize);
         List<ObjectNode> rowsList = new ArrayList<>();
         ObjectNode result = CustomerJsonSerializer.getDefaultMapper().createObjectNode();

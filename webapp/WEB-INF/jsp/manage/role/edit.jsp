@@ -94,6 +94,9 @@
                                                             "plugins": [
                                                                 "checkbox"
                                                             ],
+                                                            "checkbox": {
+                                                                "three_state": false,//父子级别级联选择
+                                                            },
                                                         });
                                                         setTimeout(function () {
                                                             $('#jstree').jstree().open_all();

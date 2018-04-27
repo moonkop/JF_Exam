@@ -1,5 +1,7 @@
 package com.njmsita.exam.authentic.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.njmsita.exam.base.BaseQueryVO;
 import com.njmsita.exam.utils.validate.validategroup.AddGroup;
 import com.njmsita.exam.utils.validate.validategroup.EditGroup;
@@ -16,6 +18,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "trole", schema = "jf_exam", catalog = "")
+
 public class TroleVo
 {
     @NotEmpty(message = "{id.notempty}",groups = {EditGroup.class})
