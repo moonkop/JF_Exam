@@ -17,6 +17,7 @@ import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.exception.FormatException;
 import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.format.CustomerJsonSerializer;
+import com.njmsita.exam.utils.format.IPUtil;
 import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.idutil.IdUtil;
 import com.njmsita.exam.utils.validate.validategroup.AddGroup;
@@ -90,19 +91,7 @@ public class TeacherController extends BaseController
     {
 
         //获取IP地址
-        String loginIp = request.getHeader("x-forwarded-for");
-        if (loginIp == null || loginIp.length() == 0 || "unknown".equalsIgnoreCase(loginIp))
-        {
-            loginIp = request.getHeader("Proxy-Client-IP");
-        }
-        if (loginIp == null || loginIp.length() == 0 || "unknown".equalsIgnoreCase(loginIp))
-        {
-            loginIp = request.getHeader("WL-Proxy-Client-IP");
-        }
-        if (loginIp == null || loginIp.length() == 0 || "unknown".equalsIgnoreCase(loginIp))
-        {
-            loginIp = request.getRemoteAddr();
-        }
+        String loginIp = IPUtil.getIP(request);
 
         //验证用户名密码
         TeacherVo loginTea = teaEbi.login(teaVo.getTeacherId(), teaVo.getPassword(), loginIp);
@@ -120,8 +109,8 @@ public class TeacherController extends BaseController
                 sbd.append(resource.getUrl());
                 sbd.append(",");
             }
-            loginTea.setTeacherRes(sbd.toString());
-            session.setAttribute(SysConsts.TEACHER_LOGIN_TEACHER_OBJECT_NAME, loginTea);
+            loginTea.setResources(sbd.toString());
+            session.setAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME, loginTea);
             Hibernate.initialize(loginTea.getTroleVo());
             return "redirect:/teacher/welcome";
         }
@@ -168,14 +157,14 @@ public class TeacherController extends BaseController
             request.setAttribute("teacherQuery",teacherQuery);
             return "/manage/me/edit";
         }
-        TeacherVo teacherVo = (TeacherVo) session.getAttribute(SysConsts.TEACHER_LOGIN_TEACHER_OBJECT_NAME);
+        TeacherVo teacherVo = (TeacherVo) session.getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
         if (null != teacherQuery)
         {
             teacherQuery.setId(teacherVo.getId());
             //不能直接进行物理更新
             TeacherVo newteacher = teaEbi.updateByLogic(teacherQuery, System.currentTimeMillis());
             //重新将数据保存到session用于修改成功后的回显
-            session.setAttribute(SysConsts.TEACHER_LOGIN_TEACHER_OBJECT_NAME, newteacher);
+            session.setAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME, newteacher);
         }
         return "redirect:/manage/detail";
     }
@@ -187,7 +176,7 @@ public class TeacherController extends BaseController
     public String loginOut(HttpSession session)
     {
         System.out.println("log out");
-        System.out.println(session.getAttribute(SysConsts.TEACHER_LOGIN_TEACHER_OBJECT_NAME));
+        System.out.println(session.getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME));
         //将session中的已登陆用户至空
         //TODO 有疑问？？？？？？？？
         session.invalidate();

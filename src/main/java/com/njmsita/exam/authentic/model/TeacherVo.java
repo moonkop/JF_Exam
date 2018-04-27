@@ -17,7 +17,7 @@ import javax.validation.constraints.NotNull;
  */
 @Entity
 @Table(name = "teacher", schema = "jf_exam")
-public class TeacherVo
+public class TeacherVo extends UserModel
 {
     @NotEmpty(message = "{id.notempty}",groups = {EditGroup.class})
     private String id;
@@ -41,7 +41,6 @@ public class TeacherVo
     private String lastLoginIp;
     private Long createtime;
     private Long modifytime;
-    private String teacherRes;
 
     @NotNull(message = "{gender.notempty}",groups = {AddGroup.class, EditGroup.class})
     private Integer gender;
@@ -58,18 +57,6 @@ public class TeacherVo
         this.troleVo = troleVo;
     }
 
-    public String getTeacherRes()
-    {
-        return teacherRes;
-    }
-
-    public void setTeacherRes(String teacherRes)
-    {
-        this.teacherRes = teacherRes;
-    }
-
-
-
     @Id
     @Column(name = "id")
     public String getId()
@@ -80,6 +67,7 @@ public class TeacherVo
     public void setId(String id)
     {
         this.id = id;
+        this.setUuid(id);
     }
 
     @Basic

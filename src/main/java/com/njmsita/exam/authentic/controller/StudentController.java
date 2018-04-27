@@ -18,6 +18,7 @@ import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.exception.FormatException;
 import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.format.CustomerJsonSerializer;
+import com.njmsita.exam.utils.format.IPUtil;
 import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.idutil.IdUtil;
 import com.njmsita.exam.utils.validate.validategroup.AddGroup;
@@ -97,19 +98,7 @@ public class StudentController extends BaseController
     {
 
         //获取IP地址
-        String loginIp = request.getHeader("x-forwarded-for");
-        if (loginIp == null || loginIp.length() == 0 || "unknown".equalsIgnoreCase(loginIp))
-        {
-            loginIp = request.getHeader("Proxy-Client-IP");
-        }
-        if (loginIp == null || loginIp.length() == 0 || "unknown".equalsIgnoreCase(loginIp))
-        {
-            loginIp = request.getHeader("WL-Proxy-Client-IP");
-        }
-        if (loginIp == null || loginIp.length() == 0 || "unknown".equalsIgnoreCase(loginIp))
-        {
-            loginIp = request.getRemoteAddr();
-        }
+        String loginIp = IPUtil.getIP(request);
 
         //验证用户名密码
         StudentVo loginStudent = studentEbi.login(student.getStudentId(), student.getPassword(), schoolId, loginIp);
@@ -127,8 +116,8 @@ public class StudentController extends BaseController
                 sbd.append(resource.getUrl());
                 sbd.append(",");
             }
-            loginStudent.setStudentRes(sbd.toString());
-            session.setAttribute(SysConsts.STUDENT_LOGIN_TEACHER_OBJECT_NAME, loginStudent);
+            loginStudent.setResources(sbd.toString());
+            session.setAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME, loginStudent);
 
             //TODO 首次登陆强制跳转个人信息页面添加班级信息？还是直接批量导入时设置班级
             //fixme 应该是批量导入时设置班级
@@ -177,7 +166,7 @@ public class StudentController extends BaseController
             request.setAttribute("studentVo",studentVo);
             return "/manage/me/edit";
         }
-        StudentVo studentLogin = (StudentVo) session.getAttribute(SysConsts.STUDENT_LOGIN_TEACHER_OBJECT_NAME);
+        StudentVo studentLogin = (StudentVo) session.getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
         if (null != studentVo)
         {
             studentVo.setId(studentLogin.getId());
@@ -187,7 +176,7 @@ public class StudentController extends BaseController
             //不能直接进行物理更新
             StudentVo newStudent = studentEbi.updateByLogic(studentVo, System.currentTimeMillis());
             //重新将数据保存到session用于修改成功后的回显
-            session.setAttribute(SysConsts.TEACHER_LOGIN_TEACHER_OBJECT_NAME, newStudent);
+            session.setAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME, newStudent);
         }
         return "redirect:/student/detail";
     }
@@ -200,7 +189,7 @@ public class StudentController extends BaseController
     {
         //将session中的已登陆用户至空
         //TODO 有疑问？？？？？？？？
-        session.setAttribute(SysConsts.STUDENT_LOGIN_TEACHER_OBJECT_NAME, null);
+        session.setAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME, null);
         return "redirect:/student/login";
     }
 

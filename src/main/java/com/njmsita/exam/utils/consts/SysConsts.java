@@ -26,14 +26,14 @@ public class SysConsts {
 
 
 	/**
-	 * 教师登录session常量名
+	 * 登录用户session常量名
 	 */
-	public static final String TEACHER_LOGIN_TEACHER_OBJECT_NAME ="loginTeacher";
+	public static final String USER_LOGIN_TEACHER_OBJECT_NAME ="loginUser";
 
 	/**
-	 * 学生登录session常量名
+	 * 全资源存储常量名
 	 */
-	public static final String STUDENT_LOGIN_TEACHER_OBJECT_NAME ="loginStudent";
+	public static final String ALL_RESOUCERS_AUTHENTIC_URL_NAME ="allResource";
 
 
 	/**

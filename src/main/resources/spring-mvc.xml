@@ -15,7 +15,7 @@
 		@DateTimeFormat ,@Controller ,@Valid ,@RequestBody ,@ResponseBody等 -->
 	<mvc:annotation-driven validator="validator" conversion-service="cconversion-service"/>
 
-	<!--=============================-校验器===========================================-->
+	<!-- =============================-校验器=========================================== -->
 	<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
 		<property name="providerClass" value="org.hibernate.validator.HibernateValidator"/>
 		<!--不设置则默认为classpath下的 ValidationMessages.properties -->
@@ -34,18 +34,18 @@
 		<property name="defaultEncoding" value="utf-8"/>
 		<property name="cacheSeconds" value="120"/>
 	</bean>
-	<!--=============================-校验器==END======================================-->
+	<!-- =============================-校验器==END====================================== -->
 
-	<!--=================解决spring与pringmvc注解冲突===================================-->
+	<!-- =================解决spring与pringmvc注解冲突=================================== -->
 	<context:component-scan base-package="com.njmsita.exam.*.controller">
 		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
 		<context:include-filter type="annotation" expression="org.springframework.web.bind.annotation.ControllerAdvice"/>
 		<!--<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Service" />-->
 	</context:component-scan>
-	<!--===============解决spring与pringmvc注解冲突====END===============================-->
+	<!-- ===============解决spring与pringmvc注解冲突====END=============================== -->
 
 
-	<!--====================================视图解析器================================== -->
+	<!-- ====================================视图解析器=================================== -->
 	<bean
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<!--配置JSTL表达式 -->
@@ -55,10 +55,10 @@
 		<!-- 后缀 -->
 		<property name="suffix" value=".jsp" />
 	</bean>
-	<!--=================================视图解析器====END============================== -->
+	<!-- =================================视图解析器====END============================== -->
 
 
-	<!--======================================文件上传================================== -->
+	<!-- ======================================文件上传================================== -->
 	<bean class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
 		<!-- 设置上传文件的最大尺寸为5MB -->
 		<property name="maxUploadSize">
@@ -69,14 +69,28 @@
 	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
 		<property name="maxUploadSize" value="10000000"/>
 	</bean>
-	<!--===================================文件上传=====END============================= -->
+	<!-- ===================================文件上传=====END============================= -->
 
 
+	<!-- ========================================拦截器================================== -->
+	<!--<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/**"/>
+			<bean class="com.njmsita.exam.utils.interceptor.LoginInterceptor"></bean>
+		</mvc:interceptor>
+		<mvc:interceptor>
+			<mvc:mapping path="/**"/>
+			<bean class="com.njmsita.exam.utils.interceptor.AuthenticInterceptor"></bean>
+		</mvc:interceptor>
+	</mvc:interceptors>-->
 
-	<!--=================================统一异常处理器================================== -->
+	<!-- ====================================拦截器====END=============================== -->
+
+
+	<!-- =================================统一异常处理器================================== -->
 	<bean class="com.njmsita.exam.utils.exception.UnifyExceptionResoler"/>
 
-	<!--==============================统一异常处理器====END============================== -->
+	<!-- ==============================统一异常处理器====END============================== -->
 
 	<!-- 配置静态资源 -->
 	<mvc:resources location="dist" mapping="dist/**" />

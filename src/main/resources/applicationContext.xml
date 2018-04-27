@@ -49,6 +49,7 @@
                 <value>classpath:mapping/QuestionVo.hbm.xml</value>
                 <value>classpath:mapping/QuestionTypeVo.hbm.xml</value>
                 <value>classpath:mapping/SubjectVo.hbm.xml</value>
+                <value>classpath:mapping/LogVo.hbm.xml</value>
             </list>
 		</property>
 		<property name="annotatedClasses">
@@ -63,6 +64,7 @@
                 <value>com.njmsita.exam.manager.model.QuestionVo</value>
                 <value>com.njmsita.exam.manager.model.QuestionTypeVo</value>
                 <value>com.njmsita.exam.manager.model.SubjectVo</value>
+                <value>com.njmsita.exam.manager.model.LogVo</value>
             </list>
 		</property>
 	</bean>
