@@ -110,9 +110,12 @@ public class RoleEbo implements RoleEbi
 
     public void update(TroleVo troleVo, String[] resourceIds) throws OperationException
     {
-//        if(null!=roleDao.getByName(troleVo.getName())){
-//            throw new OperationException("对不起，当前角色:"+troleVo.getName()+"已存在。请勿重复操作！");
-//        }
+        TroleVo temp=roleDao.getByName(troleVo.getName());
+        if(null!=temp){
+            if(temp.getId()!=troleVo.getId()){
+                throw new OperationException("对不起，当前角色:"+troleVo.getName()+"已存在。请勿重复操作！");
+            }
+        }
         bindingReses(troleVo,resourceIds);
         roleDao.update(troleVo);
     }
