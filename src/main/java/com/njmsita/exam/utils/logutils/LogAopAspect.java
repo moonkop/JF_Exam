@@ -38,8 +38,6 @@ public class LogAopAspect
         LogVo log = new LogVo();
         //获取登录用户账户
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        UserModel user = (UserModel) request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
-        log.setUserId(user.getUuid());
         //获取系统时间
         Long time=System.currentTimeMillis();
         log.setTime(time);
@@ -84,6 +82,9 @@ public class LogAopAspect
                 SystemLogAnnotation systemlog = method.getAnnotation(SystemLogAnnotation.class);
                 log.setModule(systemlog.module());
                 log.setMethod(systemlog.methods());
+                UserModel user = (UserModel) request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
+                log.setUserId(user.getUuid());
+
                 try
                 {
                     object = pjp.proceed();
