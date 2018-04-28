@@ -12,7 +12,7 @@
         <property name="remark" column="REMARK"/>
         <property name="seq" column="SEQ"/>
 
-        <set name="reses" table="trole_tresource" lazy="false">
+        <set name="reses" table="trole_tresource" lazy="false" cascade="save-update,delete" >
             <key column="TROLE_ID"></key>
             <many-to-many column="TRESOURCE_ID" class="com.njmsita.exam.authentic.model.TresourceVo"/>
         </set>

@@ -15,7 +15,6 @@ public interface RoleDao extends BaseDao<TroleVo>
      * @param roleVo    需要删除的角色
      */
     public void delete(TroleVo roleVo);
-
     /**
      * 根据名称查询角色
      * @param name      角色名称

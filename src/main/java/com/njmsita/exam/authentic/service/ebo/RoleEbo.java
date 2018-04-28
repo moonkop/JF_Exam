@@ -39,6 +39,7 @@ public class RoleEbo implements RoleEbi
 
     /**
      * 废弃
+     *
      * @param troleVo
      */
     public void save(TroleVo troleVo)
@@ -58,7 +59,7 @@ public class RoleEbo implements RoleEbi
 
     public List<TroleVo> getAll(BaseQueryVO qm, Integer pageNum, Integer pageSize)
     {
-        return roleDao.getAll(qm,pageNum,pageSize);
+        return roleDao.getAll(qm, pageNum, pageSize);
     }
 
     public Integer getCount(BaseQueryVO qm)
@@ -68,6 +69,7 @@ public class RoleEbo implements RoleEbi
 
     /**
      * 废弃
+     *
      * @param troleVo
      */
     public void update(TroleVo troleVo)
@@ -78,11 +80,13 @@ public class RoleEbo implements RoleEbi
 
     public void delete(TroleVo roleVo) throws OperationException
     {
-        List<TeacherVo> teachers=teacherDao.getAllByRoleId(roleVo.getId());
-        List<TeacherVo> students=studentDao.getAllByRoleId(roleVo.getId());
-        if(0==teachers.size()&&students.size()==0){
+        List<TeacherVo> teachers = teacherDao.getAllByRoleId(roleVo.getId());
+        List<TeacherVo> students = studentDao.getAllByRoleId(roleVo.getId());
+        if (0 == teachers.size() && students.size() == 0)
+        {
             roleDao.delete(roleVo);
-        }else{
+        } else
+        {
             throw new OperationException("该角色有关联的用户，不能删除");
         }
 
@@ -101,33 +105,40 @@ public class RoleEbo implements RoleEbi
 
     public void save(TroleVo troleVo, String[] resourceIds) throws OperationException
     {
-        if(null!=roleDao.getByName(troleVo.getName())){
-            throw new OperationException("对不起，当前角色:"+troleVo.getName()+"已存在。请勿重复操作！");
+        if (null != roleDao.getByName(troleVo.getName()))
+        {
+            throw new OperationException("对不起，当前角色:" + troleVo.getName() + "已存在。请勿重复操作！");
         }
-        bindingReses(troleVo,resourceIds);
+        bindingReses(troleVo, resourceIds);
         roleDao.save(troleVo);
     }
 
     public void update(TroleVo troleVo, String[] resourceIds) throws OperationException
     {
-        TroleVo temp=roleDao.getByName(troleVo.getName());
-        if(null!=temp){
-       //     if(temp.getId()!=troleVo.getId()){
-            if(!temp.getId().equals(troleVo.getId())){
-                throw new OperationException("对不起，当前角色:"+troleVo.getName()+"已存在。请勿重复操作！");
-            }
+
+        if (null != roleDao.getByName(troleVo.getName()) &&
+                !roleDao.getByName(troleVo.getName()).getId().equals(troleVo.getId())
+                )
+        {
+            throw new OperationException("对不起，当前角色:" + troleVo.getName() + "已存在。请勿重复操作！");
         }
-        bindingReses(troleVo,resourceIds);
-        roleDao.update(troleVo);
+        TroleVo troleVoRaw = roleDao.get(troleVo.getId());
+        bindingReses(troleVoRaw, resourceIds);
+        // roleDao.update(troleVo);
+        troleVoRaw.setName(troleVo.getName());
+        troleVoRaw.setRemark(troleVo.getRemark());
+        troleVoRaw.setSeq(troleVo.getSeq());
+
     }
 
     private void bindingReses(TroleVo troleVo, String[] resourceIds) throws OperationException
     {
-        Set<TresourceVo> resourceSet=new HashSet<>();
+        Set<TresourceVo> resourceSet = new HashSet<>();
         for (String resourceId : resourceIds)
         {
-            TresourceVo temp=resourceDao.get(resourceId);
-            if(temp==null){
+            TresourceVo temp = resourceDao.get(resourceId);
+            if (temp == null)
+            {
                 throw new OperationException("您所选的资源中有部分不存在，请勿非法操作");
             }
             resourceSet.add(temp);

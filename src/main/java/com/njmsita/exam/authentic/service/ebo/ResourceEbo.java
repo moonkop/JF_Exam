@@ -64,8 +64,14 @@ public class ResourceEbo implements ResourceEbi
         if(resourceDao.getByNameOrUrl(tresourceVo.getName(),tresourceVo.getUrl()).size()>1){
             throw new OperationException("资源名称或URL已存在，请核对后重试");
         }
-        resourceDao.update(tresourceVo);
-
+        TresourceVo temp= resourceDao.get(tresourceVo.getId());
+        temp.setResourcetype(tresourceVo.getResourcetype());
+        temp.setChilds(tresourceVo.getChilds());
+        temp.setName(tresourceVo.getName());
+        temp.setParent(tresourceVo.getParent());
+        temp.setRemark(tresourceVo.getRemark());
+        temp.setSeq(tresourceVo.getSeq());
+        temp.setUrl(tresourceVo.getUrl());
     }
 
     public void delete(TresourceVo tresourceVo)

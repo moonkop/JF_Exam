@@ -370,6 +370,7 @@ public class SystemManagerController extends BaseController
      *
      * @return 跳转角色列表页面
      */
+    @ResponseBody
     @RequestMapping("role/edit.do")
     public String roleDoAdd(@Validated(value = {AddGroup.class}) TroleVo roleVo, BindingResult bindingResult, @RequestParam(value = "resourceIds[]") String[] resourceIds,
                             HttpServletRequest request) throws OperationException
@@ -393,7 +394,7 @@ public class SystemManagerController extends BaseController
         {
             roleEbi.update(roleVo, resourceIds);
         }
-        return "redirect:/manage/role/list";
+        return "redirect:/manage/role";
     }
 
 
