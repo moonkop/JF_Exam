@@ -4,7 +4,6 @@ import com.njmsita.exam.base.BaseQueryVO;
 import com.njmsita.exam.manager.dao.dao.LogDao;
 import com.njmsita.exam.manager.model.LogVo;
 import com.njmsita.exam.manager.service.ebi.LogEbi;
-import com.njmsita.exam.utils.exception.OperationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

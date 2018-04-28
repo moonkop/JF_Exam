@@ -126,6 +126,19 @@
       <version>5.4.1.Final</version>
     </dependency>
 
+    <!--整合JUnit-->
+    <dependency>
+
+      <groupId>org.springframework</groupId>
+
+      <artifactId>spring-test</artifactId>
+
+      <version>4.2.4.RELEASE</version>
+
+      <scope>test</scope>
+
+    </dependency>
+
 
     <!-- springframework 4 dependencies end -->
   <!--  <dependency>

@@ -66,4 +66,10 @@ public class StudentDaoImpl extends BaseImpl<StudentVo> implements StudentDao
         }
     }
 
+    @Override
+    public void test()
+    {
+        System.out.println("=========================测试专用线=====================================");
+    }
+
 }
