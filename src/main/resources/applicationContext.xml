@@ -18,6 +18,7 @@
 	<!-- 注解事务驱动 -->
 	<tx:annotation-driven transaction-manager="transactionManager"/>
 
+
 	<context:component-scan base-package="com.njmsita.exam"/>
 	
 	<!-- 事务管理器 -->
@@ -35,7 +36,7 @@
 				<prop key="hibernate.format_sql">false</prop>
 				<prop key="hibernate.connection.url">jdbc:mysql://192.168.1.166:3306/jf_exam</prop>
 				<prop key="hibernate.connection.driver_class">com.mysql.jdbc.Driver</prop>
-            </props>
+			</props>
 		</property>
 		<property name="mappingLocations">
 			<list>
@@ -50,7 +51,8 @@
                 <value>classpath:mapping/QuestionTypeVo.hbm.xml</value>
                 <value>classpath:mapping/SubjectVo.hbm.xml</value>
                 <value>classpath:mapping/LogVo.hbm.xml</value>
-            </list>
+				<value>classpath:mapping/LogVo.hbm.xml</value>
+			</list>
 		</property>
 		<property name="annotatedClasses">
 			<list>

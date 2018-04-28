@@ -20,6 +20,7 @@ import com.njmsita.exam.utils.format.CustomerJsonSerializer;
 import com.njmsita.exam.utils.format.IPUtil;
 import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.idutil.IdUtil;
+import com.njmsita.exam.utils.logutils.SystemLogAnnotation;
 import com.njmsita.exam.utils.validate.validategroup.AddGroup;
 import com.njmsita.exam.utils.validate.validategroup.EditGroup;
 import net.sf.json.JSON;
@@ -124,6 +125,7 @@ public class TeacherController extends BaseController
      * 查看个人详细信息
      */
     @RequestMapping("detail")
+    @SystemLogAnnotation(module = "教师个人",methods = "查看个人详情")
     public String detail()
     {
         //前台数据从session中获取

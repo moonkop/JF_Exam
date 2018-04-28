@@ -8,10 +8,12 @@
         <id name="id" column="id">
             <generator class="native"/>
         </id>
-        <property name="operator" column="operator"/>
-        <property name="brief" column="brief"/>
-        <property name="detail" column="detail"/>
+        <property name="userId" column="userId"/>
+        <property name="module" column="module"/>
+        <property name="method" column="method"/>
         <property name="ip" column="ip"/>
         <property name="time" column="time"/>
+        <property name="commite" column="commite"/>
+        <property name="responseTime" column="response_time"/>
     </class>
 </hibernate-mapping>

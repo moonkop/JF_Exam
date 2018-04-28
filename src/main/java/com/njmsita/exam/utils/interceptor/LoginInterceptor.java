@@ -1,12 +1,7 @@
 package com.njmsita.exam.utils.interceptor;
 
 import com.njmsita.exam.authentic.model.UserModel;
-import com.njmsita.exam.manager.model.LogVo;
-import com.njmsita.exam.manager.service.ebi.LogEbi;
 import com.njmsita.exam.utils.consts.SysConsts;
-import com.njmsita.exam.utils.format.IPUtil;
-import com.njmsita.exam.utils.idutil.IdUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -24,7 +19,6 @@ public class LoginInterceptor implements HandlerInterceptor
     //执行handler之前
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object o) throws Exception
     {
-
         //得到请求的URL
         String url = request.getRequestURI();
         ServletContext sc=request.getServletContext();
@@ -53,6 +47,5 @@ public class LoginInterceptor implements HandlerInterceptor
     //执行handler之后
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object o, Exception e) throws Exception
     {
-
     }
 }

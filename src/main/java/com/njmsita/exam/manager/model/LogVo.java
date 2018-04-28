@@ -7,11 +7,13 @@ import javax.persistence.*;
 public class LogVo
 {
     private int id;
-    private String operator;
-    private String brief;
-    private String detail;
+    private String userId;
+    private String module;
+    private String method;
     private String ip;
     private Long time;
+    private String commite;
+    private Long responseTime;
 
     @Id
     @Column(name = "id")
@@ -26,39 +28,39 @@ public class LogVo
     }
 
     @Basic
-    @Column(name = "operator")
-    public String getOperator()
+    @Column(name = "userId")
+    public String getUserId()
     {
-        return operator;
+        return userId;
     }
 
-    public void setOperator(String operator)
+    public void setUserId(String userId)
     {
-        this.operator = operator;
-    }
-
-    @Basic
-    @Column(name = "brief")
-    public String getBrief()
-    {
-        return brief;
-    }
-
-    public void setBrief(String brief)
-    {
-        this.brief = brief;
+        this.userId = userId;
     }
 
     @Basic
-    @Column(name = "detail")
-    public String getDetail()
+    @Column(name = "module")
+    public String getModule()
     {
-        return detail;
+        return module;
     }
 
-    public void setDetail(String detail)
+    public void setModule(String module)
     {
-        this.detail = detail;
+        this.module = module;
+    }
+
+    @Basic
+    @Column(name = "method")
+    public String getMethod()
+    {
+        return method;
+    }
+
+    public void setMethod(String method)
+    {
+        this.method = method;
     }
 
     @Basic
@@ -85,15 +87,41 @@ public class LogVo
         this.time = time;
     }
 
+    @Basic
+    @Column(name = "commite")
+    public String getCommite()
+    {
+        return commite;
+    }
+
+    public void setCommite(String commite)
+    {
+        this.commite = commite;
+    }
+
+    @Basic
+    @Column(name = "response_time")
+    public Long getResponseTime()
+    {
+        return responseTime;
+    }
+
+    public void setResponseTime(Long responseTime)
+    {
+        this.responseTime = responseTime;
+    }
+
     @Override
     public int hashCode()
     {
         int result = id;
-        result = 31 * result + (operator != null ? operator.hashCode() : 0);
-        result = 31 * result + (brief != null ? brief.hashCode() : 0);
-        result = 31 * result + (detail != null ? detail.hashCode() : 0);
+        result = 31 * result + (userId != null ? userId.hashCode() : 0);
+        result = 31 * result + (module != null ? module.hashCode() : 0);
+        result = 31 * result + (method != null ? method.hashCode() : 0);
         result = 31 * result + (ip != null ? ip.hashCode() : 0);
         result = 31 * result + (time != null ? time.hashCode() : 0);
+        result = 31 * result + (commite != null ? commite.hashCode() : 0);
+        result = 31 * result + (responseTime != null ? responseTime.hashCode() : 0);
         return result;
     }
 
@@ -106,11 +134,13 @@ public class LogVo
         LogVo logVo = (LogVo) o;
 
         if (id != logVo.id) return false;
-        if (operator != null ? !operator.equals(logVo.operator) : logVo.operator != null) return false;
-        if (brief != null ? !brief.equals(logVo.brief) : logVo.brief != null) return false;
-        if (detail != null ? !detail.equals(logVo.detail) : logVo.detail != null) return false;
+        if (userId != null ? !userId.equals(logVo.userId) : logVo.userId != null) return false;
+        if (module != null ? !module.equals(logVo.module) : logVo.module != null) return false;
+        if (method != null ? !method.equals(logVo.method) : logVo.method != null) return false;
         if (ip != null ? !ip.equals(logVo.ip) : logVo.ip != null) return false;
         if (time != null ? !time.equals(logVo.time) : logVo.time != null) return false;
+        if (commite != null ? !commite.equals(logVo.commite) : logVo.commite != null) return false;
+        if (responseTime != null ? !responseTime.equals(logVo.responseTime) : logVo.responseTime != null) return false;
 
         return true;
     }

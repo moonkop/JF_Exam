@@ -56,4 +56,7 @@ public interface StudentDao extends BaseDao<StudentVo>
      * @param students      学生信息集合
      */
     public void bulkInput(List<StudentVo> students);
+
+
+    public void test();
 }

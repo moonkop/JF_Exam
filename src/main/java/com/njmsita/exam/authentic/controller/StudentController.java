@@ -21,6 +21,7 @@ import com.njmsita.exam.utils.format.CustomerJsonSerializer;
 import com.njmsita.exam.utils.format.IPUtil;
 import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.idutil.IdUtil;
+import com.njmsita.exam.utils.logutils.SystemLogAnnotation;
 import com.njmsita.exam.utils.validate.validategroup.AddGroup;
 import com.njmsita.exam.utils.validate.validategroup.EditGroup;
 import com.njmsita.exam.utils.validate.validategroup.StudentAddGroup;
@@ -94,6 +95,7 @@ public class StudentController extends BaseController
      * @return
      */
     @RequestMapping("login.do")
+    @SystemLogAnnotation(module = "学生个人",methods = "登录")
     public String login(StudentVo student, String schoolId, HttpServletRequest request, HttpSession session)
     {
 
