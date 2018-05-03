@@ -27,7 +27,7 @@ public class AllResourcesLoadListener implements ServletContextListener
         StringBuilder sbf = new StringBuilder();
         for (TresourceVo tresourceVo : resourceList)
         {
-            sbf.append(tresourceVo.getUrl());
+            sbf.append("["+tresourceVo.getUrl()+"]");
             sbf.append(",");
         }
         //放入sc中

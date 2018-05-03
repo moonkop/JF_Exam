@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- * 班级久层实现类
+ * 班级持久层实现类
  */
 @Repository
 public class ClassroomDaoImpl extends BaseImpl<ClassroomVo> implements ClassroomDao

@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * 学校业务层接口
+ * 日志业务层接口
  */
 public interface LogEbi extends BaseEbi<LogVo>
 {

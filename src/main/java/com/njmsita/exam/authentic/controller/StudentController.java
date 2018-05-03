@@ -259,7 +259,6 @@ public class StudentController extends BaseController
      * @return
      */
     @RequestMapping("list")
-    @SystemLogAnnotation(module = "学生管理",methods = "查询列表")
     public String toStudentList(StudentQueryModel studentQueryModel, Integer pageNum, Integer pageSize, HttpServletRequest request)
     {
         //获取学校列表

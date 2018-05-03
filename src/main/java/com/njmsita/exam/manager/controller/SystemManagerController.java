@@ -11,7 +11,6 @@ import com.njmsita.exam.authentic.service.ebi.ResourceEbi;
 import com.njmsita.exam.authentic.service.ebi.ResourcetypeEbi;
 import com.njmsita.exam.authentic.service.ebi.RoleEbi;
 import com.njmsita.exam.manager.model.ClassroomVo;
-import com.njmsita.exam.manager.model.LogVo;
 import com.njmsita.exam.manager.model.SchoolVo;
 import com.njmsita.exam.manager.model.querymodel.ClassroomQueryModel;
 import com.njmsita.exam.manager.model.querymodel.LogQueryModel;
@@ -20,6 +19,7 @@ import com.njmsita.exam.manager.service.ebi.ClassroomEbi;
 import com.njmsita.exam.manager.service.ebi.LogEbi;
 import com.njmsita.exam.manager.service.ebi.SchoolEbi;
 import com.njmsita.exam.base.BaseController;
+import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.format.CustomerJsonSerializer;
 import com.njmsita.exam.utils.format.StringUtil;
@@ -45,7 +45,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -93,7 +92,6 @@ public class SystemManagerController extends BaseController
     //todo 以后将请求方法 doEdit doAdd 之类的写成 edit.do 包括list 现有的已经改好了
     //TODO 请求转发问题，没有pageNum   pageSize参数
     @RequestMapping("school/list.do")
-    @SystemLogAnnotation(module = "学校管理",methods = "列表查询")
     public String toSchoolList(SchoolQueryModel schoolQueryModel, Integer pageNum, Integer pageSize, Model model)
     {
 
@@ -327,7 +325,6 @@ public class SystemManagerController extends BaseController
      * @return
      */
     @RequestMapping("role/list")
-    @SystemLogAnnotation(module = "角色管理",methods = "角色列表查询")
     public String toRoleList(TroleQueryModel roleQueryModel, Model model, Integer pageNum, Integer pageSize)
     {
 
@@ -353,7 +350,6 @@ public class SystemManagerController extends BaseController
      * @return 跳转edit
      */
     @RequestMapping("role/edit")
-    @SystemLogAnnotation(module = "角色管理",methods = "角色添加/修改")
     public String roleEdit(TroleVo roleVo, HttpServletRequest request)
     {
         //获取所有资源
@@ -479,7 +475,6 @@ public class SystemManagerController extends BaseController
      *
      * @return
      */
-    @SystemLogAnnotation(module = "班级管理",methods = "班级列表查询")
     @RequestMapping("classroom/list")
     public String toClassroomList(ClassroomQueryModel classroomQueryModel, Model model, Integer pageNum, Integer pageSize)
     {
@@ -674,7 +669,7 @@ public class SystemManagerController extends BaseController
      * @return
      */
     @RequestMapping("resource/list")
-    @SystemLogAnnotation(module = "资源管理",methods = "资源列表查询")
+
     public String toresourceList(ResourceQueryModel resourceQueryModel, Model model, Integer pageNum, Integer pageSize)
     {
 
@@ -743,9 +738,10 @@ public class SystemManagerController extends BaseController
         }
         if (null == tresourceVo.getId() || "".equals(tresourceVo.getId().trim()))
         {
-            //todo 能不能让这个id用户定义 不用uuid呢
-            tresourceVo.setId(IdUtil.getUUID());
+            tresourceVo.setId(tresourceVo.getUrl().substring(1).replace("/","_"));
             resourceEbi.save(tresourceVo);
+            String allRes= (String) request.getServletContext().getAttribute(SysConsts.ALL_RESOUCERS_AUTHENTIC_URL_NAME);
+            request.getServletContext().setAttribute(SysConsts.ALL_RESOUCERS_AUTHENTIC_URL_NAME,allRes+",["+tresourceVo.getUrl()+",");
         } else
         {
             resourceEbi.update(tresourceVo);

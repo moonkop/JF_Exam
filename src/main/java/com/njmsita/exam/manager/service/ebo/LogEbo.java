@@ -18,7 +18,7 @@ import java.io.*;
 import java.util.List;
 
 /**
- * 学校业务层实现类
+ * 日志业务层实现类
  */
 @Service
 @Transactional
@@ -77,6 +77,8 @@ public class LogEbo implements LogEbi
         logVo.setUserId(loginUser.getUuid());
         logVo.setCommite("用户登陆");
         logVo.setMethod("登陆");
+        logVo.setUserRole(loginUser.getUuid());
+        logVo.setRealName(loginUser.getRealName());
         logVo.setIp(loginIp);
         logVo.setModule("用户个人");
         logVo.setTime(System.currentTimeMillis());
@@ -120,9 +122,11 @@ public class LogEbo implements LogEbi
         out.write("用户ID,用户姓名,用户身份,IP地址,操作模块,操作方法,具体描述,相应时间,携带参数,操作时间\r\n");
         for (LogVo logVo : logList)
         {
+            String arguments=logVo.getArgument();
+            arguments=arguments.replaceAll(",",";");
             out.write(logVo.getUserId()+","+logVo.getRealName()+","+logVo.getUserRole()+","+
                     logVo.getIp()+","+logVo.getModule()+","+logVo.getMethod()+","+logVo.getCommite()+","+
-                    logVo.getResponseTime()+","+logVo.getArgument()+","+logVo.getTime()+"\r\n");
+                    logVo.getResponseTime()+","+arguments+","+FormatUtil.formatDateTime(logVo.getTime())+"\r\n");
         }
         out.flush();
         out.close();

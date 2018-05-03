@@ -1,12 +1,22 @@
 package com.njmsita.exam.manager.model;
 
+import com.njmsita.exam.utils.validate.validategroup.AddGroup;
+import com.njmsita.exam.utils.validate.validategroup.EditGroup;
+import org.hibernate.validator.constraints.NotEmpty;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "subject", schema = "jf_exam", catalog = "")
+/**
+ * 学科实体模型
+ */
 public class SubjectVo
 {
-    private byte id;
+    @NotNull(message = "{id.notempty}",groups = {EditGroup.class})
+    private Byte id;
+    @NotEmpty(message = "{name.notempty}",groups = {AddGroup.class,EditGroup.class})
     private String name;
 
     @Id

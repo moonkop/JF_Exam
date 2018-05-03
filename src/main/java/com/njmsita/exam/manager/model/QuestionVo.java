@@ -1,22 +1,85 @@
 package com.njmsita.exam.manager.model;
 
+import com.njmsita.exam.authentic.model.TeacherVo;
+import com.njmsita.exam.utils.validate.validategroup.AddGroup;
+import com.njmsita.exam.utils.validate.validategroup.EditGroup;
+import org.hibernate.validator.constraints.NotEmpty;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "question", schema = "jf_exam", catalog = "")
+/**
+ * 题目实体模型
+ */
 public class QuestionVo
 {
+    @NotEmpty(message = "{id.notempty}",groups = {EditGroup.class})
     private String id;
     private Byte isPrivate;
     private Long createTime;
     private String code;
+    @NotEmpty(message = "{outline.notempty}",groups = {AddGroup.class,EditGroup.class})
     private String outline;
     private String option;
     private Byte answer;
-    private String topicId;
-    private String createTeacherId;
-    private byte questionTypeId;
-    private byte subjectId;
+
+    //所属知识点  n TO 1
+    private TopicVo topic;
+    //出题人   n TO 1
+    private TeacherVo teacher;
+    //题型    n TO 1
+    private QuestionTypeVo questionType;
+    //所属科目  n TO 1
+    private SubjectVo subject;
+
+    @Basic
+    @Column(name = "topic_id")
+    public TopicVo getTopic()
+    {
+        return topic;
+    }
+
+    public void setTopic(TopicVo topic)
+    {
+        this.topic = topic;
+    }
+
+    @Basic
+    @Column(name = "create_teacher_id")
+    public TeacherVo getTeacher()
+    {
+        return teacher;
+    }
+
+    public void setTeacher(TeacherVo teacher)
+    {
+        this.teacher = teacher;
+    }
+
+    @Basic
+    @Column(name = "question_type_id")
+    public QuestionTypeVo getQuestionType()
+    {
+        return questionType;
+    }
+
+    public void setQuestionType(QuestionTypeVo questionType)
+    {
+        this.questionType = questionType;
+    }
+
+    @Basic
+    @Column(name = "subject_id")
+    public SubjectVo getSubject()
+    {
+        return subject;
+    }
+
+    public void setSubject(SubjectVo subject)
+    {
+        this.subject = subject;
+    }
 
     @Id
     @Column(name = "id")
@@ -102,54 +165,6 @@ public class QuestionVo
         this.answer = answer;
     }
 
-    @Basic
-    @Column(name = "topic_id")
-    public String getTopicId()
-    {
-        return topicId;
-    }
-
-    public void setTopicId(String topicId)
-    {
-        this.topicId = topicId;
-    }
-
-    @Basic
-    @Column(name = "create_teacher_id")
-    public String getCreateTeacherId()
-    {
-        return createTeacherId;
-    }
-
-    public void setCreateTeacherId(String createTeacherId)
-    {
-        this.createTeacherId = createTeacherId;
-    }
-
-    @Basic
-    @Column(name = "question_type_id")
-    public byte getQuestionTypeId()
-    {
-        return questionTypeId;
-    }
-
-    public void setQuestionTypeId(byte questionTypeId)
-    {
-        this.questionTypeId = questionTypeId;
-    }
-
-    @Basic
-    @Column(name = "subject_id")
-    public byte getSubjectId()
-    {
-        return subjectId;
-    }
-
-    public void setSubjectId(byte subjectId)
-    {
-        this.subjectId = subjectId;
-    }
-
     public int hashCode()
     {
         int result = id != null ? id.hashCode() : 0;
@@ -159,10 +174,6 @@ public class QuestionVo
         result = 31 * result + (outline != null ? outline.hashCode() : 0);
         result = 31 * result + (option != null ? option.hashCode() : 0);
         result = 31 * result + (answer != null ? answer.hashCode() : 0);
-        result = 31 * result + (topicId != null ? topicId.hashCode() : 0);
-        result = 31 * result + (createTeacherId != null ? createTeacherId.hashCode() : 0);
-        result = 31 * result + (int) questionTypeId;
-        result = 31 * result + (int) subjectId;
         return result;
     }
 
@@ -173,8 +184,6 @@ public class QuestionVo
 
         QuestionVo that = (QuestionVo) o;
 
-        if (questionTypeId != that.questionTypeId) return false;
-        if (subjectId != that.subjectId) return false;
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (isPrivate != null ? !isPrivate.equals(that.isPrivate) : that.isPrivate != null) return false;
         if (createTime != null ? !createTime.equals(that.createTime) : that.createTime != null) return false;
@@ -182,9 +191,6 @@ public class QuestionVo
         if (outline != null ? !outline.equals(that.outline) : that.outline != null) return false;
         if (option != null ? !option.equals(that.option) : that.option != null) return false;
         if (answer != null ? !answer.equals(that.answer) : that.answer != null) return false;
-        if (topicId != null ? !topicId.equals(that.topicId) : that.topicId != null) return false;
-        if (createTeacherId != null ? !createTeacherId.equals(that.createTeacherId) : that.createTeacherId != null)
-            return false;
 
         return true;
     }
@@ -199,10 +205,10 @@ public class QuestionVo
                 ", outline='" + outline + '\'' +
                 ", option='" + option + '\'' +
                 ", answer=" + answer +
-                ", topicId='" + topicId + '\'' +
-                ", createTeacherId='" + createTeacherId + '\'' +
-                ", questionTypeId=" + questionTypeId +
-                ", subjectId=" + subjectId +
+                ", topic=" + topic +
+                ", teacher=" + teacher +
+                ", questionType=" + questionType +
+                ", subject=" + subject +
                 '}';
     }
 }
