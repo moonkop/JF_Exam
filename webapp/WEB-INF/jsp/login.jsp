@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>SB Admin 2 - Bootstrap Admin Theme</title>
+    <title>机蜂在线考试系统</title>
 <!-- start header.html-->
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -33,7 +33,7 @@
 <body>
 <div class="container">
     <div class="row login-title">
-        机锋在线考试系统
+        机蜂在线考试系统
     </div>
     <div class="row">
         <div class="col-md-4 col-md-offset-4">

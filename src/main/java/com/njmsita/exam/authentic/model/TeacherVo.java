@@ -6,6 +6,7 @@ import com.njmsita.exam.utils.validate.annotation.IDCardNoValifatorAnnocation;
 import com.njmsita.exam.utils.validate.annotation.TelephoneValidatorAnnotation;
 import com.njmsita.exam.utils.validate.validategroup.AddGroup;
 import com.njmsita.exam.utils.validate.validategroup.EditGroup;
+import com.njmsita.exam.utils.validate.validategroup.SelfEditGroup;
 import com.njmsita.exam.utils.validate.validategroup.SetPassword;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -29,13 +30,13 @@ public class TeacherVo extends UserModel
     @NotEmpty(message = "{student.or.teacher.name.notempty}",groups = {AddGroup.class, EditGroup.class})
     private String name;
 
-    @Email(message = "{email.formar.error}",groups = {AddGroup.class,EditGroup.class})
+    @Email(message = "{email.formar.error}",groups = {AddGroup.class,EditGroup.class, SelfEditGroup.class})
     private String mail;
 
     @IDCardNoValifatorAnnocation(groups = {AddGroup.class,EditGroup.class})
     private String idCardNo;
 
-    @TelephoneValidatorAnnotation(groups = {AddGroup.class,EditGroup.class})
+    @TelephoneValidatorAnnotation(groups = {AddGroup.class,EditGroup.class,SelfEditGroup.class})
     private String telephone;
 
     @NotEmpty(message = "{password.notempty}",groups = {SetPassword.class})

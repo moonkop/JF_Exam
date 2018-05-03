@@ -240,6 +240,7 @@ public class SystemManagerController extends BaseController
 
     @ResponseBody
     @RequestMapping("role/list.do")
+    @SystemLogAnnotation(module = "角色管理",methods = "角色列表查询")
     public JsonNode roleList(TroleQueryModel troleQueryModel, Integer pageNum, Integer pageSize)
     {
         CustomerJsonSerializer serializer = new CustomerJsonSerializer(TroleVo.class, "id,name", null);
@@ -258,7 +259,7 @@ public class SystemManagerController extends BaseController
 
     @ResponseBody
     @RequestMapping("roleResource/tree.do")
-    @SystemLogAnnotation(module = "角色管理",methods = "角色查看/编辑")
+    @SystemLogAnnotation(module = "角色管理",methods = "角色资源查看")
     public List<ObjectNode> roleResourceList(TroleVo troleVo, boolean edit)
     {
         troleVo = roleEbi.get(troleVo.getId());
@@ -365,15 +366,6 @@ public class SystemManagerController extends BaseController
             //根据角色ID获取角色完整信息从而进行数据回显
             roleVo = roleEbi.get(roleVo.getId());
             request.setAttribute("role", roleVo);
-
-            //获取当前角色已拥有资源
-            Set<TresourceVo> roleReses = roleVo.getReses();
-            request.setAttribute("roleReses", roleReses);
-
-            //获取当前角色未拥有资源
-            Set<TresourceVo> otherReses = roleVo.getReses();
-            otherReses.removeAll(roleReses);
-            request.setAttribute("otherReses", otherReses);
         }
         return "/manage/role/edit";
     }
@@ -387,7 +379,7 @@ public class SystemManagerController extends BaseController
      */
     @ResponseBody
     @RequestMapping("role/edit.do")
-    @SystemLogAnnotation(module = "角色管理",methods = "角色添加")
+    @SystemLogAnnotation(module = "角色管理",methods = "角色添加/修改")
     public String roleDoAdd(@Validated(value = {AddGroup.class}) TroleVo roleVo, BindingResult bindingResult, @RequestParam(value = "resourceIds[]") String[] resourceIds,
                             HttpServletRequest request) throws OperationException
     {
@@ -428,7 +420,6 @@ public class SystemManagerController extends BaseController
 
         if (null != roleVo.getId() && !"".equals(roleVo.getId().trim()))
         {
-
             roleEbi.delete(roleVo);
         }
 

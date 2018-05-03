@@ -24,6 +24,7 @@ import com.njmsita.exam.utils.idutil.IdUtil;
 import com.njmsita.exam.utils.logutils.SystemLogAnnotation;
 import com.njmsita.exam.utils.validate.validategroup.AddGroup;
 import com.njmsita.exam.utils.validate.validategroup.EditGroup;
+import com.njmsita.exam.utils.validate.validategroup.SelfEditGroup;
 import com.njmsita.exam.utils.validate.validategroup.SetPassword;
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
@@ -153,7 +154,7 @@ public class TeacherController extends BaseController
      */
     @RequestMapping("edit.do")
     @SystemLogAnnotation(module = "教师个人",methods = "个人信息编辑")
-    public String doEdit(@Validated(value = {EditGroup.class}) TeacherVo teacherQuery, BindingResult bindingResult, HttpServletRequest request, HttpSession session) throws OperationException
+    public String doEdit(@Validated(value = {SelfEditGroup.class}) TeacherVo teacherQuery, BindingResult bindingResult, HttpServletRequest request, HttpSession session) throws OperationException
     {
         if (bindingResult.hasErrors())
         {
@@ -164,7 +165,7 @@ public class TeacherController extends BaseController
                 request.setAttribute(fieldError.getField()+"Error",fieldError.getDefaultMessage());
             }
             request.setAttribute("teacherQuery",teacherQuery);
-            return "/manage/me/edit";
+            return "redirect:/teacher/edit";
         }
         TeacherVo teacherVo = (TeacherVo) session.getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
         if (null != teacherQuery)
@@ -175,7 +176,7 @@ public class TeacherController extends BaseController
             //重新将数据保存到session用于修改成功后的回显
             session.setAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME, newteacher);
         }
-        return "redirect:/manage/detail";
+        return "redirect:/teacher/detail";
     }
 
     /**
@@ -205,12 +206,12 @@ public class TeacherController extends BaseController
      * 跳转修改密码页面
      * @return
      */
-    @RequestMapping("manage/toSetPassword")
+    @RequestMapping("setpassword")
     public String toSetPassword()
     {
         //TODO 需要提供修改密码页面
 
-        return null;
+        return "/manage/me/setpassword";
     }
 
     /**
@@ -220,7 +221,7 @@ public class TeacherController extends BaseController
      * @param session
      * @return
      */
-    @RequestMapping("manage/setPassword")
+    @RequestMapping("setpassword.do")
     @SystemLogAnnotation(module = "教师个人",methods = "修改密码")
     public String modifyPassword(String oldPassword,String newPassword,HttpSession session) throws OperationException
     {

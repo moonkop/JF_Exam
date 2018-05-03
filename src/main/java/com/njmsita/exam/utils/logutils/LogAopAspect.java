@@ -64,7 +64,10 @@ public class LogAopAspect
                 sb.append("，");
             }
         }
-        log.setArgument(sb.toString().substring(0,sb.length()-1));
+        if (args.length!=0)
+        {
+            log.setArgument(sb.toString().substring(0,sb.length()-1));
+        }
         // 拦截的放参数类型
         Signature sig = pjp.getSignature();
         MethodSignature msig = null;
