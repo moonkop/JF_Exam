@@ -3,7 +3,6 @@ package com.njmsita.exam.authentic.controller;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.njmsita.exam.authentic.model.StudentVo;
-import com.njmsita.exam.authentic.model.TeacherVo;
 import com.njmsita.exam.authentic.model.TresourceVo;
 import com.njmsita.exam.authentic.model.querymodel.StudentQueryModel;
 import com.njmsita.exam.authentic.service.ebi.ResourceEbi;
@@ -13,6 +12,7 @@ import com.njmsita.exam.base.BaseController;
 import com.njmsita.exam.manager.model.ClassroomVo;
 import com.njmsita.exam.manager.model.SchoolVo;
 import com.njmsita.exam.manager.service.ebi.ClassroomEbi;
+import com.njmsita.exam.manager.service.ebi.LogEbi;
 import com.njmsita.exam.manager.service.ebi.SchoolEbi;
 import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.exception.FormatException;
@@ -22,7 +22,6 @@ import com.njmsita.exam.utils.format.IPUtil;
 import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.idutil.IdUtil;
 import com.njmsita.exam.utils.logutils.SystemLogAnnotation;
-import com.njmsita.exam.utils.validate.validategroup.AddGroup;
 import com.njmsita.exam.utils.validate.validategroup.EditGroup;
 import com.njmsita.exam.utils.validate.validategroup.StudentAddGroup;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -32,7 +31,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -63,7 +61,8 @@ public class StudentController extends BaseController
     private SchoolEbi schoolEbi;
     @Autowired
     private ClassroomEbi classroomEbi;
-    private ObjectError error;
+    @Autowired
+    private LogEbi logEbi;
 
 
     /**
@@ -95,7 +94,6 @@ public class StudentController extends BaseController
      * @return
      */
     @RequestMapping("login.do")
-    @SystemLogAnnotation(module = "学生个人",methods = "登录")
     public String login(StudentVo student, String schoolId, HttpServletRequest request, HttpSession session)
     {
 
@@ -120,6 +118,9 @@ public class StudentController extends BaseController
             }
             loginStudent.setResources(sbd.toString());
             session.setAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME, loginStudent);
+
+            //记录登录日志
+            logEbi.login(loginStudent, loginIp);
 
             //TODO 首次登陆强制跳转个人信息页面添加班级信息？还是直接批量导入时设置班级
             //fixme 应该是批量导入时设置班级
@@ -155,6 +156,7 @@ public class StudentController extends BaseController
      * 个人信息编辑
      */
     @RequestMapping("edit.do")
+    @SystemLogAnnotation(module = "学生个人",methods = "个人信息编辑")
     public String doEdit(@Validated(value = {EditGroup.class}) StudentVo studentVo, BindingResult bindingResult, String classroomId, HttpServletRequest request, HttpSession session) throws OperationException
     {
         if (bindingResult.hasErrors())
@@ -187,6 +189,7 @@ public class StudentController extends BaseController
      * 退出登陆
      */
     @RequestMapping("logout")
+    @SystemLogAnnotation(module = "学生个人",methods = "退出登录")
     public String loginOut(HttpSession session)
     {
         //将session中的已登陆用户至空
@@ -195,6 +198,38 @@ public class StudentController extends BaseController
         return "redirect:/student/login";
     }
 
+    /**
+     * 跳转修改密码页面
+     * @return
+     */
+    @RequestMapping("manage/toSetPassword")
+    public String toSetPassword()
+    {
+        //TODO 需要提供修改密码页面
+
+        return null;
+    }
+
+    /**
+     * 修改密码
+     * @param oldPassword   原始密码
+     * @param newPassword   新密码
+     * @param session
+     * @return
+     */
+    @RequestMapping("manage/modifyPassword")
+    @SystemLogAnnotation(module = "学生个人",methods = "修改密码")
+    public String modifyPassword(String oldPassword,String newPassword,HttpSession session) throws OperationException
+    {
+
+        StudentVo loginStudent= (StudentVo) session.getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
+        if(!loginStudent.getPassword().equals(oldPassword)){
+            //todo 提供一下视图
+            return "";
+        }
+        studentEbi.modifyPassword(loginStudent,oldPassword,newPassword);
+        return "redirect:welcome";
+    }
     //------------------------------------------StudentManager----------------------------------------------
     //------------------------------------------StudentManager----------------------------------------------
     //------------------------------------------StudentManager----------------------------------------------
@@ -223,8 +258,8 @@ public class StudentController extends BaseController
      * @param request
      * @return
      */
-    //TODO fixed 异步请求分页 在下面
     @RequestMapping("list")
+    @SystemLogAnnotation(module = "学生管理",methods = "查询列表")
     public String toStudentList(StudentQueryModel studentQueryModel, Integer pageNum, Integer pageSize, HttpServletRequest request)
     {
         //获取学校列表
@@ -311,6 +346,7 @@ public class StudentController extends BaseController
      * @return 跳转学生列表页面
      */
     @RequestMapping("manage/edit.do")
+    @SystemLogAnnotation(module = "学生管理",methods = "学生添加/修改")
     public String doAdd(@Validated(value = {StudentAddGroup.class}) StudentVo studentVo, BindingResult bindingResult,
                         HttpServletRequest request) throws OperationException
     {
@@ -343,6 +379,7 @@ public class StudentController extends BaseController
      * @return 跳转学生列表页面
      */
     @RequestMapping("manage/delete.do")
+    @SystemLogAnnotation(module = "学生管理",methods = "删除学生")
     public String delete(StudentVo studentVo) throws OperationException
     {
         studentEbi.delete(studentVo);
@@ -350,6 +387,7 @@ public class StudentController extends BaseController
     }
 
     @RequestMapping("import.do")
+    @SystemLogAnnotation(module = "学生管理",methods = "批量导入")
     public String inputXls(MultipartFile studentInfo, String schoolId) throws FormatException, OperationException, IOException
     {
         if (studentInfo != null)
@@ -365,6 +403,32 @@ public class StudentController extends BaseController
         return "redirect:/student/list?pageNum=1&pageSize=10";
     }
 
+    /**
+     * 密码重置
+     * @param studentVo 学生信息
+     * @param bindingResult
+     * @param request
+     * @return
+     */
+    @RequestMapping("manage/resetPassword.do")
+    @SystemLogAnnotation(module = "学生管理",methods = "密码重置")
+    public String resetPassword(@Validated(value =EditGroup.class) StudentVo studentVo, BindingResult bindingResult,
+                                HttpServletRequest request)
+    {
+        if (bindingResult.hasErrors())
+        {
+            List<FieldError> list = bindingResult.getFieldErrors();
+            for (FieldError fieldError : list)
+            {
+                //校验信息，key = 属性名+Error
+                request.setAttribute(fieldError.getField()+"Error",fieldError.getDefaultMessage());
+            }
+            request.setAttribute("student", studentVo);
+            return "/manage/me/edit";
+        }
+        studentEbi.resetPassword(studentVo);
+        return "";
+    }
 
     //-------------------------------StudentManager-----------END-------------------------------------------
     //-------------------------------StudentManager-----------END-------------------------------------------

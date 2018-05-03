@@ -2,7 +2,6 @@ package com.njmsita.exam.manager.controller;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.BooleanNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.njmsita.exam.authentic.model.TresourceVo;
 import com.njmsita.exam.authentic.model.TroleVo;
@@ -12,22 +11,27 @@ import com.njmsita.exam.authentic.service.ebi.ResourceEbi;
 import com.njmsita.exam.authentic.service.ebi.ResourcetypeEbi;
 import com.njmsita.exam.authentic.service.ebi.RoleEbi;
 import com.njmsita.exam.manager.model.ClassroomVo;
+import com.njmsita.exam.manager.model.LogVo;
 import com.njmsita.exam.manager.model.SchoolVo;
 import com.njmsita.exam.manager.model.querymodel.ClassroomQueryModel;
+import com.njmsita.exam.manager.model.querymodel.LogQueryModel;
 import com.njmsita.exam.manager.model.querymodel.SchoolQueryModel;
 import com.njmsita.exam.manager.service.ebi.ClassroomEbi;
+import com.njmsita.exam.manager.service.ebi.LogEbi;
 import com.njmsita.exam.manager.service.ebi.SchoolEbi;
 import com.njmsita.exam.base.BaseController;
 import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.format.CustomerJsonSerializer;
 import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.idutil.IdUtil;
+import com.njmsita.exam.utils.logutils.SystemLogAnnotation;
 import com.njmsita.exam.utils.validate.validategroup.AddGroup;
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
-import org.apache.taglibs.standard.tag.common.core.ForEachSupport;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -38,6 +42,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -58,7 +66,8 @@ public class SystemManagerController extends BaseController
     private ClassroomEbi classroomEbi;
     @Autowired
     private ResourceEbi resourceEbi;
-
+    @Autowired
+    private LogEbi logEbi;
     @Autowired
     private ResourcetypeEbi resourcetypeEbi;
 //======================================================================================================================
@@ -84,6 +93,7 @@ public class SystemManagerController extends BaseController
     //todo 以后将请求方法 doEdit doAdd 之类的写成 edit.do 包括list 现有的已经改好了
     //TODO 请求转发问题，没有pageNum   pageSize参数
     @RequestMapping("school/list.do")
+    @SystemLogAnnotation(module = "学校管理",methods = "列表查询")
     public String toSchoolList(SchoolQueryModel schoolQueryModel, Integer pageNum, Integer pageSize, Model model)
     {
 
@@ -163,6 +173,7 @@ public class SystemManagerController extends BaseController
      * @return 跳转学校列表页面
      */
     @RequestMapping("school/edit.do")
+    @SystemLogAnnotation(module = "学校管理",methods = "学校添加/修改")
     public String doAdd(@Validated(value = {AddGroup.class}) SchoolVo school, BindingResult bindingResult,
                         HttpServletRequest request) throws OperationException
     {
@@ -197,6 +208,7 @@ public class SystemManagerController extends BaseController
      * @return 跳转学校列表页面
      */
     @RequestMapping("school/delete.do")
+    @SystemLogAnnotation(module = "学校管理",methods = "学校删除")
     public String schoolDelete(SchoolVo school) throws OperationException
     {
 
@@ -246,6 +258,7 @@ public class SystemManagerController extends BaseController
 
     @ResponseBody
     @RequestMapping("roleResource/tree.do")
+    @SystemLogAnnotation(module = "角色管理",methods = "角色查看/编辑")
     public List<ObjectNode> roleResourceList(TroleVo troleVo, boolean edit)
     {
         troleVo = roleEbi.get(troleVo.getId());
@@ -313,6 +326,7 @@ public class SystemManagerController extends BaseController
      * @return
      */
     @RequestMapping("role/list")
+    @SystemLogAnnotation(module = "角色管理",methods = "角色列表查询")
     public String toRoleList(TroleQueryModel roleQueryModel, Model model, Integer pageNum, Integer pageSize)
     {
 
@@ -338,6 +352,7 @@ public class SystemManagerController extends BaseController
      * @return 跳转edit
      */
     @RequestMapping("role/edit")
+    @SystemLogAnnotation(module = "角色管理",methods = "角色添加/修改")
     public String roleEdit(TroleVo roleVo, HttpServletRequest request)
     {
         //获取所有资源
@@ -372,6 +387,7 @@ public class SystemManagerController extends BaseController
      */
     @ResponseBody
     @RequestMapping("role/edit.do")
+    @SystemLogAnnotation(module = "角色管理",methods = "角色添加")
     public String roleDoAdd(@Validated(value = {AddGroup.class}) TroleVo roleVo, BindingResult bindingResult, @RequestParam(value = "resourceIds[]") String[] resourceIds,
                             HttpServletRequest request) throws OperationException
     {
@@ -406,6 +422,7 @@ public class SystemManagerController extends BaseController
      * @return 跳转角色列表页面
      */
     @RequestMapping("role/delete")
+    @SystemLogAnnotation(module = "角色管理",methods = "角色删除")
     public String roleDelete(TroleVo roleVo) throws OperationException
     {
 
@@ -471,7 +488,7 @@ public class SystemManagerController extends BaseController
      *
      * @return
      */
-
+    @SystemLogAnnotation(module = "班级管理",methods = "班级列表查询")
     @RequestMapping("classroom/list")
     public String toClassroomList(ClassroomQueryModel classroomQueryModel, Model model, Integer pageNum, Integer pageSize)
     {
@@ -519,6 +536,7 @@ public class SystemManagerController extends BaseController
      * @return 跳转班级列表页面
      */
     @RequestMapping("classroom/edit.do")
+    @SystemLogAnnotation(module = "班级管理",methods = "班级添加/编辑")
     public String classroomDoAdd(@Validated(value = {AddGroup.class}) ClassroomVo classroomVo, BindingResult bindingResult,
                                  HttpServletRequest request) throws OperationException
     {
@@ -554,6 +572,7 @@ public class SystemManagerController extends BaseController
      * @return 跳转班级列表页面
      */
     @RequestMapping("classroom/delete")
+    @SystemLogAnnotation(module = "班级管理",methods = "班级删除")
     public String classroomDelete(ClassroomVo classroomVo) throws OperationException
     {
 
@@ -664,6 +683,7 @@ public class SystemManagerController extends BaseController
      * @return
      */
     @RequestMapping("resource/list")
+    @SystemLogAnnotation(module = "资源管理",methods = "资源列表查询")
     public String toresourceList(ResourceQueryModel resourceQueryModel, Model model, Integer pageNum, Integer pageSize)
     {
 
@@ -714,6 +734,7 @@ public class SystemManagerController extends BaseController
      * @return 跳转资源列表页面
      */
     @RequestMapping("resource/edit.do")
+    @SystemLogAnnotation(module = "资源管理",methods = "资源添加/修改")
     public String resourceDoAdd(@Validated(value = {AddGroup.class}) TresourceVo tresourceVo, BindingResult bindingResult,
                                 HttpServletRequest request) throws OperationException
     {
@@ -750,6 +771,7 @@ public class SystemManagerController extends BaseController
      * @return 跳转资源列表页面
      */
     @RequestMapping("resource/delete.do")
+    @SystemLogAnnotation(module = "资源管理",methods = "资源删除")
     public String resourceDelete(TresourceVo tresourceVo) throws OperationException
     {
 
@@ -768,4 +790,47 @@ public class SystemManagerController extends BaseController
     //-----------------------------------resourceManager-----------END------------------------------------------
     //-----------------------------------resourceManager-----------END------------------------------------------
     //-----------------------------------resourceManager-----------END------------------------------------------
+
+//======================================================================================================================
+
+    //--------------------------------------------------LogManager----------------------------------------------
+    //--------------------------------------------------LogManager----------------------------------------------
+    //--------------------------------------------------LogManager----------------------------------------------
+    //--------------------------------------------------LogManager----------------------------------------------
+    //--------------------------------------------------LogManager----------------------------------------------
+    //--------------------------------------------------LogManager----------------------------------------------
+
+    /**
+     * 导出指定时间内的日志信息
+     *
+     * @param logQueryModel     该模型存放了资源属性
+     * @return
+     */
+    @RequestMapping("log/export")
+    @SystemLogAnnotation(module = "日志管理",methods = "日志导出")
+    public ResponseEntity<byte[]> exportLog(LogQueryModel logQueryModel,HttpServletRequest request) throws Exception
+    {
+//        String path=request.getServletContext().getContextPath();
+        String path=request.getServletContext().getRealPath("/WEB-INF/log");
+        //根据查询条件查询
+        File file= logEbi.getAll(logQueryModel, path);
+        byte[] body=null;
+        InputStream inputStream =new FileInputStream(file);
+        body=new byte[inputStream.available()];
+        inputStream.read(body);
+        HttpHeaders headers=new HttpHeaders();
+        headers.add("Content-Disposition", "attchement;filename=" + file.getName());
+        HttpStatus status =HttpStatus.OK;
+        ResponseEntity<byte[]> entity=new ResponseEntity<>(body,headers,status);
+        inputStream.close();
+        file.delete();
+        return entity;
+    }
+
+    //--------------------------------------------LogManager-----END--------------------------------------------
+    //--------------------------------------------LogManager-----END--------------------------------------------
+    //--------------------------------------------LogManager-----END--------------------------------------------
+    //--------------------------------------------LogManager-----END--------------------------------------------
+    //--------------------------------------------LogManager-----END--------------------------------------------
+    //--------------------------------------------LogManager-----END--------------------------------------------
 }

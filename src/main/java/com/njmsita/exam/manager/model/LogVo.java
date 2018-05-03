@@ -14,6 +14,47 @@ public class LogVo
     private Long time;
     private String commite;
     private Long responseTime;
+    private String argument;
+    private String realName;
+    private String userRole;
+
+
+    @Basic
+    @Column(name = "realName")
+    public String getRealName()
+    {
+        return realName;
+    }
+
+    public void setRealName(String realName)
+    {
+        this.realName = realName;
+    }
+
+
+    @Basic
+    @Column(name = "userRole")
+    public String getUserRole()
+    {
+        return userRole;
+    }
+
+    public void setUserRole(String userRole)
+    {
+        this.userRole = userRole;
+    }
+
+    @Basic
+    @Column(name = "argument")
+    public String getArgument()
+    {
+        return argument;
+    }
+
+    public void setArgument(String argument)
+    {
+        this.argument = argument;
+    }
 
     @Id
     @Column(name = "id")
@@ -111,7 +152,6 @@ public class LogVo
         this.responseTime = responseTime;
     }
 
-    @Override
     public int hashCode()
     {
         int result = id;
@@ -125,7 +165,6 @@ public class LogVo
         return result;
     }
 
-    @Override
     public boolean equals(Object o)
     {
         if (this == o) return true;
@@ -143,5 +182,20 @@ public class LogVo
         if (responseTime != null ? !responseTime.equals(logVo.responseTime) : logVo.responseTime != null) return false;
 
         return true;
+    }
+
+    public String toString()
+    {
+        return "LogVo{" +
+                "id=" + id +
+                ", userId='" + userId + '\'' +
+                ", module='" + module + '\'' +
+                ", method='" + method + '\'' +
+                ", ip='" + ip + '\'' +
+                ", time=" + time +
+                ", commite='" + commite + '\'' +
+                ", responseTime=" + responseTime +
+                ", argument='" + argument + '\'' +
+                '}';
     }
 }

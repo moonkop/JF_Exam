@@ -33,7 +33,6 @@ public class SubjectVo
         this.name = name;
     }
 
-    @Override
     public int hashCode()
     {
         int result = (int) id;
@@ -41,7 +40,6 @@ public class SubjectVo
         return result;
     }
 
-    @Override
     public boolean equals(Object o)
     {
         if (this == o) return true;
@@ -53,5 +51,13 @@ public class SubjectVo
         if (name != null ? !name.equals(subjectVo.name) : subjectVo.name != null) return false;
 
         return true;
+    }
+
+    public String toString()
+    {
+        return "SubjectVo{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
     }
 }

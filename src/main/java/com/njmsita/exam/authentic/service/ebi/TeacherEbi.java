@@ -33,4 +33,17 @@ public interface TeacherEbi extends BaseEbi<TeacherVo>
      */
     public void bulkInputBySheet(HSSFSheet sheet) throws OperationException, FormatException;
 
+    /**
+     * 密码重置
+     * @param teacherVo
+     */
+    public void resetPassword(TeacherVo teacherVo);
+
+    /**
+     * 修改密码
+     * @param loginTea      当前用户
+     * @param ordPassword   原始密码
+     * @param newPassword   新密码
+     */
+    public void modifyPassword(TeacherVo loginTea, String ordPassword, String newPassword) throws OperationException;
 }

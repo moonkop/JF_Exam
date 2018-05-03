@@ -25,11 +25,11 @@ public class LogAopAspect
     @Autowired
     private LogEbi logEbi;
 
-    //配置接入点,如果不知道怎么配置,可以百度一下规则
+    //定义一个切入点
     @Pointcut("execution(* com.njmsita.exam.*.controller..*.*(..))")
     private void controllerAspect()
     {
-    }//定义一个切入点
+    }
 
     @Around("controllerAspect()")
     public Object around(ProceedingJoinPoint pjp) throws Throwable
@@ -51,6 +51,20 @@ public class LogAopAspect
         String methodName = pjp.getSignature().getName();
         // 拦截的方法参数
         Object[] args = pjp.getArgs();
+
+        StringBuilder sb=new StringBuilder();
+        //绑定参数
+        for (Object arg : args)
+        {
+            if(arg!=null){
+                Class argClass=arg.getClass();
+                String argName=argClass.getName();
+                String argStr=arg.toString();
+                sb.append("$$"+argName+"-->"+argStr+"$$");
+                sb.append("，");
+            }
+        }
+        log.setArgument(sb.toString().substring(0,sb.length()-1));
         // 拦截的放参数类型
         Signature sig = pjp.getSignature();
         MethodSignature msig = null;
@@ -76,7 +90,7 @@ public class LogAopAspect
         }
         if (null != method)
         {
-            // 判断是否包含自定义的注解，说明一下这里的SystemLog就是我自己自定义的注解
+            // 判断是否包含自定义的注解
             if (method.isAnnotationPresent(SystemLogAnnotation.class))
             {
                 SystemLogAnnotation systemlog = method.getAnnotation(SystemLogAnnotation.class);
@@ -84,6 +98,8 @@ public class LogAopAspect
                 log.setMethod(systemlog.methods());
                 UserModel user = (UserModel) request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
                 log.setUserId(user.getUuid());
+                log.setRealName(user.getRealName());
+                log.setUserRole(user.getUserRole());
 
                 try
                 {

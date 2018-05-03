@@ -206,6 +206,21 @@ public class TeacherEbo implements TeacherEbi
         teaDao.bulkInput(teachers);
     }
 
+    public void resetPassword(TeacherVo teacherVo)
+    {
+        teacherVo=teaDao.get(teacherVo.getTeacherId());
+        teacherVo.setPassword(MD5Utils.md5(teacherVo.getTeacherId()));
+    }
+
+    public void modifyPassword(TeacherVo loginTea, String ordPassword, String newPassword) throws OperationException
+    {
+        if(StringUtil.isEmpty(newPassword)){
+            throw new OperationException("新密码不能为空，请不要进行非法操作！");
+        }
+        loginTea=teaDao.get(loginTea.getId());
+        loginTea.setPassword(MD5Utils.md5(newPassword));
+    }
+
 
     /**
      * 验证表格中是否有重复学号信息，以及数据库中是否已经存在数据

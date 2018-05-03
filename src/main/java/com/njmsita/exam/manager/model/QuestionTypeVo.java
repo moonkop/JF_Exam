@@ -47,7 +47,6 @@ public class QuestionTypeVo
         this.score = score;
     }
 
-    @Override
     public int hashCode()
     {
         int result = (int) id;
@@ -56,7 +55,6 @@ public class QuestionTypeVo
         return result;
     }
 
-    @Override
     public boolean equals(Object o)
     {
         if (this == o) return true;
@@ -69,5 +67,14 @@ public class QuestionTypeVo
         if (score != null ? !score.equals(that.score) : that.score != null) return false;
 
         return true;
+    }
+
+    public String toString()
+    {
+        return "QuestionTypeVo{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", score=" + score +
+                '}';
     }
 }

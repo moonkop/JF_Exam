@@ -12,6 +12,7 @@ import com.njmsita.exam.authentic.service.ebi.ResourceEbi;
 import com.njmsita.exam.authentic.service.ebi.RoleEbi;
 import com.njmsita.exam.authentic.service.ebi.TeacherEbi;
 import com.njmsita.exam.base.BaseController;
+import com.njmsita.exam.manager.service.ebi.LogEbi;
 import com.njmsita.exam.manager.service.ebi.SchoolEbi;
 import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.exception.FormatException;
@@ -23,12 +24,14 @@ import com.njmsita.exam.utils.idutil.IdUtil;
 import com.njmsita.exam.utils.logutils.SystemLogAnnotation;
 import com.njmsita.exam.utils.validate.validategroup.AddGroup;
 import com.njmsita.exam.utils.validate.validategroup.EditGroup;
+import com.njmsita.exam.utils.validate.validategroup.SetPassword;
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -41,6 +44,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.awt.print.PrinterAbortException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -61,6 +65,8 @@ public class TeacherController extends BaseController
     private ResourceEbi resourceEbi;
     @Autowired
     private SchoolEbi schoolEbi;
+    @Autowired
+    private LogEbi logEbi;
 
     /**
      * 跳转登陆页
@@ -113,6 +119,7 @@ public class TeacherController extends BaseController
             loginTea.setResources(sbd.toString());
             session.setAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME, loginTea);
             Hibernate.initialize(loginTea.getTroleVo());
+            logEbi.login(loginTea,loginIp);
             return "redirect:/teacher/welcome";
         }
 
@@ -125,7 +132,6 @@ public class TeacherController extends BaseController
      * 查看个人详细信息
      */
     @RequestMapping("detail")
-    @SystemLogAnnotation(module = "教师个人",methods = "查看个人详情")
     public String detail()
     {
         //前台数据从session中获取
@@ -146,6 +152,7 @@ public class TeacherController extends BaseController
      * 个人信息编辑
      */
     @RequestMapping("edit.do")
+    @SystemLogAnnotation(module = "教师个人",methods = "个人信息编辑")
     public String doEdit(@Validated(value = {EditGroup.class}) TeacherVo teacherQuery, BindingResult bindingResult, HttpServletRequest request, HttpSession session) throws OperationException
     {
         if (bindingResult.hasErrors())
@@ -175,6 +182,7 @@ public class TeacherController extends BaseController
      * 退出登陆
      */
     @RequestMapping("logout")
+    @SystemLogAnnotation(module = "教师个人",methods = "退出登陆")
     public String loginOut(HttpSession session)
     {
         System.out.println("log out");
@@ -193,6 +201,38 @@ public class TeacherController extends BaseController
         return roleEbi.getAll();
     }
 
+    /**
+     * 跳转修改密码页面
+     * @return
+     */
+    @RequestMapping("manage/toSetPassword")
+    public String toSetPassword()
+    {
+        //TODO 需要提供修改密码页面
+
+        return null;
+    }
+
+    /**
+     * 修改密码
+     * @param oldPassword   原始密码
+     * @param newPassword   新密码
+     * @param session
+     * @return
+     */
+    @RequestMapping("manage/setPassword")
+    @SystemLogAnnotation(module = "教师个人",methods = "修改密码")
+    public String modifyPassword(String oldPassword,String newPassword,HttpSession session) throws OperationException
+    {
+
+        TeacherVo loginTea= (TeacherVo) session.getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
+        if(!loginTea.getPassword().equals(oldPassword)){
+            //todo 提供一下视图
+            return "";
+        }
+        teaEbi.modifyPassword(loginTea,oldPassword,newPassword);
+        return "redirect:welcome";
+    }
     //------------------------------------------TeacherManager----------------------------------------------
     //------------------------------------------TeacherManager----------------------------------------------
     //------------------------------------------TeacherManager----------------------------------------------
@@ -237,6 +277,7 @@ public class TeacherController extends BaseController
      */
     //TODO fixed  异步请求分页 在下面
     @RequestMapping("manage/list")
+    @SystemLogAnnotation(module = "教师管理",methods = "列表查询")
     public String toTeacherList(TeacherQueryModel teacherQueryVo, Integer pageNum, Integer pageSize, HttpServletRequest request)
     {
 
@@ -304,6 +345,7 @@ public class TeacherController extends BaseController
      * @return 跳转教师列表页面
      */
     @RequestMapping("manage/edit.do")
+    @SystemLogAnnotation(module = "教师管理",methods = "教师添加/修改")
     public String doAdd(@Validated(value = {AddGroup.class}) TeacherVo teacher, BindingResult bindingResult,
                         HttpServletRequest request) throws OperationException
     {
@@ -337,12 +379,22 @@ public class TeacherController extends BaseController
      * @return 跳转教师列表页面
      */
     @RequestMapping("manage/delete.do")
+    @SystemLogAnnotation(module = "教师管理",methods = "删除教师")
     public String delete(TeacherVo teacher) throws OperationException
     {
         teaEbi.delete(teacher);
         return "redirect:/teacher/list";
     }
 
+    /**
+     * 批量导入
+     * @param teacherInfo 教师信息表
+     * @return
+     * @throws FormatException
+     * @throws OperationException
+     * @throws IOException
+     */
+    @SystemLogAnnotation(module = "教师管理",methods = "批量导入")
     @RequestMapping("manage/import.do")
     public String inputXls(MultipartFile teacherInfo) throws FormatException, OperationException, IOException
     {
@@ -359,12 +411,34 @@ public class TeacherController extends BaseController
         return "redirect:/teacher/list?pageNum=1&pageSize=10";
     }
 
+    /**
+     * 密码重置
+     * @param teacherVo 教师信息
+     * @param bindingResult
+     * @param request
+     * @return
+     */
     @RequestMapping("manage/resetPassword.do")
-    public String resetPassword(TeacherVo teacherVo)
+    @SystemLogAnnotation(module = "教师管理",methods = "密码重置")
+    public String resetPassword(@Validated(value =EditGroup.class) TeacherVo teacherVo,BindingResult bindingResult,
+                                HttpServletRequest request)
     {
-        //todo 重置密码
+        if (bindingResult.hasErrors())
+        {
+            List<FieldError> list = bindingResult.getFieldErrors();
+            for (FieldError fieldError : list)
+            {
+                //校验信息，key = 属性名+Error
+                request.setAttribute(fieldError.getField()+"Error",fieldError.getDefaultMessage());
+            }
+            request.setAttribute("teacher",teacherVo);
+            return "/manage/me/edit";
+        }
+        teaEbi.resetPassword(teacherVo);
         return "";
     }
+
+
     //-------------------------------TeacherManager-----------END-------------------------------------------
     //-------------------------------TeacherManager-----------END-------------------------------------------
     //-------------------------------TeacherManager-----------END-------------------------------------------
