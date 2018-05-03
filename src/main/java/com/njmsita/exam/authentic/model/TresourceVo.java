@@ -160,7 +160,6 @@ public class TresourceVo
         this.url = url;
     }
 
-    @Override
     public int hashCode()
     {
         int result = id != null ? id.hashCode() : 0;
@@ -172,7 +171,6 @@ public class TresourceVo
         return result;
     }
 
-    @Override
     public boolean equals(Object o)
     {
         if (this == o) return true;
@@ -188,5 +186,21 @@ public class TresourceVo
         if (url != null ? !url.equals(that.url) : that.url != null) return false;
 
         return true;
+    }
+
+    public String toString()
+    {
+        return "TresourceVo{" +
+                "id='" + id + '\'' +
+                ", icon='" + icon + '\'' +
+                ", name='" + name + '\'' +
+                ", remark='" + remark + '\'' +
+                ", seq=" + seq +
+                ", url='" + url + '\'' +
+                ", resourcetype=" + resourcetype +
+                ", childs=" + childs +
+                ", parent=" + parent +
+                ", roles=" + roles +
+                '}';
     }
 }

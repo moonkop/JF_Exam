@@ -23,7 +23,6 @@ public class MyAspect
         TeacherVo teacherVo= new TeacherVo();
         teacherVo.setTeacherId("0001");
         teacherVo.setPassword("123");
-        teacherController.resetPassword(teacherVo);
 
     }
 }

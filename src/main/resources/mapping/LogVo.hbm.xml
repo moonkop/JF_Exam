@@ -15,5 +15,8 @@
         <property name="time" column="time"/>
         <property name="commite" column="commite"/>
         <property name="responseTime" column="response_time"/>
+        <property name="argument" column="argument"/>
+        <property name="realName" column="realName"/>
+        <property name="userRole" column="userRole"/>
     </class>
 </hibernate-mapping>

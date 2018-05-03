@@ -5,6 +5,7 @@ import com.njmsita.exam.manager.model.ClassroomVo;
 import com.njmsita.exam.manager.model.SchoolVo;
 import com.njmsita.exam.utils.validate.annotation.IDCardNoValifatorAnnocation;
 import com.njmsita.exam.utils.validate.annotation.TelephoneValidatorAnnotation;
+import com.njmsita.exam.utils.validate.validategroup.SetPassword;
 import com.njmsita.exam.utils.validate.validategroup.StudentAddGroup;
 import com.njmsita.exam.utils.validate.validategroup.EditGroup;
 import org.hibernate.validator.constraints.Email;
@@ -39,6 +40,7 @@ public class StudentVo extends UserModel
     @TelephoneValidatorAnnotation(groups = {StudentAddGroup.class,EditGroup.class})
     private String telephone;
 
+    @NotEmpty(message = "{password.notempty}",groups = {SetPassword.class})
     private String password;
     private Long lastLoginTime;
     private String lastLoginIp;
@@ -107,6 +109,7 @@ public class StudentVo extends UserModel
     public void setRole(TroleVo role)
     {
         this.role = role;
+        super.setUserRole(role.getId());
     }
 
     @Id
@@ -144,6 +147,7 @@ public class StudentVo extends UserModel
     public void setName(String name)
     {
         this.name = name;
+        super.setRealName(name);
     }
 
     @Basic
@@ -242,7 +246,6 @@ public class StudentVo extends UserModel
         this.modifytime = modifytime;
     }
 
-    @Override
     public int hashCode()
     {
         int result = id != null ? id.hashCode() : 0;
@@ -259,7 +262,6 @@ public class StudentVo extends UserModel
         return result;
     }
 
-    @Override
     public boolean equals(Object o)
     {
         if (this == o) return true;
@@ -281,5 +283,26 @@ public class StudentVo extends UserModel
         if (modifytime != null ? !modifytime.equals(that.modifytime) : that.modifytime != null) return false;
 
         return true;
+    }
+
+    public String toString()
+    {
+        return "StudentVo{" +
+                "id='" + id + '\'' +
+                ", studentId='" + studentId + '\'' +
+                ", name='" + name + '\'' +
+                ", mail='" + mail + '\'' +
+                ", idCardNo='" + idCardNo + '\'' +
+                ", telephone='" + telephone + '\'' +
+                ", password='" + password + '\'' +
+                ", lastLoginTime=" + lastLoginTime +
+                ", lastLoginIp='" + lastLoginIp + '\'' +
+                ", createtime=" + createtime +
+                ", modifytime=" + modifytime +
+                ", gender=" + gender +
+                ", school=" + school +
+                ", classroom=" + classroom +
+                ", role=" + role +
+                '}';
     }
 }

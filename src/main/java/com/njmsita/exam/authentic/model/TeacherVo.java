@@ -6,6 +6,7 @@ import com.njmsita.exam.utils.validate.annotation.IDCardNoValifatorAnnocation;
 import com.njmsita.exam.utils.validate.annotation.TelephoneValidatorAnnotation;
 import com.njmsita.exam.utils.validate.validategroup.AddGroup;
 import com.njmsita.exam.utils.validate.validategroup.EditGroup;
+import com.njmsita.exam.utils.validate.validategroup.SetPassword;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -36,6 +37,8 @@ public class TeacherVo extends UserModel
 
     @TelephoneValidatorAnnotation(groups = {AddGroup.class,EditGroup.class})
     private String telephone;
+
+    @NotEmpty(message = "{password.notempty}",groups = {SetPassword.class})
     private String password;
     private Long lastLoginTime;
     private String lastLoginIp;
@@ -47,6 +50,8 @@ public class TeacherVo extends UserModel
     //所拥有的角色  n TO  1
     private TroleVo troleVo;
 
+    @Basic
+    @Column(name = "role_id")
     public TroleVo getTroleVo()
     {
         return troleVo;
@@ -55,6 +60,7 @@ public class TeacherVo extends UserModel
     public void setTroleVo(TroleVo troleVo)
     {
         this.troleVo = troleVo;
+        super.setUserRole(troleVo.getId());
     }
 
     @Id
@@ -104,6 +110,7 @@ public class TeacherVo extends UserModel
     public void setName(String name)
     {
         this.name = name;
+        super.setRealName(name);
     }
 
     @Basic
@@ -203,7 +210,6 @@ public class TeacherVo extends UserModel
     }
 
 
-    @Override
     public int hashCode()
     {
         int result = id != null ? id.hashCode() : 0;
@@ -220,7 +226,6 @@ public class TeacherVo extends UserModel
         return result;
     }
 
-    @Override
     public boolean equals(Object o)
     {
         if (this == o) return true;
@@ -243,5 +248,24 @@ public class TeacherVo extends UserModel
         if (modifytime != null ? !modifytime.equals(teacherVo.modifytime) : teacherVo.modifytime != null) return false;
 
         return true;
+    }
+
+    public String toString()
+    {
+        return "TeacherVo{" +
+                "id='" + id + '\'' +
+                ", teacherId='" + teacherId + '\'' +
+                ", name='" + name + '\'' +
+                ", mail='" + mail + '\'' +
+                ", idCardNo='" + idCardNo + '\'' +
+                ", telephone='" + telephone + '\'' +
+                ", password='" + password + '\'' +
+                ", lastLoginTime=" + lastLoginTime +
+                ", lastLoginIp='" + lastLoginIp + '\'' +
+                ", createtime=" + createtime +
+                ", modifytime=" + modifytime +
+                ", gender=" + gender +
+                ", troleVo=" + troleVo +
+                '}';
     }
 }

@@ -92,7 +92,6 @@ public class TroleVo
         this.seq = seq;
     }
 
-    @Override
     public int hashCode()
     {
         int result = id != null ? id.hashCode() : 0;
@@ -102,7 +101,6 @@ public class TroleVo
         return result;
     }
 
-    @Override
     public boolean equals(Object o)
     {
         if (this == o) return true;
@@ -116,5 +114,16 @@ public class TroleVo
         if (seq != null ? !seq.equals(troleVo.seq) : troleVo.seq != null) return false;
 
         return true;
+    }
+
+    public String toString()
+    {
+        return "TroleVo{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", remark='" + remark + '\'' +
+                ", seq=" + seq +
+                ", reses=" + reses +
+                '}';
     }
 }

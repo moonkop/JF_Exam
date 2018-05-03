@@ -150,7 +150,6 @@ public class QuestionVo
         this.subjectId = subjectId;
     }
 
-    @Override
     public int hashCode()
     {
         int result = id != null ? id.hashCode() : 0;
@@ -167,7 +166,6 @@ public class QuestionVo
         return result;
     }
 
-    @Override
     public boolean equals(Object o)
     {
         if (this == o) return true;
@@ -189,5 +187,22 @@ public class QuestionVo
             return false;
 
         return true;
+    }
+
+    public String toString()
+    {
+        return "QuestionVo{" +
+                "id='" + id + '\'' +
+                ", isPrivate=" + isPrivate +
+                ", createTime=" + createTime +
+                ", code='" + code + '\'' +
+                ", outline='" + outline + '\'' +
+                ", option='" + option + '\'' +
+                ", answer=" + answer +
+                ", topicId='" + topicId + '\'' +
+                ", createTeacherId='" + createTeacherId + '\'' +
+                ", questionTypeId=" + questionTypeId +
+                ", subjectId=" + subjectId +
+                '}';
     }
 }

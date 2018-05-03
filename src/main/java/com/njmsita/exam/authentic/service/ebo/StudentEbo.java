@@ -319,6 +319,21 @@ public class StudentEbo implements StudentEbi
         studentDao.bulkInput(students);
     }
 
+    public void resetPassword(StudentVo studentVo)
+    {
+        studentVo=studentDao.get(studentVo.getStudentId());
+        studentVo.setPassword(MD5Utils.md5(studentVo.getStudentId()));
+    }
+
+    public void modifyPassword(StudentVo loginStudent, String oldPassword, String newPassword) throws OperationException
+    {
+        if(StringUtil.isEmpty(newPassword)){
+            throw new OperationException("新密码不能为空，请不要进行非法操作！");
+        }
+        loginStudent=studentDao.get(loginStudent.getId());
+        loginStudent.setPassword(MD5Utils.md5(newPassword));
+    }
+
     /**
      * 验证表格中是否有重复学号信息，以及数据库中是否已经存在数据
      * @param students              学生信息集合

@@ -36,4 +36,17 @@ public interface StudentEbi extends BaseEbi<StudentVo>
     public void bulkInputBySheet(HSSFSheet sheet, String schoolId) throws OperationException, FormatException;
 
 
+    /**
+     * 密码重置
+     * @param studentVo
+     */
+    public void resetPassword(StudentVo studentVo);
+
+    /**
+     * 修改密码
+     * @param loginStudent      当前用户
+     * @param oldPassword       原始密码
+     * @param newPassword       新密码
+     */
+    public void modifyPassword(StudentVo loginStudent, String oldPassword, String newPassword) throws OperationException;
 }

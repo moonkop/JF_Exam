@@ -40,7 +40,6 @@ public class SchoolVo
         this.name = name;
     }
 
-    @Override
     public int hashCode()
     {
         int result = id != null ? id.hashCode() : 0;
@@ -48,7 +47,6 @@ public class SchoolVo
         return result;
     }
 
-    @Override
     public boolean equals(Object o)
     {
         if (this == o) return true;
@@ -60,5 +58,13 @@ public class SchoolVo
         if (name != null ? !name.equals(schoolVo.name) : schoolVo.name != null) return false;
 
         return true;
+    }
+
+    public String toString()
+    {
+        return "SchoolVo{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                '}';
     }
 }

@@ -64,4 +64,12 @@ public class TresourcetypeVo
 
         return true;
     }
+
+    public String toString()
+    {
+        return "TresourcetypeVo{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }
