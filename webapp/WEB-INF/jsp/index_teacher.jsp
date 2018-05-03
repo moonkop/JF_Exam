@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title><!-- @@var title --></title>
+    <title>机蜂在线考试系统</title>
     <%@include file="/WEB-INF/components/header.jsp"%>
 </head>
 
