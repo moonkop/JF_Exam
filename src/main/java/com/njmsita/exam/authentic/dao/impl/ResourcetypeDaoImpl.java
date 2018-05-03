@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- * 资源持久层实现类
+ * 资源类型持久层实现类
  */
 @Repository
 public class ResourcetypeDaoImpl extends BaseImpl<TresourcetypeVo> implements ResourcetypeDao

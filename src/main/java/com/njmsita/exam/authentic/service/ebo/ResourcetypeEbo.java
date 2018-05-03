@@ -12,7 +12,7 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * 资源业务层实现类
+ * 资源类型业务层实现类
  */
 @Service
 @Transactional

@@ -2,6 +2,9 @@ package com.njmsita.exam.manager.model;
 
 import javax.persistence.*;
 
+/**
+ * 日志实体模型
+ */
 @Entity
 @Table(name = "log", schema = "jf_exam", catalog = "")
 public class LogVo
@@ -196,6 +199,8 @@ public class LogVo
                 ", commite='" + commite + '\'' +
                 ", responseTime=" + responseTime +
                 ", argument='" + argument + '\'' +
+                ", realName='" + realName + '\'' +
+                ", userRole='" + userRole + '\'' +
                 '}';
     }
 }

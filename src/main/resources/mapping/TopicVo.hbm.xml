@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="com.njmsita.exam.manager.model.TopicVo" table="topic" schema="jf_exam">
+        <id name="id" column="id">
+            <generator class="native"/>
+        </id>
+        <property name="name" column="name"/>
+
+        <many-to-one name="parent" column="parent_topic_id" class="com.njmsita.exam.manager.model.TopicVo"/>
+        <many-to-one name="subjectVo" column="subject_id" class="com.njmsita.exam.manager.model.SubjectVo" lazy="false"/>
+
+        <set name="child" cascade="delete" inverse="true" lazy="false">
+            <key column="parent_topic_id"></key>
+            <one-to-many class="com.njmsita.exam.manager.model.TopicVo"/>
+        </set>
+
+    </class>
+</hibernate-mapping>

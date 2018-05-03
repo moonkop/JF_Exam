@@ -8,7 +8,7 @@ import java.util.List;
 
 
 /**
- * 资源业务层接口
+ * 资源类型业务层接口
  */
 public interface ResourcetypeEbi extends BaseEbi<TresourcetypeVo>
 {

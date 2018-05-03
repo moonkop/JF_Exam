@@ -36,7 +36,7 @@
 				<prop key="hibernate.format_sql">false</prop>
 				<prop key="hibernate.connection.url">jdbc:mysql://192.168.1.166:3306/jf_exam</prop>
 				<prop key="hibernate.connection.driver_class">com.mysql.jdbc.Driver</prop>
-			</props>
+            </props>
 		</property>
 		<property name="mappingLocations">
 			<list>
@@ -52,7 +52,8 @@
                 <value>classpath:mapping/SubjectVo.hbm.xml</value>
                 <value>classpath:mapping/LogVo.hbm.xml</value>
 				<value>classpath:mapping/LogVo.hbm.xml</value>
-			</list>
+                <value>classpath:mapping/TopicVo.hbm.xml</value>
+            </list>
 		</property>
 		<property name="annotatedClasses">
 			<list>
@@ -67,6 +68,7 @@
                 <value>com.njmsita.exam.manager.model.QuestionTypeVo</value>
                 <value>com.njmsita.exam.manager.model.SubjectVo</value>
                 <value>com.njmsita.exam.manager.model.LogVo</value>
+                <value>com.njmsita.exam.manager.model.TopicVo</value>
             </list>
 		</property>
 	</bean>

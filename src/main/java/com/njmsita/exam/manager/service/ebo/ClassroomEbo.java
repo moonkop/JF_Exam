@@ -17,7 +17,7 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * 学校业务层实现类
+ * 班级业务层实现类
  */
 @Service
 @Transactional

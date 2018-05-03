@@ -7,6 +7,9 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 
+/**
+ * 班级实体模型
+ */
 @Entity
 @Table(name = "classroom", schema = "jf_exam", catalog = "")
 public class ClassroomVo

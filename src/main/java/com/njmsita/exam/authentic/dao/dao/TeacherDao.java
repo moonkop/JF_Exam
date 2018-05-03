@@ -20,7 +20,7 @@ public interface TeacherDao extends BaseDao<TeacherVo>
 
     /**
      * 根据角色Id获取教师
-     * @param id            角色id
+     * @param roleId            角色id
      * @return              查询到的所有教师
      */
     public List<TeacherVo> getAllByRoleId(String roleId);

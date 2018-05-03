@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- * 学校久层实现类
+ * 日志持久层实现类
  */
 @Repository
 public class LogDaoImpl extends BaseImpl<LogVo> implements LogDao

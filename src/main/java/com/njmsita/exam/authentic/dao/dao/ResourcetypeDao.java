@@ -7,7 +7,7 @@ import com.njmsita.exam.base.BaseDao;
 import java.util.List;
 
 /**
- * 资源持久层接口
+ * 资源类型持久层接口
  */
 public interface ResourcetypeDao extends BaseDao<TresourcetypeVo>
 {

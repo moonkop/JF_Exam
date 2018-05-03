@@ -277,7 +277,6 @@ public class TeacherController extends BaseController
      */
     //TODO fixed  异步请求分页 在下面
     @RequestMapping("manage/list")
-    @SystemLogAnnotation(module = "教师管理",methods = "列表查询")
     public String toTeacherList(TeacherQueryModel teacherQueryVo, Integer pageNum, Integer pageSize, HttpServletRequest request)
     {
 

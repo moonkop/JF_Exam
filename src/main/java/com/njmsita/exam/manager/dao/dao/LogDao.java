@@ -7,7 +7,7 @@ import com.njmsita.exam.manager.model.querymodel.LogQueryModel;
 import java.util.List;
 
 /**
- * 学校持久层接口
+ * 日志持久层接口
  */
 public interface LogDao extends BaseDao<LogVo>
 {

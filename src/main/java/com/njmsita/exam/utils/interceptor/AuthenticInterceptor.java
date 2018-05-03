@@ -35,7 +35,7 @@ public class AuthenticInterceptor implements HandlerInterceptor {
 		//获取权限资源
 		String allResource= (String) sc.getAttribute(SysConsts.ALL_RESOUCERS_AUTHENTIC_URL_NAME);
 		//放行公开地址
-		if(!allResource.contains(url)){
+		if(!allResource.contains("["+url+"]")){
 			return true;
 		}
 		//获取并判断用户身份
