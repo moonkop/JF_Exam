@@ -287,47 +287,15 @@ public class StudentController extends BaseController
     @RequestMapping("manage/list.do")
     public JsonResponse StudentList(StudentQueryModel studentQueryModel, Integer pageNum, Integer pageSize)
     {
-//        CustomerJsonSerializer serializer = new CustomerJsonSerializer(StudentVo.class,
-//                "name,id,studentId",
-//                null);
-//        List<StudentVo> studentlist = studentEbi.getAll(studentQueryModel, pageNum, pageSize);
-//        List<ObjectNode> rowsList = new ArrayList<>();
-//        ObjectNode result = CustomerJsonSerializer.getDefaultMapper().createObjectNode();
-//        for (StudentVo studentVo : studentlist)
-//        {
-//            ObjectNode obj = serializer.toJson_ObjectNode(studentVo);
-//            if (studentVo.getRole() != null)
-//            {
-//                obj.put("role", studentVo.getRole().getName());
-//            }
-//            if (studentVo.getClassroom() != null)
-//            {
-//                obj.put("classroom", studentVo.getClassroom().getName());
-//            }
-//            if (studentVo.getSchool() != null)
-//            {
-//                obj.put("school", studentVo.getSchool().getName());
-//            }
-//
-//            rowsList.add(obj);
-//        }
-//        JsonNode resultRows = CustomerJsonSerializer.toJson_JsonNode1(rowsList);
-//        result.put("rows", resultRows);
-//        result.put("total", studentEbi.getCount(studentQueryModel));
-
-
-        List<StudentVo> studentlist = studentEbi.getAll(studentQueryModel, pageNum, pageSize);
-        JsonListResponse<StudentVo> response = new JsonListResponse<>();
-        response.serialize(studentlist,
+        return new JsonListResponse<>(
+                studentEbi.getAll(studentQueryModel, pageNum, pageSize),
                 "name," +
                 "id," +
                 "studentId," +
                 "[school]school.name," +
                 "[classroom]classroom.name," +
-                "[role]role.name");
-        response.put("total", studentEbi.getCount(studentQueryModel));
-
-        return response;
+                "[role]role.name",
+                studentEbi.getCount(studentQueryModel));
     }
 
     /**

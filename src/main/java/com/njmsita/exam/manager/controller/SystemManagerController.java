@@ -90,7 +90,8 @@ public class SystemManagerController extends BaseController
 
     //todo 以后将请求方法 doEdit doAdd 之类的写成 edit.do 包括list 现有的已经改好了
     //TODO 请求转发问题，没有pageNum   pageSize参数
-    @RequestMapping("school/list.do")
+    @Deprecated
+    @RequestMapping("school/list1.do")
     public String toSchoolList(SchoolQueryModel schoolQueryModel, Integer pageNum, Integer pageSize, Model model)
     {
 
@@ -107,14 +108,14 @@ public class SystemManagerController extends BaseController
 
     //测试方法
     @ResponseBody
-    @RequestMapping("school/list1.do")
-    public JSON schoolList(SchoolQueryModel schoolQueryModel, Integer pageNum, Integer pageSize)
+    @RequestMapping("school/list.do")
+    public JsonResponse schoolList(SchoolQueryModel schoolQueryModel, Integer pageNum, Integer pageSize)
     {
-        List<SchoolVo> rows = schoolEbi.getAll(schoolQueryModel, pageNum, pageSize);
-        JSONObject object = new JSONObject();
-        object.put("rows", rows);
-        object.put("total", schoolEbi.getCount(schoolQueryModel));
-        return object;
+
+        return new JsonListResponse<>(schoolEbi.getAll(schoolQueryModel, pageNum, pageSize),
+                "id,name",
+                schoolEbi.getCount(schoolQueryModel));
+
     }
 
     /**
@@ -240,12 +241,10 @@ public class SystemManagerController extends BaseController
     @SystemLogAnnotation(module = "角色管理", methods = "角色列表查询")
     public JsonResponse roleList(TroleQueryModel troleQueryModel, Integer pageNum, Integer pageSize)
     {
-        List<TroleVo> troleVoList = roleEbi.getAll(troleQueryModel, pageNum, pageSize);
-        JsonListResponse<TroleVo> jsonListResponse = new JsonListResponse();
-        jsonListResponse.serialize(troleVoList, "id,name");
-        jsonListResponse.put("total", roleEbi.getCount(troleQueryModel));
-        return jsonListResponse;
-
+        return new JsonListResponse<>(
+                roleEbi.getAll(troleQueryModel, pageNum, pageSize),
+                "id,name",
+                roleEbi.getCount(troleQueryModel));
     }
 
     @ResponseBody
@@ -438,21 +437,12 @@ public class SystemManagerController extends BaseController
 
     @ResponseBody
     @RequestMapping("classroom/list.do")
-    public JsonNode classroomList(ClassroomQueryModel classroomQueryModel, Integer pageNum, Integer pageSize)
+    public JsonResponse classroomList(ClassroomQueryModel classroomQueryModel, Integer pageNum, Integer pageSize)
     {
-        CustomerJsonSerializer serializer = new CustomerJsonSerializer(ClassroomVo.class, "id,name", null);
-        ObjectNode result = CustomerJsonSerializer.getDefaultMapper().createObjectNode();
-        List<ClassroomVo> classroomList = classroomEbi.getAll(classroomQueryModel, pageNum, pageSize);
-        List<ObjectNode> rows = new ArrayList<>();
-        for (ClassroomVo classroomVo : classroomList)
-        {
-            ObjectNode node = serializer.toJson_ObjectNode(classroomVo);
-            node.put("school", classroomVo.getSchoolVo().getName());
-            rows.add(node);
-        }
-        result.put("rows", CustomerJsonSerializer.toJson_JsonNode1(rows));
-        result.put("total", classroomEbi.getCount(classroomQueryModel));
-        return result;
+        return new JsonListResponse<>(
+                classroomEbi.getAll(classroomQueryModel, pageNum, pageSize),
+                "id,name,[school]schoolVo.name",
+                classroomEbi.getCount(classroomQueryModel));
 
     }
 
@@ -603,27 +593,12 @@ public class SystemManagerController extends BaseController
 
     @ResponseBody
     @RequestMapping("resource/list.do")
-    public JsonNode resourceList(ResourceQueryModel resourceQueryModel, Integer pageNum, Integer pageSize)
+    public JsonResponse resourceList(ResourceQueryModel resourceQueryModel, Integer pageNum, Integer pageSize)
     {
-        //创建自定义序列化器 并设置过滤器
-        CustomerJsonSerializer serializer = new CustomerJsonSerializer(TresourceVo.class, "id,name,url,remark", null);
-        //创建返回值对象 json类型
-        ObjectNode result = CustomerJsonSerializer.getDefaultMapper().createObjectNode();
-        List<TresourceVo> tresourceVoList = resourceEbi.getAll(resourceQueryModel, pageNum, pageSize);
-        //对象转换后存放的数组
-        List<ObjectNode> rows = new ArrayList<>();
-        for (TresourceVo tresourceVo : tresourceVoList)
-        {
-            //自定义过滤序列化对象
-            ObjectNode node = serializer.toJson_ObjectNode(tresourceVo);
-            //添加额外的特殊属性
-            node.put("type", tresourceVo.getResourcetype().getName());
-            rows.add(node);
-        }
-        //将数组转换为json节点 并插入返回值对象
-        result.put("rows", CustomerJsonSerializer.toJson_JsonNode1(rows));
-        result.put("total", resourceEbi.getCount(resourceQueryModel));
-        return result;
+        return new JsonListResponse<>(
+                resourceEbi.getAll(resourceQueryModel, pageNum, pageSize),
+                "id,name,[school]schoolVo.name",
+                resourceEbi.getCount(resourceQueryModel));
     }
 
     @ResponseBody

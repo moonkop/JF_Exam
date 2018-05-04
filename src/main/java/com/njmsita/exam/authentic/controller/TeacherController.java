@@ -17,9 +17,7 @@ import com.njmsita.exam.manager.service.ebi.SchoolEbi;
 import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.exception.FormatException;
 import com.njmsita.exam.utils.exception.OperationException;
-import com.njmsita.exam.utils.format.CustomerJsonSerializer;
-import com.njmsita.exam.utils.format.IPUtil;
-import com.njmsita.exam.utils.format.StringUtil;
+import com.njmsita.exam.utils.format.*;
 import com.njmsita.exam.utils.idutil.IdUtil;
 import com.njmsita.exam.utils.logutils.SystemLogAnnotation;
 import com.njmsita.exam.utils.validate.validategroup.AddGroup;
@@ -92,6 +90,7 @@ public class TeacherController extends BaseController
      * @param teaVo   前端获取教师用户登陆数据
      * @param request HttpServletRequest
      * @param session HttpSession
+     *
      * @return
      */
     @RequestMapping("login.do")
@@ -120,7 +119,7 @@ public class TeacherController extends BaseController
             loginTea.setResources(sbd.toString());
             session.setAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME, loginTea);
             Hibernate.initialize(loginTea.getTroleVo());
-            logEbi.login(loginTea,loginIp);
+            logEbi.login(loginTea, loginIp);
             return "redirect:/teacher/welcome";
         }
 
@@ -153,7 +152,7 @@ public class TeacherController extends BaseController
      * 个人信息编辑
      */
     @RequestMapping("edit.do")
-    @SystemLogAnnotation(module = "教师个人",methods = "个人信息编辑")
+    @SystemLogAnnotation(module = "教师个人", methods = "个人信息编辑")
     public String doEdit(@Validated(value = {SelfEditGroup.class}) TeacherVo teacherQuery, BindingResult bindingResult, HttpServletRequest request, HttpSession session) throws OperationException
     {
         if (bindingResult.hasErrors())
@@ -162,9 +161,9 @@ public class TeacherController extends BaseController
             for (FieldError fieldError : list)
             {
                 //校验信息，key=属性名+Error
-                request.setAttribute(fieldError.getField()+"Error",fieldError.getDefaultMessage());
+                request.setAttribute(fieldError.getField() + "Error", fieldError.getDefaultMessage());
             }
-            request.setAttribute("teacherQuery",teacherQuery);
+            request.setAttribute("teacherQuery", teacherQuery);
             return "redirect:/teacher/edit";
         }
         TeacherVo teacherVo = (TeacherVo) session.getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
@@ -183,7 +182,7 @@ public class TeacherController extends BaseController
      * 退出登陆
      */
     @RequestMapping("logout")
-    @SystemLogAnnotation(module = "教师个人",methods = "退出登陆")
+    @SystemLogAnnotation(module = "教师个人", methods = "退出登陆")
     public String loginOut(HttpSession session)
     {
         System.out.println("log out");
@@ -204,6 +203,7 @@ public class TeacherController extends BaseController
 
     /**
      * 跳转修改密码页面
+     *
      * @return
      */
     @RequestMapping("setpassword")
@@ -216,22 +216,25 @@ public class TeacherController extends BaseController
 
     /**
      * 修改密码
-     * @param oldPassword   原始密码
-     * @param newPassword   新密码
+     *
+     * @param oldPassword 原始密码
+     * @param newPassword 新密码
      * @param session
+     *
      * @return
      */
     @RequestMapping("setpassword.do")
-    @SystemLogAnnotation(module = "教师个人",methods = "修改密码")
-    public String modifyPassword(String oldPassword,String newPassword,HttpSession session) throws OperationException
+    @SystemLogAnnotation(module = "教师个人", methods = "修改密码")
+    public String modifyPassword(String oldPassword, String newPassword, HttpSession session) throws OperationException
     {
 
-        TeacherVo loginTea= (TeacherVo) session.getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
-        if(!loginTea.getPassword().equals(oldPassword)){
+        TeacherVo loginTea = (TeacherVo) session.getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
+        if (!loginTea.getPassword().equals(oldPassword))
+        {
             //todo 提供一下视图
             return "";
         }
-        teaEbi.modifyPassword(loginTea,oldPassword,newPassword);
+        teaEbi.modifyPassword(loginTea, oldPassword, newPassword);
         return "redirect:welcome";
     }
     //------------------------------------------TeacherManager----------------------------------------------
@@ -243,12 +246,10 @@ public class TeacherController extends BaseController
 
 
     /**
-     * 教师主页面 即list 页面           路径为 /teacher/manage        jsp位置为 manage/teacher/list
-     * 教师修改/添加页面 即edit页面      路径为 /teacher/manage/edit   jsp位置为 manage/teacher/edit
-     * 教师修改/添加操作 即edit.do操作   路径为 /teacher/manage/edit.do
-     * 教师详情页面      即detail页面   路径为  /teacher/manage/detail   jsp位置为 manage/teacher/detail
-     * 教师删除         即delete.do操作 路径为 /teacher/manage/delete.do
-     * 教师批量导入操作  即import.do操作 路径为 /teacher/manage/import.do
+     * 教师主页面 即list 页面           路径为 /teacher/manage        jsp位置为 manage/teacher/list 教师修改/添加页面 即edit页面      路径为
+     * /teacher/manage/edit   jsp位置为 manage/teacher/edit 教师修改/添加操作 即edit.do操作   路径为 /teacher/manage/edit.do 教师详情页面
+     * 即detail页面   路径为  /teacher/manage/detail   jsp位置为 manage/teacher/detail 教师删除         即delete.do操作 路径为
+     * /teacher/manage/delete.do 教师批量导入操作  即import.do操作 路径为 /teacher/manage/import.do
      */
 
     @RequestMapping("manage")
@@ -274,6 +275,7 @@ public class TeacherController extends BaseController
      *
      * @param teacherQueryVo 该模型存放了教师属性  分页数据  查询条件
      * @param request
+     *
      * @return
      */
     //TODO fixed  异步请求分页 在下面
@@ -293,23 +295,13 @@ public class TeacherController extends BaseController
 
     @ResponseBody
     @RequestMapping("manage/list.do")
-    public JsonNode schoolList(TeacherQueryModel teacherQueryVo, Integer pageNum, Integer pageSize)
+    public JsonResponse teacherList(TeacherQueryModel teacherQueryVo, Integer pageNum, Integer pageSize)
     {
-        CustomerJsonSerializer serializer = new CustomerJsonSerializer(TeacherVo.class, "name,id,teacherId", null);
-        List<TeacherVo> list = teaEbi.getAll(teacherQueryVo, pageNum, pageSize);
-        List<ObjectNode> rowsList = new ArrayList<>();
-        ObjectNode result = CustomerJsonSerializer.getDefaultMapper().createObjectNode();
-        for (TeacherVo teacherVo : list)
-        {
-            ObjectNode obj = serializer.toJson_ObjectNode(teacherVo);
+        return new JsonListResponse<>(
+                teaEbi.getAll(teacherQueryVo, pageNum, pageSize),
+                "name,id,teacherId,[role]troleVo.name",
+                teaEbi.getCount(teacherQueryVo));
 
-            obj.put("role", teacherVo.getTroleVo().getName());
-            rowsList.add(obj);
-        }
-        JsonNode resultRows = CustomerJsonSerializer.toJson_JsonNode1(rowsList);
-        result.put("rows", resultRows);
-        result.put("total", teaEbi.getCount(teacherQueryVo));
-        return result;
     }
 
 
@@ -320,6 +312,7 @@ public class TeacherController extends BaseController
      *
      * @param teacher 接受前台传递的教师id
      * @param request HttpServletRequest
+     *
      * @return 跳转edit
      */
     //todo 以后添加和修改放一起的时候统一写edit 不用add
@@ -343,10 +336,11 @@ public class TeacherController extends BaseController
      * 添加教师
      *
      * @param teacher 需要添加的信息
+     *
      * @return 跳转教师列表页面
      */
     @RequestMapping("manage/edit.do")
-    @SystemLogAnnotation(module = "教师管理",methods = "教师添加/修改")
+    @SystemLogAnnotation(module = "教师管理", methods = "教师添加/修改")
     public String doAdd(@Validated(value = {AddGroup.class}) TeacherVo teacher, BindingResult bindingResult,
                         HttpServletRequest request) throws OperationException
     {
@@ -356,9 +350,9 @@ public class TeacherController extends BaseController
             for (FieldError fieldError : list)
             {
                 //校验信息，key=属性名+Error
-                request.setAttribute(fieldError.getField()+"Error",fieldError.getDefaultMessage());
+                request.setAttribute(fieldError.getField() + "Error", fieldError.getDefaultMessage());
             }
-            request.setAttribute("teacher",teacher);
+            request.setAttribute("teacher", teacher);
             return "/manage/me/edit";
         }
         if (null == teacher.getId() || "".equals(teacher.getId().trim()))
@@ -377,10 +371,11 @@ public class TeacherController extends BaseController
      * 删除教师
      *
      * @param teacher 需要删除的教师
+     *
      * @return 跳转教师列表页面
      */
     @RequestMapping("manage/delete.do")
-    @SystemLogAnnotation(module = "教师管理",methods = "删除教师")
+    @SystemLogAnnotation(module = "教师管理", methods = "删除教师")
     public String delete(TeacherVo teacher) throws OperationException
     {
         teaEbi.delete(teacher);
@@ -389,13 +384,16 @@ public class TeacherController extends BaseController
 
     /**
      * 批量导入
+     *
      * @param teacherInfo 教师信息表
+     *
      * @return
+     *
      * @throws FormatException
      * @throws OperationException
      * @throws IOException
      */
-    @SystemLogAnnotation(module = "教师管理",methods = "批量导入")
+    @SystemLogAnnotation(module = "教师管理", methods = "批量导入")
     @RequestMapping("manage/import.do")
     public String inputXls(MultipartFile teacherInfo) throws FormatException, OperationException, IOException
     {
@@ -414,14 +412,16 @@ public class TeacherController extends BaseController
 
     /**
      * 密码重置
-     * @param teacherVo 教师信息
+     *
+     * @param teacherVo     教师信息
      * @param bindingResult
      * @param request
+     *
      * @return
      */
     @RequestMapping("manage/resetPassword.do")
-    @SystemLogAnnotation(module = "教师管理",methods = "密码重置")
-    public String resetPassword(@Validated(value =EditGroup.class) TeacherVo teacherVo,BindingResult bindingResult,
+    @SystemLogAnnotation(module = "教师管理", methods = "密码重置")
+    public String resetPassword(@Validated(value = EditGroup.class) TeacherVo teacherVo, BindingResult bindingResult,
                                 HttpServletRequest request)
     {
         if (bindingResult.hasErrors())
@@ -430,9 +430,9 @@ public class TeacherController extends BaseController
             for (FieldError fieldError : list)
             {
                 //校验信息，key = 属性名+Error
-                request.setAttribute(fieldError.getField()+"Error",fieldError.getDefaultMessage());
+                request.setAttribute(fieldError.getField() + "Error", fieldError.getDefaultMessage());
             }
-            request.setAttribute("teacher",teacherVo);
+            request.setAttribute("teacher", teacherVo);
             return "/manage/me/edit";
         }
         teaEbi.resetPassword(teacherVo);

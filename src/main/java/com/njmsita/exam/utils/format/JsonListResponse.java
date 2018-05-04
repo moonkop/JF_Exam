@@ -20,6 +20,17 @@ public class JsonListResponse<T> extends JsonResponse
     @JsonIgnore
     List<Map<String, Object>> rows = new ArrayList<>();
 
+    public JsonListResponse()
+    {
+
+    }
+
+    public JsonListResponse(List<T> raw, String fields, int total)
+    {
+        serialize(raw,fields);
+        this.put("total",total);
+    }
+
     public void setFields(String fields)
     {
         this.fields = fields.split(",");
