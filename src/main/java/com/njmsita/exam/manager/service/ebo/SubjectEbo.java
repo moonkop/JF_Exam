@@ -1,19 +1,15 @@
 package com.njmsita.exam.manager.service.ebo;
 
-import com.njmsita.exam.authentic.dao.dao.StudentDao;
-import com.njmsita.exam.authentic.model.StudentVo;
 import com.njmsita.exam.base.BaseQueryVO;
-import com.njmsita.exam.manager.dao.dao.ClassroomDao;
+import com.njmsita.exam.manager.dao.dao.QuestionDao;
 import com.njmsita.exam.manager.dao.dao.SubjectDao;
-import com.njmsita.exam.manager.model.ClassroomVo;
+import com.njmsita.exam.manager.model.QuestionVo;
 import com.njmsita.exam.manager.model.SubjectVo;
-import com.njmsita.exam.manager.service.ebi.SubjectEbi;
 import com.njmsita.exam.manager.service.ebi.SubjectEbi;
 import com.njmsita.exam.utils.exception.OperationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.io.Serializable;
 import java.util.List;
 
@@ -26,9 +22,15 @@ public class SubjectEbo implements SubjectEbi
 {
     @Autowired
     private SubjectDao subjectDao;
+    @Autowired
+    private QuestionDao questionDao;
 
-    public void save(SubjectVo subjectVo)
+    public void save(SubjectVo subjectVo) throws OperationException
     {
+        SubjectVo temp=subjectDao.getByName(subjectVo.getName());
+        if (temp!=null){
+            throw new OperationException("当前学科名称为："+subjectVo.getName()+"的学科已存在，请勿重复操作");
+        }
         subjectDao.save(subjectVo);
     }
 
@@ -52,13 +54,22 @@ public class SubjectEbo implements SubjectEbi
         return subjectDao.getCount(qm);
     }
 
-    public void update(SubjectVo subjectVo)
+    public void update(SubjectVo subjectVo) throws OperationException
     {
-        subjectDao.update(subjectVo);
+        SubjectVo temp=subjectDao.getByName(subjectVo.getName());
+        if (null !=temp&& temp.getId()!=subjectVo.getId())
+        {
+            throw new OperationException("当前学科名称为："+subjectVo.getName()+"的学科已存在，请勿重复操作");
+        }
+        temp.setName(subjectVo.getName());
     }
 
-    public void delete(SubjectVo subjectVo)
+    public void delete(SubjectVo subjectVo) throws OperationException
     {
+        List<QuestionVo> questionList= questionDao.getBySubject(subjectVo.getId());
+        if (questionList.size()>0){
+            throw new OperationException("当前学科下尚有题目存在，请不要删除！");
+        }
         subjectDao.delete(subjectVo);
     }
 

@@ -9,5 +9,5 @@ import com.njmsita.exam.manager.model.TopicVo;
  */
 public class QuestionQueryModel extends QuestionVo implements BaseQueryVO
 {
-
+    //TODO 查询条件   topicID   questionType    subject   creater
 }

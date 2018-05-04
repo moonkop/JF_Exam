@@ -1,6 +1,5 @@
 package com.njmsita.exam.manager.controller;
 
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.njmsita.exam.authentic.model.TresourceVo;
@@ -40,7 +39,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileInputStream;
@@ -661,7 +659,7 @@ public class SystemManagerController extends BaseController
                 node.put("parent", "#");
             }
             node.put("id", tresourceVo.getId());
-            node.put("text", tresourceVo.getName() + "    " + tresourceVo.getUrl());
+            node.put("text", tresourceVo.getName() + "     " + tresourceVo.getUrl());
             rows.add(node);
         }
         return rows;
@@ -743,7 +741,7 @@ public class SystemManagerController extends BaseController
                 request.setAttribute(fieldError.getField() + "Error", fieldError.getDefaultMessage());
             }
             request.setAttribute("tresourceVo", tresourceVo);
-            return "/manage/me/edit";
+            return "/manage/resource/edit";
         }
         if (null == tresourceVo.getId() || "".equals(tresourceVo.getId().trim()))
         {

@@ -2,11 +2,8 @@ package com.njmsita.exam.manager.dao.impl;
 
 import com.njmsita.exam.base.BaseImpl;
 import com.njmsita.exam.base.BaseQueryVO;
-import com.njmsita.exam.manager.dao.dao.SchoolDao;
 import com.njmsita.exam.manager.dao.dao.SubjectDao;
-import com.njmsita.exam.manager.model.SchoolVo;
 import com.njmsita.exam.manager.model.SubjectVo;
-import com.njmsita.exam.manager.model.querymodel.SchoolQueryModel;
 import org.hibernate.criterion.DetachedCriteria;
 import org.springframework.stereotype.Repository;
 
@@ -21,5 +18,12 @@ public class SubjectDaoImpl extends BaseImpl<SubjectVo> implements SubjectDao
 
     public void doQbc(DetachedCriteria dc, BaseQueryVO qm)
     {
+    }
+
+    public SubjectVo getByName(String name)
+    {
+        String hql="from SubjectVo where name=?";
+        List<SubjectVo> list= (List<SubjectVo>) this.getHibernateTemplate().find(hql,name);
+        return list.size()>0?list.get(0):null;
     }
 }

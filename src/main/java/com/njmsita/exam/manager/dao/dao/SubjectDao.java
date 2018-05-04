@@ -12,4 +12,10 @@ import java.util.List;
  */
 public interface SubjectDao extends BaseDao<SubjectVo>
 {
+    /**
+     * 根据名称查询科目
+     * @param name  科目名称
+     * @return
+     */
+    public SubjectVo getByName(String name);
 }

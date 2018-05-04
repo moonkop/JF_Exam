@@ -8,4 +8,10 @@ import com.njmsita.exam.manager.model.TopicVo;
  */
 public interface TopicDao extends BaseDao<TopicVo>
 {
+    /**
+     * 根据名称查找知识点
+     * @return
+     * @param name
+     */
+    public TopicVo getByName(String name);
 }

@@ -1,5 +1,8 @@
 package com.njmsita.exam.manager.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.njmsita.exam.authentic.service.ebi.TeacherEbi;
 import com.njmsita.exam.base.BaseController;
 import com.njmsita.exam.manager.model.QuestionTypeVo;
 import com.njmsita.exam.manager.model.QuestionVo;
@@ -13,8 +16,11 @@ import com.njmsita.exam.manager.service.ebi.QuestionEbi;
 import com.njmsita.exam.manager.service.ebi.QuestionTypeEbi;
 import com.njmsita.exam.manager.service.ebi.SubjectEbi;
 import com.njmsita.exam.manager.service.ebi.TopicEbi;
+import com.njmsita.exam.utils.exception.OperationException;
+import com.njmsita.exam.utils.format.CustomerJsonSerializer;
 import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.logutils.SystemLogAnnotation;
+import com.njmsita.exam.utils.ping4j.FirstCharUtil;
 import com.njmsita.exam.utils.validate.validategroup.AddGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,8 +29,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -42,6 +50,8 @@ public class QuestionBankManagerController extends BaseController
     private TopicEbi topicEbi;
     @Autowired
     private QuestionEbi questionEbi;
+    @Autowired
+    private TeacherEbi teacherEbi;
 
 //======================================================================================================================
 
@@ -169,13 +179,10 @@ public class QuestionBankManagerController extends BaseController
     @SystemLogAnnotation(module = "学科管理",methods = "学科删除")
     public String subjectDelete(SubjectVo subject) throws Exception
     {
-
         if (subject.getId()!=0)
         {
-
             subjectEbi.delete(subject);
         }
-
         return "redirect:/manage/subject";
     }
     //--------------------------------SubjectManager----------END--------------------------------------------
@@ -204,13 +211,10 @@ public class QuestionBankManagerController extends BaseController
      *
      * @return JSON{ rows: 内容（list） total: 查询结果总数 }
      */
-
     //TODO 请求转发问题，没有pageNum   pageSize参数
     @RequestMapping("questionType/list.do")
-    //@SystemLogAnnotation(module = "题型管理",methods = "列表查询")
     public String toQuestionTypeList(QuestionTypeQueryModel questionTypeQueryModel, Integer pageNum, Integer pageSize, Model model)
     {
-
         //调用BaseController的方法设置数据总量及最大页码数
         pageCount = pageSize;
         setDataTotal(questionTypeEbi.getCount(questionTypeQueryModel));
@@ -314,7 +318,6 @@ public class QuestionBankManagerController extends BaseController
 
         if (questionType.getId()!=0)
         {
-
             questionTypeEbi.delete(questionType);
         }
 
@@ -336,90 +339,134 @@ public class QuestionBankManagerController extends BaseController
     //-------------------------------------------TopicManager----------------------------------------------
     //-------------------------------------------TopicManager----------------------------------------------
 
+    @RequestMapping("topic")
+    public String totopicTree()
+    {
+        return "/manage/topic/tree";
+    }
+
+    @RequestMapping("topic/list1")
+    public String totopicList()
+    {
+        return "/manage/topic/list";
+    }
+
+
+    @ResponseBody
+    @RequestMapping("topic/list.do")
+    public JsonNode topicList(TopicQueryModel topicQueryModel, Integer pageNum, Integer pageSize)
+    {
+        //创建自定义序列化器 并设置过滤器
+        CustomerJsonSerializer serializer = new CustomerJsonSerializer(TopicVo.class, "id,name,url,remark", null);
+        //创建返回值对象 json类型
+        ObjectNode result = CustomerJsonSerializer.getDefaultMapper().createObjectNode();
+        List<TopicVo> topicVoList = topicEbi.getAll(topicQueryModel, pageNum, pageSize);
+        //对象转换后存放的数组
+        List<ObjectNode> rows = new ArrayList<>();
+        for (TopicVo topicVo : topicVoList)
+        {
+            //自定义过滤序列化对象
+            ObjectNode node = serializer.toJson_ObjectNode(topicVo);
+            //添加额外的特殊属性
+            node.put("subject", topicVo.getSubjectVo().getName());
+            rows.add(node);
+        }
+        //将数组转换为json节点 并插入返回值对象
+        result.put("rows", CustomerJsonSerializer.toJson_JsonNode1(rows));
+        result.put("total", topicEbi.getCount(topicQueryModel));
+        return result;
+    }
+
+    @ResponseBody
+    @RequestMapping("topic/tree.do")
+    public List<ObjectNode> topicTree()
+    {
+        List<TopicVo> list = topicEbi.getAll();
+        List<ObjectNode> rows = new ArrayList<>();
+        for (TopicVo topicVo : list)
+        {
+            ObjectNode node = CustomerJsonSerializer.getDefaultMapper().createObjectNode();
+            if (topicVo.getParent() != null)
+            {
+                node.put("parent", topicVo.getParent().getId());
+            } else
+            {
+                node.put("parent", "#");
+            }
+            node.put("id", topicVo.getId());
+            node.put("text", topicVo.getName());
+            rows.add(node);
+        }
+        return rows;
+    }
+
     /**
      * 跳转知识点页面(分页)
      *
      * @param topicQueryModel 该模型存放了知识点属性
-     * @param pageNum          页码
-     * @param pageSize         页面大小
      * @param model
+     * @param pageNum            页码
+     * @param pageSize           页面大小
      *
-     * @return JSON{ rows: 内容（list） total: 查询结果总数 }
+     * @return
      */
+    @RequestMapping("topic/list")
 
-    //TODO 请求转发问题，没有pageNum   pageSize参数
-    @RequestMapping("topic/list.do")
-    //@SystemLogAnnotation(module = "知识点管理",methods = "列表查询")
-    public String toTopicList(TopicQueryModel topicQueryModel, Integer pageNum, Integer pageSize, Model model)
+    public String totopicList(TopicQueryModel topicQueryModel, Model model, Integer pageNum, Integer pageSize)
     {
 
         //调用BaseController的方法设置数据总量及最大页码数
         pageCount = pageSize;
         setDataTotal(topicEbi.getCount(topicQueryModel));
 
-        //根据查询条件及指定页码查询
-        List<TopicVo> topicVoList = topicEbi.getAll(topicQueryModel, pageNum, pageSize);
-        model.addAttribute("TopicVoList", topicVoList);
+        //根据查询条件和指定的页码查询
+        List<TopicVo> topicList = topicEbi.getAll(topicQueryModel, pageNum, pageSize);
+        model.addAttribute("topicList", topicList);
 
         return "manage/topic/list";
     }
-
-    /**
-     * 跳转到知识点管理页面
-     *
-     * @return 跳转知识点管理
-     */
-    @RequestMapping("topic")
-    public String toTopicList()
-    {
-        return "manage/topic/list";
-    }
-
-    @RequestMapping("topic/detail")
-    public String toTopicdetail(String id, HttpServletRequest request)
-    {
-        TopicVo topicVo = topicEbi.get(id);
-        request.setAttribute("topic", topicVo);
-        return "manage/topic/detail";
-    }
-
 
     /**
      * 跳转知识点添加/修改页面
      * <p>
      * （此处将添加和修改页面合并，如果前台传递ID则进行修改否则进入添加页面）
      *
-     * @param topic  接受前台传递的知识点id
-     * @param request HttpServletRequest
+     * @param topicVo 接受前台传递的知识点id
+     * @param request     HttpServletRequest
      *
      * @return 跳转edit
      */
     @RequestMapping("topic/edit")
-    public String edit(TopicVo topic, HttpServletRequest request)
+    public String topicEdit(TopicVo topicVo, HttpServletRequest request)
     {
-
         //判断前台是否传递知识点ID
-        if (StringUtil.isEmpty(topic.getId()))
+        request.setAttribute("subject", subjectEbi.getAll());
+        if (!StringUtil.isEmpty(topicVo.getId()))
         {
             //根据知识点ID获取知识点完整信息从而进行数据回显
-            topic = topicEbi.get(topic.getId());
-            request.setAttribute("topic", topic);
+            topicVo = topicEbi.get(topicVo.getId());
+            request.setAttribute("parent", topicEbi.get(topicVo.getParent().getId()));
+            request.setAttribute("topic", topicVo);
         }
+        //如果待编辑知识点为空 则会传进来parent.id
+        request.setAttribute("parent", topicEbi.get(topicVo.getParent().getId()));
+
         return "/manage/topic/edit";
     }
 
     /**
      * 添加知识点
      *
-     * @param topic 需要添加的信息
+     * @param topicVo 需要添加的信息(必须包含学校id)
      *
      * @return 跳转知识点列表页面
      */
     @RequestMapping("topic/edit.do")
     @SystemLogAnnotation(module = "知识点管理",methods = "知识点添加/修改")
-    public String doAdd(@Validated(value = {AddGroup.class}) TopicVo topic, BindingResult bindingResult,
-                        HttpServletRequest request) throws Exception
+    public String topicDoAdd(@Validated(value = {AddGroup.class}) TopicVo topicVo, BindingResult bindingResult,
+                                HttpServletRequest request) throws OperationException
     {
+
         if (bindingResult.hasErrors())
         {
             List<FieldError> list = bindingResult.getFieldErrors();
@@ -428,15 +475,16 @@ public class QuestionBankManagerController extends BaseController
                 //校验信息，key=属性名+Error
                 request.setAttribute(fieldError.getField() + "Error", fieldError.getDefaultMessage());
             }
-            request.setAttribute("topic", topic);
+            request.setAttribute("topicVo", topicVo);
             return "/manage/topic/edit";
         }
-        if (StringUtil.isEmpty(topic.getId()))
+        if (null == topicVo.getId() || "".equals(topicVo.getId().trim()))
         {
-            topicEbi.save(topic);
+            topicVo.setId(FirstCharUtil.firstCharAndID(topicVo.getName()));
+            topicEbi.save(topicVo);
         } else
         {
-            topicEbi.update(topic);
+            topicEbi.update(topicVo);
         }
         return "redirect:/manage/topic";
     }
@@ -445,19 +493,19 @@ public class QuestionBankManagerController extends BaseController
     /**
      * 删除知识点
      *
-     * @param topic 需要删除的知识点
+     * @param topicVo 需要删除的知识点
      *
      * @return 跳转知识点列表页面
      */
     @RequestMapping("topic/delete.do")
     @SystemLogAnnotation(module = "知识点管理",methods = "知识点删除")
-    public String topicDelete(TopicVo topic) throws Exception
+    public String topicDelete(TopicVo topicVo) throws OperationException
     {
 
-        if (StringUtil.isEmpty(topic.getId()))
+        if (null != topicVo.getId() && !"".equals(topicVo.getId().trim()))
         {
 
-            topicEbi.delete(topic);
+            topicEbi.delete(topicVo);
         }
 
         return "redirect:/manage/topic";
@@ -477,34 +525,35 @@ public class QuestionBankManagerController extends BaseController
     //-------------------------------------------QuestionManager----------------------------------------------
     //-------------------------------------------QuestionManager----------------------------------------------
     //-------------------------------------------QuestionManager----------------------------------------------
-
-    /**
-     * 跳转题目页面(分页)
-     *
-     * @param questionQueryModel 该模型存放了题目属性
-     * @param pageNum          页码
-     * @param pageSize         页面大小
-     * @param model
-     *
-     * @return JSON{ rows: 内容（list） total: 查询结果总数 }
-     */
-
-    //TODO 请求转发问题，没有pageNum   pageSize参数
+    @ResponseBody
     @RequestMapping("question/list.do")
-    //@SystemLogAnnotation(module = "题目管理",methods = "列表查询")
-    public String toQuestionList(QuestionQueryModel questionQueryModel, Integer pageNum, Integer pageSize, Model model)
+    public JsonNode questionList(QuestionQueryModel questionQueryModel, Integer offset, Integer pageSize,
+                                 HttpServletRequest request)
     {
+        //创建自定义序列化器 并设置过滤器
+        CustomerJsonSerializer serializer = new CustomerJsonSerializer(QuestionVo.class, "id,name,code,outline,option,answer", null);
+        //创建返回值对象 json类型
+        ObjectNode result = CustomerJsonSerializer.getDefaultMapper().createObjectNode();
+        List<QuestionVo> questionVoList = questionEbi.getAll(questionQueryModel, offset, pageSize);
+        //对象转换后存放的数组
+        List<ObjectNode> rows = new ArrayList<>();
+        for (QuestionVo questionVo : questionVoList)
+        {
+            //自定义过滤序列化对象
+            ObjectNode node = serializer.toJson_ObjectNode(questionVo);
 
-        //调用BaseController的方法设置数据总量及最大页码数
-        pageCount = pageSize;
-        setDataTotal(questionEbi.getCount(questionQueryModel));
-
-        //根据查询条件及指定页码查询
-        List<QuestionVo> questionVoList = questionEbi.getAll(questionQueryModel, pageNum, pageSize);
-        model.addAttribute("questionVoList", questionVoList);
-
-        return "manage/question/list";
+            //添加额外的特殊属性
+            node.put("questionType",questionVo.getQuestionType().getName());
+            rows.add(node);
+        }
+        //将数组转换为json节点 并插入返回值对象
+        result.put("rows", CustomerJsonSerializer.toJson_JsonNode1(rows));
+        result.put("total", questionEbi.getCount(questionQueryModel));
+        return result;
     }
+
+    //TODO 获取知识点异步方法
+
 
     /**
      * 跳转到题目管理页面
@@ -512,98 +561,17 @@ public class QuestionBankManagerController extends BaseController
      * @return 跳转题目管理
      */
     @RequestMapping("question")
-    public String toQuestionList()
+    public String toQuestionList(HttpServletRequest request)
     {
+        //学科
+        List<SubjectVo> subjectVoList= subjectEbi.getAll();
+        request.setAttribute("subjectVoList",subjectVoList);
         return "manage/question/list";
     }
 
-    @RequestMapping("question/detail")
-    public String toQuestiondetail(String id, HttpServletRequest request)
-    {
-        QuestionVo questionVo = questionEbi.get(id);
-        request.setAttribute("question", questionVo);
-        return "manage/question/detail";
-    }
 
 
-    /**
-     * 跳转题目添加/修改页面
-     * <p>
-     * （此处将添加和修改页面合并，如果前台传递ID则进行修改否则进入添加页面）
-     *
-     * @param question  接受前台传递的题目id
-     * @param request HttpServletRequest
-     *
-     * @return 跳转edit
-     */
-    @RequestMapping("question/edit")
-    public String edit(QuestionVo question, HttpServletRequest request)
-    {
 
-        //判断前台是否传递题目ID
-        if (StringUtil.isEmpty(question.getId()))
-        {
-            //根据题目ID获取题目完整信息从而进行数据回显
-            question = questionEbi.get(question.getId());
-            request.setAttribute("question", question);
-        }
-        return "/manage/question/edit";
-    }
-
-    /**
-     * 添加题目
-     *
-     * @param question 需要添加的信息
-     *
-     * @return 跳转题目列表页面
-     */
-    @RequestMapping("question/edit.do")
-    @SystemLogAnnotation(module = "题目管理",methods = "题目添加/修改")
-    public String doAdd(@Validated(value = {AddGroup.class}) QuestionVo question, BindingResult bindingResult,
-                        HttpServletRequest request) throws Exception
-    {
-        if (bindingResult.hasErrors())
-        {
-            List<FieldError> list = bindingResult.getFieldErrors();
-            for (FieldError fieldError : list)
-            {
-                //校验信息，key=属性名+Error
-                request.setAttribute(fieldError.getField() + "Error", fieldError.getDefaultMessage());
-            }
-            request.setAttribute("question", question);
-            return "/manage/question/edit";
-        }
-        if (StringUtil.isEmpty(question.getId()))
-        {
-            questionEbi.save(question);
-        } else
-        {
-            questionEbi.update(question);
-        }
-        return "redirect:/manage/question";
-    }
-
-
-    /**
-     * 删除题目
-     *
-     * @param question 需要删除的题目
-     *
-     * @return 跳转题目列表页面
-     */
-    @RequestMapping("question/delete.do")
-    @SystemLogAnnotation(module = "题目管理",methods = "题目删除")
-    public String questionDelete(QuestionVo question) throws Exception
-    {
-
-        if (StringUtil.isEmpty(question.getId()))
-        {
-
-            questionEbi.delete(question);
-        }
-
-        return "redirect:/manage/question";
-    }
     //--------------------------------QuestionManager----------END--------------------------------------------
     //--------------------------------QuestionManager----------END--------------------------------------------
     //--------------------------------QuestionManager----------END--------------------------------------------
