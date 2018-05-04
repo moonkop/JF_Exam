@@ -15,7 +15,7 @@ import javax.validation.constraints.NotNull;
 public class SubjectVo
 {
     @NotNull(message = "{id.notempty}",groups = {EditGroup.class})
-    private Byte id;
+    private byte id;
     @NotEmpty(message = "{name.notempty}",groups = {AddGroup.class,EditGroup.class})
     private String name;
 

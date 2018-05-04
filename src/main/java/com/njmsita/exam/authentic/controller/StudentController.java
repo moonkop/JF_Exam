@@ -17,9 +17,7 @@ import com.njmsita.exam.manager.service.ebi.SchoolEbi;
 import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.exception.FormatException;
 import com.njmsita.exam.utils.exception.OperationException;
-import com.njmsita.exam.utils.format.CustomerJsonSerializer;
-import com.njmsita.exam.utils.format.IPUtil;
-import com.njmsita.exam.utils.format.StringUtil;
+import com.njmsita.exam.utils.format.*;
 import com.njmsita.exam.utils.idutil.IdUtil;
 import com.njmsita.exam.utils.logutils.SystemLogAnnotation;
 import com.njmsita.exam.utils.validate.validategroup.EditGroup;
@@ -91,6 +89,7 @@ public class StudentController extends BaseController
      * @param student 前端获取学生用户登陆数据
      * @param request HttpServletRequest
      * @param session HttpSession
+     *
      * @return
      */
     @RequestMapping("login.do")
@@ -156,7 +155,7 @@ public class StudentController extends BaseController
      * 个人信息编辑
      */
     @RequestMapping("edit.do")
-    @SystemLogAnnotation(module = "学生个人",methods = "个人信息编辑")
+    @SystemLogAnnotation(module = "学生个人", methods = "个人信息编辑")
     public String doEdit(@Validated(value = {EditGroup.class}) StudentVo studentVo, BindingResult bindingResult, String classroomId, HttpServletRequest request, HttpSession session) throws OperationException
     {
         if (bindingResult.hasErrors())
@@ -165,9 +164,9 @@ public class StudentController extends BaseController
             for (FieldError fieldError : list)
             {
                 //校验信息，key=属性名+Error
-                request.setAttribute(fieldError.getField()+"Error",fieldError.getDefaultMessage());
+                request.setAttribute(fieldError.getField() + "Error", fieldError.getDefaultMessage());
             }
-            request.setAttribute("studentVo",studentVo);
+            request.setAttribute("studentVo", studentVo);
             return "/manage/me/edit";
         }
         StudentVo studentLogin = (StudentVo) session.getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
@@ -189,7 +188,7 @@ public class StudentController extends BaseController
      * 退出登陆
      */
     @RequestMapping("logout")
-    @SystemLogAnnotation(module = "学生个人",methods = "退出登录")
+    @SystemLogAnnotation(module = "学生个人", methods = "退出登录")
     public String loginOut(HttpSession session)
     {
         //将session中的已登陆用户至空
@@ -200,6 +199,7 @@ public class StudentController extends BaseController
 
     /**
      * 跳转修改密码页面
+     *
      * @return
      */
     @RequestMapping("manage/toSetPassword")
@@ -212,22 +212,25 @@ public class StudentController extends BaseController
 
     /**
      * 修改密码
-     * @param oldPassword   原始密码
-     * @param newPassword   新密码
+     *
+     * @param oldPassword 原始密码
+     * @param newPassword 新密码
      * @param session
+     *
      * @return
      */
     @RequestMapping("manage/modifyPassword")
-    @SystemLogAnnotation(module = "学生个人",methods = "修改密码")
-    public String modifyPassword(String oldPassword,String newPassword,HttpSession session) throws OperationException
+    @SystemLogAnnotation(module = "学生个人", methods = "修改密码")
+    public String modifyPassword(String oldPassword, String newPassword, HttpSession session) throws OperationException
     {
 
-        StudentVo loginStudent= (StudentVo) session.getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
-        if(!loginStudent.getPassword().equals(oldPassword)){
+        StudentVo loginStudent = (StudentVo) session.getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
+        if (!loginStudent.getPassword().equals(oldPassword))
+        {
             //todo 提供一下视图
             return "";
         }
-        studentEbi.modifyPassword(loginStudent,oldPassword,newPassword);
+        studentEbi.modifyPassword(loginStudent, oldPassword, newPassword);
         return "redirect:welcome";
     }
     //------------------------------------------StudentManager----------------------------------------------
@@ -256,6 +259,7 @@ public class StudentController extends BaseController
      *
      * @param studentQueryModel 该模型存放了学生属性  查询条件
      * @param request
+     *
      * @return
      */
     @RequestMapping("list")
@@ -281,36 +285,17 @@ public class StudentController extends BaseController
 
     @ResponseBody
     @RequestMapping("manage/list.do")
-    public JsonNode StudentList(StudentQueryModel studentQueryModel, Integer pageNum, Integer pageSize)
+    public JsonResponse StudentList(StudentQueryModel studentQueryModel, Integer pageNum, Integer pageSize)
     {
-        CustomerJsonSerializer serializer = new CustomerJsonSerializer(StudentVo.class,
-                "name,id,studentId",
-                null);
-        List<StudentVo> sutdentList = studentEbi.getAll(studentQueryModel, pageNum, pageSize);
-        List<ObjectNode> rowsList = new ArrayList<>();
-        ObjectNode result = CustomerJsonSerializer.getDefaultMapper().createObjectNode();
-        for (StudentVo studentVo : sutdentList)
-        {
-            ObjectNode obj = serializer.toJson_ObjectNode(studentVo);
-            if (studentVo.getRole() != null)
-            {
-                obj.put("role", studentVo.getRole().getName());
-            }
-            if (studentVo.getClassroom() != null)
-            {
-                obj.put("classroom", studentVo.getClassroom().getName());
-            }
-            if (studentVo.getSchool() != null)
-            {
-                obj.put("school", studentVo.getSchool().getName());
-            }
-
-            rowsList.add(obj);
-        }
-        JsonNode resultRows = CustomerJsonSerializer.toJson_JsonNode1(rowsList);
-        result.put("rows", resultRows);
-        result.put("total", studentEbi.getCount(studentQueryModel));
-        return result;
+        return new JsonListResponse<>(
+                studentEbi.getAll(studentQueryModel, pageNum, pageSize),
+                "name," +
+                "id," +
+                "studentId," +
+                "[school]school.name," +
+                "[classroom]classroom.name," +
+                "[role]role.name",
+                studentEbi.getCount(studentQueryModel));
     }
 
     /**
@@ -320,6 +305,7 @@ public class StudentController extends BaseController
      *
      * @param studentVo 接受前台传递的学生id
      * @param request   HttpServletRequest
+     *
      * @return 跳转edit
      */
     @RequestMapping("manage/edit")
@@ -342,10 +328,11 @@ public class StudentController extends BaseController
      * 添加学生
      *
      * @param studentVo 需要添加的信息
+     *
      * @return 跳转学生列表页面
      */
     @RequestMapping("manage/edit.do")
-    @SystemLogAnnotation(module = "学生管理",methods = "学生添加/修改")
+    @SystemLogAnnotation(module = "学生管理", methods = "学生添加/修改")
     public String doAdd(@Validated(value = {StudentAddGroup.class}) StudentVo studentVo, BindingResult bindingResult,
                         HttpServletRequest request) throws OperationException
     {
@@ -355,9 +342,9 @@ public class StudentController extends BaseController
             for (FieldError fieldError : list)
             {
                 //校验信息，key=属性名+Error
-                request.setAttribute(fieldError.getField() + "Error" ,fieldError.getDefaultMessage());
+                request.setAttribute(fieldError.getField() + "Error", fieldError.getDefaultMessage());
             }
-            request.setAttribute("studentVo",studentVo);
+            request.setAttribute("studentVo", studentVo);
             return "/manage/student/edit";
         }
 
@@ -365,7 +352,8 @@ public class StudentController extends BaseController
         {
             studentVo.setId(IdUtil.getUUID());
             studentEbi.save(studentVo);
-        }else {
+        } else
+        {
             studentEbi.update(studentVo);
         }
         return "redirect:/student/manage";
@@ -375,10 +363,11 @@ public class StudentController extends BaseController
      * 删除学生
      *
      * @param studentVo 需要删除的学生
+     *
      * @return 跳转学生列表页面
      */
     @RequestMapping("manage/delete.do")
-    @SystemLogAnnotation(module = "学生管理",methods = "删除学生")
+    @SystemLogAnnotation(module = "学生管理", methods = "删除学生")
     public String delete(StudentVo studentVo) throws OperationException
     {
         studentEbi.delete(studentVo);
@@ -386,7 +375,7 @@ public class StudentController extends BaseController
     }
 
     @RequestMapping("import.do")
-    @SystemLogAnnotation(module = "学生管理",methods = "批量导入")
+    @SystemLogAnnotation(module = "学生管理", methods = "批量导入")
     public String inputXls(MultipartFile studentInfo, String schoolId) throws FormatException, OperationException, IOException
     {
         if (studentInfo != null)
@@ -404,14 +393,16 @@ public class StudentController extends BaseController
 
     /**
      * 密码重置
-     * @param studentVo 学生信息
+     *
+     * @param studentVo     学生信息
      * @param bindingResult
      * @param request
+     *
      * @return
      */
     @RequestMapping("manage/resetPassword.do")
-    @SystemLogAnnotation(module = "学生管理",methods = "密码重置")
-    public String resetPassword(@Validated(value =EditGroup.class) StudentVo studentVo, BindingResult bindingResult,
+    @SystemLogAnnotation(module = "学生管理", methods = "密码重置")
+    public String resetPassword(@Validated(value = EditGroup.class) StudentVo studentVo, BindingResult bindingResult,
                                 HttpServletRequest request)
     {
         if (bindingResult.hasErrors())
@@ -420,7 +411,7 @@ public class StudentController extends BaseController
             for (FieldError fieldError : list)
             {
                 //校验信息，key = 属性名+Error
-                request.setAttribute(fieldError.getField()+"Error",fieldError.getDefaultMessage());
+                request.setAttribute(fieldError.getField() + "Error", fieldError.getDefaultMessage());
             }
             request.setAttribute("student", studentVo);
             return "/manage/me/edit";

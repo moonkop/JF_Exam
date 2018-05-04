@@ -39,7 +39,7 @@ public class LogAopAspect
         //获取登录用户账户
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         //获取系统时间
-        Long time=System.currentTimeMillis();
+        Long time = System.currentTimeMillis();
         log.setTime(time);
         log.setIp(IPUtil.getIP(request));
 
@@ -52,19 +52,23 @@ public class LogAopAspect
         // 拦截的方法参数
         Object[] args = pjp.getArgs();
 
-        StringBuilder sb=new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         //绑定参数
         for (Object arg : args)
         {
-            if(arg!=null){
-                Class argClass=arg.getClass();
-                String argName=argClass.getName();
-                String argStr=arg.toString();
-                sb.append("$$"+argName+"-->"+argStr+"$$");
+            if (arg != null)
+            {
+                Class argClass = arg.getClass();
+                String argName = argClass.getName();
+                String argStr = arg.toString();
+                sb.append("$$" + argName + "-->" + argStr + "$$");
                 sb.append("，");
             }
         }
-        log.setArgument(sb.toString().substring(0,sb.length()-1));
+        if (args.length != 0)
+        {
+            log.setArgument(sb.toString().substring(0, sb.length() - 1));
+        }
         // 拦截的放参数类型
         Signature sig = pjp.getSignature();
         MethodSignature msig = null;
@@ -110,12 +114,13 @@ public class LogAopAspect
                     log.setCommite("执行成功！");
                     //保存进数据库
                     logEbi.save(log);
-                } catch (Throwable e)
+                } catch (Exception e)
                 {
                     long end = System.currentTimeMillis();
                     log.setResponseTime(end - start);
-                    log.setCommite("执行失败");
+                    log.setCommite("执行失败->"+e.getMessage());
                     logEbi.save(log);
+                    throw e;
                 }
             } else
             {//没有包含注解

@@ -198,8 +198,6 @@ public class TresourceVo
                 ", seq=" + seq +
                 ", url='" + url + '\'' +
                 ", resourcetype=" + resourcetype +
-                ", childs=" + childs +
-                ", parent=" + parent +
                 ", roles=" + roles +
                 '}';
     }

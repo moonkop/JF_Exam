@@ -63,7 +63,7 @@
 
                             $table = $("#table");
                             $table.bootstrapTable(
-                                {
+                                {  responseHandler:tableResponseHandler,
                                     locale: 'zh-CN',
                                     queryParams: queryParams,
                                     url: '/teacher/manage/list.do',

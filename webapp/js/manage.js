@@ -1,3 +1,7 @@
+tableResponseHandler=  function (res) {
+    return res.payload;
+}
+
 queryParams = function (params) {
     var temp = {
         pageNum: params.pageNumber,

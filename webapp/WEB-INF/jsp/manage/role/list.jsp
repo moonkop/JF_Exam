@@ -63,8 +63,9 @@
                             $table = $("#table");
                             $table.bootstrapTable(
                                 {
-                                    locale: 'zh-CN',
                                     queryParams: queryParams,
+                                    responseHandler:tableResponseHandler,
+                                    locale: 'zh-CN',
                                     url: '/manage/role/list.do',
                                     method: 'get',
                                     cache: false,

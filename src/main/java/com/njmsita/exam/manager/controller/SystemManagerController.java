@@ -21,6 +21,8 @@ import com.njmsita.exam.base.BaseController;
 import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.format.CustomerJsonSerializer;
+import com.njmsita.exam.utils.format.JsonListResponse;
+import com.njmsita.exam.utils.format.JsonResponse;
 import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.idutil.IdUtil;
 import com.njmsita.exam.utils.logutils.SystemLogAnnotation;
@@ -43,10 +45,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 系统管理控制器
@@ -89,7 +88,8 @@ public class SystemManagerController extends BaseController
 
     //todo 以后将请求方法 doEdit doAdd 之类的写成 edit.do 包括list 现有的已经改好了
     //TODO 请求转发问题，没有pageNum   pageSize参数
-    @RequestMapping("school/list.do")
+    @Deprecated
+    @RequestMapping("school/list1.do")
     public String toSchoolList(SchoolQueryModel schoolQueryModel, Integer pageNum, Integer pageSize, Model model)
     {
 
@@ -106,14 +106,14 @@ public class SystemManagerController extends BaseController
 
     //测试方法
     @ResponseBody
-    @RequestMapping("school/list1.do")
-    public JSON schoolList(SchoolQueryModel schoolQueryModel, Integer pageNum, Integer pageSize)
+    @RequestMapping("school/list.do")
+    public JsonResponse schoolList(SchoolQueryModel schoolQueryModel, Integer pageNum, Integer pageSize)
     {
-        List<SchoolVo> rows = schoolEbi.getAll(schoolQueryModel, pageNum, pageSize);
-        JSONObject object = new JSONObject();
-        object.put("rows", rows);
-        object.put("total", schoolEbi.getCount(schoolQueryModel));
-        return object;
+
+        return new JsonListResponse<>(schoolEbi.getAll(schoolQueryModel, pageNum, pageSize),
+                "id,name",
+                schoolEbi.getCount(schoolQueryModel));
+
     }
 
     /**
@@ -169,7 +169,7 @@ public class SystemManagerController extends BaseController
      * @return 跳转学校列表页面
      */
     @RequestMapping("school/edit.do")
-    @SystemLogAnnotation(module = "学校管理",methods = "学校添加/修改")
+    @SystemLogAnnotation(module = "学校管理", methods = "学校添加/修改")
     public String doAdd(@Validated(value = {AddGroup.class}) SchoolVo school, BindingResult bindingResult,
                         HttpServletRequest request) throws OperationException
     {
@@ -204,7 +204,7 @@ public class SystemManagerController extends BaseController
      * @return 跳转学校列表页面
      */
     @RequestMapping("school/delete.do")
-    @SystemLogAnnotation(module = "学校管理",methods = "学校删除")
+    @SystemLogAnnotation(module = "学校管理", methods = "学校删除")
     public String schoolDelete(SchoolVo school) throws OperationException
     {
 
@@ -236,25 +236,18 @@ public class SystemManagerController extends BaseController
 
     @ResponseBody
     @RequestMapping("role/list.do")
-    public JsonNode roleList(TroleQueryModel troleQueryModel, Integer pageNum, Integer pageSize)
+    @SystemLogAnnotation(module = "角色管理", methods = "角色列表查询")
+    public JsonResponse roleList(TroleQueryModel troleQueryModel, Integer pageNum, Integer pageSize)
     {
-        CustomerJsonSerializer serializer = new CustomerJsonSerializer(TroleVo.class, "id,name", null);
-        ObjectNode result = CustomerJsonSerializer.getDefaultMapper().createObjectNode();
-        List<TroleVo> troleVoList = roleEbi.getAll(troleQueryModel, pageNum, pageSize);
-        List<ObjectNode> rows = new ArrayList<>();
-        for (TroleVo troleVo : troleVoList)
-        {
-            ObjectNode node = serializer.toJson_ObjectNode(troleVo);
-            rows.add(node);
-        }
-        result.put("rows", CustomerJsonSerializer.toJson_JsonNode1(rows));
-        result.put("total", roleEbi.getCount(troleQueryModel));
-        return result;
+        return new JsonListResponse<>(
+                roleEbi.getAll(troleQueryModel, pageNum, pageSize),
+                "id,name",
+                roleEbi.getCount(troleQueryModel));
     }
 
     @ResponseBody
     @RequestMapping("roleResource/tree.do")
-    @SystemLogAnnotation(module = "角色管理",methods = "角色查看/编辑")
+    @SystemLogAnnotation(module = "角色管理", methods = "角色资源查看")
     public List<ObjectNode> roleResourceList(TroleVo troleVo, boolean edit)
     {
         troleVo = roleEbi.get(troleVo.getId());
@@ -289,8 +282,6 @@ public class SystemManagerController extends BaseController
                     .put("text", tresourceVo.getName() + "    " + tresourceVo.getUrl());
             rows.add(node);
         }
-
-
 
 
         return rows;
@@ -359,15 +350,6 @@ public class SystemManagerController extends BaseController
             //根据角色ID获取角色完整信息从而进行数据回显
             roleVo = roleEbi.get(roleVo.getId());
             request.setAttribute("role", roleVo);
-
-            //获取当前角色已拥有资源
-            Set<TresourceVo> roleReses = roleVo.getReses();
-            request.setAttribute("roleReses", roleReses);
-
-            //获取当前角色未拥有资源
-            Set<TresourceVo> otherReses = roleVo.getReses();
-            otherReses.removeAll(roleReses);
-            request.setAttribute("otherReses", otherReses);
         }
         return "/manage/role/edit";
     }
@@ -381,7 +363,7 @@ public class SystemManagerController extends BaseController
      */
     @ResponseBody
     @RequestMapping("role/edit.do")
-    @SystemLogAnnotation(module = "角色管理",methods = "角色添加/修改")
+    @SystemLogAnnotation(module = "角色管理", methods = "角色添加/修改")
     public String roleDoAdd(@Validated(value = {AddGroup.class}) TroleVo roleVo, BindingResult bindingResult, @RequestParam(value = "resourceIds[]") String[] resourceIds,
                             HttpServletRequest request) throws OperationException
     {
@@ -416,13 +398,12 @@ public class SystemManagerController extends BaseController
      * @return 跳转角色列表页面
      */
     @RequestMapping("role/delete")
-    @SystemLogAnnotation(module = "角色管理",methods = "角色删除")
+    @SystemLogAnnotation(module = "角色管理", methods = "角色删除")
     public String roleDelete(TroleVo roleVo) throws OperationException
     {
 
         if (null != roleVo.getId() && !"".equals(roleVo.getId().trim()))
         {
-
             roleEbi.delete(roleVo);
         }
 
@@ -454,21 +435,12 @@ public class SystemManagerController extends BaseController
 
     @ResponseBody
     @RequestMapping("classroom/list.do")
-    public JsonNode classroomList(ClassroomQueryModel classroomQueryModel, Integer pageNum, Integer pageSize)
+    public JsonResponse classroomList(ClassroomQueryModel classroomQueryModel, Integer pageNum, Integer pageSize)
     {
-        CustomerJsonSerializer serializer = new CustomerJsonSerializer(ClassroomVo.class, "id,name", null);
-        ObjectNode result = CustomerJsonSerializer.getDefaultMapper().createObjectNode();
-        List<ClassroomVo> classroomList = classroomEbi.getAll(classroomQueryModel, pageNum, pageSize);
-        List<ObjectNode> rows = new ArrayList<>();
-        for (ClassroomVo classroomVo : classroomList)
-        {
-            ObjectNode node = serializer.toJson_ObjectNode(classroomVo);
-            node.put("school", classroomVo.getSchoolVo().getName());
-            rows.add(node);
-        }
-        result.put("rows", CustomerJsonSerializer.toJson_JsonNode1(rows));
-        result.put("total", classroomEbi.getCount(classroomQueryModel));
-        return result;
+        return new JsonListResponse<>(
+                classroomEbi.getAll(classroomQueryModel, pageNum, pageSize),
+                "id,name,[school]schoolVo.name",
+                classroomEbi.getCount(classroomQueryModel));
 
     }
 
@@ -529,7 +501,7 @@ public class SystemManagerController extends BaseController
      * @return 跳转班级列表页面
      */
     @RequestMapping("classroom/edit.do")
-    @SystemLogAnnotation(module = "班级管理",methods = "班级添加/编辑")
+    @SystemLogAnnotation(module = "班级管理", methods = "班级添加/编辑")
     public String classroomDoAdd(@Validated(value = {AddGroup.class}) ClassroomVo classroomVo, BindingResult bindingResult,
                                  HttpServletRequest request) throws OperationException
     {
@@ -565,7 +537,7 @@ public class SystemManagerController extends BaseController
      * @return 跳转班级列表页面
      */
     @RequestMapping("classroom/delete")
-    @SystemLogAnnotation(module = "班级管理",methods = "班级删除")
+    @SystemLogAnnotation(module = "班级管理", methods = "班级删除")
     public String classroomDelete(ClassroomVo classroomVo) throws OperationException
     {
 
@@ -619,27 +591,12 @@ public class SystemManagerController extends BaseController
 
     @ResponseBody
     @RequestMapping("resource/list.do")
-    public JsonNode resourceList(ResourceQueryModel resourceQueryModel, Integer pageNum, Integer pageSize)
+    public JsonResponse resourceList(ResourceQueryModel resourceQueryModel, Integer pageNum, Integer pageSize)
     {
-        //创建自定义序列化器 并设置过滤器
-        CustomerJsonSerializer serializer = new CustomerJsonSerializer(TresourceVo.class, "id,name,url,remark", null);
-        //创建返回值对象 json类型
-        ObjectNode result = CustomerJsonSerializer.getDefaultMapper().createObjectNode();
-        List<TresourceVo> tresourceVoList = resourceEbi.getAll(resourceQueryModel, pageNum, pageSize);
-        //对象转换后存放的数组
-        List<ObjectNode> rows = new ArrayList<>();
-        for (TresourceVo tresourceVo : tresourceVoList)
-        {
-            //自定义过滤序列化对象
-            ObjectNode node = serializer.toJson_ObjectNode(tresourceVo);
-            //添加额外的特殊属性
-            node.put("type", tresourceVo.getResourcetype().getName());
-            rows.add(node);
-        }
-        //将数组转换为json节点 并插入返回值对象
-        result.put("rows", CustomerJsonSerializer.toJson_JsonNode1(rows));
-        result.put("total", resourceEbi.getCount(resourceQueryModel));
-        return result;
+        return new JsonListResponse<>(
+                resourceEbi.getAll(resourceQueryModel, pageNum, pageSize),
+                "id,name,[school]schoolVo.name",
+                resourceEbi.getCount(resourceQueryModel));
     }
 
     @ResponseBody
@@ -727,7 +684,7 @@ public class SystemManagerController extends BaseController
      * @return 跳转资源列表页面
      */
     @RequestMapping("resource/edit.do")
-    @SystemLogAnnotation(module = "资源管理",methods = "资源添加/修改")
+    @SystemLogAnnotation(module = "资源管理", methods = "资源添加/修改")
     public String resourceDoAdd(@Validated(value = {AddGroup.class}) TresourceVo tresourceVo, BindingResult bindingResult,
                                 HttpServletRequest request) throws OperationException
     {
@@ -745,10 +702,10 @@ public class SystemManagerController extends BaseController
         }
         if (null == tresourceVo.getId() || "".equals(tresourceVo.getId().trim()))
         {
-            tresourceVo.setId(tresourceVo.getUrl().substring(1).replace("/","_"));
+            tresourceVo.setId(tresourceVo.getUrl().substring(1).replace("/", "_"));
             resourceEbi.save(tresourceVo);
-            String allRes= (String) request.getServletContext().getAttribute(SysConsts.ALL_RESOUCERS_AUTHENTIC_URL_NAME);
-            request.getServletContext().setAttribute(SysConsts.ALL_RESOUCERS_AUTHENTIC_URL_NAME,allRes+",["+tresourceVo.getUrl()+",");
+            String allRes = (String) request.getServletContext().getAttribute(SysConsts.ALL_RESOUCERS_AUTHENTIC_URL_NAME);
+            request.getServletContext().setAttribute(SysConsts.ALL_RESOUCERS_AUTHENTIC_URL_NAME, allRes + ",[" + tresourceVo.getUrl() + ",");
         } else
         {
             resourceEbi.update(tresourceVo);
@@ -765,7 +722,7 @@ public class SystemManagerController extends BaseController
      * @return 跳转资源列表页面
      */
     @RequestMapping("resource/delete.do")
-    @SystemLogAnnotation(module = "资源管理",methods = "资源删除")
+    @SystemLogAnnotation(module = "资源管理", methods = "资源删除")
     public String resourceDelete(TresourceVo tresourceVo) throws OperationException
     {
 
@@ -797,25 +754,26 @@ public class SystemManagerController extends BaseController
     /**
      * 导出指定时间内的日志信息
      *
-     * @param logQueryModel     该模型存放了资源属性
+     * @param logQueryModel 该模型存放了资源属性
+     *
      * @return
      */
     @RequestMapping("log/export")
-    @SystemLogAnnotation(module = "日志管理",methods = "日志导出")
-    public ResponseEntity<byte[]> exportLog(LogQueryModel logQueryModel,HttpServletRequest request) throws Exception
+    @SystemLogAnnotation(module = "日志管理", methods = "日志导出")
+    public ResponseEntity<byte[]> exportLog(LogQueryModel logQueryModel, HttpServletRequest request) throws Exception
     {
 //        String path=request.getServletContext().getContextPath();
-        String path=request.getServletContext().getRealPath("/WEB-INF/log");
+        String path = request.getServletContext().getRealPath("/WEB-INF/log");
         //根据查询条件查询
-        File file= logEbi.getAll(logQueryModel, path);
-        byte[] body=null;
-        InputStream inputStream =new FileInputStream(file);
-        body=new byte[inputStream.available()];
+        File file = logEbi.getAll(logQueryModel, path);
+        byte[] body = null;
+        InputStream inputStream = new FileInputStream(file);
+        body = new byte[inputStream.available()];
         inputStream.read(body);
-        HttpHeaders headers=new HttpHeaders();
+        HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "attchement;filename=" + file.getName());
-        HttpStatus status =HttpStatus.OK;
-        ResponseEntity<byte[]> entity=new ResponseEntity<>(body,headers,status);
+        HttpStatus status = HttpStatus.OK;
+        ResponseEntity<byte[]> entity = new ResponseEntity<>(body, headers, status);
         inputStream.close();
         file.delete();
         return entity;

@@ -58,7 +58,8 @@
                             </div>
                         </div>
                         <div class="col-sm-offset-2">
-                            <button class="btn btn-default" onclick="window.location.href= '/teacher/edit'">编辑</button>
+                            <a href= '/teacher/edit'>编辑</a>
+                            <a href= '/teacher/setpassword'>修改密码</a>
                         </div>
 
                     </div>

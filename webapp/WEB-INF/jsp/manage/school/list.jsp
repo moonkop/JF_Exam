@@ -65,10 +65,10 @@
 
                     $table = $("#table");
                     $table.bootstrapTable(
-                        {
+                        {  responseHandler:tableResponseHandler,
                             locale:'zh-CN',
                             queryParams: queryParams,
-                            url: '/manage/school/list1.do',
+                            url: '/manage/school/list.do',
                             method: 'get',
                             cache: false,
                             pagination: true,
