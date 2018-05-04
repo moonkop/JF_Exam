@@ -51,7 +51,7 @@
                 <value>classpath:mapping/QuestionTypeVo.hbm.xml</value>
                 <value>classpath:mapping/SubjectVo.hbm.xml</value>
                 <value>classpath:mapping/LogVo.hbm.xml</value>
-				<value>classpath:mapping/LogVo.hbm.xml</value>
+				<!--<value>classpath:mapping/LogVo.hbm.xml</value>-->
                 <value>classpath:mapping/TopicVo.hbm.xml</value>
             </list>
 		</property>

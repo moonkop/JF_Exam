@@ -16,7 +16,7 @@ public class QuestionTypeVo
 {
 
     @NotNull(message = "{id.notempty}",groups = {EditGroup.class})
-    private Byte id;
+    private byte id;
     @NotEmpty(message = "{name.notempty}",groups = {AddGroup.class, EditGroup.class})
     private String name;
     @NotNull(message = "{score.notempty}",groups = {AddGroup.class, EditGroup.class})

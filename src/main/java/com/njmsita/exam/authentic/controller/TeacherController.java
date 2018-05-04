@@ -302,6 +302,7 @@ public class TeacherController extends BaseController
         for (TeacherVo teacherVo : list)
         {
             ObjectNode obj = serializer.toJson_ObjectNode(teacherVo);
+
             obj.put("role", teacherVo.getTroleVo().getName());
             rowsList.add(obj);
         }
