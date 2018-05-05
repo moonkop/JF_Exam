@@ -9,4 +9,10 @@ import com.njmsita.exam.manager.model.SubjectVo;
  */
 public interface QuestionTypeDao extends BaseDao<QuestionTypeVo>
 {
+    /**
+     * 根据名称查询题型
+     * @param name  题型名称
+     * @return
+     */
+    public QuestionTypeVo getByName(String name);
 }

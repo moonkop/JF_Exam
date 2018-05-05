@@ -22,6 +22,7 @@ public class QuestionVo
     @NotEmpty(message = "{outline.notempty}",groups = {AddGroup.class,EditGroup.class})
     private String outline;
     private String option;
+    //TODo 修改数据类型
     private Byte answer;
 
     //所属知识点  n TO 1

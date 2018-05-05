@@ -9,6 +9,8 @@ import com.njmsita.exam.manager.model.SubjectVo;
 import org.hibernate.criterion.DetachedCriteria;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * 题型持久层实现类
  */
@@ -18,5 +20,12 @@ public class QuestionTypeDaoImpl extends BaseImpl<QuestionTypeVo> implements Que
 
     public void doQbc(DetachedCriteria dc, BaseQueryVO qm)
     {
+    }
+
+    public QuestionTypeVo getByName(String name)
+    {
+        String hql="from QuestionTypeVo where name =?";
+        List<QuestionTypeVo> list= (List<QuestionTypeVo>) this.getHibernateTemplate().find(hql,name);
+        return list.size()>0?list.get(0):null;
     }
 }

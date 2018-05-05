@@ -1,5 +1,7 @@
 package com.njmsita.exam.utils.exception;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -7,6 +9,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 /**
  * 统一异常处理器
@@ -29,21 +32,42 @@ public class UnifyExceptionResoler implements HandlerExceptionResolver
         }
 
         message=unifyException.getMessage();
-        request.setAttribute("exceptionMessage",message);
+        String requestHeader = request.getHeader("x-requested-whith");
+        ModelAndView modelAndView = new ModelAndView();
+        if(requestHeader != null && requestHeader.equals("XMLHttpRequest")){
+            try
+            {
+                String JSON="";
+                //设置状态码
+                response.setStatus(HttpStatus.OK.value());
+                //设置ContentType
+                response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                //避免乱码
+                response.setCharacterEncoding("UTF-8");
 
-        //TODO 区分异步同步请求返回
-        try
-        {
-            response.setStatus(500);
-            request.getRequestDispatcher("/WEB-INF/jsp/error/500.jsp").forward(request,response);
-        } catch (ServletException e)
-        {
-            e.printStackTrace();
-        } catch (IOException e)
-        {
-            e.printStackTrace();
+                response.setHeader("Cache-Control","no-cache,must-revalidate");
+
+                PrintWriter writer = response.getWriter();
+                JSON+="{exceptionMessage:"+message+"}";
+                writer.write(JSON);
+                writer.flush();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }else {
+            request.setAttribute("exceptionMessage",message);
+            try
+            {
+                response.setStatus(500);
+                request.getRequestDispatcher("/WEB-INF/jsp/error/500.jsp").forward(request,response);
+            } catch (ServletException e)
+            {
+                e.printStackTrace();
+            } catch (IOException e)
+            {
+                e.printStackTrace();
+            }
         }
-
         return new ModelAndView();
     }
 }
