@@ -26,10 +26,11 @@
                     <div class="panel-body">
                         <div class="row">
                             <div class="col-lg-12">
-                                <form role="form" class="form-horizontal" action="/teacher/manage/edit.do" method="post">
+                                <form role="form" class="form-horizontal" action="/teacher/manage/edit.do"
+                                      method="post">
 
-                                            <input type="text" class="form-control" id="id" name="id" style="display: none"
-                                                   value="${teacher.id}">
+                                    <input type="text" class="form-control" id="id" name="id" style="display: none"
+                                           value="${teacher.id}">
                                     <div class="form-group">
                                         <label class="col-sm-2 control-label">账号</label>
                                         <div class="col-sm-8">
@@ -53,11 +54,25 @@
                                                    value="${teacher.name}">
                                         </div>
                                     </div>
+
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">性别</label>
+                                        <div class="col-sm-8">
+                                        <label class="radio-inline">
+                                            <input type="radio" name="gender" value="1" checked> 男
+                                        </label>
+                                        <label class="radio-inline">
+                                            <input type="radio" name="gender" value="0"> 女
+                                        </label>
+                                        </div>
+                                    </div>
+
+
                                     <div class="form-group">
                                         <label for="selectRole" class="col-sm-2 control-label">身份</label>
 
                                         <div class="col-sm-8">
-                                            <select name="roleID" id="selectRole" class="form-control">
+                                            <select name="troleVo.id" id="selectRole" class="form-control">
                                                 <c:forEach items="${requestScope.roles}" var="role">
                                                     <option value="${role.id}"
                                                             <c:if test="${teacher.troleVo==role}">selected</c:if>   >

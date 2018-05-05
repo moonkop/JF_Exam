@@ -146,7 +146,7 @@ public class TeacherController extends BaseController
     public String edit()
     {
         //回显数据在session中获取
-        return "/manage/me/edit";
+        return "/back";
     }
 
     /**
@@ -354,7 +354,7 @@ public class TeacherController extends BaseController
                 request.setAttribute(fieldError.getField() + "Error", fieldError.getDefaultMessage());
             }
             request.setAttribute("teacher", teacher);
-            return "/manage/me/edit";
+            return "/back";
         }
         if (null == teacher.getId() || "".equals(teacher.getId().trim()))
         {
@@ -438,7 +438,7 @@ public class TeacherController extends BaseController
                 request.setAttribute(fieldError.getField() + "Error", fieldError.getDefaultMessage());
             }
             request.setAttribute("teacher", teacherVo);
-            return "/manage/me/edit";
+            return "/back";
         }
         teaEbi.resetPassword(teacherVo);
         return "";

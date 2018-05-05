@@ -1,4 +1,4 @@
-tableResponseHandler=  function (res) {
+tableResponseHandler = function (res) {
     return res.payload;
 }
 
@@ -9,13 +9,14 @@ queryParams = function (params) {
     };
     return temp;
 }
+
 function OnResult(result, onsuccess, onfailure)
 {
-    if (result.code == 0)
+    if (result.code == 100)
     {
         if (onsuccess === undefined)
         {
-            defaultOnSuccess();
+            defaultOnSuccess(result);
 
         } else if (onsuccess === 0)
         {
@@ -39,9 +40,19 @@ function OnResult(result, onsuccess, onfailure)
         }
     }
 }
+
 function defaultOnSuccess(result)
 {
-    alert("操作成功");
+    if (result.message == "ok")
+    {
+        alert("操作成功");
+    } else if (result.message === undefined)
+    {
+        alert("操作结果未知");
+    } else
+    {
+        alert(result.message);
+    }
 }
 
 function defaultOnFailure(res)

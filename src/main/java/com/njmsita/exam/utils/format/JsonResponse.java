@@ -6,20 +6,25 @@ import java.util.Map;
 public class JsonResponse
 {
     protected Map<String, Object> payload = new HashMap<>();
-    private String mesasge;
+    private String message;
     private int code;
 
     public JsonResponse()
     {
-        this.mesasge = "ok";
+        this.message = "ok";
         this.code = 100;
     }
 
     public JsonResponse(String message)
     {
-        this.mesasge = message;
+        this.message = message;
         this.code = 100;
+    }
 
+    public JsonResponse(int code, String message)
+    {
+        this.message = message;
+        this.code = code;
     }
 
     public Map<String, Object> getPayload()
@@ -32,14 +37,14 @@ public class JsonResponse
         this.payload = payload;
     }
 
-    public String getMesasge()
+    public String getMessage()
     {
-        return mesasge;
+        return message;
     }
 
-    public void setMesasge(String mesasge)
+    public void setMessage(String message)
     {
-        this.mesasge = mesasge;
+        this.message = message;
     }
 
     public int getCode()

@@ -72,10 +72,16 @@ public class JsonListResponse<T> extends JsonResponse
                         {
                             break;
                         }
-                        Class<?> classType = objtemp.getClass();
-                        Field field = classType.getDeclaredField(props);
-                        field.setAccessible(true); // 抑制Java对修饰符的检查
-                        objtemp = field.get(objtemp);
+                        try
+                        {
+                            Class<?> classType = objtemp.getClass();
+                            Field field = classType.getDeclaredField(props);
+                            field.setAccessible(true); // 抑制Java对修饰符的检查
+                            objtemp = field.get(objtemp);
+                        } catch (Exception e)
+                        {
+                            e.printStackTrace();
+                        }
                     }
                     row.put(fieldName, objtemp);
                 }

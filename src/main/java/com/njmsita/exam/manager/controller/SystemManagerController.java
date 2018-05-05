@@ -182,7 +182,7 @@ public class SystemManagerController extends BaseController
                 request.setAttribute(fieldError.getField() + "Error", fieldError.getDefaultMessage());
             }
             request.setAttribute("school", school);
-            return "/manage/me/edit";
+            return "/back";
         }
         if (null == school.getId() || "".equals(school.getId())) //fixed empty
         {
@@ -373,7 +373,7 @@ public class SystemManagerController extends BaseController
                 request.setAttribute(fieldError.getField() + "Error", fieldError.getDefaultMessage());
             }
             request.setAttribute("resourceIds", resourceIds);
-            return "/manage/me/edit";
+            return "/back";
         }
         if (null == roleVo.getId() || "".equals(roleVo.getId().trim()))
         {
@@ -522,7 +522,7 @@ public class SystemManagerController extends BaseController
                 request.setAttribute(fieldError.getField() + "Error", fieldError.getDefaultMessage());
             }
             request.setAttribute("classroomVo", classroomVo);
-            return "/manage/me/edit";
+            return "/back";
         }
         if (null == classroomVo.getId() || "".equals(classroomVo.getId().trim()))
         {

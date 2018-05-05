@@ -61,7 +61,10 @@ public class TeacherVo extends UserModel
     public void setTroleVo(TroleVo troleVo)
     {
         this.troleVo = troleVo;
-        super.setUserRole(troleVo.getId());
+        if (troleVo != null)
+        {
+            super.setUserRole(troleVo.getId());
+        }
     }
 
     @Id

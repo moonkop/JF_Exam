@@ -1,5 +1,7 @@
 package com.njmsita.exam.utils.exception;
 
+import com.njmsita.exam.utils.format.CustomerJsonSerializer;
+import com.njmsita.exam.utils.format.JsonResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.servlet.HandlerExceptionResolver;
@@ -32,24 +34,20 @@ public class UnifyExceptionResoler implements HandlerExceptionResolver
         }
 
         message=unifyException.getMessage();
-        String requestHeader = request.getHeader("x-requested-whith");
+        String requestHeader = request.getHeader("x-requested-with");
         ModelAndView modelAndView = new ModelAndView();
         if(requestHeader != null && requestHeader.equals("XMLHttpRequest")){
             try
             {
-                String JSON="";
                 //设置状态码
                 response.setStatus(HttpStatus.OK.value());
                 //设置ContentType
                 response.setContentType(MediaType.APPLICATION_JSON_VALUE);
                 //避免乱码
                 response.setCharacterEncoding("UTF-8");
-
                 response.setHeader("Cache-Control","no-cache,must-revalidate");
-
                 PrintWriter writer = response.getWriter();
-                JSON+="{exceptionMessage:"+message+"}";
-                writer.write(JSON);
+                writer.write(CustomerJsonSerializer.toJsonString_static(new JsonResponse(500,"操作失败"+message)));
                 writer.flush();
             }catch (Exception e){
                 e.printStackTrace();

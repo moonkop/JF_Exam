@@ -167,7 +167,7 @@ public class StudentController extends BaseController
                 request.setAttribute(fieldError.getField() + "Error", fieldError.getDefaultMessage());
             }
             request.setAttribute("studentVo", studentVo);
-            return "/manage/me/edit";
+            return "/back";
         }
         StudentVo studentLogin = (StudentVo) session.getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
         if (null != studentVo)
@@ -418,7 +418,7 @@ public class StudentController extends BaseController
                 request.setAttribute(fieldError.getField() + "Error", fieldError.getDefaultMessage());
             }
             request.setAttribute("student", studentVo);
-            return "/manage/me/edit";
+            return "/back";
         }
         studentEbi.resetPassword(studentVo);
         return "";
