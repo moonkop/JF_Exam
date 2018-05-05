@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>学生管理 - 编辑</title>
+    <title>学校管理 - 编辑</title>
     <%@include file="/WEB-INF/components/header.jsp"%>
 </head>
 

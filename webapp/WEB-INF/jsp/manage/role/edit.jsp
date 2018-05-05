@@ -4,7 +4,7 @@
 <html lang="en">
 
 <head>
-    <title>学生管理 - 编辑</title>
+    <title>角色管理 - 编辑</title>
     <script src="/vendor/jquery/jquery.min.js"></script>
     <%@include file="/WEB-INF/components/header.jsp" %>
 </head>

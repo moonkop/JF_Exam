@@ -13,6 +13,8 @@ import com.njmsita.exam.manager.service.ebi.QuestionEbi;
 import com.njmsita.exam.manager.service.ebi.QuestionTypeEbi;
 import com.njmsita.exam.manager.service.ebi.SubjectEbi;
 import com.njmsita.exam.manager.service.ebi.TopicEbi;
+import com.njmsita.exam.utils.format.JsonListResponse;
+import com.njmsita.exam.utils.format.JsonResponse;
 import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.logutils.SystemLogAnnotation;
 import com.njmsita.exam.utils.validate.validategroup.AddGroup;
@@ -23,6 +25,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -62,22 +65,15 @@ public class QuestionBankManagerController extends BaseController
      *
      * @return JSON{ rows: 内容（list） total: 查询结果总数 }
      */
-
-    //TODO 请求转发问题，没有pageNum   pageSize参数
+    @ResponseBody
     @RequestMapping("subject/list.do")
-    //@SystemLogAnnotation(module = "学科管理",methods = "列表查询")
-    public String toSubjectList(SubjectQueryModel subjectQueryModel, Integer pageNum, Integer pageSize, Model model)
+    public JsonResponse toSubjectList(SubjectQueryModel subjectQueryModel, Integer pageNum, Integer pageSize, Model model)
     {
+        return  new JsonListResponse(
+                subjectEbi.getAll(subjectQueryModel, pageNum, pageSize),
+                "id,name",
+                subjectEbi.getCount(subjectQueryModel));
 
-        //调用BaseController的方法设置数据总量及最大页码数
-        pageCount = pageSize;
-        setDataTotal(subjectEbi.getCount(subjectQueryModel));
-
-        //根据查询条件及指定页码查询
-        List<SubjectVo> subjectVoList = subjectEbi.getAll(subjectQueryModel, pageNum, pageSize);
-        model.addAttribute("subjectVoList", subjectVoList);
-
-        return "manage/subject/list";
     }
 
     /**
