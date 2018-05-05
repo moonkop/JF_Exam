@@ -28,6 +28,12 @@
                                     <input type="text" class="form-control" style="display: none;" name="id"
                                            value="${subject.id}">
                                     <div class="form-group">
+                                        <label class="col-sm-2 control-label">科目id</label>
+                                        <div class="col-sm-8">
+                                            <p class="form-control-static">${subject.id}</p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
                                         <label class="col-sm-2 control-label" for="input-name">科目名</label>
                                         <div class="col-sm-8">
                                             <input type="text" class="form-control" id="input-name" name="name"

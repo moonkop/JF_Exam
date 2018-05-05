@@ -33,7 +33,7 @@
                             </div>
                         
                             <div class="col-sm-offset-2">
-                                <a class="btn btn-default" href="/student/manage/edit?id=${school.id}">编辑</a>
+                                <a class="btn btn-default" href="/manage/school/edit?id=${school.id}">编辑</a>
                             </div>
                         </div>
                     </div>

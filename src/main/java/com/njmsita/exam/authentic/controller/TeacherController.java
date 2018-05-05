@@ -41,6 +41,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.awt.print.PrinterAbortException;
@@ -374,12 +375,16 @@ public class TeacherController extends BaseController
      *
      * @return 跳转教师列表页面
      */
+    @ResponseBody
     @RequestMapping("manage/delete.do")
     @SystemLogAnnotation(module = "教师管理", methods = "删除教师")
-    public String delete(TeacherVo teacher) throws OperationException
+    public JsonResponse delete(TeacherVo teacher) throws OperationException
     {
-        teaEbi.delete(teacher);
-        return "redirect:/teacher/list";
+        if (!StringUtil.isEmpty(teacher.getId()))
+        {
+            teaEbi.delete(teacher);
+        }
+        return new JsonResponse("删除成功");
     }
 
     /**

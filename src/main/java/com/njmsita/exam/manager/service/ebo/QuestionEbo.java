@@ -56,7 +56,7 @@ public class QuestionEbo implements QuestionEbi
         questionDao.delete(questionVo);
     }
 
-    public List<QuestionVo> getBySubject(Byte id)
+    public List<QuestionVo> getBySubject(Integer id)
     {
         return questionDao.getBySubject(id);
     }

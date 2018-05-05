@@ -61,6 +61,10 @@ public class SubjectEbo implements SubjectEbi
         {
             throw new OperationException("当前学科名称为："+subjectVo.getName()+"的学科已存在，请勿重复操作");
         }
+        if (temp == null)
+        {
+            temp = subjectDao.get(subjectVo.getId());
+        }
         temp.setName(subjectVo.getName());
     }
 

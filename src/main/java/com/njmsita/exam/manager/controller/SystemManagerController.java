@@ -203,19 +203,16 @@ public class SystemManagerController extends BaseController
      *
      * @return 跳转学校列表页面
      */
+    @ResponseBody
     @RequestMapping("school/delete.do")
     @SystemLogAnnotation(module = "学校管理", methods = "学校删除")
-    public String schoolDelete(SchoolVo school) throws OperationException
+    public JsonResponse schoolDelete(SchoolVo school) throws OperationException
     {
-
-        if (null != school.getId() && !"".equals(school.getId().trim()))
+        if (!StringUtil.isEmpty(school.getId()))
         {
-
             schoolEbi.delete(school);
         }
-
-        return "redirect:/manage/school";
-        //  return "redirect:/manage/roleVo/list";
+        return new JsonResponse("删除成功");
     }
     //--------------------------------SchoolManager----------END--------------------------------------------
     //--------------------------------SchoolManager----------END--------------------------------------------
@@ -454,6 +451,7 @@ public class SystemManagerController extends BaseController
      *
      * @return
      */
+    @Deprecated
     @RequestMapping("classroom/list")
     public String toClassroomList(ClassroomQueryModel classroomQueryModel, Model model, Integer pageNum, Integer pageSize)
     {
@@ -468,6 +466,15 @@ public class SystemManagerController extends BaseController
 
         return "manage/classroom/list";
     }
+
+    @RequestMapping("classroom/detail")
+    public String toClassroomDetail(String id, HttpServletRequest request)
+    {
+        ClassroomVo classroomVo = classroomEbi.get(id);
+        request.setAttribute("classroom", classroomVo);
+        return "manage/classroom/detail";
+    }
+
 
     /**
      * 跳转班级添加/修改页面
@@ -721,18 +728,16 @@ public class SystemManagerController extends BaseController
      *
      * @return 跳转资源列表页面
      */
+    @ResponseBody
     @RequestMapping("resource/delete.do")
     @SystemLogAnnotation(module = "资源管理", methods = "资源删除")
-    public String resourceDelete(TresourceVo tresourceVo) throws OperationException
+    public JsonResponse resourceDelete(TresourceVo tresourceVo) throws OperationException
     {
-
-        if (null != tresourceVo.getId() && !"".equals(tresourceVo.getId().trim()))
+        if (!StringUtil.isEmpty(tresourceVo.getId()))
         {
-
             resourceEbi.delete(tresourceVo);
         }
-
-        return "redirect:/manage/resource";
+        return new JsonResponse("删除成功");
     }
 
     //-----------------------------------resourceManager-----------END------------------------------------------

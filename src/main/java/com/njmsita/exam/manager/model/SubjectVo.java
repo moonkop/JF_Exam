@@ -15,18 +15,18 @@ import javax.validation.constraints.NotNull;
 public class SubjectVo
 {
     @NotNull(message = "{id.notempty}",groups = {EditGroup.class})
-    private byte id;
+    private Integer id;
     @NotEmpty(message = "{name.notempty}",groups = {AddGroup.class,EditGroup.class})
     private String name;
 
     @Id
     @Column(name = "id")
-    public byte getId()
+    public Integer getId()
     {
         return id;
     }
 
-    public void setId(byte id)
+    public void setId(Integer id)
     {
         this.id = id;
     }

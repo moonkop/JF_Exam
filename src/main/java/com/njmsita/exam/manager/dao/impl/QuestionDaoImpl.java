@@ -22,7 +22,7 @@ public class QuestionDaoImpl extends BaseImpl<QuestionVo> implements QuestionDao
     {
     }
 
-    public List<QuestionVo> getBySubject(Byte id)
+    public List<QuestionVo> getBySubject(Integer id)
     {
         String hql="from QuestionVo where subject.id=?";
         return (List<QuestionVo>) this.getHibernateTemplate().find(hql,id);

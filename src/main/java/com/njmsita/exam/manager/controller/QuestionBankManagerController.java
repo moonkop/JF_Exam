@@ -21,6 +21,7 @@ import com.njmsita.exam.utils.format.JsonResponse;
 import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.format.CustomerJsonSerializer;
 import com.njmsita.exam.utils.format.StringUtil;
+import com.njmsita.exam.utils.idutil.IdUtil;
 import com.njmsita.exam.utils.logutils.SystemLogAnnotation;
 import com.njmsita.exam.utils.ping4j.FirstCharUtil;
 import com.njmsita.exam.utils.validate.validategroup.AddGroup;
@@ -68,8 +69,8 @@ public class QuestionBankManagerController extends BaseController
      * 跳转学科页面(分页)
      *
      * @param subjectQueryModel 该模型存放了学科属性
-     * @param pageNum          页码
-     * @param pageSize         页面大小
+     * @param pageNum           页码
+     * @param pageSize          页面大小
      * @param model
      *
      * @return JSON{ rows: 内容（list） total: 查询结果总数 }
@@ -78,7 +79,7 @@ public class QuestionBankManagerController extends BaseController
     @RequestMapping("subject/list.do")
     public JsonResponse toSubjectList(SubjectQueryModel subjectQueryModel, Integer pageNum, Integer pageSize, Model model)
     {
-        return  new JsonListResponse(
+        return new JsonListResponse(
                 subjectEbi.getAll(subjectQueryModel, pageNum, pageSize),
                 "id,name",
                 subjectEbi.getCount(subjectQueryModel));
@@ -97,7 +98,7 @@ public class QuestionBankManagerController extends BaseController
     }
 
     @RequestMapping("subject/detail")
-    public String toSubjectdetail(String id, HttpServletRequest request)
+    public String toSubjectdetail(Integer id, HttpServletRequest request)
     {
         SubjectVo SubjectVo = subjectEbi.get(id);
         request.setAttribute("subject", SubjectVo);
@@ -110,7 +111,7 @@ public class QuestionBankManagerController extends BaseController
      * <p>
      * （此处将添加和修改页面合并，如果前台传递ID则进行修改否则进入添加页面）
      *
-     * @param subject  接受前台传递的学科id
+     * @param subject 接受前台传递的学科id
      * @param request HttpServletRequest
      *
      * @return 跳转edit
@@ -120,7 +121,7 @@ public class QuestionBankManagerController extends BaseController
     {
 
         //判断前台是否传递学科ID
-        if (subject.getId()!=0)
+        if (subject.getId() != null)
         {
             //根据学科ID获取学科完整信息从而进行数据回显
             subject = subjectEbi.get(subject.getId());
@@ -137,7 +138,7 @@ public class QuestionBankManagerController extends BaseController
      * @return 跳转学科列表页面
      */
     @RequestMapping("subject/edit.do")
-    @SystemLogAnnotation(module = "学科管理",methods = "学科添加/修改")
+    @SystemLogAnnotation(module = "学科管理", methods = "学科添加/修改")
     public String doAdd(@Validated(value = {AddGroup.class}) SubjectVo subject, BindingResult bindingResult,
                         HttpServletRequest request) throws Exception
     {
@@ -150,16 +151,16 @@ public class QuestionBankManagerController extends BaseController
                 request.setAttribute(fieldError.getField() + "Error", fieldError.getDefaultMessage());
             }
             request.setAttribute("subject", subject);
-            return "/manage/subject/edit";
+            return "redirect:/bank/manage/subject";
         }
-        if (subject.getId()!=0)
-        {
-            subjectEbi.save(subject);
-        } else
+        if (subject.getId() != null)
         {
             subjectEbi.update(subject);
+        } else
+        {
+            subjectEbi.save(subject);
         }
-        return "redirect:/manage/subject";
+        return "redirect:/bank/manage/subject";
     }
 
 
@@ -170,15 +171,16 @@ public class QuestionBankManagerController extends BaseController
      *
      * @return 跳转学科列表页面
      */
+    @ResponseBody
     @RequestMapping("subject/delete.do")
-    @SystemLogAnnotation(module = "学科管理",methods = "学科删除")
-    public String subjectDelete(SubjectVo subject) throws Exception
+    @SystemLogAnnotation(module = "学科管理", methods = "学科删除")
+    public JsonResponse subjectDelete(SubjectVo subject) throws Exception
     {
-        if (subject.getId()!=0)
+        if (subject.getId() != 0)
         {
             subjectEbi.delete(subject);
         }
-        return "redirect:/manage/subject";
+        return new JsonResponse("删除成功");
     }
     //--------------------------------SubjectManager----------END--------------------------------------------
     //--------------------------------SubjectManager----------END--------------------------------------------
@@ -200,8 +202,8 @@ public class QuestionBankManagerController extends BaseController
      * 跳转题型页面(分页)
      *
      * @param questionTypeQueryModel 该模型存放了题型属性
-     * @param pageNum          页码
-     * @param pageSize         页面大小
+     * @param pageNum                页码
+     * @param pageSize               页面大小
      * @param model
      *
      * @return JSON{ rows: 内容（list） total: 查询结果总数 }
@@ -246,8 +248,8 @@ public class QuestionBankManagerController extends BaseController
      * <p>
      * （此处将添加和修改页面合并，如果前台传递ID则进行修改否则进入添加页面）
      *
-     * @param questionType  接受前台传递的题型id
-     * @param request HttpServletRequest
+     * @param questionType 接受前台传递的题型id
+     * @param request      HttpServletRequest
      *
      * @return 跳转edit
      */
@@ -256,7 +258,7 @@ public class QuestionBankManagerController extends BaseController
     {
 
         //判断前台是否传递题型ID
-        if (questionType.getId()!=0)
+        if (questionType.getId() != 0)
         {
             //根据题型ID获取题型完整信息从而进行数据回显
             questionType = questionTypeEbi.get(questionType.getId());
@@ -273,7 +275,7 @@ public class QuestionBankManagerController extends BaseController
      * @return 跳转题型列表页面
      */
     @RequestMapping("questionType/edit.do")
-    @SystemLogAnnotation(module = "题型管理",methods = "题型添加/修改")
+    @SystemLogAnnotation(module = "题型管理", methods = "题型添加/修改")
     public String doAdd(@Validated(value = {AddGroup.class}) QuestionTypeVo questionType, BindingResult bindingResult,
                         HttpServletRequest request) throws Exception
     {
@@ -288,7 +290,7 @@ public class QuestionBankManagerController extends BaseController
             request.setAttribute("questionType", questionType);
             return "/manage/questionType/edit";
         }
-        if (questionType.getId()!=0)
+        if (questionType.getId() != 0)
         {
             questionTypeEbi.save(questionType);
         } else
@@ -306,17 +308,16 @@ public class QuestionBankManagerController extends BaseController
      *
      * @return 跳转题型列表页面
      */
+    @ResponseBody
     @RequestMapping("questionType/delete.do")
-    @SystemLogAnnotation(module = "题型管理",methods = "题型删除")
-    public String questionTypeDelete(QuestionTypeVo questionType) throws Exception
+    @SystemLogAnnotation(module = "题型管理", methods = "题型删除")
+    public JsonResponse questionTypeDelete(QuestionTypeVo questionType) throws Exception
     {
-
-        if (questionType.getId()!=0)
+        if (questionType.getId() != 0)
         {
             questionTypeEbi.delete(questionType);
         }
-
-        return "redirect:/manage/questionType";
+        return new JsonResponse("删除成功");
     }
     //--------------------------------QuestionTypeManager----------END--------------------------------------------
     //--------------------------------QuestionTypeManager----------END--------------------------------------------
@@ -400,8 +401,8 @@ public class QuestionBankManagerController extends BaseController
      *
      * @param topicQueryModel 该模型存放了知识点属性
      * @param model
-     * @param pageNum            页码
-     * @param pageSize           页面大小
+     * @param pageNum         页码
+     * @param pageSize        页面大小
      *
      * @return
      */
@@ -427,7 +428,7 @@ public class QuestionBankManagerController extends BaseController
      * （此处将添加和修改页面合并，如果前台传递ID则进行修改否则进入添加页面）
      *
      * @param topicVo 接受前台传递的知识点id
-     * @param request     HttpServletRequest
+     * @param request HttpServletRequest
      *
      * @return 跳转edit
      */
@@ -457,9 +458,9 @@ public class QuestionBankManagerController extends BaseController
      * @return 跳转知识点列表页面
      */
     @RequestMapping("topic/edit.do")
-    @SystemLogAnnotation(module = "知识点管理",methods = "知识点添加/修改")
+    @SystemLogAnnotation(module = "知识点管理", methods = "知识点添加/修改")
     public String topicDoAdd(@Validated(value = {AddGroup.class}) TopicVo topicVo, BindingResult bindingResult,
-                                HttpServletRequest request) throws OperationException
+                             HttpServletRequest request) throws OperationException
     {
 
         if (bindingResult.hasErrors())
@@ -492,18 +493,16 @@ public class QuestionBankManagerController extends BaseController
      *
      * @return 跳转知识点列表页面
      */
+    @ResponseBody
     @RequestMapping("topic/delete.do")
-    @SystemLogAnnotation(module = "知识点管理",methods = "知识点删除")
-    public String topicDelete(TopicVo topicVo) throws OperationException
+    @SystemLogAnnotation(module = "知识点管理", methods = "知识点删除")
+    public JsonResponse topicDelete(TopicVo topicVo) throws OperationException
     {
-
-        if (null != topicVo.getId() && !"".equals(topicVo.getId().trim()))
+        if (!StringUtil.isEmpty(topicVo.getId()))
         {
-
             topicEbi.delete(topicVo);
         }
-
-        return "redirect:/manage/topic";
+        return new JsonResponse("删除成功");
     }
     //--------------------------------TopicManager----------END--------------------------------------------
     //--------------------------------TopicManager----------END--------------------------------------------
@@ -538,7 +537,7 @@ public class QuestionBankManagerController extends BaseController
             ObjectNode node = serializer.toJson_ObjectNode(questionVo);
 
             //添加额外的特殊属性
-            node.put("questionType",questionVo.getQuestionType().getName());
+            node.put("questionType", questionVo.getQuestionType().getName());
             rows.add(node);
         }
         //将数组转换为json节点 并插入返回值对象
@@ -559,12 +558,10 @@ public class QuestionBankManagerController extends BaseController
     public String toQuestionList(HttpServletRequest request)
     {
         //学科
-        List<SubjectVo> subjectVoList= subjectEbi.getAll();
-        request.setAttribute("subjectVoList",subjectVoList);
+        List<SubjectVo> subjectVoList = subjectEbi.getAll();
+        request.setAttribute("subjectVoList", subjectVoList);
         return "manage/question/list";
     }
-
-
 
 
     //--------------------------------QuestionManager----------END--------------------------------------------

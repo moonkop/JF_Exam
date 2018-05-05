@@ -366,12 +366,16 @@ public class StudentController extends BaseController
      *
      * @return 跳转学生列表页面
      */
+    @ResponseBody
     @RequestMapping("manage/delete.do")
     @SystemLogAnnotation(module = "学生管理", methods = "删除学生")
-    public String delete(StudentVo studentVo) throws OperationException
+    public JsonResponse delete(StudentVo studentVo) throws OperationException
     {
-        studentEbi.delete(studentVo);
-        return "redirect:/student/list";
+        if (!StringUtil.isEmpty(studentVo.getId()))
+        {
+            studentEbi.delete(studentVo);
+        }
+        return new JsonResponse("删除成功");
     }
 
     @RequestMapping("import.do")
