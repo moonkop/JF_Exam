@@ -43,10 +43,7 @@ public class JsonListResponse<T> extends JsonResponse
 
     public JsonListResponse(List<T> raw, String fields, int total)
     {
-        this.raw=raw;
-        this.setFields(fields);
-        serialize();
-        this.put("total", total);
+        this(raw, fields, total, false);
     }
 
     public JsonListResponse<T> addCustomJsonElementFormater(String key, CustomJsonElementFormater<T> formater)

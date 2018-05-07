@@ -38,10 +38,10 @@
 
                                         <div class="col-sm-8">
                                             <select name="schoolID" id="selectSchool" class="form-control">
-                                                <c:forEach items="${requestScope.schools}" var="school">
-                                                    <option value="${school.id}"
-                                                            <c:if test="${student.school==school}">selected</c:if>   >
-                                                            ${school.name}
+                                                <c:forEach items="${requestScope.schools}" var="subject">
+                                                    <option value="${subject.id}"
+                                                            <c:if test="${student.school==subject}">selected</c:if>   >
+                                                            ${subject.name}
                                                     </option>
                                                 </c:forEach>
                                             </select>

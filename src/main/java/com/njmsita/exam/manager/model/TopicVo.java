@@ -1,5 +1,7 @@
 package com.njmsita.exam.manager.model;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.njmsita.exam.utils.validate.validategroup.AddGroup;
 import com.njmsita.exam.utils.validate.validategroup.EditGroup;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -9,6 +11,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "topic", schema = "jf_exam", catalog = "")
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class,property = "id")
 /**
  * 知识点实体模型
  */

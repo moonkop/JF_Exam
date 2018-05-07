@@ -22,23 +22,23 @@
             科目管理
         </h3>
         <div class="table-btns">
-            <a class="btn btn-primary" href="/bank/manage/subject/edit"> 添加科目</a>
+            <a class="btn btn-primary" href="/manage/bank/subject/edit"> 添加科目</a>
         </div>
         <script src="/vendor/bootstrap-table/bootstrap-table.js"></script>
         <script>
             window.operateEvents = {
                 'click .js-edit': function (e, value, row, index) {
-                    window.location.href = "/bank/manage/subject/edit?id=" + row.id;
+                    window.location.href = "/manage/bank/subject/edit?id=" + row.id;
                 },
                 'click .js-view': function (e, value, row, index) {
-                    window.location.href = "/bank/manage/subject/detail?id=" + row.id;
+                    window.location.href = "/manage/bank/subject/detail?id=" + row.id;
                 },
                 'click .js-del': function (e, value, row, index) {
                     if (confirm("确定要删除吗？") == true)
                     {
                         $.ajax(
                             {
-                                url: '/bank/manage/subject/delete.do?id=' + row.id,
+                                url: '/manage/bank/subject/delete.do?id=' + row.id,
                                 type: "post",
                                 success:function(res)
                                 {
@@ -65,7 +65,7 @@
                         {  responseHandler:tableResponseHandler,
                             locale:'zh-CN',
                             queryParams: queryParams,
-                            url: '/bank/manage/subject/list.do',
+                            url: '/manage/bank/subject/list.do',
                             method: 'get',
                             cache: false,
                             pagination: true,
