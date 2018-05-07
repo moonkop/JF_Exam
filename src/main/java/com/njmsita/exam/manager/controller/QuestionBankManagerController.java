@@ -20,13 +20,10 @@ import com.njmsita.exam.manager.service.ebi.TopicEbi;
 import com.njmsita.exam.utils.json.JsonListResponse;
 import com.njmsita.exam.utils.json.JsonResponse;
 import com.njmsita.exam.utils.consts.SysConsts;
-import com.njmsita.exam.utils.format.JsonListResponse;
-import com.njmsita.exam.utils.format.JsonResponse;
 import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.json.CustomJsonSerializer;
 import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.idutil.IdUtil;
-import com.njmsita.exam.utils.jsonfilter.JSON;
 import com.njmsita.exam.utils.logutils.SystemLogAnnotation;
 import com.njmsita.exam.utils.ping4j.FirstCharUtil;
 import com.njmsita.exam.utils.validate.validategroup.AddGroup;
@@ -38,13 +35,10 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 题库管理控制器
@@ -411,13 +405,13 @@ public class QuestionBankManagerController extends BaseController
 
     @ResponseBody
     @RequestMapping("topic/treeBySubject.do")
-    public JsonResponse topicTreeBySubject(Integer subjectID)
+    public JsonResponse topicTreeBySubject(Integer subjectID) throws OperationException
     {
         //todo 根据学科查知识点树
         SubjectVo subjectVo = subjectEbi.get(subjectID);
 
         return new JsonListResponse<TopicVo>(
-                topicEbi.getTopicBySubject(subjectVo),
+                topicEbi.getBySubject(subjectID,null),
                 "id,[text]name,[parent]parent.name",
                 0);
 
