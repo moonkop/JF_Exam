@@ -9,5 +9,16 @@ import com.njmsita.exam.manager.model.TopicVo;
  */
 public class QuestionQueryModel extends QuestionVo implements BaseQueryVO
 {
-    //TODO 查询条件   topicID   questionType    subject   creater
+    //TODO 查询条件   topicID   questionType    subject   creater    isPrivate
+    private Boolean showMe;
+
+    public Boolean getShowMe()
+    {
+        return showMe;
+    }
+
+    public void setShowMe(Boolean showMe)
+    {
+        this.showMe = showMe;
+    }
 }

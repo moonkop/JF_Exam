@@ -1,8 +1,10 @@
 package com.njmsita.exam.manager.dao.dao;
 
+import com.njmsita.exam.authentic.model.TeacherVo;
 import com.njmsita.exam.base.BaseDao;
 import com.njmsita.exam.manager.model.QuestionVo;
 import com.njmsita.exam.manager.model.SubjectVo;
+import com.njmsita.exam.manager.model.querymodel.QuestionQueryModel;
 
 import java.util.List;
 
@@ -24,4 +26,14 @@ public interface QuestionDao extends BaseDao<QuestionVo>
      * @return
      */
     public List<QuestionVo> getByQuestionType(Integer id);
+
+    /**
+     *
+     * @param questionQueryModel
+     * @param offset
+     * @param pageSize
+     * @param login
+     * @return
+     */
+    public List<QuestionVo> getAllByTeacher(QuestionQueryModel questionQueryModel, Integer offset, Integer pageSize, TeacherVo login);
 }

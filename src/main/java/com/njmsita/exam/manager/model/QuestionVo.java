@@ -16,13 +16,14 @@ public class QuestionVo
 {
     @NotEmpty(message = "{id.notempty}",groups = {EditGroup.class})
     private String id;
-    private Byte isPrivate;
+    private Integer isPrivate;
     private Long createTime;
     private String code;
     @NotEmpty(message = "{outline.notempty}",groups = {AddGroup.class,EditGroup.class})
     private String outline;
     private String option;
     private String answer;
+    private Long modifyTime;
 
     //所属知识点  n TO 1
     private TopicVo topic;
@@ -32,6 +33,32 @@ public class QuestionVo
     private QuestionTypeVo questionType;
     //所属科目  n TO 1
     private SubjectVo subject;
+    //修改人
+    private TeacherVo modifyTeacher;
+
+    @Basic
+    @Column(name = "modify_time")
+    public Long getModifyTime()
+    {
+        return modifyTime;
+    }
+
+    public void setModifyTime(Long modifyTime)
+    {
+        this.modifyTime = modifyTime;
+    }
+
+    @Basic
+    @Column(name = "modify_teacher")
+    public TeacherVo getModifyTeacher()
+    {
+        return modifyTeacher;
+    }
+
+    public void setModifyTeacher(TeacherVo modifyTeacher)
+    {
+        this.modifyTeacher = modifyTeacher;
+    }
 
     @Basic
     @Column(name = "topic_id")
@@ -95,12 +122,12 @@ public class QuestionVo
 
     @Basic
     @Column(name = "is_private")
-    public Byte getIsPrivate()
+    public Integer getIsPrivate()
     {
         return isPrivate;
     }
 
-    public void setIsPrivate(Byte isPrivate)
+    public void setIsPrivate(Integer isPrivate)
     {
         this.isPrivate = isPrivate;
     }
