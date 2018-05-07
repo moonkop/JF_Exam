@@ -1,7 +1,7 @@
 package com.njmsita.exam.utils.exception;
 
-import com.njmsita.exam.utils.format.CustomerJsonSerializer;
-import com.njmsita.exam.utils.format.JsonResponse;
+import com.njmsita.exam.utils.json.CustomJsonSerializer;
+import com.njmsita.exam.utils.json.JsonResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.servlet.HandlerExceptionResolver;
@@ -47,7 +47,7 @@ public class UnifyExceptionResoler implements HandlerExceptionResolver
                 response.setCharacterEncoding("UTF-8");
                 response.setHeader("Cache-Control","no-cache,must-revalidate");
                 PrintWriter writer = response.getWriter();
-                writer.write(CustomerJsonSerializer.toJsonString_static(new JsonResponse(500,"操作失败"+message)));
+                writer.write(CustomJsonSerializer.toJsonString_static(new JsonResponse(500,"操作失败"+message)));
                 writer.flush();
             }catch (Exception e){
                 e.printStackTrace();

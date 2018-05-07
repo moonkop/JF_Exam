@@ -38,6 +38,12 @@
                                 </div>
                             </div>
                             <div class="form-group">
+                                <label class="col-sm-2 control-label">性别</label>
+                                <div class="col-sm-8">
+                                    <p class="form-control-static"> ${teacher.gender == 1 ?"男":"女"}   </p>
+                                </div>
+                            </div>
+                            <div class="form-group">
                                 <label class="col-sm-2 control-label">身份</label>
                                 <div class="col-sm-8">
                                     <p class="form-control-static">${teacher.troleVo.name}</p>

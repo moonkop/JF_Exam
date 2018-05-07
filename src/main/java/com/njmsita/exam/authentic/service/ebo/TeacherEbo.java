@@ -100,6 +100,7 @@ public class TeacherEbo implements TeacherEbi
             temp.setIdCardNo(teacherVo.getIdCardNo());
             temp.setTelephone(teacherVo.getTelephone());
             temp.setTroleVo(teacherVo.getTroleVo());
+            temp.setGender(teacherVo.getGender());
             if (!StringUtil.isEmpty(teacherVo.getPassword()))
             {
                 temp.setPassword(MD5Utils.md5(teacherVo.getPassword()));

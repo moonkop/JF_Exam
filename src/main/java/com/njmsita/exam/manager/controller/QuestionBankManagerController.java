@@ -17,11 +17,13 @@ import com.njmsita.exam.manager.service.ebi.QuestionEbi;
 import com.njmsita.exam.manager.service.ebi.QuestionTypeEbi;
 import com.njmsita.exam.manager.service.ebi.SubjectEbi;
 import com.njmsita.exam.manager.service.ebi.TopicEbi;
+import com.njmsita.exam.utils.json.JsonListResponse;
+import com.njmsita.exam.utils.json.JsonResponse;
 import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.format.JsonListResponse;
 import com.njmsita.exam.utils.format.JsonResponse;
 import com.njmsita.exam.utils.exception.OperationException;
-import com.njmsita.exam.utils.format.CustomerJsonSerializer;
+import com.njmsita.exam.utils.json.CustomJsonSerializer;
 import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.idutil.IdUtil;
 import com.njmsita.exam.utils.jsonfilter.JSON;
@@ -353,15 +355,15 @@ public class QuestionBankManagerController extends BaseController
         return "/manage/topic/list";
     }
 
-
+    @Deprecated
     @ResponseBody
     @RequestMapping("topic/list.do")
     public JsonNode topicList(TopicQueryModel topicQueryModel, Integer pageNum, Integer pageSize)
     {
         //创建自定义序列化器 并设置过滤器
-        CustomerJsonSerializer serializer = new CustomerJsonSerializer(TopicVo.class, "id,name,url,remark", null);
+        CustomJsonSerializer serializer = new CustomJsonSerializer(TopicVo.class, "id,name,url,remark", null);
         //创建返回值对象 json类型
-        ObjectNode result = CustomerJsonSerializer.getDefaultMapper().createObjectNode();
+        ObjectNode result = CustomJsonSerializer.getDefaultMapper().createObjectNode();
         List<TopicVo> topicVoList = topicEbi.getAll(topicQueryModel, pageNum, pageSize);
         //对象转换后存放的数组
         List<ObjectNode> rows = new ArrayList<>();
@@ -374,11 +376,15 @@ public class QuestionBankManagerController extends BaseController
             rows.add(node);
         }
         //将数组转换为json节点 并插入返回值对象
-        result.put("rows", CustomerJsonSerializer.toJson_JsonNode1(rows));
+        result.put("rows", CustomJsonSerializer.toJson_JsonNode1(rows));
         result.put("total", topicEbi.getCount(topicQueryModel));
         return result;
     }
 
+
+
+
+    @Deprecated
     @ResponseBody
     @RequestMapping("topic/tree.do")
     public List<ObjectNode> topicTree()
@@ -387,7 +393,7 @@ public class QuestionBankManagerController extends BaseController
         List<ObjectNode> rows = new ArrayList<>();
         for (TopicVo topicVo : list)
         {
-            ObjectNode node = CustomerJsonSerializer.getDefaultMapper().createObjectNode();
+            ObjectNode node = CustomJsonSerializer.getDefaultMapper().createObjectNode();
             if (topicVo.getParent() != null)
             {
                 node.put("parent", topicVo.getParent().getId());
@@ -401,6 +407,23 @@ public class QuestionBankManagerController extends BaseController
         }
         return rows;
     }
+
+
+    @ResponseBody
+    @RequestMapping("topic/treeBySubject.do")
+    public JsonResponse topicTreeBySubject(Integer subjectID)
+    {
+        //todo 根据学科查知识点树
+        SubjectVo subjectVo = subjectEbi.get(subjectID);
+
+        return new JsonListResponse<TopicVo>(
+                topicEbi.getTopicBySubject(subjectVo),
+                "id,[text]name,[parent]parent.name",
+                0);
+
+    }
+
+
 
     /**
      * 跳转知识点页面(分页)
@@ -622,7 +645,7 @@ public class QuestionBankManagerController extends BaseController
         }
         return new JsonResponse("删除成功");
     }
-    
+
     /**
      * 跳转到题目管理页面
      *

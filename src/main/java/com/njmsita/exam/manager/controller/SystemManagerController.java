@@ -20,15 +20,14 @@ import com.njmsita.exam.manager.service.ebi.SchoolEbi;
 import com.njmsita.exam.base.BaseController;
 import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.exception.OperationException;
-import com.njmsita.exam.utils.format.CustomerJsonSerializer;
-import com.njmsita.exam.utils.format.JsonListResponse;
-import com.njmsita.exam.utils.format.JsonResponse;
+import com.njmsita.exam.utils.json.CustomJsonElementFormater;
+import com.njmsita.exam.utils.json.CustomJsonSerializer;
+import com.njmsita.exam.utils.json.JsonListResponse;
+import com.njmsita.exam.utils.json.JsonResponse;
 import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.idutil.IdUtil;
 import com.njmsita.exam.utils.logutils.SystemLogAnnotation;
 import com.njmsita.exam.utils.validate.validategroup.AddGroup;
-import net.sf.json.JSON;
-import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -41,6 +40,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileInputStream;
@@ -255,7 +255,7 @@ public class SystemManagerController extends BaseController
 
         for (TresourceVo tresourceVo : allResources)
         {
-            ObjectNode node = CustomerJsonSerializer.getDefaultMapper().createObjectNode();
+            ObjectNode node = CustomJsonSerializer.getDefaultMapper().createObjectNode();
 
             boolean haveResource = roleReses.contains(tresourceVo);
             //如果是编辑 则传回所有资源 如果不是 则传回拥有的资源
@@ -266,7 +266,7 @@ public class SystemManagerController extends BaseController
             }
             if (edit && haveResource)
             {
-                node.put("state", CustomerJsonSerializer.getDefaultMapper().createObjectNode().put("selected", "true"));
+                node.put("state", CustomJsonSerializer.getDefaultMapper().createObjectNode().put("selected", "true"));
             }
             if (tresourceVo.getParent() != null)
             {
@@ -561,7 +561,7 @@ public class SystemManagerController extends BaseController
     @RequestMapping("getClassroomBySchoolID.do")
     public JsonNode getClassroomBySchoolID(String id)
     {
-        CustomerJsonSerializer serializer = new CustomerJsonSerializer(ClassroomVo.class, "id,name", null);
+        CustomJsonSerializer serializer = new CustomJsonSerializer(ClassroomVo.class, "id,name", null);
         return serializer.toJson_JsonNode(classroomEbi.getAllBySchoolId(id));
 
     }
@@ -608,25 +608,23 @@ public class SystemManagerController extends BaseController
 
     @ResponseBody
     @RequestMapping("resource/tree.do")
-    public List<ObjectNode> resourceTree()
+    public JsonResponse resourceTree()
     {
-        List<TresourceVo> list = resourceEbi.getAll();
-        List<ObjectNode> rows = new ArrayList<>();
-        for (TresourceVo tresourceVo : list)
-        {
-            ObjectNode node = CustomerJsonSerializer.getDefaultMapper().createObjectNode();
-            if (tresourceVo.getParent() != null)
-            {
-                node.put("parent", tresourceVo.getParent().getId());
-            } else
-            {
-                node.put("parent", "#");
-            }
-            node.put("id", tresourceVo.getId());
-            node.put("text", tresourceVo.getName() + "     " + tresourceVo.getUrl());
-            rows.add(node);
-        }
-        return rows;
+        return new JsonListResponse<TresourceVo>(
+                resourceEbi.getAll(),
+                "id,[text],[parent]parent.id",
+                0, true)
+                .addCustomJsonElementFormater("text", new CustomJsonElementFormater<TresourceVo>()
+                {
+                    @Override
+                    public Object format(TresourceVo obj)
+                    {
+                        return obj.getName() + "   -   " + obj.getUrl();
+                    }
+                })
+                .addNullValue("parent", "#")
+                .serialize();
+
     }
 
     /**

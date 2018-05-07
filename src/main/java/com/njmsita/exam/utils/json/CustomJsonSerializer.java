@@ -1,4 +1,4 @@
-package com.njmsita.exam.utils.format;
+package com.njmsita.exam.utils.json;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
  *
  * @author Diamond
  */
-public class CustomerJsonSerializer
+public class CustomJsonSerializer
 {
 
     static final String DYNC_INCLUDE = "DYNC_INCLUDE";
@@ -23,7 +23,7 @@ public class CustomerJsonSerializer
         return new ObjectMapper();
     }
 
-    public CustomerJsonSerializer(Class<?> clazz, String include, String filter)
+    public CustomJsonSerializer(Class<?> clazz, String include, String filter)
     {
         filter(clazz, include, filter);
     }
