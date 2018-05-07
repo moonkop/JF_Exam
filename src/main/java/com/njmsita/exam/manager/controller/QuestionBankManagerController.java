@@ -2,6 +2,7 @@ package com.njmsita.exam.manager.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.njmsita.exam.authentic.model.TeacherVo;
 import com.njmsita.exam.authentic.service.ebi.TeacherEbi;
 import com.njmsita.exam.base.BaseController;
 import com.njmsita.exam.manager.model.QuestionTypeVo;
@@ -16,11 +17,13 @@ import com.njmsita.exam.manager.service.ebi.QuestionEbi;
 import com.njmsita.exam.manager.service.ebi.QuestionTypeEbi;
 import com.njmsita.exam.manager.service.ebi.SubjectEbi;
 import com.njmsita.exam.manager.service.ebi.TopicEbi;
+import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.format.JsonListResponse;
 import com.njmsita.exam.utils.format.JsonResponse;
 import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.format.CustomerJsonSerializer;
 import com.njmsita.exam.utils.format.StringUtil;
+import com.njmsita.exam.utils.idutil.IdUtil;
 import com.njmsita.exam.utils.jsonfilter.JSON;
 import com.njmsita.exam.utils.logutils.SystemLogAnnotation;
 import com.njmsita.exam.utils.ping4j.FirstCharUtil;
@@ -35,6 +38,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -520,33 +524,40 @@ public class QuestionBankManagerController extends BaseController
     //----------------------------------------QuestionManager----------------------------------------------
     //----------------------------------------QuestionManager----------------------------------------------
     //----------------------------------------QuestionManager----------------------------------------------
+
+    /**
+     * 查看题库
+     * @param questionQueryModel
+     * @param offset
+     * @param pageSize
+     * @param request
+     * @return
+     */
     @ResponseBody
     @RequestMapping("question/list.do")
-    public JsonNode questionList(QuestionQueryModel questionQueryModel, Integer offset, Integer pageSize,
+    public JsonResponse questionList(QuestionQueryModel questionQueryModel, Integer offset, Integer pageSize,
                                  HttpServletRequest request)
     {
-        //创建自定义序列化器 并设置过滤器
-        CustomerJsonSerializer serializer = new CustomerJsonSerializer(QuestionVo.class, "id,name,code,outline,option,answer", null);
-        //创建返回值对象 json类型
-        ObjectNode result = CustomerJsonSerializer.getDefaultMapper().createObjectNode();
-        List<QuestionVo> questionVoList = questionEbi.getAll(questionQueryModel, offset, pageSize);
-        //对象转换后存放的数组
-        List<ObjectNode> rows = new ArrayList<>();
-        for (QuestionVo questionVo : questionVoList)
-        {
-            //自定义过滤序列化对象
-            ObjectNode node = serializer.toJson_ObjectNode(questionVo);
-
-            //添加额外的特殊属性
-            node.put("questionType", questionVo.getQuestionType().getName());
-            rows.add(node);
+        List<QuestionVo> list=null;
+        TeacherVo teacherVo= (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
+        if(teacherVo.getTroleVo().getId().equals("0")){
+            list=questionEbi.getAll(questionQueryModel,offset,pageSize);
+        }else {
+            if (questionQueryModel.getShowMe()){
+                questionQueryModel.setTeacher(teacherVo);
+            }
+            list=questionEbi.getAllByTeacher(questionQueryModel,offset,pageSize,teacherVo);
         }
-        //将数组转换为json节点 并插入返回值对象
-        result.put("rows", CustomerJsonSerializer.toJson_JsonNode1(rows));
-        result.put("total", questionEbi.getCount(questionQueryModel));
-        return result;
+        return new JsonListResponse<>(list,"id,name,code,outline,option,answer",0);
     }
 
+    /**
+     * 获取科目的所有知识点
+     * @param subjectId
+     * @param parent
+     * @return
+     * @throws Exception
+     */
     @RequestMapping("question/topicList")
     @ResponseBody
     public JsonResponse getTopic(Integer subjectId,String parent)throws Exception{
@@ -554,9 +565,20 @@ public class QuestionBankManagerController extends BaseController
                 "id,name,[parent]parent.id",0);
     }
 
+    /**
+     * 题目的添加/修改
+     * @param questionVo
+     * @param bindingResult
+     * @param session
+     * @return
+     * @throws Exception
+     */
     @RequestMapping("question/edit.do")
     @ResponseBody
-    public JsonResponse doAdd(@Validated(value = {AddGroup.class}) QuestionVo questionVo, BindingResult bindingResult){
+    @SystemLogAnnotation(module = "题目管理", methods = "题目添加/修改")
+    public JsonResponse doAdd(@Validated(value = {AddGroup.class}) QuestionVo questionVo, BindingResult bindingResult,
+                              HttpSession session) throws Exception
+    {
         JsonResponse jsonResponse =new JsonResponse();
         if (bindingResult.hasErrors())
         {
@@ -566,22 +588,41 @@ public class QuestionBankManagerController extends BaseController
                 //校验信息，key=属性名+Error
                 jsonResponse.put(fieldError.getField() + "Error", fieldError.getDefaultMessage());
             }
-
-
-
-
-
-
-
-
-
             //操作是否成功
             jsonResponse.setCode(500);
+        }
+        TeacherVo teacherVo= (TeacherVo) session.getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
+        if (null == questionVo.getId() || "".equals(questionVo.getId().trim()))
+        {
+            questionVo.setTeacher(teacherVo);
+            questionVo.setId(IdUtil.getUUID());
+            questionEbi.save(questionVo);
+        } else
+        {
+            questionVo.setModifyTeacher(teacherVo);
+            questionEbi.update(questionVo);
         }
         return jsonResponse;
     }
 
-
+    /**
+     * 题目删除
+     * @param questionVo
+     * @return
+     * @throws OperationException
+     */
+    @ResponseBody
+    @RequestMapping("question/delete.do")
+    @SystemLogAnnotation(module = "题目管理", methods = "题目删除")
+    public JsonResponse questionDelete(QuestionVo questionVo) throws OperationException
+    {
+        if (!StringUtil.isEmpty(questionVo.getId()))
+        {
+            questionEbi.delete(questionVo);
+        }
+        return new JsonResponse("删除成功");
+    }
+    
     /**
      * 跳转到题目管理页面
      *
