@@ -87,24 +87,32 @@ public class TopicEbo implements TopicEbi
         if(topicVo.getSubjectVo()==null){
             throw new OperationException("选择科目不能为空，请不要进行非法操作！");
         }
-        if(topicVo.getParent()==null){
-            throw new OperationException("选择父知识点不能为空，请不要进行非法操作！");
-        }
-        if(topicVo.getSubjectVo().getId()!=0){
+        if(topicVo.getSubjectVo().getId()==0||topicVo.getSubjectVo().getId()==null){
             throw new OperationException("选择科目不能为空，请不要进行非法操作！");
         }
-        if(StringUtil.isEmpty(topicVo.getParent().getId())){
-            throw new OperationException("选择父知识点不能为空，请不要进行非法操作！");
+        TopicVo parent=null;
+        if(topicVo.getParent()!=null&&!StringUtil.isEmpty(topicVo.getParent().getId())){
+            parent=topicDao.get(topicVo.getParent().getId());
+            if (parent==null){
+                throw new OperationException("选择父知识点不存在，请不要进行非法操作！");
+            }
+        }else {
+            parent=new TopicVo();
+            parent.setId("-");
         }
+        topicVo.setParent(parent);
         SubjectVo subject=subjectDao.get(topicVo.getSubjectVo().getId());
-        TopicVo parent=topicDao.get(topicVo.getParent().getId());
         if (subject==null){
             throw new OperationException("选择科目不存在，请不要进行非法操作！");
         }
-        if (parent==null){
-            throw new OperationException("选择父知识点不存在，请不要进行非法操作！");
-        }
         topicVo.setSubjectVo(subject);
-        topicVo.setParent(parent);
+    }
+
+    public List<TopicVo> getBySubject(Integer subjectId, String parent) throws OperationException
+    {
+        if(subjectId==0||subjectId==null){
+            throw new OperationException("知识点不能为空，请不要进行非法操作！");
+        }
+        return topicDao.getBySubject(subjectId,parent);
     }
 }
