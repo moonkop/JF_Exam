@@ -23,5 +23,5 @@ public interface QuestionDao extends BaseDao<QuestionVo>
      * @param id    题型id
      * @return
      */
-    public List<QuestionVo> getByQuestionType(Byte id);
+    public List<QuestionVo> getByQuestionType(Integer id);
 }

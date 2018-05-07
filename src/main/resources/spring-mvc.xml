@@ -4,20 +4,24 @@
 	xmlns:context="http://www.springframework.org/schema/context"
 	   xmlns:aop="http://www.springframework.org/schema/aop"
 	xmlns:mvc="http://www.springframework.org/schema/mvc"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
-        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-                        http://www.springframework.org/schema/context
-    http://www.springframework.org/schema/context/spring-context-3.0.xsd
-    http://www.springframework.org/schema/aop
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+    	http://www.springframework.org/schema/context/spring-context.xsd
+    	http://www.springframework.org/schema/aop
 		http://www.springframework.org/schema/aop/spring-aop.xsd
-                        http://www.springframework.org/schema/mvc
-
-    http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
+        http://www.springframework.org/schema/mvc
+		http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
 
 	<!-- 激活基于注解的配置 @RequestMapping, @ExceptionHandler,数据绑定 ,@NumberFormat ,
 		@DateTimeFormat ,@Controller ,@Valid ,@RequestBody ,@ResponseBody等 -->
-	<mvc:annotation-driven validator="validator" conversion-service="cconversion-service"/>
+	<mvc:annotation-driven validator="validator" conversion-service="cconversion-service">
+		<mvc:return-value-handlers>
+			<bean class="com.njmsita.exam.utils.jsonfilter.JsonReturnHandler"/>
+		</mvc:return-value-handlers>
+	</mvc:annotation-driven>
 
 	<!-- =============================-校验器=========================================== -->
 	<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
@@ -39,6 +43,10 @@
 		<property name="cacheSeconds" value="120"/>
 	</bean>
 	<!-- =============================-校验器==END====================================== -->
+
+	<!-- ===============================JSON=========================================== -->
+
+	<!-- =============================JSON==END======================================== -->
 
 	<!-- =================解决spring与pringmvc注解冲突=================================== -->
 	<context:component-scan base-package="com.njmsita.exam.*.controller">

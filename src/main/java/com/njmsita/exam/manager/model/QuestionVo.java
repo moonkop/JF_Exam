@@ -22,8 +22,7 @@ public class QuestionVo
     @NotEmpty(message = "{outline.notempty}",groups = {AddGroup.class,EditGroup.class})
     private String outline;
     private String option;
-    //TODo 修改数据类型
-    private Byte answer;
+    private String answer;
 
     //所属知识点  n TO 1
     private TopicVo topic;
@@ -156,12 +155,12 @@ public class QuestionVo
 
     @Basic
     @Column(name = "answer")
-    public Byte getAnswer()
+    public String getAnswer()
     {
         return answer;
     }
 
-    public void setAnswer(Byte answer)
+    public void setAnswer(String answer)
     {
         this.answer = answer;
     }

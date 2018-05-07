@@ -21,6 +21,7 @@ import com.njmsita.exam.utils.json.JsonResponse;
 import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.json.CustomJsonSerializer;
 import com.njmsita.exam.utils.format.StringUtil;
+import com.njmsita.exam.utils.idutil.IdUtil;
 import com.njmsita.exam.utils.logutils.SystemLogAnnotation;
 import com.njmsita.exam.utils.ping4j.FirstCharUtil;
 import com.njmsita.exam.utils.validate.validategroup.AddGroup;
@@ -35,7 +36,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 题库管理控制器
@@ -152,7 +155,7 @@ public class QuestionBankManagerController extends BaseController
             request.setAttribute("subject", subject);
             return "redirect:/bank/manage/subject";
         }
-        if (subject.getId() != null)
+        if (subject.getId() != null&&subject.getId()!=0)
         {
             subjectEbi.update(subject);
         } else
@@ -175,7 +178,7 @@ public class QuestionBankManagerController extends BaseController
     @SystemLogAnnotation(module = "学科管理", methods = "学科删除")
     public JsonResponse subjectDelete(SubjectVo subject) throws Exception
     {
-        if (subject.getId() != 0)
+        if (subject.getId() != 0&&subject.getId()!=null)
         {
             subjectEbi.delete(subject);
         }
@@ -190,12 +193,12 @@ public class QuestionBankManagerController extends BaseController
 
 //======================================================================================================================
 
-    //-------------------------------------------QuestionTypeManager----------------------------------------------
-    //-------------------------------------------QuestionTypeManager----------------------------------------------
-    //-------------------------------------------QuestionTypeManager----------------------------------------------
-    //-------------------------------------------QuestionTypeManager----------------------------------------------
-    //-------------------------------------------QuestionTypeManager----------------------------------------------
-    //-------------------------------------------QuestionTypeManager----------------------------------------------
+    //-------------------------------------------QuestionTypeManager-----------------------------------------
+    //-------------------------------------------QuestionTypeManager-----------------------------------------
+    //-------------------------------------------QuestionTypeManager-----------------------------------------
+    //-------------------------------------------QuestionTypeManager-----------------------------------------
+    //-------------------------------------------QuestionTypeManager-----------------------------------------
+    //-------------------------------------------QuestionTypeManager-----------------------------------------
 
     /**
      * 跳转题型页面(分页)
@@ -257,7 +260,7 @@ public class QuestionBankManagerController extends BaseController
     {
 
         //判断前台是否传递题型ID
-        if (questionType.getId() != 0)
+        if (questionType.getId() != 0&&questionType.getId()!=null)
         {
             //根据题型ID获取题型完整信息从而进行数据回显
             questionType = questionTypeEbi.get(questionType.getId());
@@ -289,12 +292,12 @@ public class QuestionBankManagerController extends BaseController
             request.setAttribute("questionType", questionType);
             return "/manage/questionType/edit";
         }
-        if (questionType.getId() != 0)
-        {
-            questionTypeEbi.save(questionType);
-        } else
+        if (questionType.getId() !=null&&questionType.getId()!=0)
         {
             questionTypeEbi.update(questionType);
+        } else
+        {
+            questionTypeEbi.save(questionType);
         }
         return "redirect:/manage/questionType";
     }
@@ -312,18 +315,18 @@ public class QuestionBankManagerController extends BaseController
     @SystemLogAnnotation(module = "题型管理", methods = "题型删除")
     public JsonResponse questionTypeDelete(QuestionTypeVo questionType) throws Exception
     {
-        if (questionType.getId() != 0)
+        if (questionType.getId() != 0&&questionType.getId()!=null)
         {
             questionTypeEbi.delete(questionType);
         }
         return new JsonResponse("删除成功");
     }
-    //--------------------------------QuestionTypeManager----------END--------------------------------------------
-    //--------------------------------QuestionTypeManager----------END--------------------------------------------
-    //--------------------------------QuestionTypeManager----------END--------------------------------------------
-    //--------------------------------QuestionTypeManager----------END--------------------------------------------
-    //--------------------------------QuestionTypeManager----------END--------------------------------------------
-    //--------------------------------QuestionTypeManager----------END--------------------------------------------
+    //--------------------------------QuestionTypeManager----------END-------------------------------------
+    //--------------------------------QuestionTypeManager----------END-------------------------------------
+    //--------------------------------QuestionTypeManager----------END-------------------------------------
+    //--------------------------------QuestionTypeManager----------END-------------------------------------
+    //--------------------------------QuestionTypeManager----------END-------------------------------------
+    //--------------------------------QuestionTypeManager----------END-------------------------------------
 
 //======================================================================================================================
 
@@ -502,7 +505,7 @@ public class QuestionBankManagerController extends BaseController
         {
             topicEbi.update(topicVo);
         }
-        return "redirect:/manage/topic";
+        return "redirect:/manage/bank/topic";
     }
 
 
@@ -533,12 +536,12 @@ public class QuestionBankManagerController extends BaseController
 
 //======================================================================================================================
 
-    //-------------------------------------------QuestionManager----------------------------------------------
-    //-------------------------------------------QuestionManager----------------------------------------------
-    //-------------------------------------------QuestionManager----------------------------------------------
-    //-------------------------------------------QuestionManager----------------------------------------------
-    //-------------------------------------------QuestionManager----------------------------------------------
-    //-------------------------------------------QuestionManager----------------------------------------------
+    //----------------------------------------QuestionManager----------------------------------------------
+    //----------------------------------------QuestionManager----------------------------------------------
+    //----------------------------------------QuestionManager----------------------------------------------
+    //----------------------------------------QuestionManager----------------------------------------------
+    //----------------------------------------QuestionManager----------------------------------------------
+    //----------------------------------------QuestionManager----------------------------------------------
     @ResponseBody
     @RequestMapping("question/list.do")
     public JsonNode questionList(QuestionQueryModel questionQueryModel, Integer offset, Integer pageSize,
@@ -566,7 +569,39 @@ public class QuestionBankManagerController extends BaseController
         return result;
     }
 
-    //TODO 获取知识点异步方法
+    @RequestMapping("question/topicList")
+    @ResponseBody
+    public JsonResponse getTopic(Integer subjectId,String parent)throws Exception{
+        return new JsonListResponse<>(topicEbi.getBySubject(subjectId,parent),
+                "id,name,[parent]parent.id",0);
+    }
+
+    @RequestMapping("question/edit.do")
+    @ResponseBody
+    public JsonResponse doAdd(@Validated(value = {AddGroup.class}) QuestionVo questionVo, BindingResult bindingResult){
+        JsonResponse jsonResponse =new JsonResponse();
+        if (bindingResult.hasErrors())
+        {
+            List<FieldError> list = bindingResult.getFieldErrors();
+            for (FieldError fieldError : list)
+            {
+                //校验信息，key=属性名+Error
+                jsonResponse.put(fieldError.getField() + "Error", fieldError.getDefaultMessage());
+            }
+
+
+
+
+
+
+
+
+
+            //操作是否成功
+            jsonResponse.setCode(500);
+        }
+        return jsonResponse;
+    }
 
 
     /**
