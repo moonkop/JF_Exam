@@ -107,4 +107,10 @@ public class TopicEbo implements TopicEbi
         topicVo.setSubjectVo(subject);
         topicVo.setParent(parent);
     }
+
+    //todo 根据学科查知识点树
+    public List<TopicVo> getTopicBySubject(SubjectVo subjectVo)
+    {
+        return null;
+    }
 }

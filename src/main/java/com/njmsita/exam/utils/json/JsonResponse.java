@@ -1,4 +1,4 @@
-package com.njmsita.exam.utils.format;
+package com.njmsita.exam.utils.json;
 
 import java.util.HashMap;
 import java.util.Map;
