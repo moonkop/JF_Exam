@@ -2,13 +2,10 @@ package com.njmsita.exam.utils.json;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class JsonListResponse<T> extends JsonResponse
 {
@@ -27,21 +24,44 @@ public class JsonListResponse<T> extends JsonResponse
 
     }
 
-
-    public JsonListResponse(List<T> raw, String fields, int total)
+    public JsonListResponse(String fields)
     {
+        this.setFields(fields);
+    }
 
-        serialize(raw, fields);
+
+    public JsonListResponse(List<T> raw, String fields, int total,boolean withMoreOptions)
+    {
+        this.raw=raw;
+        this.setFields(fields);
+        if (!withMoreOptions)
+        {
+            serialize();
+        }
         this.put("total", total);
     }
 
-    public JsonListResponse<T> addCustomJsonElementFormater(String key, CustomJsonElementFormater formater)
+    public JsonListResponse(List<T> raw, String fields, int total)
     {
-        elementMap.get(key).formater=formater;
+        this.raw=raw;
+        this.setFields(fields);
+        serialize();
+        this.put("total", total);
+    }
+
+    public JsonListResponse<T> addCustomJsonElementFormater(String key, CustomJsonElementFormater<T> formater)
+    {
+        elementMap.get(key).formater = formater;
         return this;
     }
 
-    public void setFields(String fieldString)
+    public JsonListResponse<T> addNullValue(String key, Object value)
+    {
+        elementMap.get(key).nullValue = value;
+        return this;
+    }
+
+    public JsonListResponse<T> setFields(String fieldString)
     {
         String[] fields = fieldString.split(",");
         for (String field : fields)
@@ -49,16 +69,13 @@ public class JsonListResponse<T> extends JsonResponse
             JsonElement element = new JsonElement(field);
             elementMap.put(element.key, element);
         }
+        return this;
     }
 
-
-    public void serialize(List<T> raw, String fields)
+    public JsonListResponse<T> serialize()
     {
-        this.raw = raw;
-        Pattern p = Pattern.compile("\\[([^\\]]+)\\]");
         try
         {
-            setFields(fields);
             for (T obj : raw)
             {
                 Map<String, Object> row = new HashMap<>();
@@ -74,7 +91,7 @@ public class JsonListResponse<T> extends JsonResponse
         {
             e.printStackTrace();
         }
-
+        return this;
     }
 
 }

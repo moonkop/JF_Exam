@@ -410,7 +410,7 @@ public class QuestionBankManagerController extends BaseController
         return new JsonListResponse<TopicVo>(
                 topicEbi.getTopicBySubject(subjectVo),
                 "id,[text]name,[parent]parent.name",
-                topicEbi.getTopicConutBySubject());
+                0);
 
     }
 

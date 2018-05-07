@@ -8,6 +8,7 @@ public class JsonElement<T>
 {
     String key;
     String fieldPath;
+    Object nullValue=null;
     T object;
     CustomJsonElementFormater<T> formater;
     public JsonElement(String field)
@@ -26,7 +27,7 @@ public class JsonElement<T>
         {
             key = matcher.group();
             key = key.substring(1, key.length() - 1);
-            fieldPath = fieldPath.substring(fieldPath.lastIndexOf(']') + 1, fieldPath.length());
+            fieldPath = fieldRawString.substring(fieldRawString.lastIndexOf(']') + 1, fieldRawString.length());
         } else
         {
             fieldPath = fieldRawString;
@@ -54,6 +55,7 @@ public class JsonElement<T>
         {
             if (objtemp == null)
             {
+                objtemp=this.nullValue;
                 break;
             }
             try

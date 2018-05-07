@@ -12,7 +12,4 @@ import java.util.List;
 public interface TopicEbi extends BaseEbi<TopicVo>
 {
     public List<TopicVo> getTopicBySubject(SubjectVo subjectVo);
-
-    public int getTopicConutBySubject();
-
 }
