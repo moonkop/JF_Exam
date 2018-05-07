@@ -356,15 +356,17 @@ public class TeacherController extends BaseController
             request.setAttribute("teacher", teacher);
             return "/back";
         }
+        String id = teacher.getId();
         if (null == teacher.getId() || "".equals(teacher.getId().trim()))
         {
-            teacher.setId(IdUtil.getUUID());
+            id = IdUtil.getUUID();
+            teacher.setId(id);
             teaEbi.save(teacher);
         } else
         {
             teaEbi.update(teacher);
         }
-        return "redirect:/teacher/manage";
+        return "redirect:/teacher/manage/detail?id="+id;
     }
 
 

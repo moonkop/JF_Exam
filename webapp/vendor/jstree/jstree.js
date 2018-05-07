@@ -934,6 +934,7 @@
 		 * @param  {Object} data additional data to pass with the event
 		 */
 		trigger : function (ev, data) {
+			console.log(ev);
 			if(!data) {
 				data = {};
 			}
@@ -1822,6 +1823,8 @@
 							if (!m[dat[i].parent.toString()]) {
 								this._data.core.last_error = { 'error' : 'parse', 'plugin' : 'core', 'id' : 'core_07', 'reason' : 'Node with invalid parent', 'data' : JSON.stringify({ 'id' : dat[i].id.toString(), 'parent' : dat[i].parent.toString() }) };
 								this.settings.core.error.call(this, this._data.core.last_error);
+                                dat[i].text="[error]"+dat[i].text;
+								p.children.push(dat[i].id.toString());
 								continue;
 							}
 
@@ -1981,7 +1984,7 @@
 				}
 			}
 			else {
-				rslt.call(this, func(args), false);
+				rslt.call(this, func.call(this,args), false);
 			}
 		},
 		/**

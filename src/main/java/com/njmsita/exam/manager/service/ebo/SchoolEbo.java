@@ -9,6 +9,7 @@ import com.njmsita.exam.manager.model.SchoolVo;
 import com.njmsita.exam.authentic.model.StudentVo;
 import com.njmsita.exam.manager.service.ebi.SchoolEbi;
 import com.njmsita.exam.utils.exception.OperationException;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,8 +64,16 @@ public class SchoolEbo implements SchoolEbi
 
     public void update(SchoolVo schoolVo) throws OperationException
     {
-        if(null==schoolDao.findByName(schoolVo.getName())){
-            schoolDao.update(schoolVo);
+        SchoolVo schoolVoHasSameName=schoolDao.findByName(schoolVo.getName());
+
+        if(schoolVoHasSameName==null||(schoolVoHasSameName.getId()!=schoolVo.getId())){
+         //   schoolDao.update(schoolVo);
+            SchoolVo schoolVoPersistent = schoolDao.get(schoolVo.getId());
+            if (schoolVoPersistent == null)
+            {
+                throw new OperationException("不存在该id的学校，请勿非法操作");
+            }
+            schoolVoPersistent.setName(schoolVo.getName());
         }else{
             throw new OperationException("当前学校名为："+schoolVo.getName()+"的学校已存在，请勿重复操作");
         }

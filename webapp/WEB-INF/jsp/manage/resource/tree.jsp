@@ -42,58 +42,80 @@
                     }
 
                     $(document).ready(function () {
+
+                        function initTree()
+                        {
+                            $('#jstree')
+                                .on("refresh.jstree", function (event, data)
+                                {
+                                    getJstree().open_all();
+                                })
+                                .jstree({
+                                'core': {
+                                    'worker': false
+                                },
+                                "plugins": [
+                                    "contextmenu"
+                                ],
+                                'contextmenu': {
+                                    'items': function (node) {
+                                        var tmp = {
+                                            create: {
+                                                label: "添加资源",
+                                                action: function (data) {
+                                                    var id = getJstree().get_node(data.reference).id;
+                                                    window.location.href = "/manage/resource/edit?parent.id=" + id;
+                                                }
+                                            },
+                                            delete: {
+                                                label: "删除资源",
+                                                action: function (data) {
+                                                    var id = getJstree().get_node(data.reference).id;
+                                                    if (confirm("真的要删除吗？"))
+                                                    {
+                                                        $.ajax(
+                                                            {
+                                                                url: "/manage/resource/delete.do?id=" + id,
+                                                                success: function (res) {
+                                                                    OnResult(res, function () {
+                                                                        alert(res.message);
+                                                                        getResourceTree();
+                                                                    });
+                                                                }
+                                                            }
+                                                        )
+                                                    }
+                                                }
+                                            },
+                                            edit: {
+                                                label: "编辑资源",
+                                                action: function (data) {
+                                                    var id = getJstree().get_node(data.reference).id;
+                                                    window.location.href = "/manage/resource/edit?id=" + id;
+                                                }
+                                            }
+                                        };
+                                        return tmp;
+                                    }
+                                }
+                            });
+
+                        }
+
+
+
                         function getResourceTree()
                         {
                             $.ajax({
                                 url: '/manage/resource/tree.do',
                                 success: function (res) {
-                                    $('#jstree').jstree({
-
-                                        'core': {
-                                            'data': res
-                                        },
-                                        "plugins": [
-                                            "contextmenu"
-                                        ],
-                                        'contextmenu': {
-                                            'items': function (node) {
-                                                var tmp = {
-                                                    create: {
-                                                        label: "添加资源",
-                                                        action: function (data) {
-                                                            var id = getJstree().get_node(data.reference).id;
-                                                            window.location.href = "/manage/resource/edit?parent.id=" + id;
-                                                        }
-                                                    },
-                                                    delete: {
-                                                        label: "删除资源",
-                                                        action: function (data) {
-                                                            var id = getJstree().get_node(data.reference).id;
-                                                            if (confirm("真的要删除吗？"))
-                                                            {
-                                                                window.location.href = "/manage/resource/delete.do?id=" + id;
-                                                            }
-                                                        }
-                                                    },
-                                                    edit: {
-                                                        label: "编辑资源",
-                                                        action: function (data) {
-                                                            var id = getJstree().get_node(data.reference).id;
-                                                            window.location.href = "/manage/resource/edit?id=" + id;
-                                                        }
-                                                    }
-                                                };
-                                                return tmp;
-                                            }
-                                        }
-                                    });
-                                    setTimeout(function () {
-                                        $('#jstree').jstree().open_all();
-                                    }, 100);
+                                    getJstree().settings.core.data=res;
+                                    getJstree().refresh();
                                 }
                             })
                         }
 
+                        initTree();
                         getResourceTree();
 
                     })
