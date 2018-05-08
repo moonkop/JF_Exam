@@ -60,13 +60,13 @@
                 <a href="#"><i class="fa fa-sitemap fa-fw"></i> 题库管理<span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level">
                     <li>
-                        <a href="/bank/manage/subject">科目管理</a>
+                        <a href="/manage/bank/subject">科目管理</a>
                     </li>
                     <li>
-                        <a href="/bank/manage/topic">知识点管理</a>
+                        <a href="/manage/bank/topic">知识点管理</a>
                     </li>
                     <li>
-                        <a href="/bank/manage/question">题目管理</a>
+                        <a href="/manage/bank/question">题目管理</a>
                     </li>
                 </ul>
                 <!-- /.nav-second-level -->

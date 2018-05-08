@@ -11,6 +11,8 @@ public class JsonElement<T>
     Object nullValue=null;
     T object;
     CustomJsonElementFormater<T> formater;
+
+
     public JsonElement(String field)
     {
         resolve(field);
@@ -64,9 +66,12 @@ public class JsonElement<T>
                 Field field = classType.getDeclaredField(props);
                 field.setAccessible(true); // 抑制Java对修饰符的检查
                 objtemp = field.get(objtemp);
-            } catch (Exception e)
+            } catch (NoSuchFieldException e)
             {
-                e.printStackTrace();
+                objtemp=null;
+            } catch (IllegalAccessException e)
+            {
+
             }
         }
         return objtemp;

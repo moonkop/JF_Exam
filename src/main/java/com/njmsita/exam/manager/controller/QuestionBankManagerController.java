@@ -44,7 +44,7 @@ import java.util.List;
  * 题库管理控制器
  */
 @Controller
-@RequestMapping("/bank/manage")
+@RequestMapping("/manage/bank")
 public class QuestionBankManagerController extends BaseController
 {
     @Autowired
@@ -96,7 +96,7 @@ public class QuestionBankManagerController extends BaseController
     @RequestMapping("subject")
     public String toSubjectList()
     {
-        return "manage/subject/list";
+        return "/manage/bank/subject/list";
     }
 
     @RequestMapping("subject/detail")
@@ -104,7 +104,7 @@ public class QuestionBankManagerController extends BaseController
     {
         SubjectVo SubjectVo = subjectEbi.get(id);
         request.setAttribute("subject", SubjectVo);
-        return "manage/subject/detail";
+        return "/manage/bank/subject/detail";
     }
 
 
@@ -129,7 +129,7 @@ public class QuestionBankManagerController extends BaseController
             subject = subjectEbi.get(subject.getId());
             request.setAttribute("subject", subject);
         }
-        return "/manage/subject/edit";
+        return "/manage/bank/subject/edit";
     }
 
     /**
@@ -153,7 +153,7 @@ public class QuestionBankManagerController extends BaseController
                 request.setAttribute(fieldError.getField() + "Error", fieldError.getDefaultMessage());
             }
             request.setAttribute("subject", subject);
-            return "redirect:/bank/manage/subject";
+            return "redirect:/manage/bank/subject";
         }
         if (subject.getId() != null&&subject.getId()!=0)
         {
@@ -162,7 +162,7 @@ public class QuestionBankManagerController extends BaseController
         {
             subjectEbi.save(subject);
         }
-        return "redirect:/bank/manage/subject";
+        return "redirect:/manage/bank/subject";
     }
 
 
@@ -338,15 +338,19 @@ public class QuestionBankManagerController extends BaseController
     //-------------------------------------------TopicManager----------------------------------------------
 
     @RequestMapping("topic")
-    public String totopicTree()
+    public String totopicTree(Integer subjectID, HttpServletRequest request)
     {
-        return "/manage/topic/tree";
+        List<SubjectVo> subjects= subjectEbi.getAll();
+        request.setAttribute("subjects", subjects);
+        request.setAttribute("subjectSelected", subjectID);
+        return "/manage/bank/topic/tree";
     }
 
+    @Deprecated
     @RequestMapping("topic/list1")
     public String totopicList()
     {
-        return "/manage/topic/list";
+        return "/manage/bank/topic/list";
     }
 
     @Deprecated
@@ -407,14 +411,10 @@ public class QuestionBankManagerController extends BaseController
     @RequestMapping("topic/treeBySubject.do")
     public JsonResponse topicTreeBySubject(Integer subjectID) throws OperationException
     {
-        //todo 根据学科查知识点树
-        SubjectVo subjectVo = subjectEbi.get(subjectID);
-
         return new JsonListResponse<TopicVo>(
-                topicEbi.getBySubject(subjectID,null),
-                "id,[text]name,[parent]parent.name",
-                0);
-
+                topicEbi.getBySubject(subjectID,""),
+                "id,[text]name,[parent]parent.id",
+                0,true).addNullValue("parent","#").serialize();
     }
 
 
@@ -429,8 +429,8 @@ public class QuestionBankManagerController extends BaseController
      *
      * @return
      */
+    @Deprecated
     @RequestMapping("topic/list")
-
     public String totopicList(TopicQueryModel topicQueryModel, Model model, Integer pageNum, Integer pageSize)
     {
 

@@ -13,7 +13,7 @@
         <many-to-one name="parent" column="parent_topic_id" class="com.njmsita.exam.manager.model.TopicVo" lazy="proxy"/>
         <many-to-one name="subjectVo" column="subject_id" class="com.njmsita.exam.manager.model.SubjectVo" lazy="false"/>
 
-        <set name="child" cascade="delete" inverse="true" lazy="false">
+        <set name="child" cascade="delete" inverse="true" lazy="true">
             <key column="parent_topic_id"></key>
             <one-to-many class="com.njmsita.exam.manager.model.TopicVo"/>
         </set>

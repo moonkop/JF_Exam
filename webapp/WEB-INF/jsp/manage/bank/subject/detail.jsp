@@ -40,7 +40,7 @@
                                     </div>
 
                                     <div class="col-sm-offset-2">
-                                        <a class="btn btn-default" href="/bank/manage/subject/edit?id=${subject.id}">编辑</a>
+                                        <a class="btn btn-default" href="/manage/bank/subject/edit?id=${subject.id}">编辑</a>
                                     </div>
                                 </div>
                             </div>

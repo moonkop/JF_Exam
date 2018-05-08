@@ -1,9 +1,10 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 
 <html lang="en">
 
 <head>
-    <title>资源管理</title>
+    <title>知识点管理</title>
     <%@include file="/WEB-INF/components/header.jsp" %>
     <script src="/vendor/jstree/jstree.js"></script>
     <link rel="stylesheet" href="/vendor/jstree/themes/default/style.css"/>
@@ -21,10 +22,27 @@
         <div class="row">
             <div class="col-lg-12">
                 <h3>
-                    资源管理
+                    知识点管理
                 </h3>
-                <div class="table-btns">
-                    <a class="btn btn-primary" href="/manage/resource/edit"> 添加资源</a>
+
+
+                <div class="fixed-table-toolbar">
+                    <div class="bs-bars pull-left">
+                        <div class="table-btns">
+                            <a class="btn btn-primary" href="/manage/resource/edit"> 添加知识点</a>
+                        </div>
+                        <label for="select-subject" class="">科目</label>
+                        <label>
+                            <select id="select-subject" class="">
+                                <c:forEach items="${requestScope.subjects}" var="subject">
+                                    <option value="${subject.id}"
+                                            <c:if test="${subjectSelected==subject.id}">selected</c:if>   >
+                                            ${subject.name}
+                                    </option>
+                                </c:forEach>
+                            </select>
+                        </label>
+                    </div>
                 </div>
 
                 <script type="text/javascript">
@@ -60,14 +78,14 @@
                                         'items': function (node) {
                                             var tmp = {
                                                 create: {
-                                                    label: "添加资源",
+                                                    label: "添加知识点",
                                                     action: function (data) {
                                                         var id = getJstree().get_node(data.reference).id;
                                                         window.location.href = "/manage/resource/edit?parent.id=" + id;
                                                     }
                                                 },
                                                 delete: {
-                                                    label: "删除资源",
+                                                    label: "删除知识点",
                                                     action: function (data) {
                                                         var id = getJstree().get_node(data.reference).id;
                                                         if (confirm("真的要删除吗？"))
@@ -87,7 +105,7 @@
                                                     }
                                                 },
                                                 edit: {
-                                                    label: "编辑资源",
+                                                    label: "编辑知识点",
                                                     action: function (data) {
                                                         var id = getJstree().get_node(data.reference).id;
                                                         window.location.href = "/manage/resource/edit?id=" + id;
@@ -105,7 +123,7 @@
                         function getResourceTree()
                         {
                             $.ajax({
-                                url: '/manage/resource/tree.do',
+                                url: '/manage/bank/topic/treeBySubject.do?subjectID=' + $("#select-subject").val(),
                                 success: function (res) {
                                     OnResult(res, function () {
                                             getJstree().settings.core.data = res.payload.rows;
@@ -118,13 +136,16 @@
 
                         initTree();
                         getResourceTree();
+                        $("#select-subject").on("change", function () {
+                            getResourceTree();
 
+                        })
                     })
 
 
                 </script>
-                <div id="jstree">
 
+                <div id="jstree">
                 </div>
 
 

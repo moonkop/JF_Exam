@@ -24,7 +24,7 @@
                     <div class="panel-body">
                         <div class="row">
                             <div class="col-lg-12">
-                                <form role="form" class="form-horizontal" action="/bank/manage/subject/edit.do">
+                                <form role="form" class="form-horizontal" action="/manage/bank/subject/edit.do">
                                     <input type="text" class="form-control" style="display: none;" name="id"
                                            value="${subject.id}">
                                     <div class="form-group">
