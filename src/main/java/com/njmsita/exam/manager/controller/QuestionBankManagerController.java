@@ -502,6 +502,7 @@ public class QuestionBankManagerController extends BaseController
             topicEbi.save(topicVo);
         } else
         {
+
             topicEbi.update(topicVo);
         }
         return "redirect:/manage/bank/topic";
@@ -616,8 +617,7 @@ public class QuestionBankManagerController extends BaseController
             questionEbi.save(questionVo);
         } else
         {
-            questionVo.setModifyTeacher(teacherVo);
-            questionEbi.update(questionVo);
+            questionEbi.updateOrSaveToMe(questionVo,teacherVo);
         }
         return jsonResponse;
     }

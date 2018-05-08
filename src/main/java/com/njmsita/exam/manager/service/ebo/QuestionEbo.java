@@ -14,6 +14,7 @@ import com.njmsita.exam.manager.model.querymodel.QuestionQueryModel;
 import com.njmsita.exam.manager.service.ebi.QuestionEbi;
 import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.format.StringUtil;
+import com.njmsita.exam.utils.idutil.IdUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,17 +69,14 @@ public class QuestionEbo implements QuestionEbi
     {
         infoValidate(questionVo);
         QuestionVo temp=questionDao.get(questionVo.getId());
-        if(temp==null){
-            throw new OperationException("当前题目ID不存在，请不要进行非法操作！");
-        }
         temp.setCode(questionVo.getCode());
-        temp.setModifyTeacher(questionVo.getModifyTeacher());
-        temp.setModifyTime(System.currentTimeMillis());
+        temp.setIsPrivate(questionVo.getIsPrivate());
+        temp.setOutline(questionVo.getOutline());
+        temp.setOption(questionVo.getOption());
+        temp.setAnswer(questionVo.getAnswer());
+
         temp.setTopic(questionVo.getTopic());
         temp.setQuestionType(questionVo.getQuestionType());
-        temp.setAnswer(questionVo.getAnswer());
-        temp.setOption(questionVo.getOption());
-        temp.setOutline(questionVo.getOutline());
         temp.setSubject(questionVo.getSubject());
     }
 
@@ -147,5 +145,17 @@ public class QuestionEbo implements QuestionEbi
     public List<QuestionVo> getAllByTeacher(QuestionQueryModel questionQueryModel, Integer offset, Integer pageSize, TeacherVo login)
     {
         return questionDao.getAllByTeacher(questionQueryModel,offset,pageSize, login);
+    }
+
+    public void updateOrSaveToMe(QuestionVo questionVo, TeacherVo teacherVo) throws OperationException
+    {
+        QuestionVo temp=questionDao.get(questionVo.getId());
+        if(temp.getTeacher().getTeacherId().equals(teacherVo.getTeacherId())){
+            this.update(questionVo);
+        }else {
+            questionVo.setTeacher(teacherVo);
+            questionVo.setId(IdUtil.getUUID());
+            this.save(questionVo);
+        }
     }
 }

@@ -23,7 +23,6 @@ public class QuestionVo
     private String outline;
     private String option;
     private String answer;
-    private Long modifyTime;
 
     //所属知识点  n TO 1
     private TopicVo topic;
@@ -33,32 +32,6 @@ public class QuestionVo
     private QuestionTypeVo questionType;
     //所属科目  n TO 1
     private SubjectVo subject;
-    //修改人
-    private TeacherVo modifyTeacher;
-
-    @Basic
-    @Column(name = "modify_time")
-    public Long getModifyTime()
-    {
-        return modifyTime;
-    }
-
-    public void setModifyTime(Long modifyTime)
-    {
-        this.modifyTime = modifyTime;
-    }
-
-    @Basic
-    @Column(name = "modify_teacher")
-    public TeacherVo getModifyTeacher()
-    {
-        return modifyTeacher;
-    }
-
-    public void setModifyTeacher(TeacherVo modifyTeacher)
-    {
-        this.modifyTeacher = modifyTeacher;
-    }
 
     @Basic
     @Column(name = "topic_id")
