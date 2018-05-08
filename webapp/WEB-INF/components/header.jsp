@@ -11,6 +11,7 @@
 <link href="/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 <link rel="stylesheet" href="/vendor/bootstrap-table/bootstrap-table.css">
 <script src="/vendor/jquery/jquery.js"></script>
+<script src="/vendor/layer/layer.js"></script>
 <script src="/dist/js/manage.js"></script>
 <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>

@@ -65,7 +65,7 @@ public class LogAopAspect
                 sb.append("，");
             }
         }
-        if (args.length != 0)
+        if (sb.length() != 0)
         {
             log.setArgument(sb.toString().substring(0, sb.length() - 1));
         }

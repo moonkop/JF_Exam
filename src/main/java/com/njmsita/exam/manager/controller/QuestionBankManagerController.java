@@ -360,13 +360,38 @@ public class QuestionBankManagerController extends BaseController
 
     @ResponseBody
     @RequestMapping("topic/move.do")
-    public JsonResponse topicMove(String topicid, String parentid)
+    public JsonResponse topicMove(String id, String parent) throws OperationException
     {
-
+        TopicVo topicVo= topicEbi.get(id);
+        TopicVo parentVo = topicEbi.get(parent);
+        topicVo.setParent(parentVo);
+        topicEbi.update(topicVo);
         return new JsonResponse();
     }
 
-
+    @ResponseBody
+    @RequestMapping("topic/rename.do")
+    public JsonResponse topicRename(String id, String text) throws OperationException
+    {
+        TopicVo topicVo= topicEbi.get(id);
+        topicVo.setName(text);
+        topicEbi.update(topicVo);
+        return new JsonResponse();
+    }
+    @ResponseBody
+    @RequestMapping("topic/create.do")
+    public JsonResponse topicCreate(String parent,String name) throws OperationException
+    {
+        TopicVo topicVo= new TopicVo();
+        TopicVo parentVo = topicEbi.get(parent);
+        String id= IdUtil.getUUID();
+        topicVo.setId(id);
+        topicVo.setParent(parentVo);
+        topicVo.setName(name);
+        topicVo.setSubjectVo(parentVo.getSubjectVo());
+        topicEbi.save(topicVo);
+        return new JsonResponse().put("id",id);
+    }
     /**
      * 跳转知识点添加/修改页面
      * <p>

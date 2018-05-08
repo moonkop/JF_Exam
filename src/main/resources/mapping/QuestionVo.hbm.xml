@@ -14,12 +14,12 @@
         <property name="outline" column="outline"/>
         <property name="option" column="option"/>
         <property name="answer" column="answer"/>
-        <property name="modifyTime" column="create_time"/>
+        <!--<property name="modifyTime" column="create_time"/>-->
 
         <many-to-one name="topic" column="topic_id" class="com.njmsita.exam.manager.model.TopicVo" lazy="false"/>
         <many-to-one name="teacher" column="create_teacher_id" class="com.njmsita.exam.authentic.model.TeacherVo" lazy="false"/>
         <many-to-one name="questionType" column="question_type_id" class="com.njmsita.exam.manager.model.QuestionTypeVo" lazy="false"/>
         <many-to-one name="subject" column="subject_id" class="com.njmsita.exam.manager.model.SubjectVo" lazy="false"/>
-        <many-to-one name="modifyTeacher" column="modify_teacher" class="com.njmsita.exam.authentic.model.TeacherVo"/>
+        <!--<many-to-one name="modifyTeacher" column="modify_teacher" class="com.njmsita.exam.authentic.model.TeacherVo"/>-->
     </class>
 </hibernate-mapping>

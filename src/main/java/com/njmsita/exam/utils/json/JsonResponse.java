@@ -42,9 +42,10 @@ public class JsonResponse
         return message;
     }
 
-    public void setMessage(String message)
+    public JsonResponse setMessage(String message)
     {
         this.message = message;
+        return this;
     }
 
     public int getCode()
@@ -52,9 +53,10 @@ public class JsonResponse
         return code;
     }
 
-    public void setCode(int code)
+    public JsonResponse setCode(int code)
     {
         this.code = code;
+        return this;
     }
 
     public JsonResponse put(String key, Object value)

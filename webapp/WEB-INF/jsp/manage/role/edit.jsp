@@ -27,7 +27,7 @@
                     <div class="panel-body">
                         <div class="row">
                             <div class="col-lg-12">
-                                <form role="form" class="form-horizontal" action="/manage/role/edit.do">
+                                <form role="form" class="form-horizontal" action="/manage/role/edit.do" id="mainform">
                                     <div class="form-group" style="display:none">
                                         <input type="text" class="form-control" id="id" name="id" style="display: none"
                                                value="${role.id}">
@@ -124,19 +124,14 @@
 
 
                                         $("form").on("submit", function () {
-                                            var data = {};
-                                            $.each($("form").serializeArray(), function (index, item) {
-                                                data[item.name] = item.value;
-                                            })
+                                            var data = getFormData("mainform");
                                             data["resourceIds"] = getJstree().get_checked();
-
                                             $.ajax({
                                                 url: "/manage/role/edit.do",
                                                 type: "post",
                                                 data: data,
                                                 success: function (res) {
                                                     alert("success");
-
                                                 }
                                             });
                                             return false;
