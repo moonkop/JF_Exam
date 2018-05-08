@@ -35,6 +35,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
@@ -155,7 +156,7 @@ public class QuestionBankManagerController extends BaseController
             request.setAttribute("subject", subject);
             return "redirect:/manage/bank/subject";
         }
-        if (subject.getId() != null&&subject.getId()!=0)
+        if (subject.getId() != null && subject.getId() != 0)
         {
             subjectEbi.update(subject);
         } else
@@ -178,7 +179,7 @@ public class QuestionBankManagerController extends BaseController
     @SystemLogAnnotation(module = "学科管理", methods = "学科删除")
     public JsonResponse subjectDelete(SubjectVo subject) throws Exception
     {
-        if (subject.getId() != 0&&subject.getId()!=null)
+        if (subject.getId() != 0 && subject.getId() != null)
         {
             subjectEbi.delete(subject);
         }
@@ -260,7 +261,7 @@ public class QuestionBankManagerController extends BaseController
     {
 
         //判断前台是否传递题型ID
-        if (questionType.getId() != 0&&questionType.getId()!=null)
+        if (questionType.getId() != 0 && questionType.getId() != null)
         {
             //根据题型ID获取题型完整信息从而进行数据回显
             questionType = questionTypeEbi.get(questionType.getId());
@@ -292,7 +293,7 @@ public class QuestionBankManagerController extends BaseController
             request.setAttribute("questionType", questionType);
             return "/manage/questionType/edit";
         }
-        if (questionType.getId() !=null&&questionType.getId()!=0)
+        if (questionType.getId() != null && questionType.getId() != 0)
         {
             questionTypeEbi.update(questionType);
         } else
@@ -315,7 +316,7 @@ public class QuestionBankManagerController extends BaseController
     @SystemLogAnnotation(module = "题型管理", methods = "题型删除")
     public JsonResponse questionTypeDelete(QuestionTypeVo questionType) throws Exception
     {
-        if (questionType.getId() != 0&&questionType.getId()!=null)
+        if (questionType.getId() != 0 && questionType.getId() != null)
         {
             questionTypeEbi.delete(questionType);
         }
@@ -340,70 +341,10 @@ public class QuestionBankManagerController extends BaseController
     @RequestMapping("topic")
     public String totopicTree(Integer subjectID, HttpServletRequest request)
     {
-        List<SubjectVo> subjects= subjectEbi.getAll();
+        List<SubjectVo> subjects = subjectEbi.getAll();
         request.setAttribute("subjects", subjects);
         request.setAttribute("subjectSelected", subjectID);
         return "/manage/bank/topic/tree";
-    }
-
-    @Deprecated
-    @RequestMapping("topic/list1")
-    public String totopicList()
-    {
-        return "/manage/bank/topic/list";
-    }
-
-    @Deprecated
-    @ResponseBody
-    @RequestMapping("topic/list.do")
-    public JsonNode topicList(TopicQueryModel topicQueryModel, Integer pageNum, Integer pageSize)
-    {
-        //创建自定义序列化器 并设置过滤器
-        CustomJsonSerializer serializer = new CustomJsonSerializer(TopicVo.class, "id,name,url,remark", null);
-        //创建返回值对象 json类型
-        ObjectNode result = CustomJsonSerializer.getDefaultMapper().createObjectNode();
-        List<TopicVo> topicVoList = topicEbi.getAll(topicQueryModel, pageNum, pageSize);
-        //对象转换后存放的数组
-        List<ObjectNode> rows = new ArrayList<>();
-        for (TopicVo topicVo : topicVoList)
-        {
-            //自定义过滤序列化对象
-            ObjectNode node = serializer.toJson_ObjectNode(topicVo);
-            //添加额外的特殊属性
-            node.put("subject", topicVo.getSubjectVo().getName());
-            rows.add(node);
-        }
-        //将数组转换为json节点 并插入返回值对象
-        result.put("rows", CustomJsonSerializer.toJson_JsonNode1(rows));
-        result.put("total", topicEbi.getCount(topicQueryModel));
-        return result;
-    }
-
-
-
-
-    @Deprecated
-    @ResponseBody
-    @RequestMapping("topic/tree.do")
-    public List<ObjectNode> topicTree()
-    {
-        List<TopicVo> list = topicEbi.getAll();
-        List<ObjectNode> rows = new ArrayList<>();
-        for (TopicVo topicVo : list)
-        {
-            ObjectNode node = CustomJsonSerializer.getDefaultMapper().createObjectNode();
-            if (topicVo.getParent() != null)
-            {
-                node.put("parent", topicVo.getParent().getId());
-            } else
-            {
-                node.put("parent", "#");
-            }
-            node.put("id", topicVo.getId());
-            node.put("text", topicVo.getName());
-            rows.add(node);
-        }
-        return rows;
     }
 
 
@@ -412,38 +353,19 @@ public class QuestionBankManagerController extends BaseController
     public JsonResponse topicTreeBySubject(Integer subjectID) throws OperationException
     {
         return new JsonListResponse<TopicVo>(
-                topicEbi.getBySubject(subjectID,""),
+                topicEbi.getBySubject(subjectID, ""),
                 "id,[text]name,[parent]parent.id",
-                0,true).addNullValue("parent","#").serialize();
+                0, true).addNullValue("parent", "#").serialize();
     }
 
-
-
-    /**
-     * 跳转知识点页面(分页)
-     *
-     * @param topicQueryModel 该模型存放了知识点属性
-     * @param model
-     * @param pageNum         页码
-     * @param pageSize        页面大小
-     *
-     * @return
-     */
-    @Deprecated
-    @RequestMapping("topic/list")
-    public String totopicList(TopicQueryModel topicQueryModel, Model model, Integer pageNum, Integer pageSize)
+    @ResponseBody
+    @RequestMapping("topic/move.do")
+    public JsonResponse topicMove(String topicid, String parentid)
     {
 
-        //调用BaseController的方法设置数据总量及最大页码数
-        pageCount = pageSize;
-        setDataTotal(topicEbi.getCount(topicQueryModel));
-
-        //根据查询条件和指定的页码查询
-        List<TopicVo> topicList = topicEbi.getAll(topicQueryModel, pageNum, pageSize);
-        model.addAttribute("topicList", topicList);
-
-        return "manage/topic/list";
+        return new JsonResponse();
     }
+
 
     /**
      * 跳转知识点添加/修改页面
@@ -544,50 +466,62 @@ public class QuestionBankManagerController extends BaseController
 
     /**
      * 查看题库
+     *
      * @param questionQueryModel
      * @param offset
      * @param pageSize
      * @param request
+     *
      * @return
      */
     @ResponseBody
     @RequestMapping("question/list.do")
     public JsonResponse questionList(QuestionQueryModel questionQueryModel, Integer offset, Integer pageSize,
-                                 HttpServletRequest request)
+                                     HttpServletRequest request)
     {
-        List<QuestionVo> list=null;
-        TeacherVo teacherVo= (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
-        if(teacherVo.getTroleVo().getId().equals("0")){
-            list=questionEbi.getAll(questionQueryModel,offset,pageSize);
-        }else {
-            if (questionQueryModel.getShowMe()){
+        List<QuestionVo> list = null;
+        TeacherVo teacherVo = (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
+        if (teacherVo.getTroleVo().getId().equals("0"))
+        {
+            list = questionEbi.getAll(questionQueryModel, offset, pageSize);
+        } else
+        {
+            if (questionQueryModel.getShowMe())
+            {
                 questionQueryModel.setTeacher(teacherVo);
             }
-            list=questionEbi.getAllByTeacher(questionQueryModel,offset,pageSize,teacherVo);
+            list = questionEbi.getAllByTeacher(questionQueryModel, offset, pageSize, teacherVo);
         }
-        return new JsonListResponse<>(list,"id,name,code,outline,option,answer",0);
+        return new JsonListResponse<>(list, "id,name,code,outline,option,answer", 0);
     }
 
     /**
      * 获取科目的所有知识点
+     *
      * @param subjectId
      * @param parent
+     *
      * @return
+     *
      * @throws Exception
      */
     @RequestMapping("question/topicList")
     @ResponseBody
-    public JsonResponse getTopic(Integer subjectId,String parent)throws Exception{
-        return new JsonListResponse<>(topicEbi.getBySubject(subjectId,parent),
-                "id,name,[parent]parent.id",0);
+    public JsonResponse getTopic(Integer subjectId, String parent) throws Exception
+    {
+        return new JsonListResponse<>(topicEbi.getBySubject(subjectId, parent),
+                "id,name,[parent]parent.id", 0);
     }
 
     /**
      * 题目的添加/修改
+     *
      * @param questionVo
      * @param bindingResult
      * @param session
+     *
      * @return
+     *
      * @throws Exception
      */
     @RequestMapping("question/edit.do")
@@ -596,7 +530,7 @@ public class QuestionBankManagerController extends BaseController
     public JsonResponse doAdd(@Validated(value = {AddGroup.class}) QuestionVo questionVo, BindingResult bindingResult,
                               HttpSession session) throws Exception
     {
-        JsonResponse jsonResponse =new JsonResponse();
+        JsonResponse jsonResponse = new JsonResponse();
         if (bindingResult.hasErrors())
         {
             List<FieldError> list = bindingResult.getFieldErrors();
@@ -608,7 +542,7 @@ public class QuestionBankManagerController extends BaseController
             //操作是否成功
             jsonResponse.setCode(500);
         }
-        TeacherVo teacherVo= (TeacherVo) session.getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
+        TeacherVo teacherVo = (TeacherVo) session.getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
         if (null == questionVo.getId() || "".equals(questionVo.getId().trim()))
         {
             questionVo.setTeacher(teacherVo);
@@ -624,8 +558,11 @@ public class QuestionBankManagerController extends BaseController
 
     /**
      * 题目删除
+     *
      * @param questionVo
+     *
      * @return
+     *
      * @throws OperationException
      */
     @ResponseBody

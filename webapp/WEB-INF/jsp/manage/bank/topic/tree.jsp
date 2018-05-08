@@ -67,6 +67,33 @@
                                 .on("refresh.jstree", function (event, data) {
                                     getJstree().open_all();
                                 })
+                                .on('move_node.jstree', function (e, data) {
+                                    $.ajax(
+                                        {
+                                            url:'/manage/bank/topic/move',
+                                            data:{ 'id' : data.node.id, 'parent' : data.parent },
+                                            success:function(res)
+                                            {
+                                                OnResult(res);
+                                                data.instance.refresh();
+                                            }
+                                        }
+                                    )
+                                })
+                                .on('rename_node.jstree', function (e, data) {
+                                    $.ajax(
+                                        {
+                                            url:'/manage/bank/topic/rename',
+                                            data:{ 'id' : data.node.id, 'text' : data.text },
+                                            success:function(res)
+                                            {
+                                                OnResult(res);
+//                                                data.instance.set_id(data.node, d.id);
+                                                data.instance.refresh();
+                                            }
+                                        }
+                                    )
+                                })
                                 .jstree({
                                     'core': {
                                         'worker': false
@@ -92,7 +119,7 @@
                                                         {
                                                             $.ajax(
                                                                 {
-                                                                    url: "/manage/resource/delete.do?id=" + id,
+                                                                    url: "/manage/bank/topic/delete.do?id=" + id,
                                                                     success: function (res) {
                                                                         OnResult(res, function () {
                                                                             alert(res.message);
