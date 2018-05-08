@@ -32,6 +32,12 @@ public class QuestionVo
     private QuestionTypeVo questionType;
     //所属科目  n TO 1
     private SubjectVo subject;
+    private String codes;
+    private String options;
+    private String topicId;
+    private String createTeacherId;
+    private byte questionTypeId;
+    private byte subjectId;
 
     @Basic
     @Column(name = "topic_id")
@@ -210,5 +216,77 @@ public class QuestionVo
                 ", questionType=" + questionType +
                 ", subject=" + subject +
                 '}';
+    }
+
+    @Basic
+    @Column(name = "codes")
+    public String getCodes()
+    {
+        return codes;
+    }
+
+    public void setCodes(String codes)
+    {
+        this.codes = codes;
+    }
+
+    @Basic
+    @Column(name = "options")
+    public String getOptions()
+    {
+        return options;
+    }
+
+    public void setOptions(String options)
+    {
+        this.options = options;
+    }
+
+    @Basic
+    @Column(name = "topic_id")
+    public String getTopicId()
+    {
+        return topicId;
+    }
+
+    public void setTopicId(String topicId)
+    {
+        this.topicId = topicId;
+    }
+
+    @Basic
+    @Column(name = "create_teacher_id")
+    public String getCreateTeacherId()
+    {
+        return createTeacherId;
+    }
+
+    public void setCreateTeacherId(String createTeacherId)
+    {
+        this.createTeacherId = createTeacherId;
+    }
+
+    @Basic
+    @Column(name = "question_type_id")
+    public byte getQuestionTypeId()
+    {
+        return questionTypeId;
+    }
+
+    public void setQuestionTypeId(byte questionTypeId)
+    {
+        this.questionTypeId = questionTypeId;
+    }
+
+    @Basic
+    @Column(name = "subject_id")
+    public byte getSubjectId()
+    {
+        return subjectId;
+    }
+
+    public void setSubjectId(byte subjectId)
+    {
+        this.subjectId = subjectId;
     }
 }
