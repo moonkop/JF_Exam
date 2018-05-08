@@ -404,6 +404,8 @@ public class StudentEbo implements StudentEbi
         }
         if(studentId==null||studentId.trim().equals("")){
             throw new FormatException("表格中第"+(rowNum+1)+"行的“学号”属性为空，请核对后重新导入！");
+        }else if(studentId.length()>32){
+            throw new FormatException("表格中第"+(rowNum+1)+"行的“学号”属性格式不正确，请核对后重新导入！");
         }
         //设置性别
         if(SysConsts.INFO_TEACHER_OR_SUTDENT_GENDER_MALE.equals(row.getCell(3).getStringCellValue())){

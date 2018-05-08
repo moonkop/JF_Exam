@@ -377,6 +377,15 @@ public class StudentController extends BaseController
         return new JsonResponse("删除成功");
     }
 
+    /**
+     * 批量导入学生信息
+     * @param studentInfo
+     * @param schoolId
+     * @return
+     * @throws FormatException
+     * @throws OperationException
+     * @throws IOException
+     */
     @RequestMapping("import.do")
     @SystemLogAnnotation(module = "学生管理", methods = "批量导入")
     public String inputXls(MultipartFile studentInfo, String schoolId) throws FormatException, OperationException, IOException

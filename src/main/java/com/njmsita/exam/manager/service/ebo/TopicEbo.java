@@ -5,7 +5,6 @@ import com.njmsita.exam.manager.dao.dao.SubjectDao;
 import com.njmsita.exam.manager.dao.dao.TopicDao;
 import com.njmsita.exam.manager.model.SubjectVo;
 import com.njmsita.exam.manager.model.TopicVo;
-import com.njmsita.exam.manager.service.ebi.SubjectEbi;
 import com.njmsita.exam.manager.service.ebi.TopicEbi;
 import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.format.StringUtil;
@@ -31,7 +30,7 @@ public class TopicEbo implements TopicEbi
     public void save(TopicVo topicVo) throws OperationException
     {
         infoValidate(topicVo);
-        if(topicDao.getByName(topicVo.getName())!=null){
+        if(topicDao.getByName(topicVo.getName(), topicVo.getSubjectVo().getId())!=null){
             throw new OperationException("当前知识点名称为："+topicVo.getName()+"的知识点已存在，请勿重复操作");
         }
         topicDao.save(topicVo);
@@ -60,7 +59,7 @@ public class TopicEbo implements TopicEbi
     public void update(TopicVo topicVo) throws OperationException
     {
         infoValidate(topicVo);
-        TopicVo temp=topicDao.getByName(topicVo.getName());
+        TopicVo temp=topicDao.getByName(topicVo.getName(), topicVo.getSubjectVo().getId());
         if(temp!=null&&temp.getId()!=topicVo.getId()){
             throw new OperationException("当前知识点名称为："+topicVo.getName()+"的知识点已存在，请勿重复操作");
         }
@@ -105,6 +104,7 @@ public class TopicEbo implements TopicEbi
         if (subject==null){
             throw new OperationException("选择科目不存在，请不要进行非法操作！");
         }
+        topicVo.setName(topicVo.getName().toUpperCase());
         topicVo.setSubjectVo(subject);
     }
 

@@ -118,7 +118,7 @@ public class QuestionVo
     }
 
     @Basic
-    @Column(name = "code")
+    @Column(name = "codes")
     public String getCode()
     {
         return code;
@@ -142,7 +142,7 @@ public class QuestionVo
     }
 
     @Basic
-    @Column(name = "option")
+    @Column(name = "options")
     public String getOption()
     {
         return option;
