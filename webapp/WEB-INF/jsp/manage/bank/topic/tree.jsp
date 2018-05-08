@@ -67,12 +67,41 @@
                                 .on("refresh.jstree", function (event, data) {
                                     getJstree().open_all();
                                 })
+                                .on('move_node.jstree', function (e, data) {
+                                    $.ajax(
+                                        {
+                                            url: '/manage/bank/topic/move.do',
+                                            data: {'id': data.node.id, 'parent': data.parent},
+                                            success: function (res) {
+                                                OnResult(res);
+                                                getResourceTree();
+                                                // data.instance.refresh();
+                                            }
+                                        }
+                                    )
+                                })
+                                .on('rename_node.jstree', function (e, data) {
+                                    $.ajax(
+                                        {
+                                            url: '/manage/bank/topic/rename.do',
+                                            data: {'id': data.node.id, 'text': data.text},
+                                            success: function (res) {
+                                                OnResult(res);
+                                                getResourceTree();
+//                                                data.instance.set_id(data.node, d.id);
+                                                //data.instance.refresh();
+                                            }
+                                        }
+                                    )
+                                }).on('create_node.jstree', function (e, data) {})
                                 .jstree({
                                     'core': {
-                                        'worker': false
+                                        'worker': false,
+                                        "check_callback": true
                                     },
                                     "plugins": [
-                                        "contextmenu"
+                                        "contextmenu",
+                                        "dnd"
                                     ],
                                     'contextmenu': {
                                         'items': function (node) {
@@ -80,8 +109,34 @@
                                                 create: {
                                                     label: "添加知识点",
                                                     action: function (data) {
-                                                        var id = getJstree().get_node(data.reference).id;
-                                                        window.location.href = "/manage/resource/edit?parent.id=" + id;
+                                                        var node = getJstree().get_node(data.reference);
+                                                        layer.open({
+                                                            type: 5,
+                                                            shadeClose: true, //点击遮罩关闭
+                                                            closeBtn: 2,
+                                                            title: '请输入知识点名称',
+                                                            area: ['320px', '170px'],
+                                                            content: $("#js-add-form-template").html(),
+                                                            success: function () {
+                                                                $("#form-add-topic>input[name='parent']").val(node.id);
+                                                                $(".js-layer-form-add-btn").on("click", function () {
+                                                                        $.ajax(
+                                                                            {
+                                                                                url: "/manage/bank/topic/create.do",
+                                                                                data: getFormData("form-add-topic"),
+                                                                                success: function (res) {
+                                                                                    OnResult(res);
+                                                                                    getResourceTree();
+                                                                                }
+                                                                            }
+                                                                        )
+                                                                    }
+                                                                )
+
+                                                            },
+                                                            end: function () {
+                                                            }
+                                                        });
                                                     }
                                                 },
                                                 delete: {
@@ -92,7 +147,7 @@
                                                         {
                                                             $.ajax(
                                                                 {
-                                                                    url: "/manage/resource/delete.do?id=" + id,
+                                                                    url: "/manage/bank/topic/delete.do?id=" + id,
                                                                     success: function (res) {
                                                                         OnResult(res, function () {
                                                                             alert(res.message);
@@ -107,8 +162,8 @@
                                                 edit: {
                                                     label: "编辑知识点",
                                                     action: function (data) {
-                                                        var id = getJstree().get_node(data.reference).id;
-                                                        window.location.href = "/manage/resource/edit?id=" + id;
+                                                        obj = getJstree().get_node(data.reference);
+                                                        getJstree().edit(obj);
                                                     }
                                                 }
                                             };
@@ -158,5 +213,23 @@
 </div>
 <%@include file="/WEB-INF/components/footer.jsp" %>
 </body>
+
+<script id="js-add-form-template" type="text/template">
+    <div class="layer-popup">
+        <form role="form" class="form-horizontal" id="form-add-topic">
+            <input type="hidden" name="parent">
+            <div class="form-group">
+                <label class="col-sm-4 control-label">知识点名称</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" id="inputID" name="name">
+                </div>
+            </div>
+            <button type="button" class="js-layer-form-add-btn btn btn-primary  pull-right">
+                <i class="glyphicon glyphicon-plus"></i>添加
+            </button>
+        </form>
+    </div>
+</script>
+
 
 </html>

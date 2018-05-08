@@ -10,6 +10,17 @@ queryParams = function (params) {
     return temp;
 }
 
+getFormData=function(formid)
+{
+    data={};
+    $.each($("#"+formid).serializeArray(), function (index, item) {
+        data[item.name] = item.value;
+    })
+    return data;
+
+}
+
+
 function OnResult(result, onsuccess, onfailure)
 {
     if (result.code == 100)
@@ -45,17 +56,18 @@ function defaultOnSuccess(result)
 {
     if (result.message == "ok")
     {
-        alert("操作成功");
+        layer.msg('操作成功');
     } else if (result.message === undefined)
     {
-        alert("操作结果未知");
+        layer.msg('操作结果未知');
     } else
     {
-        alert(result.message);
+        layer.msg('result.message');
     }
 }
 
 function defaultOnFailure(res)
 {
-    alert("操作失败" + res.code + ":" + res.message);
+
+    layer.alert("操作失败" + res.code + ":" + res.message);
 }
