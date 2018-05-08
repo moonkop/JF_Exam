@@ -32,4 +32,10 @@ public interface TopicDao extends BaseDao<TopicVo>
      * @return
      */
     public List<TopicVo> getByLikeName(String topicName);
+
+    /**
+     * 根据学科自动创建根知识点
+     * @param topicVo
+     */
+    public void createBootBySubject(TopicVo topicVo);
 }

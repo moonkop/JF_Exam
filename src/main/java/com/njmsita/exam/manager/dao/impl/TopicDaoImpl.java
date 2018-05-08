@@ -42,4 +42,9 @@ public class TopicDaoImpl extends BaseImpl<TopicVo> implements TopicDao
         dc.add(Restrictions.like("name","%"+topicName+"%"));
         return (List<TopicVo>) this.getHibernateTemplate().findByCriteria(dc);
     }
+
+    public void createBootBySubject(TopicVo topicVo)
+    {
+        this.getHibernateTemplate().save(topicVo);
+    }
 }
