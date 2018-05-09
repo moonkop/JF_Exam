@@ -29,7 +29,7 @@ public interface QuestionDao extends BaseDao<QuestionVo>
     public List<QuestionVo> getByQuestionType(Integer id);
 
     /**
-     *
+     * 根据当前教师角色查询指定条件的题目
      * @param questionQueryModel
      * @param offset
      * @param pageSize
@@ -52,4 +52,13 @@ public interface QuestionDao extends BaseDao<QuestionVo>
      * @return
      */
     public List<QuestionVo> getAllByAdmin(BaseQueryVO qm, Integer pageNum, Integer pageCount);
+
+    /**
+     * 根据当前教师查询指定知识点及题型的题目
+     * @param topicIds          知识点
+     * @param questionTypeId    题型
+     * @param login         当前登陆人
+     * @return
+     */
+    public List<QuestionVo> getByTopicIdsAndTypeId(String[] topicIds, Integer questionTypeId, TeacherVo login);
 }

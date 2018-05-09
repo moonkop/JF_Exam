@@ -9,15 +9,4 @@ import com.njmsita.exam.manager.model.TopicVo;
  */
 public class PaperQueryModel extends PaperVo implements BaseQueryVO
 {
-    private Boolean showMe;
-
-    public Boolean getShowMe()
-    {
-        return showMe;
-    }
-
-    public void setShowMe(Boolean showMe)
-    {
-        this.showMe = showMe;
-    }
 }

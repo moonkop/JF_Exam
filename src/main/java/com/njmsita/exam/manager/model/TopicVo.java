@@ -7,6 +7,7 @@ import com.njmsita.exam.utils.validate.validategroup.EditGroup;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Set;
 
 @Entity
@@ -19,6 +20,8 @@ public class TopicVo
 {
     @NotEmpty(message = "{id.notempty}",groups = {EditGroup.class})
     private String id;
+
+    @NotNull(message = "{name.notempty}",groups = {AddGroup.class, EditGroup.class})
     @NotEmpty(message = "{name.notempty}",groups = {AddGroup.class, EditGroup.class})
     private String name;
 

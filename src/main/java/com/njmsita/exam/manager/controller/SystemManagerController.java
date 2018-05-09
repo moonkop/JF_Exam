@@ -361,7 +361,8 @@ public class SystemManagerController extends BaseController
     @ResponseBody
     @RequestMapping("role/edit.do")
     @SystemLogAnnotation(module = "角色管理", methods = "角色添加/修改")
-    public String roleDoAdd(@Validated(value = {AddGroup.class}) TroleVo roleVo, BindingResult bindingResult, @RequestParam(value = "resourceIds[]") String[] resourceIds,
+    public String roleDoAdd(@Validated(value = {AddGroup.class}) TroleVo roleVo, BindingResult bindingResult,
+                            @RequestParam(value = "resourceIds[]") String[] resourceIds,
                             HttpServletRequest request) throws OperationException
     {
         if (bindingResult.hasErrors())

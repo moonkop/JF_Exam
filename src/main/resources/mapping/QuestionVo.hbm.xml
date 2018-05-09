@@ -14,6 +14,7 @@
         <property name="outline" column="outline"/>
         <property name="option" column="options"/>
         <property name="answer" column="answer"/>
+        <property name="useTime" column="useTime"/>
 
         <many-to-one name="topic" column="topic_id" class="com.njmsita.exam.manager.model.TopicVo" lazy="false"/>
         <many-to-one name="teacher" column="create_teacher_id" class="com.njmsita.exam.authentic.model.TeacherVo" lazy="false"/>

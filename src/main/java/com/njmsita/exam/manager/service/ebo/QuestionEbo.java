@@ -25,8 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * 题目业务层实现类
@@ -77,15 +76,22 @@ public class QuestionEbo implements QuestionEbi
     {
         infoValidate(questionVo);
         QuestionVo temp=questionDao.get(questionVo.getId());
-        temp.setCode(questionVo.getCode());
-        temp.setIsPrivate(questionVo.getIsPrivate());
-        temp.setOutline(questionVo.getOutline());
-        temp.setOption(questionVo.getOption());
-        temp.setAnswer(questionVo.getAnswer());
+        if(temp==null){
+            throw new OperationException("当前选择的题目不存在，请不要进行非法操作！");
+        }
+        setField(temp,questionVo);
+    }
 
-        temp.setTopic(questionVo.getTopic());
-        temp.setQuestionType(questionVo.getQuestionType());
-        temp.setSubject(questionVo.getSubject());
+    private void setField(QuestionVo oldQuestion,QuestionVo newQuestion){
+        oldQuestion.setCode(newQuestion.getCode());
+        oldQuestion.setIsPrivate(newQuestion.getIsPrivate());
+        oldQuestion.setOutline(newQuestion.getOutline());
+        oldQuestion.setOption(newQuestion.getOption());
+        oldQuestion.setAnswer(newQuestion.getAnswer());
+
+        oldQuestion.setTopic(newQuestion.getTopic());
+        oldQuestion.setQuestionType(newQuestion.getQuestionType());
+        oldQuestion.setSubject(newQuestion.getSubject());
     }
 
     public void delete(QuestionVo questionVo)
@@ -183,15 +189,18 @@ public class QuestionEbo implements QuestionEbi
         return questionDao.getAllByTeacher(questionQueryModel,offset,pageSize, login);
     }
 
-    public void updateOrSaveToMe(QuestionVo questionVo, TeacherVo teacherVo) throws OperationException
+    public QuestionVo updateOrSaveToMe(QuestionVo questionVo, TeacherVo teacherVo) throws OperationException
     {
+        infoValidate(questionVo);
         QuestionVo temp=questionDao.get(questionVo.getId());
         if(temp.getTeacher().getTeacherId().equals(teacherVo.getTeacherId())){
-            this.update(questionVo);
+            setField(temp,questionVo);
+            return temp;
         }else {
             questionVo.setTeacher(teacherVo);
             questionVo.setId(IdUtil.getUUID());
             this.save(questionVo);
+            return questionVo;
         }
     }
 
@@ -231,6 +240,117 @@ public class QuestionEbo implements QuestionEbi
         }
 
         questionDao.bulkInput(questions);
+    }
+
+    public List<QuestionVo> autoSelectByTopicIdsAndType(String[] topicIds, Integer questionTypeId,
+           Integer questionNum, TeacherVo teacherVo)throws Exception
+    {
+        //数据校验
+        QuestionTypeVo questionTypeVo= questionTypeDao.get(questionTypeId);
+        if(questionTypeVo==null){
+            throw new OperationException("所选择的题型不存在，请不要进行非法操作");
+        }
+        if(questionNum==null||questionNum==0){
+            throw new OperationException("所抽取的题目数量不能为0，请不要进行非法操作");
+        }
+        String[] topicIds2=null;
+        if(topicIds!=null){
+            List<String> correctTopicIds=new ArrayList<>();
+            for (String topicId : topicIds)
+            {
+                if(StringUtil.isEmpty(topicId)){
+                    continue;
+                }
+                TopicVo topicVo=topicDao.get(topicId);
+                if(topicVo==null){
+                    continue;
+                }
+                correctTopicIds.add(topicId);
+            }
+            if(correctTopicIds.size()>0){
+                topicIds2=new String[correctTopicIds.size()];
+                correctTopicIds.toArray(topicIds2);
+            }
+        }
+
+        //得到所有符合条件的题目
+        List<QuestionVo> questionList=questionDao.getByTopicIdsAndTypeId(topicIds2,questionTypeId,teacherVo);
+        if(questionList.size()<=questionNum){
+            return questionList;
+        }
+
+        Map<Integer, Set<QuestionVo>> map =new HashMap<>();
+        Set<QuestionVo> paper=new HashSet<>();
+
+        //将得到的题目根据使用次数保存在map中   key-->使用次数    value-->当前使用次数的所有题目
+        for (QuestionVo questionVo : questionList)
+        {
+            if(map.containsKey(questionVo.getUseTime())) {
+                map.get(questionVo.getUseTime()).add(questionVo);
+            }else {
+                Set<QuestionVo> set=new HashSet<QuestionVo>();
+                set.add(questionVo);
+                map.put(questionVo.getUseTime(), set);
+            }
+        }
+
+        while (paper.size()<questionNum) {
+            QuestionVo question=selectQuestion(map);
+            if (question!=null) {
+                paper.add(question);
+            }
+        }
+
+        List<QuestionVo> paperQuestions=new ArrayList<>();
+        paperQuestions.addAll(paper);
+
+        return paperQuestions;
+    }
+
+    /**
+     * 选择题目
+     * @param map
+     * @return
+     */
+    private static QuestionVo selectQuestion(Map<Integer, Set<QuestionVo>> map) {
+        //sum为各个使用次数与其所用于题目数量乘积的总和
+        int sum=0;
+        //p为各个使用次数的总概率
+        int p=0;
+        //使用次数的种类
+        List<Integer> useTimes=new ArrayList<>();
+        //各个使用次数对应的线性概率
+        List<Integer> pn=new ArrayList<>();
+        //得到sum和useTimes
+        for (Map.Entry<Integer, Set<QuestionVo>> entry : map.entrySet()) {
+            sum+=(entry.getKey()+1)*entry.getValue().size();
+            useTimes.add(entry.getKey());
+        }
+        //得到p和pn
+        for (Integer integer : useTimes) {
+            p+=sum/(integer+sum*0.5);
+            pn.add(p);
+        }
+        Random random=new Random();
+        int num=random.nextInt(p)+1;
+        //根据随机数出现的位置找到对应的使用次数，并从其所拥有题目的集合中随机抽取一个
+        for (Integer integer : pn) {
+            if(num<=integer) {
+                Integer useTime=useTimes.get(pn.indexOf(integer));
+                Set<QuestionVo> set = map.get(useTime);
+                if(set.size()==0)
+                    continue;
+                else {
+                    List<QuestionVo> list=new ArrayList<>();
+                    list.addAll(set);
+                    QuestionVo question=list.get(new Random().nextInt(list.size()));
+                    set.remove(question);
+                    map.put(useTime, set);
+                    return question;
+                }
+            }
+        }
+        return null;
     }
 
     /**

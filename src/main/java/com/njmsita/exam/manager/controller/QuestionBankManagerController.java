@@ -464,7 +464,6 @@ public class QuestionBankManagerController extends BaseController
         {
             //根据知识点ID获取知识点完整信息从而进行数据回显
             topicVo = topicEbi.get(topicVo.getId());
-            request.setAttribute("parent", topicEbi.get(topicVo.getParent().getId()));
             request.setAttribute("topic", topicVo);
         }
         //如果待编辑知识点为空 则会传进来parent.id
@@ -569,7 +568,7 @@ public class QuestionBankManagerController extends BaseController
             }
             list=questionEbi.getAllByTeacher(questionQueryModel,offset,pageSize,teacherVo);
         }
-        return new JsonListResponse<>(list,"id,code,outline,option,answer,isPrivate",0);
+        return new JsonListResponse<>(list,"id,code,outline,option,answer,[score]questionType.score",0);
     }
 
     /**
@@ -600,7 +599,7 @@ public class QuestionBankManagerController extends BaseController
     public JsonResponse doAdd(@Validated(value = {AddGroup.class}) QuestionVo questionVo, BindingResult bindingResult,
                               HttpSession session) throws Exception
     {
-        JsonResponse jsonResponse =new JsonResponse();
+        JsonListResponse jsonResponse =new JsonListResponse<>();
         if (bindingResult.hasErrors())
         {
             List<FieldError> list = bindingResult.getFieldErrors();
@@ -620,7 +619,10 @@ public class QuestionBankManagerController extends BaseController
             questionEbi.save(questionVo);
         } else
         {
-            questionEbi.updateOrSaveToMe(questionVo,teacherVo);
+            QuestionVo questionUpdate=questionEbi.updateOrSaveToMe(questionVo,teacherVo);
+            List<QuestionVo> list=new ArrayList<>();
+            list.add(questionUpdate);
+            jsonResponse.setRaw(list).setFields("id,code,outline,option,answer,[score]questionType.score").serialize();
         }
         return jsonResponse;
     }

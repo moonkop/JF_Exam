@@ -1,8 +1,12 @@
 package com.njmsita.exam.manager.model;
 
 import com.njmsita.exam.authentic.model.TeacherVo;
+import com.njmsita.exam.utils.validate.validategroup.AddGroup;
+import com.njmsita.exam.utils.validate.validategroup.EditGroup;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 /**
@@ -12,15 +16,38 @@ import java.util.Objects;
 @Table(name = "paper", schema = "jf_exam", catalog = "")
 public class PaperVo
 {
+    @NotEmpty(message = "{id.notempty}",groups = {EditGroup.class})
     private String id;
+
+    @NotNull(message = "{title.notempty}",groups = {AddGroup.class, EditGroup.class})
+    @NotEmpty(message = "{title.notempty}",groups = {AddGroup.class, EditGroup.class})
     private String title;
+
+    @NotNull(message = "{comment.notempty}",groups = {AddGroup.class, EditGroup.class})
+    @NotEmpty(message = "{comment.notempty}",groups = {AddGroup.class, EditGroup.class})
     private String comment;
+
+    @NotNull(message = "{questionContain.notempty}",groups = {AddGroup.class, EditGroup.class})
+    @NotEmpty(message = "{questionContain.notempty}",groups = {AddGroup.class, EditGroup.class})
+    private String questionContain;
 
     //出卷教师  n  TO  1
     private TeacherVo teacher;
 
     //所属科目  n  TO  1
     private SubjectVo subjectVo;
+
+    @Basic
+    @Column(name = "questionContain")
+    public String getQuestionContain()
+    {
+        return questionContain;
+    }
+
+    public void setQuestionContain(String questionContain)
+    {
+        this.questionContain = questionContain;
+    }
 
     @Basic
     @Column(name = "create_teacher_id")

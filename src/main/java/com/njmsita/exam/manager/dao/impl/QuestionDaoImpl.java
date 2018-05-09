@@ -67,7 +67,7 @@ public class QuestionDaoImpl extends BaseImpl<QuestionVo> implements QuestionDao
         }
         return dc;
     }
-    public void doQbcByPublic(DetachedCriteria dc, BaseQueryVO qm)
+    public void doQbcByPublic(DetachedCriteria dc)
     {
         dc.add(Restrictions.eq("isPrivate", 0));
 
@@ -83,14 +83,14 @@ public class QuestionDaoImpl extends BaseImpl<QuestionVo> implements QuestionDao
         }else {
             if(qqm.getTeacher()!=null){
 
-                //查出指定科目下指定知识点的指定题型指定教师公开的题目
-                doQbcByPublic(doQbc1(dc,qqm),qqm);
+                //查出指定科目下指定知识点的指定题型指定教师的题目
+                doQbcByPublic(doQbc1(dc,qqm));
                 List<QuestionVo> list1= (List<QuestionVo>) this.getHibernateTemplate().findByCriteria(dc,offset,pageSize);
                 return list1;
             }else {
                 //查出指定科目下指定知识点的指定题型公开的题目
                 doQbc1(dc,qqm);
-                doQbcByPublic(dc,qqm);
+                doQbcByPublic(dc);
                 List<QuestionVo> list= (List<QuestionVo>) this.getHibernateTemplate().findByCriteria(dc,offset,pageSize);
 
                 //查出指定科目下指定知识点的指定题型并且属于当前教师私有的题目
@@ -134,5 +134,43 @@ public class QuestionDaoImpl extends BaseImpl<QuestionVo> implements QuestionDao
     {
         String hql="from QuestionVo where questionType.id=?";
         return (List<QuestionVo>) this.getHibernateTemplate().find(hql,id);
+    }
+
+    public DetachedCriteria doQbc2(DetachedCriteria dc, String[] topicIds, Integer questionTypeId)
+    {
+        if(null!=topicIds){
+            dc.createAlias("topic","to2");
+            dc.add(Restrictions.in("to2.id",topicIds));
+        }
+            dc.createAlias("questionType","que2");
+            dc.add(Restrictions.eq("que2.id", questionTypeId));
+        return dc;
+    }
+
+    public List<QuestionVo> getByTopicIdsAndTypeId(String[] topicIds, Integer questionTypeId, TeacherVo login)
+    {
+        DetachedCriteria dc=DetachedCriteria.forClass(QuestionVo.class);
+        //判断出卷教师是否是管理员
+        if(login.getTroleVo().getId().equals("0")){
+            //查询指定知识点  指定题型的所有题目
+            doQbcByPublic(doQbc2(dc,topicIds,questionTypeId));
+            List<QuestionVo> list1= (List<QuestionVo>) this.getHibernateTemplate().findByCriteria(dc);
+            return list1;
+        }else {
+            //查出指定科目下指定知识点的指定题型公开的题目
+            doQbc2(dc,topicIds,questionTypeId);
+            doQbcByPublic(dc);
+            List<QuestionVo> list= (List<QuestionVo>) this.getHibernateTemplate().findByCriteria(dc);
+
+            //查出指定科目下指定知识点的指定题型并且属于当前教师私有的题目
+            DetachedCriteria dc1=DetachedCriteria.forClass(QuestionVo.class);
+            dc1.createAlias("teacher","te3");
+            dc1.add(Restrictions.eq("te3.id",login.getId()));
+            dc1.add(Restrictions.eq("isPrivate", 1));
+            List<QuestionVo> listLoginPrivate= (List<QuestionVo>) this.getHibernateTemplate().findByCriteria(dc1);
+
+            list.addAll(listLoginPrivate);
+            return list;
+        }
     }
 }
