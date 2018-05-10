@@ -35,7 +35,6 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
@@ -156,7 +155,7 @@ public class QuestionBankManagerController extends BaseController
             request.setAttribute("subject", subject);
             return "redirect:/manage/bank/subject";
         }
-        if (subject.getId() != null && subject.getId() != 0)
+        if (subject.getId() != null&&subject.getId()!=0)
         {
             subjectEbi.update(subject);
         } else
@@ -180,7 +179,7 @@ public class QuestionBankManagerController extends BaseController
     @SystemLogAnnotation(module = "学科管理", methods = "学科删除")
     public JsonResponse subjectDelete(SubjectVo subject) throws Exception
     {
-        if (subject.getId() != 0 && subject.getId() != null)
+        if (subject.getId() != 0&&subject.getId()!=null)
         {
             subjectEbi.delete(subject);
         }
@@ -262,7 +261,7 @@ public class QuestionBankManagerController extends BaseController
     {
 
         //判断前台是否传递题型ID
-        if (questionType.getId() != 0 && questionType.getId() != null)
+        if (questionType.getId() != 0&&questionType.getId()!=null)
         {
             //根据题型ID获取题型完整信息从而进行数据回显
             questionType = questionTypeEbi.get(questionType.getId());
@@ -294,7 +293,7 @@ public class QuestionBankManagerController extends BaseController
             request.setAttribute("questionType", questionType);
             return "/manage/questionType/edit";
         }
-        if (questionType.getId() != null && questionType.getId() != 0)
+        if (questionType.getId() !=null&&questionType.getId()!=0)
         {
             questionTypeEbi.update(questionType);
         } else
@@ -317,7 +316,7 @@ public class QuestionBankManagerController extends BaseController
     @SystemLogAnnotation(module = "题型管理", methods = "题型删除")
     public JsonResponse questionTypeDelete(QuestionTypeVo questionType) throws Exception
     {
-        if (questionType.getId() != 0 && questionType.getId() != null)
+        if (questionType.getId() != 0&&questionType.getId()!=null)
         {
             questionTypeEbi.delete(questionType);
         }
@@ -342,7 +341,7 @@ public class QuestionBankManagerController extends BaseController
     @RequestMapping("topic")
     public String totopicTree(Integer subjectID, HttpServletRequest request)
     {
-        List<SubjectVo> subjects = subjectEbi.getAll();
+        List<SubjectVo> subjects= subjectEbi.getAll();
         request.setAttribute("subjects", subjects);
         request.setAttribute("subjectSelected", subjectID);
         return "/manage/bank/topic/tree";
@@ -354,9 +353,9 @@ public class QuestionBankManagerController extends BaseController
     public JsonResponse topicTreeBySubject(Integer subjectID) throws OperationException
     {
         return new JsonListResponse<TopicVo>(
-                topicEbi.getBySubject(subjectID, ""),
+                topicEbi.getBySubject(subjectID,""),
                 "id,[text]name,[parent]parent.id",
-                0, true).addNullValue("parent", "#").serialize();
+                0,true).addNullValue("parent","#").serialize();
     }
 
     @ResponseBody
@@ -412,7 +411,6 @@ public class QuestionBankManagerController extends BaseController
         {
             //根据知识点ID获取知识点完整信息从而进行数据回显
             topicVo = topicEbi.get(topicVo.getId());
-            request.setAttribute("parent", topicEbi.get(topicVo.getParent().getId()));
             request.setAttribute("topic", topicVo);
         }
         //如果待编辑知识点为空 则会传进来parent.id
@@ -494,62 +492,53 @@ public class QuestionBankManagerController extends BaseController
 
     /**
      * 查看题库
-     *
      * @param questionQueryModel
      * @param offset
      * @param pageSize
      * @param request
-     *
      * @return
      */
     @ResponseBody
     @RequestMapping("question/list.do")
     public JsonResponse questionList(QuestionQueryModel questionQueryModel, Integer offset, Integer pageSize,
-                                     HttpServletRequest request)
+                                 HttpServletRequest request)
     {
-        List<QuestionVo> list = null;
-        TeacherVo teacherVo = (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
-        if (teacherVo.getTroleVo().getId().equals("0"))
-        {
-            list = questionEbi.getAll(questionQueryModel, offset, pageSize);
-        } else
-        {
-            if (questionQueryModel.getShowMe())
-            {
+        List<QuestionVo> list=null;
+        TeacherVo teacherVo= (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
+        if(teacherVo.getTroleVo().getId().equals("0")){
+            list=questionEbi.getAll(questionQueryModel,offset,pageSize);
+        }else {
+            if(questionQueryModel.getShowMe()==null){
+                questionQueryModel.setShowMe(false);
+            }
+            if (questionQueryModel.getShowMe()){
                 questionQueryModel.setTeacher(teacherVo);
             }
-            list = questionEbi.getAllByTeacher(questionQueryModel, offset, pageSize, teacherVo);
+            list=questionEbi.getAllByTeacher(questionQueryModel,offset,pageSize,teacherVo);
         }
-        return new JsonListResponse<>(list, "id,name,code,outline,option,answer", 0);
+        return new JsonListResponse<>(list,"id,code,outline,option,answer,[score]questionType.score",0);
     }
 
     /**
      * 获取科目的所有知识点
-     *
      * @param subjectId
      * @param parent
-     *
      * @return
-     *
      * @throws Exception
      */
     @RequestMapping("question/topicList")
     @ResponseBody
-    public JsonResponse getTopic(Integer subjectId, String parent) throws Exception
-    {
-        return new JsonListResponse<>(topicEbi.getBySubject(subjectId, parent),
-                "id,name,[parent]parent.id", 0);
+    public JsonResponse getTopic(Integer subjectId,String parent)throws Exception{
+        return new JsonListResponse<>(topicEbi.getBySubject(subjectId,parent),
+                "id,name,[parent]parent.id",0);
     }
 
     /**
      * 题目的添加/修改
-     *
      * @param questionVo
      * @param bindingResult
      * @param session
-     *
      * @return
-     *
      * @throws Exception
      */
     @RequestMapping("question/edit.do")
@@ -558,7 +547,7 @@ public class QuestionBankManagerController extends BaseController
     public JsonResponse doAdd(@Validated(value = {AddGroup.class}) QuestionVo questionVo, BindingResult bindingResult,
                               HttpSession session) throws Exception
     {
-        JsonResponse jsonResponse = new JsonResponse();
+        JsonListResponse jsonResponse =new JsonListResponse<>();
         if (bindingResult.hasErrors())
         {
             List<FieldError> list = bindingResult.getFieldErrors();
@@ -570,7 +559,7 @@ public class QuestionBankManagerController extends BaseController
             //操作是否成功
             jsonResponse.setCode(500);
         }
-        TeacherVo teacherVo = (TeacherVo) session.getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
+        TeacherVo teacherVo= (TeacherVo) session.getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
         if (null == questionVo.getId() || "".equals(questionVo.getId().trim()))
         {
             questionVo.setTeacher(teacherVo);
@@ -578,18 +567,18 @@ public class QuestionBankManagerController extends BaseController
             questionEbi.save(questionVo);
         } else
         {
-            questionEbi.updateOrSaveToMe(questionVo,teacherVo);
+            QuestionVo questionUpdate=questionEbi.updateOrSaveToMe(questionVo,teacherVo);
+            List<QuestionVo> list=new ArrayList<>();
+            list.add(questionUpdate);
+            jsonResponse.setRaw(list).setFields("id,code,outline,option,answer,[score]questionType.score").serialize();
         }
         return jsonResponse;
     }
 
     /**
      * 题目删除
-     *
      * @param questionVo
-     *
      * @return
-     *
      * @throws OperationException
      */
     @ResponseBody

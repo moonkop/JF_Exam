@@ -60,4 +60,9 @@ public class SysConsts {
 	 * 性别  女
 	 */
 	public static final String INFO_TEACHER_OR_SUTDENT_GENDER_FEMALE="女";
+
+	/**
+	 * 简答题
+	 */
+	public static final String NO_ANSWER_QUESTION_TYPE_NAME="简答题";
 }

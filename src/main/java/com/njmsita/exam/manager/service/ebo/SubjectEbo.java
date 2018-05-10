@@ -3,10 +3,13 @@ package com.njmsita.exam.manager.service.ebo;
 import com.njmsita.exam.base.BaseQueryVO;
 import com.njmsita.exam.manager.dao.dao.QuestionDao;
 import com.njmsita.exam.manager.dao.dao.SubjectDao;
+import com.njmsita.exam.manager.dao.dao.TopicDao;
 import com.njmsita.exam.manager.model.QuestionVo;
 import com.njmsita.exam.manager.model.SubjectVo;
+import com.njmsita.exam.manager.model.TopicVo;
 import com.njmsita.exam.manager.service.ebi.SubjectEbi;
 import com.njmsita.exam.utils.exception.OperationException;
+import com.njmsita.exam.utils.ping4j.FirstCharUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +26,8 @@ public class SubjectEbo implements SubjectEbi
     @Autowired
     private SubjectDao subjectDao;
     @Autowired
+    private TopicDao topicDao;
+    @Autowired
     private QuestionDao questionDao;
 
     public void save(SubjectVo subjectVo) throws OperationException
@@ -32,6 +37,11 @@ public class SubjectEbo implements SubjectEbi
             throw new OperationException("当前学科名称为："+subjectVo.getName()+"的学科已存在，请勿重复操作");
         }
         subjectDao.save(subjectVo);
+        TopicVo topicVo =new TopicVo();
+        topicVo.setName(subjectVo.getName().toUpperCase());
+        topicVo.setId(FirstCharUtil.firstCharAndID(subjectVo.getName()));
+        topicVo.setSubjectVo(subjectVo);
+        topicDao.createBootBySubject(topicVo);
     }
 
     public List<SubjectVo> getAll()

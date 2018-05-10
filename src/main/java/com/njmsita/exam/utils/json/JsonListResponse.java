@@ -15,24 +15,22 @@ public class JsonListResponse<T> extends JsonResponse
     String[] fields;
     @JsonIgnore
     List<Map<String, Object>> rows = new ArrayList<>();
-
     Map<String, JsonElement> elementMap = new HashMap<>();
-
 
     public JsonListResponse()
     {
 
     }
 
+
     public JsonListResponse(String fields)
     {
         this.setFields(fields);
     }
 
-
-    public JsonListResponse(List<T> raw, String fields, int total,boolean withMoreOptions)
+    public JsonListResponse(List<T> raw, String fields, int total, boolean withMoreOptions)
     {
-        this.raw=raw;
+        this.raw = raw;
         this.setFields(fields);
         if (!withMoreOptions)
         {
@@ -41,9 +39,16 @@ public class JsonListResponse<T> extends JsonResponse
         this.put("total", total);
     }
 
+
     public JsonListResponse(List<T> raw, String fields, int total)
     {
         this(raw, fields, total, false);
+    }
+
+    public JsonListResponse<T> setRaw(List<T> raw)
+    {
+        this.raw = raw;
+        return this;
     }
 
     public JsonListResponse<T> addCustomJsonElementFormater(String key, CustomJsonElementFormater<T> formater)

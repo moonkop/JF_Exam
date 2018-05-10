@@ -24,6 +24,8 @@ public class QuestionVo
     private String option;
     private String answer;
 
+    private Integer useTime;
+
     //所属知识点  n TO 1
     private TopicVo topic;
     //出题人   n TO 1
@@ -32,6 +34,18 @@ public class QuestionVo
     private QuestionTypeVo questionType;
     //所属科目  n TO 1
     private SubjectVo subject;
+
+    @Basic
+    @Column(name = "useTime")
+    public Integer getUseTime()
+    {
+        return useTime;
+    }
+
+    public void setUseTime(Integer useTime)
+    {
+        this.useTime = useTime;
+    }
 
     @Basic
     @Column(name = "topic_id")
@@ -118,7 +132,7 @@ public class QuestionVo
     }
 
     @Basic
-    @Column(name = "code")
+    @Column(name = "codes")
     public String getCode()
     {
         return code;
@@ -142,7 +156,7 @@ public class QuestionVo
     }
 
     @Basic
-    @Column(name = "option")
+    @Column(name = "options")
     public String getOption()
     {
         return option;
@@ -211,4 +225,5 @@ public class QuestionVo
                 ", subject=" + subject +
                 '}';
     }
+
 }

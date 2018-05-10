@@ -14,8 +14,9 @@ public interface TopicDao extends BaseDao<TopicVo>
      * 根据名称查找知识点
      * @return
      * @param name
+     * @param subjectId
      */
-    public TopicVo getByName(String name);
+    public TopicVo getByName(String name, Integer subjectId);
 
     /**
      * 根据学科以及父知识点获取知识点
@@ -24,4 +25,17 @@ public interface TopicDao extends BaseDao<TopicVo>
      * @return          知识点集合
      */
     public List<TopicVo> getBySubject(Integer subjectId, String parent);
+
+    /**
+     * 根据名称模糊查询
+     * @param topicName
+     * @return
+     */
+    public List<TopicVo> getByLikeName(String topicName);
+
+    /**
+     * 根据学科自动创建根知识点
+     * @param topicVo
+     */
+    public void createBootBySubject(TopicVo topicVo);
 }
