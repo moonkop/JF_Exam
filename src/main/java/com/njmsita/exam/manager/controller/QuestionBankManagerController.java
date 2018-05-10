@@ -604,7 +604,7 @@ public class QuestionBankManagerController extends BaseController
         //学科
         List<SubjectVo> subjectVoList = subjectEbi.getAll();
         request.setAttribute("subjects", subjectVoList);
-        return "manage/bank/question/list";
+        return "/manage/bank/question/list";
     }
 
 

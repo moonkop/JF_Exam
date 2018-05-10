@@ -21,7 +21,31 @@ body {
   top: 50px;
   bottom: 0px;
 }
+.app-header{
+  float: left;
+  display: flex;
+  align-items: center;
+  h1,h2,h3,h4,h5,h6 {
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+}
+.question-manage{
+  display: flex;
+  align-items: flex-start;
+  height: 100%;
+  #jstree {
+    width: 300px;
+    height: 100%;
+    overflow: auto ;
+  }
+}
+.inline{
+  display: inline-block;
+}
 #page-wrapper {
+  display: flex;
+  flex-flow: column;
   padding: 0 15px;
   min-height: 568px;
   background-color: white;
@@ -31,6 +55,7 @@ body {
 
 @media (min-width: 768px) {
   #page-wrapper {
+
     position: relative;
     padding: 0px 0 30px 30px;
   }

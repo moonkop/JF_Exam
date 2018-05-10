@@ -1,10 +1,16 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
+<%@ taglib uri="http://tiles.apache.org/tags-tiles-extras" prefix="tilesx" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 <html>
 <head>
     <title><tiles:getAsString name="title" ignore="true"/></title>
     <tiles:insertAttribute name="header" ignore="true"/>
-    <tiles:insertAttribute name="additional-headers" ignore="true"/>
+    <tilesx:useAttribute id="list" name="additional-headers" classname="java.util.List" ignore="true" />
+    <c:forEach var="item" items="${list}">
+        <tiles:insertAttribute value="${item}" flush="true" />
+    </c:forEach>
 </head>
 <body>
 

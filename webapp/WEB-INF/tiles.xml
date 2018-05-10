@@ -75,20 +75,26 @@
     </definition>
     <definition name="/manage/role/edit" extends="base">
         <put-attribute name="body" value="/WEB-INF/jsp/manage/role/edit.jsp"/>
-        <put-attribute name="additional-headers" value="/WEB-INF/layout/additional-headers/tree-header.jsp"/>
         <put-attribute name="title" value="角色管理 - 编辑"/>
+        <put-list-attribute name="additional-headers">
+            <add-attribute value="/WEB-INF/layout/additional-headers/tree-header.jsp" />
+        </put-list-attribute>
     </definition>
     <definition name="/manage/role/detail" extends="base">
         <put-attribute name="body" value="/WEB-INF/jsp/manage/role/detail.jsp"/>
-        <put-attribute name="additional-headers" value="/WEB-INF/layout/additional-headers/tree-header.jsp"/>
         <put-attribute name="title" value="角色管理 - 详情"/>
+        <put-list-attribute name="additional-headers">
+            <add-attribute value="/WEB-INF/layout/additional-headers/tree-header.jsp" />
+        </put-list-attribute>
     </definition>
 
 
     <definition name="/manage/resource/tree" extends="base">
         <put-attribute name="body" value="/WEB-INF/jsp/manage/resource/tree.jsp"/>
-        <put-attribute name="additional-headers" value="/WEB-INF/layout/additional-headers/tree-header.jsp"/>
         <put-attribute name="title" value="资源管理"/>
+        <put-list-attribute name="additional-headers">
+            <add-attribute value="/WEB-INF/layout/additional-headers/tree-header.jsp" />
+        </put-list-attribute>
     </definition>
     <definition name="/manage/resource/edit" extends="base">
         <put-attribute name="body" value="/WEB-INF/jsp/manage/resource/edit.jsp"/>
@@ -116,16 +122,20 @@
 
     <definition name="/manage/bank/topic/tree" extends="base">
         <put-attribute name="body" value="/WEB-INF/jsp/manage/bank/topic/tree.jsp"/>
-        <put-attribute name="additional-headers" value="/WEB-INF/layout/additional-headers/tree-header.jsp"/>
         <put-attribute name="title" value="知识点管理"/>
+        <put-list-attribute name="additional-headers">
+            <add-attribute value="/WEB-INF/layout/additional-headers/tree-header.jsp" />
+        </put-list-attribute>
     </definition>
 
 
 
     <definition name="/manage/bank/question/list" extends="base">
         <put-attribute name="body" value="/WEB-INF/jsp/manage/bank/question/list.jsp"/>
-        <put-attribute name="additional-headers" value="/WEB-INF/layout/additional-headers/tree-header.jsp"/>
         <put-attribute name="title" value="题库管理"/>
+        <put-list-attribute name="additional-headers">
+            <add-attribute value="/WEB-INF/layout/additional-headers/tree-header.jsp" />
+        </put-list-attribute>
     </definition>
     
     
