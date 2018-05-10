@@ -58,6 +58,26 @@
 
 
 	<!-- ====================================视图解析器=================================== -->
+
+    <!-- ===================================tiles视图解析================================= -->
+
+
+
+	<bean class="org.springframework.web.servlet.view.UrlBasedViewResolver"
+		  id="tilesViewResolver">
+		<property name="viewClass" value="org.springframework.web.servlet.view.tiles3.TilesView" />
+	</bean>
+	<bean class="org.springframework.web.servlet.view.tiles3.TilesConfigurer" id="tilesConfigurer">
+		<property name="definitions">
+			<list>
+				<value>/WEB-INF/tiles.xml</value>
+				<!-- Scan views directory for Tiles configurations -->
+			</list>
+		</property>
+	</bean>
+
+    <!-- ====================================tiles视图解析===END======================== -->
+
 	<bean
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<!--配置JSTL表达式 -->

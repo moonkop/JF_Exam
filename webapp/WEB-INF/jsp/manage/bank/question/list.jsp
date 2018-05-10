@@ -6,7 +6,7 @@
         <div class="row">
             <div class="col-lg-12">
 
-                    <h3 style="display: inline-block;">知识点管理</h3>
+                    <h3 style="display: inline-block;">题目管理</h3>
                     <div class="" style="display: inline-block;margin-left: 30px;">
 
                             <label>科目</label>
@@ -42,55 +42,28 @@
                                 .on("refresh.jstree", function (event, data) {
                                     getJstree().open_all();
                                 })
-                                .on('move_node.jstree', function (e, data) {
-                                    $.ajax(
-                                        {
-                                            url: '/manage/bank/topic/move.do',
-                                            data: {'id': data.node.id, 'parent': data.parent},
-                                            success: function (res) {
-                                                OnResult(res);
-                                                getResourceTree();
-                                                // data.instance.refresh();
-                                            }
-                                        }
-                                    )
-                                })
-                                .on('rename_node.jstree', function (e, data) {
-                                    $.ajax(
-                                        {
-                                            url: '/manage/bank/topic/rename.do',
-                                            data: {'id': data.node.id, 'text': data.text},
-                                            success: function (res) {
-                                                OnResult(res);
-                                                getResourceTree();
-//                                                data.instance.set_id(data.node, d.id);
-                                                //data.instance.refresh();
-                                            }
-                                        }
-                                    )
-                                }).on('create_node.jstree', function (e, data) {
-                            })
                                 .jstree({
                                     'core': {
                                         'worker': false,
-                                        "check_callback": true
+                                        "check_callback": true,
+                                        "themes" : { "icons": false }
                                     },
                                     "plugins": [
                                         "contextmenu",
-                                        "dnd"
                                     ],
+
                                     'contextmenu': {
                                         'items': function (node) {
                                             var tmp = {
                                                 create: {
-                                                    label: "添加知识点",
+                                                    label: "添加题目",
                                                     action: function (data) {
                                                         var node = getJstree().get_node(data.reference);
                                                         layer.open({
                                                             type: 5,
                                                             shadeClose: true, //点击遮罩关闭
                                                             closeBtn: 2,
-                                                            title: '请输入知识点名称',
+                                                            title: '请输入题目名称',
                                                             area: ['320px', '170px'],
                                                             content: $("#js-add-form-template").html(),
                                                             success: function () {
@@ -113,33 +86,6 @@
                                                             end: function () {
                                                             }
                                                         });
-                                                    }
-                                                },
-                                                delete: {
-                                                    label: "删除知识点",
-                                                    action: function (data) {
-                                                        var id = getJstree().get_node(data.reference).id;
-                                                        if (confirm("真的要删除吗？"))
-                                                        {
-                                                            $.ajax(
-                                                                {
-                                                                    url: "/manage/bank/topic/delete.do?id=" + id,
-                                                                    success: function (res) {
-                                                                        OnResult(res, function () {
-                                                                            alert(res.message);
-                                                                            getResourceTree();
-                                                                        });
-                                                                    }
-                                                                }
-                                                            )
-                                                        }
-                                                    }
-                                                },
-                                                edit: {
-                                                    label: "编辑知识点",
-                                                    action: function (data) {
-                                                        obj = getJstree().get_node(data.reference);
-                                                        getJstree().edit(obj);
                                                     }
                                                 }
                                             };
@@ -183,15 +129,14 @@
             </div>
 
         </div>
-
 <script id="js-add-form-template" type="text/template">
     <div class="layer-popup">
         <form role="form" class="form-horizontal" id="form-add-topic">
             <input type="hidden" name="parent">
             <div class="form-group">
-                <label class="col-sm-4 control-label">知识点名称</label>
+                <label class="col-sm-4 control-label">题干</label>
                 <div class="col-sm-8">
-                    <input type="text" class="form-control" id="inputID" name="name">
+                    <textarea type="text" class="form-control" id="inputID" name="name"/>
                 </div>
             </div>
             <button type="button" class="js-layer-form-add-btn btn btn-primary  pull-right">
@@ -200,5 +145,4 @@
         </form>
     </div>
 </script>
-
         <!-- end content -->

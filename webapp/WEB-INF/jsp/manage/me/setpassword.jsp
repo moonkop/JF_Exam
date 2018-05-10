@@ -1,21 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 
-<html lang="en">
-
-<head>
-    <title>个人信息 - 修改密码</title>
-    <%@include file="/WEB-INF/components/header.jsp" %>
-    <script src="/dist/js/bootstrapValidator.js"></script>
-    <script src="/dist/js/md5.js"></script>
-</head>
-
-<body>
-
-<div id="wrapper">
-    <%@include file="/WEB-INF/components/navbar.jsp" %>
-    <%@include file="/WEB-INF/components/sidebar.jsp" %>
-
-    <div id="page-wrapper">
         <!-- start content -->
         <div class="row">
             <div class="col-lg-12">
@@ -126,9 +110,3 @@
 
 
         <!-- end content -->
-    </div>
-</div>
-<%@include file="/WEB-INF/components/footer.jsp" %>
-</body>
-
-</html>

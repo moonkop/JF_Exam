@@ -13,19 +13,44 @@ body {
   width: 100%;
 }
 
+.app-container{
+  display: flex;
+  align-items: stretch;
+  position: absolute;
+  width: 100%;
+  top: 50px;
+  bottom: 0px;
+}
 #page-wrapper {
   padding: 0 15px;
   min-height: 568px;
   background-color: white;
+  width:100%;
+  overflow: auto;
 }
 
 @media (min-width: 768px) {
   #page-wrapper {
     position: relative;
-    margin:  0 0 0 250px;
-    padding: 50px 0 30px 30px;
-    border-left: 1px solid darken(@gray-lightest, 6.5%);
+    padding: 0px 0 30px 30px;
   }
+}
+
+//-------------side----------------//
+.side-visible-line{
+  border: 0px;
+  color: @background-color-menu;
+  background: #FFFFFF;
+}
+.app-side.app-side-opened{
+  transform: translateX(0);
+}
+.app-side.app-side-closed{
+  position: absolute !important;
+}
+.app-side{
+  transform: translateX(-100%);
+  transition: all 0.3s ease-out;
 }
 
 // Navigation
@@ -38,9 +63,8 @@ body {
 
 .navbar-default {
   background-color: #2a323d;
-  color: #ffffff;
+  color: @text-color;
   border: 0;
-  position: fixed;
   width: 100%;
 }
 
@@ -171,10 +195,9 @@ body {
 @media (min-width: 768px) {
   .sidebar {
     z-index: 1;
-    position: fixed;
+    flex: 0 0 250px;
     width: 250px;
     height: 100%;
-    top: 50px;
   }
 
   .navbar-top-links .dropdown-messages,

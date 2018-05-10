@@ -248,7 +248,7 @@ public class TeacherController extends BaseController
     @RequestMapping("manage")
     public String toTeacherList()
     {
-        return "manage/teacher/list";
+        return "/manage/teacher/list";
     }
 
     @RequestMapping("manage/detail")
@@ -260,7 +260,7 @@ public class TeacherController extends BaseController
 //        }
         TeacherVo teacherVo = teaEbi.get(teacherQueryModel.getId());
         modelMap.put("teacher", teacherVo);
-        return "manage/teacher/detail";
+        return "/manage/teacher/detail";
     }
 
     /**
@@ -283,7 +283,7 @@ public class TeacherController extends BaseController
         List<TeacherVo> teacherList = teaEbi.getAll(teacherQueryVo, pageNum, pageSize);
         request.setAttribute("teacherList", teacherList);
 
-        return "manager/teacher/list";
+        return "/manager/teacher/list";
     }
 
     @ResponseBody
@@ -322,7 +322,7 @@ public class TeacherController extends BaseController
             request.setAttribute("teacher", teacher);
 
         }
-        return "manage/teacher/edit";
+        return "/manage/teacher/edit";
     }
 
     /**

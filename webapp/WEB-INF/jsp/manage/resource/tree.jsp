@@ -1,21 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 
-<html lang="en">
 
-<head>
-    <title>资源管理</title>
-    <%@include file="/WEB-INF/components/header.jsp" %>
-    <script src="/vendor/jstree/jstree.js"></script>
-    <link rel="stylesheet" href="/vendor/jstree/themes/default/style.css"/>
-</head>
-
-<body>
-
-<div id="wrapper">
-    <%@include file="/WEB-INF/components/navbar.jsp" %>
-    <%@include file="/WEB-INF/components/sidebar.jsp" %>
-
-    <div id="page-wrapper">
         <!-- start content -->
 
         <div class="row">
@@ -133,9 +118,3 @@
         </div>
 
         <!-- end content -->
-    </div>
-</div>
-<%@include file="/WEB-INF/components/footer.jsp" %>
-</body>
-
-</html>

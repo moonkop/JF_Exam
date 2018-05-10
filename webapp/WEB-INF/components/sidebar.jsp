@@ -1,6 +1,6 @@
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8"%>
-<div class="navbar-default sidebar" role="navigation">
+<div class="navbar-default sidebar app-side" role="navigation">
     <div class="sidebar-nav navbar-collapse">
         <ul class="nav" id="side-menu">
             <!--<li class="sidebar-search">-->

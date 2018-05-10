@@ -101,7 +101,7 @@ public class SystemManagerController extends BaseController
         List<SchoolVo> schoolVoList = schoolEbi.getAll(schoolQueryModel, pageNum, pageSize);
         model.addAttribute("schoolVoList", schoolVoList);
 
-        return "manage/school/list";
+        return "/manage/school/list";
     }
 
     //测试方法
@@ -124,7 +124,7 @@ public class SystemManagerController extends BaseController
     @RequestMapping("school")
     public String toSchoolList()
     {
-        return "manage/school/list";
+        return "/manage/school/list";
     }
 
     @RequestMapping("school/detail")
@@ -132,7 +132,7 @@ public class SystemManagerController extends BaseController
     {
         SchoolVo schoolVo = schoolEbi.get(id);
         request.setAttribute("school", schoolVo);
-        return "manage/school/detail";
+        return "/manage/school/detail";
     }
 
 
@@ -321,7 +321,7 @@ public class SystemManagerController extends BaseController
         List<TroleVo> roleList = roleEbi.getAll(roleQueryModel, pageNum, pageSize);
         model.addAttribute("roleList", roleList);
 
-        return "manage/role/list";
+        return "/manage/role/list";
     }
 
     /**
@@ -464,7 +464,7 @@ public class SystemManagerController extends BaseController
         List<ClassroomVo> classroomList = classroomEbi.getAll(classroomQueryModel, pageNum, pageSize);
         model.addAttribute("classroomList", classroomList);
 
-        return "manage/classroom/list";
+        return "/manage/classroom/list";
     }
 
     @RequestMapping("classroom/detail")
@@ -472,7 +472,7 @@ public class SystemManagerController extends BaseController
     {
         ClassroomVo classroomVo = classroomEbi.get(id);
         request.setAttribute("classroom", classroomVo);
-        return "manage/classroom/detail";
+        return "/manage/classroom/detail";
     }
 
 
@@ -650,7 +650,7 @@ public class SystemManagerController extends BaseController
         List<TresourceVo> resourceList = resourceEbi.getAll(resourceQueryModel, pageNum, pageSize);
         model.addAttribute("resourceList", resourceList);
 
-        return "manage/resource/list";
+        return "/manage/resource/list";
     }
 
     /**

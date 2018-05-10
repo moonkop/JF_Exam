@@ -161,6 +161,7 @@ public class QuestionBankManagerController extends BaseController
             subjectEbi.update(subject);
         } else
         {
+            //todo 添加科目的同时添加该科目的根知识点
             subjectEbi.save(subject);
         }
         return "redirect:/manage/bank/subject";
@@ -384,13 +385,12 @@ public class QuestionBankManagerController extends BaseController
     {
         TopicVo topicVo= new TopicVo();
         TopicVo parentVo = topicEbi.get(parent);
-        String id= IdUtil.getUUID();
-        topicVo.setId(id);
-        topicVo.setParent(parentVo);
         topicVo.setName(name);
+        topicVo.setId(FirstCharUtil.firstCharAndID(topicVo.getName()));
+        topicVo.setParent(parentVo);
         topicVo.setSubjectVo(parentVo.getSubjectVo());
         topicEbi.save(topicVo);
-        return new JsonResponse().put("id",id);
+        return new JsonResponse();
     }
     /**
      * 跳转知识点添加/修改页面
@@ -402,6 +402,7 @@ public class QuestionBankManagerController extends BaseController
      *
      * @return 跳转edit
      */
+    @Deprecated
     @RequestMapping("topic/edit")
     public String topicEdit(TopicVo topicVo, HttpServletRequest request)
     {
@@ -427,6 +428,7 @@ public class QuestionBankManagerController extends BaseController
      *
      * @return 跳转知识点列表页面
      */
+    @Deprecated
     @RequestMapping("topic/edit.do")
     @SystemLogAnnotation(module = "知识点管理", methods = "知识点添加/修改")
     public String topicDoAdd(@Validated(value = {AddGroup.class}) TopicVo topicVo, BindingResult bindingResult,
@@ -612,8 +614,8 @@ public class QuestionBankManagerController extends BaseController
     {
         //学科
         List<SubjectVo> subjectVoList = subjectEbi.getAll();
-        request.setAttribute("subjectVoList", subjectVoList);
-        return "manage/question/list";
+        request.setAttribute("subjects", subjectVoList);
+        return "manage/bank/question/list";
     }
 
 

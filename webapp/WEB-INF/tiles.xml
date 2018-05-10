@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+        "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<tiles-definitions>
+
+
+    <definition name="base" template="/WEB-INF/layout/basic-template.jsp">
+        <put-attribute name="header" value="/WEB-INF/components/header.jsp"/>
+        <put-attribute name="navbar" value="/WEB-INF/components/navbar.jsp"/>
+        <put-attribute name="sidebar" value="/WEB-INF/components/sidebar.jsp"/>
+        <put-attribute name="footer" value="/WEB-INF/components/footer.jsp"/>
+        <put-attribute name="title" value="机蜂在线考试系统"/>
+    </definition>
+
+
+    <definition name="/manage/school/list" extends="base">
+        <put-attribute name="body" value="/WEB-INF/jsp/manage/school/list.jsp"/>
+        <put-attribute name="title" value="学校管理"/>
+    </definition>
+    <definition name="/manage/school/edit" extends="base">
+        <put-attribute name="body" value="/WEB-INF/jsp/manage/school/edit.jsp"/>
+        <put-attribute name="title" value="学校管理 - 编辑"/>
+    </definition>
+    <definition name="/manage/school/detail" extends="base">
+        <put-attribute name="body" value="/WEB-INF/jsp/manage/school/detail.jsp"/>
+        <put-attribute name="title" value="学校管理 - 详情"/>
+    </definition>
+
+
+    <definition name="/manage/classroom/list" extends="base">
+        <put-attribute name="body" value="/WEB-INF/jsp/manage/classroom/list.jsp"/>
+        <put-attribute name="title" value="班级管理"/>
+    </definition>
+    <definition name="/manage/classroom/edit" extends="base">
+        <put-attribute name="body" value="/WEB-INF/jsp/manage/classroom/edit.jsp"/>
+        <put-attribute name="title" value="班级管理 - 编辑"/>
+    </definition>
+    <definition name="/manage/classroom/detail" extends="base">
+        <put-attribute name="body" value="/WEB-INF/jsp/manage/classroom/detail.jsp"/>
+        <put-attribute name="title" value="班级管理 - 详情"/>
+    </definition>
+
+
+    <definition name="/manage/student/list" extends="base">
+        <put-attribute name="body" value="/WEB-INF/jsp/manage/student/list.jsp"/>
+        <put-attribute name="title" value="学生管理"/>
+    </definition>
+    <definition name="/manage/student/edit" extends="base">
+        <put-attribute name="body" value="/WEB-INF/jsp/manage/student/edit.jsp"/>
+        <put-attribute name="title" value="学生管理 - 编辑"/>
+    </definition>
+    <definition name="/manage/student/detail" extends="base">
+        <put-attribute name="body" value="/WEB-INF/jsp/manage/student/detail.jsp"/>
+        <put-attribute name="title" value="学生管理 - 详情"/>
+    </definition>
+
+
+    <definition name="/manage/teacher/list" extends="base">
+        <put-attribute name="body" value="/WEB-INF/jsp/manage/teacher/list.jsp"/>
+        <put-attribute name="title" value="教师管理"/>
+    </definition>
+    <definition name="/manage/teacher/edit" extends="base">
+        <put-attribute name="body" value="/WEB-INF/jsp/manage/teacher/edit.jsp"/>
+        <put-attribute name="title" value="教师管理 - 编辑"/>
+    </definition>
+    <definition name="/manage/teacher/detail" extends="base">
+        <put-attribute name="body" value="/WEB-INF/jsp/manage/teacher/detail.jsp"/>
+        <put-attribute name="title" value="教师管理 - 详情"/>
+    </definition>
+
+
+    <definition name="/manage/role/list" extends="base">
+        <put-attribute name="body" value="/WEB-INF/jsp/manage/role/list.jsp"/>
+        <put-attribute name="title" value="角色管理"/>
+    </definition>
+    <definition name="/manage/role/edit" extends="base">
+        <put-attribute name="body" value="/WEB-INF/jsp/manage/role/edit.jsp"/>
+        <put-attribute name="additional-headers" value="/WEB-INF/layout/additional-headers/tree-header.jsp"/>
+        <put-attribute name="title" value="角色管理 - 编辑"/>
+    </definition>
+    <definition name="/manage/role/detail" extends="base">
+        <put-attribute name="body" value="/WEB-INF/jsp/manage/role/detail.jsp"/>
+        <put-attribute name="additional-headers" value="/WEB-INF/layout/additional-headers/tree-header.jsp"/>
+        <put-attribute name="title" value="角色管理 - 详情"/>
+    </definition>
+
+
+    <definition name="/manage/resource/tree" extends="base">
+        <put-attribute name="body" value="/WEB-INF/jsp/manage/resource/tree.jsp"/>
+        <put-attribute name="additional-headers" value="/WEB-INF/layout/additional-headers/tree-header.jsp"/>
+        <put-attribute name="title" value="资源管理"/>
+    </definition>
+    <definition name="/manage/resource/edit" extends="base">
+        <put-attribute name="body" value="/WEB-INF/jsp/manage/resource/edit.jsp"/>
+        <put-attribute name="title" value="资源管理 - 编辑"/>
+    </definition>
+    <definition name="/manage/resource/detail" extends="base">
+        <put-attribute name="body" value="/WEB-INF/jsp/manage/resource/detail.jsp"/>
+        <put-attribute name="title" value="资源管理 - 详情"/>
+    </definition>
+
+
+    <definition name="/manage/bank/subject/list" extends="base">
+        <put-attribute name="body" value="/WEB-INF/jsp/manage/bank/subject/list.jsp"/>
+        <put-attribute name="title" value="学科管理"/>
+    </definition>
+    <definition name="/manage/bank/subject/edit" extends="base">
+        <put-attribute name="body" value="/WEB-INF/jsp/manage/bank/subject/edit.jsp"/>
+        <put-attribute name="title" value="学科管理 - 编辑"/>
+    </definition>
+    <definition name="/manage/bank/subject/detail" extends="base">
+        <put-attribute name="body" value="/WEB-INF/jsp/manage/bank/subject/detail.jsp"/>
+        <put-attribute name="title" value="学科管理 - 详情"/>
+    </definition>
+    
+
+    <definition name="/manage/bank/topic/tree" extends="base">
+        <put-attribute name="body" value="/WEB-INF/jsp/manage/bank/topic/tree.jsp"/>
+        <put-attribute name="additional-headers" value="/WEB-INF/layout/additional-headers/tree-header.jsp"/>
+        <put-attribute name="title" value="知识点管理"/>
+    </definition>
+
+
+
+    <definition name="/manage/bank/question/list" extends="base">
+        <put-attribute name="body" value="/WEB-INF/jsp/manage/bank/question/list.jsp"/>
+        <put-attribute name="additional-headers" value="/WEB-INF/layout/additional-headers/tree-header.jsp"/>
+        <put-attribute name="title" value="题库管理"/>
+    </definition>
+    
+    
+</tiles-definitions>
