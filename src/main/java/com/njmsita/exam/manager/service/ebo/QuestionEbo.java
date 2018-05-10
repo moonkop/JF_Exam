@@ -312,7 +312,7 @@ public class QuestionEbo implements QuestionEbi
      * @param map
      * @return
      */
-    private static QuestionVo selectQuestion(Map<Integer, Set<QuestionVo>> map) {
+    private QuestionVo selectQuestion(Map<Integer, Set<QuestionVo>> map) {
         //sum为各个使用次数与其所用于题目数量乘积的总和
         int sum=0;
         //p为各个使用次数的总概率
@@ -346,6 +346,8 @@ public class QuestionEbo implements QuestionEbi
                     QuestionVo question=list.get(new Random().nextInt(list.size()));
                     set.remove(question);
                     map.put(useTime, set);
+                    question=questionDao.get(question.getId());
+                    question.setUseTime(question.getUseTime()+1);
                     return question;
                 }
             }

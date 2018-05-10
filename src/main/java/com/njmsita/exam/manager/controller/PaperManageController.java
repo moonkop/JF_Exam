@@ -62,6 +62,14 @@ public class PaperManageController
         return "/paper/list";
     }
 
+    /**
+     * 试卷列表
+     * @param paperQueryModel   查询条件
+     * @param pageNum           页码
+     * @param pageSize          页面大小
+     * @param request
+     * @return
+     */
     @ResponseBody
     @RequestMapping("list.do")
     public JsonResponse paperList(PaperQueryModel paperQueryModel, Integer pageNum, Integer pageSize,
@@ -75,6 +83,13 @@ public class PaperManageController
                 "id,title,[teacher]teacher.id,[subject]subject.name",0);
     }
 
+    /**
+     * 跳转编辑页面
+     * @param paperVo   如果paperVo的id为空则为添加
+     * @param request
+     * @return
+     * @throws Exception
+     */
     @RequestMapping("toEdit")
     public String editPaper(PaperVo paperVo,HttpServletRequest request) throws Exception{
         request.setAttribute("subjectList",subjectEbi.getAll());
@@ -88,9 +103,18 @@ public class PaperManageController
         return "/paper/eidt";
     }
 
+    /**
+     * 自动组卷
+     * @param topicIds          所选知识点
+     * @param questionTypeId    题型
+     * @param questionNum       所需题目数量
+     * @param session
+     * @return
+     * @throws Exception
+     */
     @ResponseBody
     @RequestMapping("autoSelect")
-    public JsonResponse autoSelectQuestion(@RequestParam(value = "topicIds[]") String[] topicIds,
+    public JsonResponse autoSelectQuestion(@RequestParam(value = "topicIds") String[] topicIds,
            Integer questionTypeId, Integer questionNum, HttpSession session)throws Exception
     {
         TeacherVo teacherVo= (TeacherVo) session.getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
@@ -105,6 +129,14 @@ public class PaperManageController
         }
     }
 
+    /**
+     * 试卷生成
+     * @param paperVo       试卷信息
+     * @param bindingResult
+     * @param request
+     * @return
+     * @throws OperationException
+     */
     @RequestMapping("paper/edit.do")
     @SystemLogAnnotation(module = "试卷管理", methods = "试卷添加/修改")
     public String paperDoAdd(@Validated(value = {AddGroup.class}) PaperVo paperVo, BindingResult bindingResult,
@@ -133,5 +165,23 @@ public class PaperManageController
             paperEbi.update(paperVo);
         }
         return "redirect:/paper/toList";
+    }
+
+    /**
+     * 试卷删除
+     * @param paperVo
+     * @return
+     * @throws OperationException
+     */
+    @ResponseBody
+    @RequestMapping("paper/delete.do")
+    @SystemLogAnnotation(module = "试卷管理", methods = "试卷删除")
+    public JsonResponse paperDelete(PaperVo paperVo) throws OperationException
+    {
+        if (!StringUtil.isEmpty(paperVo.getId()))
+        {
+            paperEbi.delete(paperVo);
+        }
+        return new JsonResponse("删除成功");
     }
 }

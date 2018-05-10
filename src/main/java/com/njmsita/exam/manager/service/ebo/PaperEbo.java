@@ -5,14 +5,17 @@ import com.njmsita.exam.manager.dao.dao.PaperDao;
 import com.njmsita.exam.manager.dao.dao.QuestionDao;
 import com.njmsita.exam.manager.dao.dao.SubjectDao;
 import com.njmsita.exam.manager.model.PaperVo;
+import com.njmsita.exam.manager.model.QuestionVo;
 import com.njmsita.exam.manager.model.SubjectVo;
 import com.njmsita.exam.manager.service.ebi.PaperEbi;
 import com.njmsita.exam.utils.exception.OperationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import sun.plugin2.util.PojoUtil;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,12 +29,6 @@ public class PaperEbo implements PaperEbi
     private PaperDao paperDao;
     @Autowired
     private SubjectDao subjectDao;
-
-    public void save(PaperVo paperVo) throws OperationException
-    {
-        infoValid(paperVo);
-        paperDao.save(paperVo);
-    }
 
     public List<PaperVo> getAll()
     {
@@ -51,6 +48,12 @@ public class PaperEbo implements PaperEbi
     public Integer getCount(BaseQueryVO qm)
     {
         return paperDao.getCount(qm);
+    }
+
+    public void save(PaperVo paperVo) throws OperationException
+    {
+        infoValid(paperVo);
+        paperDao.save(paperVo);
     }
 
     public void update(PaperVo paperVo) throws OperationException
@@ -96,4 +99,5 @@ public class PaperEbo implements PaperEbi
         }
         paperVo.setSubjectVo(subject);
     }
+
 }

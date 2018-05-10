@@ -61,4 +61,5 @@ public interface QuestionDao extends BaseDao<QuestionVo>
      * @return
      */
     public List<QuestionVo> getByTopicIdsAndTypeId(String[] topicIds, Integer questionTypeId, TeacherVo login);
+
 }
