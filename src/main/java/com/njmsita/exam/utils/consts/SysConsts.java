@@ -6,23 +6,11 @@ package com.njmsita.exam.utils.consts;
  *
  */
 public class SysConsts {
-	/**
-	 * 未删除客户
-	 */
-	public static final int CUSTOMER_UNDELETE = 0;
-	/**
-	 * 已删除客户
-	 */
-	public static final int CUSTOMER_DELETED = 1;
 
-	/**
-	 * 超级管理员用户名
-	 */
-	public static final String ADMIN_USER_NAME = "admin";
 	/**
 	 * 超级管理员ID
 	 */
-	public static final String ADMIN_USER_ID = "0";
+	public static final String ADMIN_ROLE_ID = "0";
 
 
 	/**
@@ -65,4 +53,24 @@ public class SysConsts {
 	 * 简答题
 	 */
 	public static final String NO_ANSWER_QUESTION_TYPE_NAME="简答题";
+
+	/**
+	 * 考试状态码
+	 */
+	public static final Integer EXAM_STATUS_NO_CHECK = 101;
+	public static final Integer EXAM_STATUS_PASS = 111;
+	public static final Integer EXAM_STATUS_NO_PASS = 112;
+	public static final Integer EXAM_STATUS_UNDER_WAY = 121;
+	public static final Integer EXAM_STATUS_IN_MARK = 131;
+	public static final Integer EXAM_STATUS_ENDING = 199;
+
+	/**
+	 * 考试状态视图
+	 */
+	public static final String EXAM_STATUS_NO_CHECK_VIEW = "待审核";
+	public static final String EXAM_STATUS_PASS_VIEW = "未开始";
+	public static final String EXAM_STATUS_NO_PASS_VIEW = "待修改";
+	public static final String EXAM_STATUS_UNDER_WAY_VIEW = "进行中";
+	public static final String EXAM_STATUS_IN_MARK_VIEW = "阅卷中";
+	public static final String EXAM_STATUS_ENDING_VIEW = "结束";
 }

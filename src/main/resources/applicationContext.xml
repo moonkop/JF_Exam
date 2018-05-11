@@ -21,7 +21,12 @@
 	<bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
 		<property name="sessionFactory" ref="sessionFactory"/>
 	</bean>
-	
+
+	<!--============================================Quartz任务集===================================================-->
+	<bean name="schedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean"/>
+	<!--=========================================Quartz任务集=========END==========================================-->
+
+
 	<!-- SessionFactory -->
 	<bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
 		<property name="dataSource" ref="dataSource"/>
@@ -32,7 +37,7 @@
 				<prop key="hibernate.format_sql">false</prop>
 				<prop key="hibernate.connection.url">jdbc:mysql://192.168.1.166:3306/jf_exam</prop>
 				<prop key="hibernate.connection.driver_class">com.mysql.jdbc.Driver</prop>
-			</props>
+            </props>
 		</property>
 		<property name="mappingLocations">
 			<list>
@@ -49,7 +54,8 @@
                 <value>classpath:mapping/LogVo.hbm.xml</value>
                 <value>classpath:mapping/TopicVo.hbm.xml</value>
 				<value>classpath:mapping/PaperVo.hbm.xml</value>
-			</list>
+                <value>classpath:mapping/ExamVo.hbm.xml</value>
+            </list>
 		</property>
 		<property name="annotatedClasses">
 			<list>
@@ -66,7 +72,8 @@
                 <value>com.njmsita.exam.manager.model.LogVo</value>
                 <value>com.njmsita.exam.manager.model.TopicVo</value>
 				<value>com.njmsita.exam.manager.model.PaperVo</value>
-			</list>
+                <value>com.njmsita.exam.manager.model.ExamVo</value>
+            </list>
 		</property>
 	</bean>
 	

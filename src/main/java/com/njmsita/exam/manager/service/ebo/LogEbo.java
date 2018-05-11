@@ -1,14 +1,11 @@
 package com.njmsita.exam.manager.service.ebo;
 
-import com.njmsita.exam.authentic.model.StudentVo;
 import com.njmsita.exam.authentic.model.UserModel;
 import com.njmsita.exam.base.BaseQueryVO;
 import com.njmsita.exam.manager.dao.dao.LogDao;
 import com.njmsita.exam.manager.model.LogVo;
 import com.njmsita.exam.manager.model.querymodel.LogQueryModel;
 import com.njmsita.exam.manager.service.ebi.LogEbi;
-import com.njmsita.exam.utils.consts.SysConsts;
-import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.format.FormatUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -9,6 +9,8 @@ import com.njmsita.exam.authentic.service.ebi.ResourceEbi;
 import com.njmsita.exam.authentic.service.ebi.RoleEbi;
 import com.njmsita.exam.authentic.service.ebi.TeacherEbi;
 import com.njmsita.exam.base.BaseController;
+import com.njmsita.exam.manager.dao.dao.ExamDao;
+import com.njmsita.exam.manager.service.ebi.ExamEbi;
 import com.njmsita.exam.manager.service.ebi.LogEbi;
 import com.njmsita.exam.manager.service.ebi.SchoolEbi;
 import com.njmsita.exam.utils.consts.SysConsts;
@@ -19,14 +21,18 @@ import com.njmsita.exam.utils.idutil.IdUtil;
 import com.njmsita.exam.utils.json.JsonListResponse;
 import com.njmsita.exam.utils.json.JsonResponse;
 import com.njmsita.exam.utils.logutils.SystemLogAnnotation;
+import com.njmsita.exam.utils.timertask.ScheduleJob;
+import com.njmsita.exam.utils.timertask.TestJob;
 import com.njmsita.exam.utils.validate.validategroup.AddGroup;
 import com.njmsita.exam.utils.validate.validategroup.EditGroup;
 import com.njmsita.exam.utils.validate.validategroup.SelfEditGroup;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.hibernate.Hibernate;
+import org.quartz.Job;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -59,6 +65,8 @@ public class TeacherController extends BaseController
     private SchoolEbi schoolEbi;
     @Autowired
     private LogEbi logEbi;
+    @Autowired
+    private SchedulerFactoryBean schedulerFactoryBean;
 
     /**
      * 跳转登陆页
@@ -87,9 +95,8 @@ public class TeacherController extends BaseController
      * @return
      */
     @RequestMapping("login.do")
-    public String login(TeacherVo teaVo, HttpServletRequest request, HttpSession session)
+    public String login(TeacherVo teaVo, HttpServletRequest request, HttpSession session) throws Exception
     {
-
         //获取IP地址
         String loginIp = IPUtil.getIP(request);
 

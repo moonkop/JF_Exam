@@ -49,7 +49,7 @@
 	<!-- =============================JSON==END======================================== -->
 
 	<!-- =================解决spring与pringmvc注解冲突=================================== -->
-	<context:component-scan base-package="com.njmsita.exam.*.controller">
+	<context:component-scan base-package="com.njmsita.exam.*.controller,com.njmsita.exam.utils.timertask">
 		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
 		<context:include-filter type="annotation" expression="org.springframework.web.bind.annotation.ControllerAdvice"/>
 		<!--<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Service" />-->
