@@ -158,61 +158,68 @@
 </script>
 
 <script id="js-template-question-view" type="text/html">
-<div class="form-horizontal">
-    <div class="form-group">
-        <label class="col-sm-2 control-label">题干</label>
-        <div class="col-sm-8">
-            <p class="form-control-static" data-field="outline"></p>
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">题干</label>
+            <div class="col-sm-8">
+                <p class="form-control-static" data-field="outline"></p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">代码</label>
+            <div class="col-sm-8">
+                <p class="form-control-static" data-field="codes"></p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">选项</label>
+            <div class="col-sm-8">
+                <div data-field="option"></div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">答案</label>
+            <div class="col-sm-8">
+                <p class="form-control-static" data-field="answer"></p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">题目类型</label>
+            <div class="col-sm-8">
+                <p class="form-control-static" data-field="type"></p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">所属科目</label>
+            <div class="col-sm-8">
+                <p class="form-control-static" data-field="subject"></p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">所属知识点</label>
+            <div class="col-sm-8">
+                <p class="form-control-static" data-field="topic"></p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">题目id</label>
+            <div class="col-sm-8">
+                <p class="form-control-static" data-field="id"></p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">出题人</label>
+            <div class="col-sm-8">
+                <p class="form-control-static" data-field="createTeacher"></p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">出题时间</label>
+            <div class="col-sm-8">
+                <p class="form-control-static" data-field="createTime"></p>
+            </div>
         </div>
     </div>
-    <div class="form-group">
-        <label class="col-sm-2 control-label">代码</label>
-        <div class="col-sm-8">
-            <p class="form-control-static" data-field="codes"></p>
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="col-sm-2 control-label">答案</label>
-        <div class="col-sm-8">
-            <p class="form-control-static" data-field="answer"></p>
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="col-sm-2 control-label">题目类型</label>
-        <div class="col-sm-8">
-            <p class="form-control-static" data-field="type"></p>
-        </div>
-    </div>    <div class="form-group">
-        <label class="col-sm-2 control-label">所属科目</label>
-        <div class="col-sm-8">
-            <p class="form-control-static" data-field="subject"></p>
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="col-sm-2 control-label">所属知识点</label>
-        <div class="col-sm-8">
-            <p class="form-control-static" data-field="topic"></p>
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="col-sm-2 control-label">题目id</label>
-        <div class="col-sm-8">
-            <p class="form-control-static" data-field="id"></p>
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="col-sm-2 control-label">出题人</label>
-        <div class="col-sm-8">
-            <p class="form-control-static" data-field="createTeacher"></p>
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="col-sm-2 control-label">出题时间</label>
-        <div class="col-sm-8">
-            <p class="form-control-static" data-field="createTime"></p>
-        </div>
-    </div>
-</div>
 </script>
 
 
@@ -238,7 +245,7 @@
 <script>
     var questionList = [
         {
-            id: "321321",
+            id: "1de729a42212434a87b3771ee1acf717",
             outline: "世界上最好的语言是什么？",
             type: 2,
             code: "",
@@ -252,7 +259,7 @@
             answer: "2"
         }
         , {
-            id: "123123",
+            id: "22c717969eb24fd187c7717a72425ad0",
             outline: "面向过程的语言有",
             type: 3,
             code: "",
@@ -265,7 +272,7 @@
             score: 3,
             answer: "0,1"
         }, {
-            id: "321",
+            id: "2ff2af22be1e4276a2a899d3ae8563fc",
             outline: "JAVA有什么优点？",
             type: 4,
             code: "",
@@ -273,7 +280,7 @@
             score: 10
         }
     ]
-    var $question_panel = $("#js-template-question-panel");
+    var $question_detail_form = $("#js-template-question-panel");
     var $question_option_list = $("#js-template-question-option-list");
     var $question_option = $("#js-template-question-option-radio");
     var $question_option_checkbox = $("#js-template-question-option-checkbox");
@@ -303,10 +310,10 @@
 
     }
 
-    function renderQuestionOptionList(questionOptions)
+    function renderQuestionOptionList(question)
     {
         var $question_option_list = $($("#js-template-question-option-list").html());
-        questionOptions.map(function (item, index) {
+        question.options.map(function (item, index) {
             switch (QuestionTypeMap(question.type))
             {
                 case "单选题":
@@ -350,7 +357,7 @@
         {
             case "单选题":
             case "多选题":
-                $question_panel.find(".question-body").append(renderQuestionOptionList(question.options));
+                $question_panel.find(".question-body").append(renderQuestionOptionList(question));
                 $question_panel.find(".question-answer").text("答案：" + QuestionAnswerNumsToChars(question.answer));
                 break;
             case "简答题":
@@ -359,43 +366,67 @@
         return $question_panel;
     }
 
-    function EditQuestion(question)
+    function RenderQuestion_View(questionDetail)
     {
-
-    }
-    function ViewQuestion(question)
-    {
-        $question_panel=renderQuestion(question);
-        layer.open(
-            {
-                type: 5,
-                shadeClose: true, //点击遮罩关闭
-                closeBtn: 2,
-                title: '题目详情',
-                area: ['700px', '500px'],
-                content: $question_panel.prop("outerHTML"),
-                success: function () {
-
-                },
-                end: function () {
-                }
+        var $questionForm = $($("#js-template-question-view").html());
+        var config = {
+            option: function (value,key) {
+               // return renderQuestionOptionList(value).prop("outerHTML");
             }
-        )
-    }
-    function DeleteQuestion(question)
-    {
+        }
 
+        var fieldContent;
+        for (var key in questionDetail)
+        {
+            var currentConfig = config[key];
+            if (currentConfig != undefined)
+            {
+                if (typeof currentConfig == 'function')
+                {
+                    fieldContent = currentConfig(questionDetail[key], key);
+                }
+            } else
+            {
+                fieldContent = questionDetail[key];
+            }
+            $questionForm.find("[data-field='" + key+"']").html(fieldContent);
+        }
+        return $questionForm;
     }
-    function RefreshQuestion(questionid)
-    {
 
-    }
+
     $(document).ready(function () {
         questionList.map(function (question) {
             $(".question-list").append(renderQuestion(question));
             $("#question_" + question.id + " .js-question-view").on("click",
                 function () {
-                    ViewQuestion(question);
+                    $.ajax(
+                        {
+                            url:"/manage/bank/question/detail.do",
+                            data:{id:question.id},
+                            success:function (res) {
+                                OnResult(res,function (res) {
+                                    var questionDetail=res.payload.object;
+                                    $question_detail_form = RenderQuestion_View(questionDetail);
+                                    layer.open(
+                                        {
+                                            type: 5,
+                                            shadeClose: true, //点击遮罩关闭
+                                            closeBtn: 2,
+                                            title: '题目详情',
+                                            area: ['700px', '500px'],
+                                            content: $question_detail_form.prop("outerHTML"),
+                                            success: function () {
+
+                                            },
+                                            end: function () {
+                                            }
+                                        }
+                                    )
+                                })
+                            }
+                        }
+                    )
                 }
             )
         })

@@ -34,7 +34,7 @@ function OnResult(result, onsuccess, onfailure)
 
         } else
         {
-            onsuccess();
+            onsuccess(result);
         }
     } else
     {
@@ -46,8 +46,7 @@ function OnResult(result, onsuccess, onfailure)
 
         } else
         {
-            onfailure();
-
+            onfailure(result);
         }
     }
 }
