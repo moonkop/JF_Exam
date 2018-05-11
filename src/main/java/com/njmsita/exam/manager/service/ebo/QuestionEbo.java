@@ -433,8 +433,11 @@ public class QuestionEbo implements QuestionEbi
             StringBuilder jsonOptions=new StringBuilder();
             int i=0;
             jsonOptions.append("{[");
+            Map<String, String> optionMap = new HashMap<>();
             for (String option : options)
             {
+                optionMap.put(String.valueOf(i), option);
+
                 jsonOptions.append("{");
                 jsonOptions.append("\""+i+"\":\""+option+"\"");
                 jsonOptions.append("},");

@@ -27,6 +27,8 @@ import com.njmsita.exam.utils.idutil.IdUtil;
 import com.njmsita.exam.utils.logutils.SystemLogAnnotation;
 import com.njmsita.exam.utils.ping4j.FirstCharUtil;
 import com.njmsita.exam.utils.validate.validategroup.AddGroup;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -35,6 +37,8 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
@@ -605,6 +609,22 @@ public class QuestionBankManagerController extends BaseController
         List<SubjectVo> subjectVoList = subjectEbi.getAll();
         request.setAttribute("subjects", subjectVoList);
         return "/manage/bank/question/list";
+    }
+
+    @RequestMapping("question/import.do")
+    @SystemLogAnnotation(module = "题目管理", methods = "批量导入")
+    public String inputXls(MultipartFile questionInfo, Integer subjectId) throws Exception
+    {
+        if (questionInfo != null)
+        {
+            if (SysConsts.INFO_BULK_INPUT_FILE_CONTENT_TYPE.equals(questionInfo.getContentType()))
+            {
+                HSSFWorkbook workbook = new HSSFWorkbook( questionInfo.getInputStream() );
+                HSSFSheet sheet = workbook.getSheetAt(0);
+                questionEbi.bulkInputBySheet(sheet, subjectId);
+            }
+        }
+        return "redirect:/manage/bank/question";
     }
 
 

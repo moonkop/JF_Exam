@@ -13,7 +13,7 @@ body {
   width: 100%;
 }
 
-.app-container{
+.app-container {
   display: flex;
   align-items: stretch;
   position: absolute;
@@ -21,35 +21,92 @@ body {
   top: 50px;
   bottom: 0px;
 }
-.app-header{
+
+.app-header {
   float: left;
   display: flex;
   align-items: center;
-  h1,h2,h3,h4,h5,h6 {
+  h1, h2, h3, h4, h5, h6 {
     margin-top: 20px;
     margin-bottom: 20px;
   }
 }
-.question-manage{
+
+.question-manage {
   display: flex;
   align-items: flex-start;
   height: 100%;
   #jstree {
     width: 300px;
     height: 100%;
-    overflow: auto ;
+    overflow: auto;
+  }
+  .question-list {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    display: flex;
+    flex-flow: column;
+    margin-right: 30px;
+  }
+  .panel-question {
+    .question-header {
+      margin-bottom: 15px;
+      span {
+        margin-right: 20px;
+      }
+      .question-index{
+        display: none;
+      }
+    }
+    .question-body {
+      overflow: hidden;
+    }
+    border: 1px solid #E7E7E8;
+    flex-shrink: 0;
+    overflow: hidden;
+    width: 100%;
+    min-height: 150px;
+  }
+  .question-option-list {
+    .question-option {
+      margin-top: 5px;
+      label {
+        font-weight: normal;
+
+      }
+    }
+    .question-option-correct{
+      label:after{
+        margin-left: 10px;
+        font-family:FontAwesome;
+        content: '\f00c';
+        color: #0cb181;
+        font-size: 20px;
+      }
+    }
+
+    margin-top: 15px;
+    margin-left: 20px;
   }
 }
-.inline{
+
+
+#jstree::-webkit-scrollbar {
+  display: none;
+}
+
+.inline {
   display: inline-block;
 }
+
 #page-wrapper {
   display: flex;
   flex-flow: column;
   padding: 0 15px;
   min-height: 568px;
   background-color: white;
-  width:100%;
+  width: 100%;
   overflow: auto;
 }
 
@@ -57,23 +114,26 @@ body {
   #page-wrapper {
 
     position: relative;
-    padding: 0px 0 30px 30px;
+    padding: 0px 0 20px 20px;
   }
 }
 
 //-------------side----------------//
-.side-visible-line{
+.side-visible-line {
   border: 0px;
   color: @background-color-menu;
   background: #FFFFFF;
 }
-.app-side.app-side-opened{
+
+.app-side.app-side-opened {
   transform: translateX(0);
 }
-.app-side.app-side-closed{
+
+.app-side.app-side-closed {
   position: absolute !important;
 }
-.app-side{
+
+.app-side {
   transform: translateX(-100%);
   transition: all 0.3s ease-out;
 }
@@ -176,7 +236,7 @@ body {
     color: @text-color;
     &.active {
       &:hover {
-      background-color:  @background-color-active;
+        background-color: @background-color-active;
       }
       background-color: @background-color-active;
       color: @text-color-active;
@@ -240,11 +300,10 @@ body {
   transition: all .5s;
 }
 
-.btn-primary{
+.btn-primary {
   background-color: @btn-primary-color;
   border-color: @btn-primary-color;
 }
-
 
 .btn-success.btn-outline {
   color: @brand-success;
@@ -296,8 +355,8 @@ body {
   margin: 0;
 }
 
-.main-panel{
-  margin-top:20px;
+.main-panel {
+  margin-top: 20px;
 }
 
 .panel .slidedown .glyphicon,
@@ -335,23 +394,27 @@ body {
   width: 100%;
   height: 100%;
 }
-.table-btns{
+
+.table-btns {
   padding-bottom: 10px;
 }
+
 .table-action {
 
 }
 
-.table td a{
+.table td a {
   color: #333;
   cursor: pointer;
-  &:hover{
+  &:hover {
     color: #777;
   }
 }
-.table td a.fa{
+
+.table td a.fa {
   padding-right: 10px;
 }
+
 // DataTables Overrides
 
 table.dataTable thead .sorting,
@@ -429,17 +492,18 @@ table.dataTable thead .sorting:after {
 .huge {
   font-size: 40px;
 }
-.panel{
+
+.panel {
   border-radius: 0px;
 }
-.panel-primary{
+
+.panel-primary {
   border: 1px solid #E7E7E8;
-  >.panel-heading {
+  > .panel-heading {
     background-color: @background-color-menu;
   }
 
 }
-
 
 .panel-green {
   border-color: @brand-success;
