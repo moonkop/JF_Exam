@@ -8,6 +8,7 @@ import com.njmsita.exam.manager.dao.dao.SubjectDao;
 import com.njmsita.exam.manager.model.QuestionVo;
 import com.njmsita.exam.manager.model.SubjectVo;
 import com.njmsita.exam.manager.model.querymodel.QuestionQueryModel;
+import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.format.StringUtil;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
@@ -151,7 +152,7 @@ public class QuestionDaoImpl extends BaseImpl<QuestionVo> implements QuestionDao
     {
         DetachedCriteria dc=DetachedCriteria.forClass(QuestionVo.class);
         //判断出卷教师是否是管理员
-        if(login.getTroleVo().getId().equals("0")){
+        if(login.getTroleVo().getId().equals(SysConsts.ADMIN_ROLE_ID)){
             //查询指定知识点  指定题型的所有题目
             doQbcByPublic(doQbc2(dc,topicIds,questionTypeId));
             List<QuestionVo> list1= (List<QuestionVo>) this.getHibernateTemplate().findByCriteria(dc);

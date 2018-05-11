@@ -18,8 +18,10 @@ import com.njmsita.exam.utils.exception.FormatException;
 import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.idutil.IdUtil;
+import net.sf.json.JSONArray;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.usermodel.Row;
+import org.codehaus.jackson.map.ser.impl.JsonSerializerMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -431,20 +433,15 @@ public class QuestionEbo implements QuestionEbi
             answer=readOptionAndAnswer(row,answer,options);
             //opstions转json
             StringBuilder jsonOptions=new StringBuilder();
+            Map<String,String> map=new HashMap<>();
             int i=0;
-            jsonOptions.append("{[");
-            Map<String, String> optionMap = new HashMap<>();
             for (String option : options)
             {
-                optionMap.put(String.valueOf(i), option);
-
-                jsonOptions.append("{");
-                jsonOptions.append("\""+i+"\":\""+option+"\"");
-                jsonOptions.append("},");
+                map.put(i+"",option);
                 i++;
             }
-            String JsonOP=jsonOptions.substring(0,jsonOptions.length()-1);
-            temp.setOption(JsonOP+"]}");
+            JSONArray jsonArray=JSONArray.fromObject(map);
+            temp.setOption(jsonArray.toString());
         }
 
 
