@@ -7,15 +7,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class JsonListResponse<T> extends JsonResponse
+public class JsonListResponse<T> extends JsonObjectResponse<T>
 {
     @JsonIgnore
-    List<T> raw;
+    protected List<T> raw;
     @JsonIgnore
-    String[] fields;
-    @JsonIgnore
-    List<Map<String, Object>> rows = new ArrayList<>();
-    Map<String, JsonElement> elementMap = new HashMap<>();
+    protected List<Map<String, Object>> rows = new ArrayList<>();
 
     public JsonListResponse()
     {
@@ -34,7 +31,7 @@ public class JsonListResponse<T> extends JsonResponse
         this.setFields(fields);
         if (!withMoreOptions)
         {
-            serialize();
+            this.serialize();
         }
         this.put("total", total);
     }
@@ -51,26 +48,24 @@ public class JsonListResponse<T> extends JsonResponse
         return this;
     }
 
+    @Override
     public JsonListResponse<T> addCustomJsonElementFormater(String key, CustomJsonElementFormater<T> formater)
     {
-        elementMap.get(key).formater = formater;
+        super.addCustomJsonElementFormater(key, formater);
         return this;
     }
 
+    @Override
     public JsonListResponse<T> addNullValue(String key, Object value)
     {
-        elementMap.get(key).nullValue = value;
+        super.addNullValue(key, value);
         return this;
     }
 
+    @Override
     public JsonListResponse<T> setFields(String fieldString)
     {
-        String[] fields = fieldString.split(",");
-        for (String field : fields)
-        {
-            JsonElement element = new JsonElement(field);
-            elementMap.put(element.key, element);
-        }
+        super.setFields(fieldString);
         return this;
     }
 
@@ -80,11 +75,7 @@ public class JsonListResponse<T> extends JsonResponse
         {
             for (T obj : raw)
             {
-                Map<String, Object> row = new HashMap<>();
-                for (JsonElement<T> element : this.elementMap.values())
-                {
-                    row.put(element.key, element.serialize(obj));
-                }
+                Map<String, Object> row = this.serializeObject(obj);
                 rows.add(row);
             }
             this.payload.put("rows", rows);

@@ -18,6 +18,7 @@ import com.njmsita.exam.manager.service.ebi.QuestionTypeEbi;
 import com.njmsita.exam.manager.service.ebi.SubjectEbi;
 import com.njmsita.exam.manager.service.ebi.TopicEbi;
 import com.njmsita.exam.utils.json.JsonListResponse;
+import com.njmsita.exam.utils.json.JsonObjectResponse;
 import com.njmsita.exam.utils.json.JsonResponse;
 import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.exception.OperationException;
@@ -41,6 +42,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.xml.ws.ResponseWrapper;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -520,7 +522,25 @@ public class QuestionBankManagerController extends BaseController
             }
             list=questionEbi.getAllByTeacher(questionQueryModel,offset,pageSize,teacherVo);
         }
-        return new JsonListResponse<>(list,"id,code,outline,option,answer,[score]questionType.score",0);
+        return new JsonListResponse<>(list,"id,code,outline,option,answer,[type]questionType.id",0);
+    }
+    @ResponseBody
+    @RequestMapping("question/detail.do")
+    public JsonResponse questionDetail(String id)
+    {
+        return new JsonObjectResponse<QuestionVo>(questionEbi.get(id),
+                   "id," +
+                         "code," +
+                         "outline," +
+                         "option," +
+                         "answer," +
+                         "[type]questionType.name," +
+                         "[value]questionType.score," +
+                         "[createTeacher]teacher.name," +
+                         "createTime," +
+                         "[subject]subject.name," +
+                         "[topic]topic.name," +
+                           "useTime");
     }
 
     /**

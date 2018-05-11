@@ -25,6 +25,13 @@
                         <div>身份：${loginUser.troleVo.name}</div>
                     </a>
                 </li>
+                <script>
+                    var User={
+                        id:'${loginUser.id}',
+                        name:'${loginUser.name}',
+                        role:'${loginUser.troleVo.id}'
+                    }
+                </script>
                 <li class="divider"></li>
                 <li>
                     <a class="text-center" href="/teacher/detail">

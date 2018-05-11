@@ -179,7 +179,7 @@ public class TeacherController extends BaseController
     public String loginOut(HttpSession session)
     {
         System.out.println("log out");
-        System.out.println(session.getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME));
+     //   System.out.println(session.getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME));
         //将session中的已登陆用户至空
         //TODO 有疑问？？？？？？？？
         session.invalidate();
