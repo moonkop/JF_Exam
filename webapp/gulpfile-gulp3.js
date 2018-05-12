@@ -190,3 +190,9 @@ gulp.task('dev', ['browserSync', 'less', 'minify-css', 'js', 'minify-js', 'html'
     gulp.watch('dist/pages/*.*', browserSync.reload);
 
 });
+
+gulp.task('watch',['less','js'],function () {
+    gulp.watch('less/*.less',['less']);
+    gulp.watch('js/*.js',['js']);
+
+})
