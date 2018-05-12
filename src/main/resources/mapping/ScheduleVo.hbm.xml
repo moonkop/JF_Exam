@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="com.njmsita.exam.manager.model.ScheduleVo" table="schedule" schema="jf_exam">
+        <id name="id" column="id"/>
+        <property name="jobName" column="jobName"/>
+        <property name="jobGroup" column="jobGroup"/>
+        <property name="jobStatus" column="jobStatus"/>
+        <property name="cronexpression" column="cronexpression"/>
+        <property name="describe" column="describe"/>
+        <property name="examId" column="exam_id"/>
+        <property name="jobType" column="jobType"/>
+    </class>
+</hibernate-mapping>

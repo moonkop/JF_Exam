@@ -55,6 +55,7 @@
                 <value>classpath:mapping/TopicVo.hbm.xml</value>
 				<value>classpath:mapping/PaperVo.hbm.xml</value>
                 <value>classpath:mapping/ExamVo.hbm.xml</value>
+                <value>classpath:mapping/ScheduleVo.hbm.xml</value>
             </list>
 		</property>
 		<property name="annotatedClasses">
@@ -73,6 +74,7 @@
                 <value>com.njmsita.exam.manager.model.TopicVo</value>
 				<value>com.njmsita.exam.manager.model.PaperVo</value>
                 <value>com.njmsita.exam.manager.model.ExamVo</value>
+                <value>com.njmsita.exam.manager.model.ScheduleVo</value>
             </list>
 		</property>
 	</bean>
