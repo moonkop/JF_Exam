@@ -5,9 +5,7 @@ import com.njmsita.exam.authentic.dao.dao.StudentDao;
 import com.njmsita.exam.authentic.model.TeacherVo;
 import com.njmsita.exam.manager.dao.dao.QuestionDao;
 import com.njmsita.exam.manager.model.QuestionVo;
-import com.njmsita.exam.utils.timertask.DataWorkContext;
 import com.njmsita.exam.utils.timertask.QuartzJobFactory;
-import com.njmsita.exam.utils.timertask.ScheduleJob;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.quartz.*;
@@ -35,7 +33,7 @@ public class MyAspect
     @Test
     public void fun3() throws SchedulerException
     {
-        //schedulerFactoryBean 由spring创建注入
+        /*//schedulerFactoryBean 由spring创建注入
         Scheduler scheduler = schedulerFactoryBean.getScheduler();
         //这里获取任务信息数据
         List<ScheduleJob> jobList = DataWorkContext.getAllJob();
@@ -66,8 +64,7 @@ public class MyAspect
                 //按新的trigger重新设置job执行
                 scheduler.rescheduleJob(triggerKey, trigger);
             }
-        }
-        return;
+        }*/
     }
 
 

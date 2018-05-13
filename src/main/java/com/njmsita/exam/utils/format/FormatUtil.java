@@ -23,4 +23,20 @@ public class FormatUtil {
 		DecimalFormat   df   =new DecimalFormat("#.00");    
 		return df.format(money);
 	}
+
+	public static final String cronExpression(Long time){
+		String timeStr=formatDateTime(time);
+		String[] date=timeStr.split(" ");
+		String[] year=date[0].split("-");
+		String[] second=date[1].split(":");
+		StringBuilder cron=new StringBuilder();
+		for(int i=second.length-1;i>=0;i--){
+			cron.append(Integer.parseInt(second[i])+" ");
+		}
+		for(int i=year.length-1;i>0;i--){
+			cron.append(Integer.parseInt(year[i])+" ");
+		}
+		cron.append("? "+year[0]);
+		return cron.toString();
+	}
 }
