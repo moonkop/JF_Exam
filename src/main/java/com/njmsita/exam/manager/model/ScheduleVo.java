@@ -1,6 +1,11 @@
 package com.njmsita.exam.manager.model;
 
+import com.njmsita.exam.manager.dao.dao.ExamDao;
+import com.njmsita.exam.utils.consts.SysConsts;
+
 import javax.persistence.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 @Entity
@@ -13,8 +18,55 @@ public class ScheduleVo
     private Integer jobStatus;
     private String cronexpression;
     private String describe;
-    private String examId;
     private Integer jobType;
+
+    private ExamVo examVo;
+
+    private Integer nowStatu;
+    private Integer affterStatu;
+    private ExamDao examDao;
+
+    @Basic
+    @Column(name = "exam_id")
+    public ExamVo getExamVo()
+    {
+        return examVo;
+    }
+
+    public void setExamVo(ExamVo examVo)
+    {
+        this.examVo = examVo;
+    }
+
+    public Integer getNowStatu()
+    {
+        return nowStatu;
+    }
+
+    public void setNowStatu(Integer nowStatu)
+    {
+        this.nowStatu = nowStatu;
+    }
+
+    public Integer getAffterStatu()
+    {
+        return affterStatu;
+    }
+
+    public void setAffterStatu(Integer affterStatu)
+    {
+        this.affterStatu = affterStatu;
+    }
+
+    public ExamDao getExamDao()
+    {
+        return examDao;
+    }
+
+    public void setExamDao(ExamDao examDao)
+    {
+        this.examDao = examDao;
+    }
 
     @Id
     @Column(name = "id")
@@ -88,17 +140,6 @@ public class ScheduleVo
         this.describe = describe;
     }
 
-    @Basic
-    @Column(name = "exam_id")
-    public String getExamId()
-    {
-        return examId;
-    }
-
-    public void setExamId(String examId)
-    {
-        this.examId = examId;
-    }
 
     @Basic
     @Column(name = "jobType")
@@ -116,7 +157,7 @@ public class ScheduleVo
     public int hashCode()
     {
 
-        return Objects.hash(id, jobName, jobGroup, jobStatus, cronexpression, describe, examId, jobType);
+        return Objects.hash(id, jobName, jobGroup, jobStatus, cronexpression, describe, jobType);
     }
 
     @Override
@@ -131,7 +172,24 @@ public class ScheduleVo
                 Objects.equals(jobStatus, that.jobStatus) &&
                 Objects.equals(cronexpression, that.cronexpression) &&
                 Objects.equals(describe, that.describe) &&
-                Objects.equals(examId, that.examId) &&
                 Objects.equals(jobType, that.jobType);
+    }
+
+    @Override
+    public String toString()
+    {
+        return "ScheduleVo{" +
+                "id='" + id + '\'' +
+                ", jobName='" + jobName + '\'' +
+                ", jobGroup='" + jobGroup + '\'' +
+                ", jobStatus=" + jobStatus +
+                ", cronexpression='" + cronexpression + '\'' +
+                ", describe='" + describe + '\'' +
+                ", jobType=" + jobType +
+                ", examVo=" + examVo +
+                ", nowStatu=" + nowStatu +
+                ", affterStatu=" + affterStatu +
+                ", examDao=" + examDao +
+                '}';
     }
 }

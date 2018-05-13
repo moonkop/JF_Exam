@@ -11,7 +11,8 @@
         <property name="jobStatus" column="jobStatus"/>
         <property name="cronexpression" column="cronexpression"/>
         <property name="describe" column="describe"/>
-        <property name="examId" column="exam_id"/>
         <property name="jobType" column="jobType"/>
+
+        <many-to-one name="examVo" column="exam_id" class="com.njmsita.exam.manager.model.ExamVo"/>
     </class>
 </hibernate-mapping>

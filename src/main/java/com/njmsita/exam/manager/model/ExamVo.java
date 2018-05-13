@@ -36,6 +36,7 @@ public class ExamVo
     private String paperContent;
     private String classroomIds;
     private String remark;
+    private String name;
 
     //该考试对应状态下的操作
     private Set<String> operation;
@@ -64,6 +65,18 @@ public class ExamVo
     public String getExamStatusView()
     {
         return examStatusView;
+    }
+
+    @Basic
+    @Column(name = "name")
+    public String getName()
+    {
+        return name;
+    }
+
+    public void setName(String name)
+    {
+        this.name = name;
     }
 
     @Basic

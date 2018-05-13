@@ -13,6 +13,7 @@
         <property name="paperContent" column="paper_content"/>
         <property name="classroomIds" column="classroom_ids"/>
         <property name="remark" column="remark"/>
+        <property name="name" column="name"/>
 
         <many-to-one name="createTeacher" column="create_teacher_id" class="com.njmsita.exam.authentic.model.TeacherVo"/>
 

@@ -48,12 +48,28 @@ public interface ExamEbi extends BaseEbi<ExamVo>
     /**
      * 审核通过
      * @param examVo
+     * @param teacherVo
      */
-    public void setPass(ExamVo examVo) throws OperationException;
+    public void setPass(ExamVo examVo, TeacherVo teacherVo) throws Exception;
 
     /**
      * 审核不通过
      * @param examVo
+     * @param teacherVo
      */
-    public void setNoPass(ExamVo examVo) throws OperationException;
+    public void setNoPass(ExamVo examVo, TeacherVo teacherVo) throws Exception;
+
+    /**
+     * 取消考试
+     * @param examVo
+     * @param teacherVo
+     */
+    public void cancel(ExamVo examVo, TeacherVo teacherVo) throws Exception;
+
+    /**
+     * 删除考试
+     * @param examVo
+     * @param teacherVo
+     */
+    public void deleteCancel(ExamVo examVo, TeacherVo teacherVo) throws Exception;
 }
