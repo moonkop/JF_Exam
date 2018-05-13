@@ -1,7 +1,5 @@
 package com.njmsita.exam.manager.controller;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.njmsita.exam.authentic.model.TeacherVo;
 import com.njmsita.exam.authentic.service.ebi.TeacherEbi;
 import com.njmsita.exam.base.BaseController;
@@ -12,7 +10,6 @@ import com.njmsita.exam.manager.model.TopicVo;
 import com.njmsita.exam.manager.model.querymodel.QuestionQueryModel;
 import com.njmsita.exam.manager.model.querymodel.QuestionTypeQueryModel;
 import com.njmsita.exam.manager.model.querymodel.SubjectQueryModel;
-import com.njmsita.exam.manager.model.querymodel.TopicQueryModel;
 import com.njmsita.exam.manager.service.ebi.QuestionEbi;
 import com.njmsita.exam.manager.service.ebi.QuestionTypeEbi;
 import com.njmsita.exam.manager.service.ebi.SubjectEbi;
@@ -22,7 +19,6 @@ import com.njmsita.exam.utils.json.JsonObjectResponse;
 import com.njmsita.exam.utils.json.JsonResponse;
 import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.exception.OperationException;
-import com.njmsita.exam.utils.json.CustomJsonSerializer;
 import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.idutil.IdUtil;
 import com.njmsita.exam.utils.logutils.SystemLogAnnotation;
@@ -42,7 +38,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.xml.ws.ResponseWrapper;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -522,7 +517,7 @@ public class QuestionBankManagerController extends BaseController
             }
             list=questionEbi.getAllByTeacher(questionQueryModel,offset,pageSize,teacherVo);
         }
-        return new JsonListResponse<>(list,"id,code,outline,option,answer,[type]questionType.id",0);
+        return new JsonListResponse<>(list,"id,code,outline,[options]option,answer,[type]questionType.id",0);
     }
     @ResponseBody
     @RequestMapping("question/detail.do")
@@ -532,9 +527,9 @@ public class QuestionBankManagerController extends BaseController
                    "id," +
                          "code," +
                          "outline," +
-                         "option," +
+                         "[options]option," +
                          "answer," +
-                         "[type]questionType.name," +
+                         "[type]questionType.id," +
                          "[value]questionType.score," +
                          "[createTeacher]teacher.name," +
                          "createTime," +
@@ -633,13 +628,13 @@ public class QuestionBankManagerController extends BaseController
 
     @RequestMapping("question/import.do")
     @SystemLogAnnotation(module = "题目管理", methods = "批量导入")
-    public String inputXls(MultipartFile questionInfo, Integer subjectId) throws Exception
+    public String inputXls(MultipartFile questionFile, Integer subjectId) throws Exception
     {
-        if (questionInfo != null)
+        if (questionFile != null)
         {
-            if (SysConsts.INFO_BULK_INPUT_FILE_CONTENT_TYPE.equals(questionInfo.getContentType()))
+            if (SysConsts.INFO_BULK_INPUT_FILE_CONTENT_TYPE.equals(questionFile.getContentType()))
             {
-                HSSFWorkbook workbook = new HSSFWorkbook( questionInfo.getInputStream() );
+                HSSFWorkbook workbook = new HSSFWorkbook( questionFile.getInputStream() );
                 HSSFSheet sheet = workbook.getSheetAt(0);
                 questionEbi.bulkInputBySheet(sheet, subjectId);
             }

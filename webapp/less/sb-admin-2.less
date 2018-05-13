@@ -54,6 +54,15 @@ body {
         margin-right: 30px;
     }
 }
+.question-option-correct {
+    label:after {
+        margin-left: 10px;
+        font-family: FontAwesome;
+        content: '\f00c';
+        color: #0cb181;
+        font-size: 20px;
+    }
+}
 
 .panel-question {
     border: 1px solid #E7E7E8;
@@ -81,6 +90,14 @@ body {
     }
     .question-body {
         overflow: hidden;
+        .question-code {
+            display: none;
+            pre {
+                border: 0;
+                background-color: #ffffff;
+
+            }
+        }
         .question-option-list {
             .question-option {
                 margin-top: 5px;
@@ -88,30 +105,28 @@ body {
                     font-weight: normal;
                 }
             }
-            .question-option-correct {
-                label:after {
-                    margin-left: 10px;
-                    font-family: FontAwesome;
-                    content: '\f00c';
-                    color: #0cb181;
-                    font-size: 20px;
-                }
-            }
+
             margin-top: 15px;
             margin-left: 20px;
         }
     }
 }
 
-.layui-layer-content .form-horizontal {
-    border: 0px;
+.layui-layer-content {
+    height: auto !important;
+    position: absolute !important;
+    top: 45px;
+    bottom: 0px;
     overflow-x: hidden;
     overflow-y: auto;
-    -height: 100%、;
-    *6+5
-    .form-group-small {
-        margin-bottom: 5px;
-        font-size: 12px;
+    width: 100%;
+    .form-horizontal {
+        border: 0px;
+        height: 100%;
+        .form-group-small {
+            margin-bottom: 5px;
+            font-size: 12px;
+        }
     }
 }
 
@@ -467,7 +482,7 @@ table.dataTable thead .sorting:after {
     color: rgba(50, 50, 50, .5);
 }
 
-// Circle Buttons 
+// Circle Buttons
 
 .btn-circle {
     width: 30px;
