@@ -135,6 +135,7 @@
         <put-attribute name="title" value="题库管理"/>
         <put-list-attribute name="additional-headers">
             <add-attribute value="/WEB-INF/layout/additional-headers/tree-header.jsp" />
+            <add-attribute value="/WEB-INF/layout/additional-headers/highlight-header.jsp" />
         </put-list-attribute>
     </definition>
     

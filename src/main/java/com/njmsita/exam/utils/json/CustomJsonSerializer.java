@@ -1,6 +1,7 @@
 package com.njmsita.exam.utils.json;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -35,6 +36,7 @@ public class CustomJsonSerializer
      */
     public void filter(Class<?> clazz, String include, String filter)
     {
+
         if (clazz == null) return;
         if (include != null && include.length() > 0)
         {

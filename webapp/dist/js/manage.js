@@ -61,7 +61,7 @@ function defaultOnSuccess(result)
         layer.msg('操作结果未知');
     } else
     {
-        layer.msg('result.message');
+        layer.msg(result.message);
     }
 }
 

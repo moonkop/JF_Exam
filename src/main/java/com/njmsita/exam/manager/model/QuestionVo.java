@@ -35,6 +35,8 @@ public class QuestionVo
     //所属科目  n TO 1
     private SubjectVo subject;
 
+    //todo 加一个code 所属语言类型 方便前台渲染 (JAVA,XML,HTML,CSS,JS,....)
+
     @Basic
     @Column(name = "useTime")
     public Integer getUseTime()

@@ -19,6 +19,7 @@ public class SubjectVo
     @NotEmpty(message = "{name.notempty}",groups = {AddGroup.class,EditGroup.class})
     private String name;
 
+    //todo 加一个默认语言类型，在question没有code语言类型的时候使用默认类型渲染
     @Id
     @Column(name = "id")
     public Integer getId()
