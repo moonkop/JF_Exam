@@ -24,6 +24,4 @@ public class QuartzJobFactory implements Job
         }
         System.out.println("任务名称 = [" + scheduleVo.getJobName() + "]");
     }
-
-
 }

@@ -59,14 +59,11 @@ public class LogEbo implements LogEbi
         logdao.delete(logVo);
     }
 
-
     //-----------------------------------以上为基本操作-------------------------------------
     //-----------------------------------以上为基本操作-------------------------------------
     //-----------------------------------以上为基本操作-------------------------------------
     //-----------------------------------以上为基本操作-------------------------------------
     //-----------------------------------以上为基本操作-------------------------------------
-
-
 
     public void login(UserModel loginUser, String loginIp)
     {
@@ -95,7 +92,6 @@ public class LogEbo implements LogEbi
             logQueryModel.setEndTime(System.currentTimeMillis());
         }
         List<LogVo> logList=logdao.getAll(logQueryModel);
-
         //文件写入
         return fileWriter(logList,path);
     }
@@ -114,7 +110,6 @@ public class LogEbo implements LogEbi
         fileName=fileName.replace(":","");
         File file = new File(path+"\\"+fileName);
 
-        //file.createNewFile();
         BufferedWriter out = new BufferedWriter(new FileWriter(file));
         out.write("用户ID,用户姓名,用户身份,IP地址,操作模块,操作方法,具体描述,相应时间,携带参数,操作时间\r\n");
         for (LogVo logVo : logList)

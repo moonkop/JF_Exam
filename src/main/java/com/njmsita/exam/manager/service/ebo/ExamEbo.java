@@ -1,10 +1,13 @@
 package com.njmsita.exam.manager.service.ebo;
 
+import com.njmsita.exam.authentic.dao.dao.StudentDao;
 import com.njmsita.exam.authentic.dao.dao.TeacherDao;
+import com.njmsita.exam.authentic.model.StudentVo;
 import com.njmsita.exam.authentic.model.TeacherVo;
 import com.njmsita.exam.base.BaseQueryVO;
 import com.njmsita.exam.manager.dao.dao.*;
 import com.njmsita.exam.manager.model.*;
+import com.njmsita.exam.manager.model.querymodel.ExamQueryModel;
 import com.njmsita.exam.manager.service.ebi.ExamEbi;
 import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.exception.OperationException;
@@ -14,7 +17,6 @@ import com.njmsita.exam.utils.idutil.IdUtil;
 import com.njmsita.exam.utils.timertask.SchedulerJobUtil;
 import net.sf.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,12 +42,15 @@ public class ExamEbo implements ExamEbi
     @Autowired
     private PaperDao paperDao;
     @Autowired
-    @Qualifier("schedulerFactoryBean")
     private SchedulerFactoryBean schedulerFactoryBean;
     @Autowired
     private ScheduleDao scheduleDao;
     @Autowired
     private LogDao logDao;
+    @Autowired
+    private StudentExamDao studentExamDao;
+    @Autowired
+    private StudentDao studentDao;
 
     /**
      * 作废
@@ -119,17 +124,17 @@ public class ExamEbo implements ExamEbi
 
     }
 
-    public List<ExamVo> getByCreateTeacher(TeacherVo login)
+    public List<ExamVo> getByCreateTeacher(String teacherId)
     {
-        List<ExamVo> list=examDao.getByCreateTeacher(login.getTeacherId());
-        operationValid(list,login);
+        List<ExamVo> list=examDao.getByCreateTeacher(teacherId);
+        operationValid(list,teacherId);
         return list;
     }
 
-    public List<ExamVo> getByMarkTeacher(TeacherVo login)
+    public List<ExamVo> getByMarkTeacher(String teacherId)
     {
-        List<ExamVo> list=examDao.getByMarkTeacher(login.getTeacherId());
-        operationValid(list,login);
+        List<ExamVo> list=examDao.getByMarkTeacher(teacherId);
+        operationValid(list,teacherId);
         return list;
     }
 
@@ -173,6 +178,7 @@ public class ExamEbo implements ExamEbi
             throw new OperationException("所选该场考试不是可取消状态，请不要进行非法操作！");
         }
         temp.setExamStatus(SysConsts.EXAM_STATUS_IN_CANCEL);
+        studentExamDao.deleteAllByExam(examVo);
         List<ScheduleVo> scheduleList=scheduleDao.getByExam(temp.getId());
         for (ScheduleVo scheduleVo : scheduleList)
         {
@@ -207,6 +213,54 @@ public class ExamEbo implements ExamEbi
         //TODO 测试：是否可以逻辑更新
         temp.setMarkTeachers(markTeacherValid(markTeachers));
     }
+
+    public List<ExamVo> getMyExamList(String studentId)
+    {
+        List<StudentExamVo> studentExamVos=studentExamDao.getByStudent(studentId);
+        List<ExamVo> list=new ArrayList<>();
+        for (StudentExamVo studentExamVo : studentExamVos)
+        {
+            ExamVo examVo=studentExamVo.getExamVo();
+            Set<String> set=new HashSet<>();
+            if(examVo.getExamStatus()==SysConsts.EXAM_STATUS_OPEN){
+                set.add(SysConsts.EXAM_OPERATION_ATTEND);
+            }
+            if(examVo.getExamStatus()==SysConsts.EXAM_STATUS_ENDING){
+                set.add(SysConsts.EXAM_OPERATION_VIEW_SCORE);
+            }
+            examVo.setOperation(set);
+            list.add(examVo);
+        }
+        return list;
+    }
+
+    public List<ExamVo> getAllByAdmin(String teacherId, ExamQueryModel examQueryModel,
+                                      Integer pageNum, Integer pageSize)throws Exception
+    {
+        List<ExamVo> list=examDao.getAll(examQueryModel,pageNum,pageSize);
+        operationValid(list,teacherId);
+        return list;
+    }
+
+    public ExamVo attendExam(ExamVo examVo, StudentVo studentVo) throws Exception
+    {
+        examVo=isNull(examVo);
+        StudentExamVo studentExamVo=studentExamDao.getByStudentAndExam(examVo,studentVo);
+        if(studentExamVo==null){
+            throw new OperationException("你没有该场考试，请不要进行非法操作！");
+        }
+        examVo=studentExamVo.getExamVo();
+        if(examVo.getExamStatus()!=SysConsts.EXAM_STATUS_OPEN){
+            throw new OperationException("尚未开始考试，请不要进行非法操作！");
+        }
+        studentExamVo.setOperation(SysConsts.STUDENT_EXAM_OPERATION_ARCHIVE);
+        return examVo;
+    }
+
+    //-----------------------------------以上为业务操作-------------------------------------
+    //-----------------------------------以上为业务操作-------------------------------------
+    //-----------------------------------以上为业务操作-------------------------------------
+    //-----------------------------------以上为业务操作-------------------------------------
 
     /**
      * 创建定时任务
@@ -282,10 +336,11 @@ public class ExamEbo implements ExamEbi
     /**
      * 操作校验
      * @param list
-     * @param login
+     * @param teacherId
      */
-    private void operationValid(List<ExamVo> list, TeacherVo login)
+    private void operationValid(List<ExamVo> list, String teacherId)
     {
+        TeacherVo login=teacherDao.get(teacherId);
         for (ExamVo examVo : list)
         {
             Set<String> set = new HashSet<>();
@@ -317,8 +372,8 @@ public class ExamEbo implements ExamEbi
                 continue;
             }
             if(examVo.getExamStatus()==SysConsts.EXAM_STATUS_IN_MARK){
-                if(!login.getTroleVo().getId().equals(SysConsts.ADMIN_ROLE_ID)){
-                    set.add(SysConsts.EXAM_OPERATION_ADD_MARK_TEACHER);
+                set.add(SysConsts.EXAM_OPERATION_ADD_MARK_TEACHER);
+                if(examVo.getMarkTeachers().contains(login)){
                     set.add(SysConsts.EXAM_OPERATION_MARK);
                     set.add(SysConsts.EXAM_OPERATION_SUBMIT_MARK);
                 }
@@ -367,6 +422,8 @@ public class ExamEbo implements ExamEbi
         if(temp==null){
             throw new OperationException("所选择的科目不存在,请不要进行非法操作！");
         }
+        //删除该场考试的所有学生
+        studentExamDao.deleteAllByExam(examVo);
         Set<TeacherVo> teacherSet=markTeacherValid(markTeachers);
         Map<String,ClassroomVo> map=new HashMap<>();
         int i=0;
@@ -374,6 +431,15 @@ public class ExamEbo implements ExamEbi
         {
             ClassroomVo classroomVo=classroomDao.get(classroomId);
             if(classroomVo!=null){
+                List<StudentVo> studentList=studentDao.getByClassroom(classroomId);
+                for (StudentVo studentVo : studentList)
+                {
+                    StudentExamVo studentExamVo= new StudentExamVo();
+                    studentExamVo.setId(IdUtil.getUUID());
+                    studentExamVo.setExamVo(examVo);
+                    studentExamVo.setStudentVo(studentVo);
+                    studentExamDao.save(studentExamVo);
+                }
                 map.put(i+"",classroomVo);
             }
         }

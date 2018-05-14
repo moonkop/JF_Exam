@@ -43,37 +43,30 @@ public class IDCardNoValidator implements ConstraintValidator<IDCardNoValifatorA
         if (idcard == null) {
             return false;
         }
-
         // 非18位为假
         if (idcard.length() != 18) {
             return false;
         }
         // 获取前17位
         String idcard17 = idcard.substring(0, 17);
-
         // 前17位全部为数字
         if (!isDigital(idcard17)) {
             return false;
         }
-
         String provinceid = idcard.substring(0, 2);
         // 校验省份
         if (!checkProvinceid(provinceid)) {
             return false;
         }
-
         // 校验出生日期
         String birthday = idcard.substring(6, 14);
-
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-
         try {
             Date birthDate = sdf.parse(birthday);
             String tmpDate = sdf.format(birthDate);
             if (!tmpDate.equals(birthday)) {// 出生年月日不正确
                 return false;
             }
-
         } catch (ParseException e1) {
 
             return false;
@@ -81,13 +74,9 @@ public class IDCardNoValidator implements ConstraintValidator<IDCardNoValifatorA
 
         // 获取第18位
         String idcard18Code = idcard.substring(17, 18);
-
         char c[] = idcard17.toCharArray();
-
         int bit[] = converCharToInt(c);
-
         int sum17 = 0;
-
         sum17 = getPowerSum(bit);
 
         // 将和值与11取模得到余数进行校验码判断
@@ -99,7 +88,6 @@ public class IDCardNoValidator implements ConstraintValidator<IDCardNoValifatorA
         if (!idcard18Code.equalsIgnoreCase(checkCode)) {
             return false;
         }
-
         return true;
     }
 
@@ -121,34 +109,26 @@ public class IDCardNoValidator implements ConstraintValidator<IDCardNoValifatorA
         if (idcard.length() != 15) {
             return false;
         }
-
         // 15全部为数字
         if (!isDigital(idcard)) {
             return false;
         }
-
         String provinceid = idcard.substring(0, 2);
         // 校验省份
         if (!checkProvinceid(provinceid)) {
             return false;
         }
-
         String birthday = idcard.substring(6, 12);
-
         SimpleDateFormat sdf = new SimpleDateFormat("yyMMdd");
-
         try {
             Date birthDate = sdf.parse(birthday);
             String tmpDate = sdf.format(birthDate);
             if (!tmpDate.equals(birthday)) {// 身份证日期错误
                 return false;
             }
-
         } catch (ParseException e1) {
-
             return false;
         }
-
         return true;
     }
 
@@ -162,27 +142,21 @@ public class IDCardNoValidator implements ConstraintValidator<IDCardNoValifatorA
         if (idcard == null) {
             return null;
         }
-
         // 非15位身份证
         if (idcard.length() != 15) {
             return null;
         }
-
         // 15全部为数字
         if (!isDigital(idcard)) {
             return null;
         }
-
         String provinceid = idcard.substring(0, 2);
         // 校验省份
         if (!checkProvinceid(provinceid)) {
             return null;
         }
-
         String birthday = idcard.substring(6, 12);
-
         SimpleDateFormat sdf = new SimpleDateFormat("yyMMdd");
-
         Date birthdate = null;
         try {
             birthdate = sdf.parse(birthday);
@@ -190,29 +164,21 @@ public class IDCardNoValidator implements ConstraintValidator<IDCardNoValifatorA
             if (!tmpDate.equals(birthday)) {// 身份证日期错误
                 return null;
             }
-
         } catch (ParseException e1) {
             return null;
         }
-
         Calendar cday = Calendar.getInstance();
         cday.setTime(birthdate);
         String year = String.valueOf(cday.get(Calendar.YEAR));
-
         String idcard17 = idcard.substring(0, 6) + year + idcard.substring(8);
-
         char c[] = idcard17.toCharArray();
         String checkCode = "";
-
         // 将字符数组转为整型数组
         int bit[] = converCharToInt(c);
-
         int sum17 = 0;
         sum17 = getPowerSum(bit);
-
         // 获取和值与11取模得到余数进行校验码
         checkCode = getCheckCodeBySum(sum17);
-
         // 获取不到校验位
         if (null == checkCode) {
             return null;
@@ -224,7 +190,6 @@ public class IDCardNoValidator implements ConstraintValidator<IDCardNoValifatorA
 
     /**
      * 校验省份
-     *
      * @param provinceid
      * @return 合法返回TRUE，否则返回FALSE
      */
@@ -239,7 +204,6 @@ public class IDCardNoValidator implements ConstraintValidator<IDCardNoValifatorA
 
     /**
      * 数字验证
-     *
      * @param str
      * @return
      */
@@ -249,18 +213,14 @@ public class IDCardNoValidator implements ConstraintValidator<IDCardNoValifatorA
 
     /**
      * 将身份证的每位和对应位的加权因子相乘之后，再得到和值
-     *
      * @param bit
      * @return
      */
     private  int getPowerSum(int[] bit) {
-
         int sum = 0;
-
         if (power.length != bit.length) {
             return sum;
         }
-
         for (int i = 0; i < bit.length; i++) {
             for (int j = 0; j < power.length; j++) {
                 if (i == j) {
@@ -273,7 +233,6 @@ public class IDCardNoValidator implements ConstraintValidator<IDCardNoValifatorA
 
     /**
      * 将和值与11取模得到余数进行校验码判断
-     *
      * @param sum17
      * @return 校验位
      */
@@ -319,7 +278,6 @@ public class IDCardNoValidator implements ConstraintValidator<IDCardNoValifatorA
 
     /**
      * 将字符数组转为整型数组
-     *
      * @param c
      * @return
      * @throws NumberFormatException
@@ -332,7 +290,6 @@ public class IDCardNoValidator implements ConstraintValidator<IDCardNoValifatorA
         }
         return a;
     }
-
 
     private int len15;
     private int len18;

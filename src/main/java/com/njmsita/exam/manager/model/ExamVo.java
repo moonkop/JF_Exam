@@ -2,7 +2,6 @@ package com.njmsita.exam.manager.model;
 
 import com.njmsita.exam.authentic.model.TeacherVo;
 import com.njmsita.exam.utils.consts.SysConsts;
-
 import javax.persistence.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,17 +36,14 @@ public class ExamVo
     private String classroomIds;
     private String remark;
     private String name;
-
     //该考试对应状态下的操作
     private Set<String> operation;
-
     //发起考试的教师
     private TeacherVo createTeacher;
     //所属科目  n  TO  1
     private SubjectVo subjectVo;
     //阅卷教师  n  TO  m
     private Set<TeacherVo> markTeachers;
-
     private Integer examStatus;
     //考试状态视图值
     private String examStatusView;

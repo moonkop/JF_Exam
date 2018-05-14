@@ -1,5 +1,6 @@
 package com.njmsita.exam.manager.dao.dao;
 
+import com.njmsita.exam.authentic.model.StudentVo;
 import com.njmsita.exam.base.BaseDao;
 import com.njmsita.exam.manager.model.ScheduleVo;
 import com.njmsita.exam.manager.model.SubjectVo;
@@ -17,4 +18,6 @@ public interface ScheduleDao extends BaseDao<ScheduleVo>
      * @param examId
      */
     public List<ScheduleVo> getByExam(String examId);
+
+
 }

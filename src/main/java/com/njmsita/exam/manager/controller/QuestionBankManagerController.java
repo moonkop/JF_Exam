@@ -86,7 +86,6 @@ public class QuestionBankManagerController extends BaseController
                 subjectEbi.getAll(subjectQueryModel, pageNum, pageSize),
                 "id,name",
                 subjectEbi.getCount(subjectQueryModel));
-
     }
 
     /**
@@ -107,7 +106,6 @@ public class QuestionBankManagerController extends BaseController
         request.setAttribute("subject", SubjectVo);
         return "/manage/bank/subject/detail";
     }
-
 
     /**
      * 跳转学科添加/修改页面
@@ -167,7 +165,6 @@ public class QuestionBankManagerController extends BaseController
         return "redirect:/manage/bank/subject";
     }
 
-
     /**
      * 删除学科
      *
@@ -201,10 +198,8 @@ public class QuestionBankManagerController extends BaseController
     //-------------------------------------------QuestionTypeManager-----------------------------------------
     //-------------------------------------------QuestionTypeManager-----------------------------------------
     //-------------------------------------------QuestionTypeManager-----------------------------------------
-
     /**
      * 跳转题型页面(分页)
-     *
      * @param questionTypeQueryModel 该模型存放了题型属性
      * @param pageNum                页码
      * @param pageSize               页面大小
@@ -239,40 +234,39 @@ public class QuestionBankManagerController extends BaseController
     @RequestMapping("questionType")
     public String toQuestionTypeList()
     {
-        return "manage/questionType/list";
+        return "/manage/bank/questionType/list";
     }
 
     @RequestMapping("questionType/detail")
-    public String toQuestionTypedetail(String id, HttpServletRequest request)
+    public String toQuestionTypedetail(Integer id, HttpServletRequest request)
     {
         QuestionTypeVo questionTypeVo = questionTypeEbi.get(id);
         request.setAttribute("questionType", questionTypeVo);
-        return "manage/questionType/detail";
+        return "/manage/bank/questionType/detail";
     }
-
 
     /**
      * 跳转题型添加/修改页面
      * <p>
      * （此处将添加和修改页面合并，如果前台传递ID则进行修改否则进入添加页面）
      *
-     * @param questionType 接受前台传递的题型id
+     * @param id 接受前台传递的题型id
      * @param request      HttpServletRequest
      *
      * @return 跳转edit
      */
     @RequestMapping("questionType/edit")
-    public String edit(QuestionTypeVo questionType, HttpServletRequest request)
+    public String edit(Integer id, HttpServletRequest request)
     {
 
         //判断前台是否传递题型ID
-        if (questionType.getId() != 0 && questionType.getId() != null)
+        if (id!=null&&id!=0)
         {
             //根据题型ID获取题型完整信息从而进行数据回显
-            questionType = questionTypeEbi.get(questionType.getId());
+            QuestionTypeVo questionType = questionTypeEbi.get(id);
             request.setAttribute("questionType", questionType);
         }
-        return "/manage/questionType/edit";
+        return "/manage/bank/questionType/edit";
     }
 
     /**
@@ -296,7 +290,7 @@ public class QuestionBankManagerController extends BaseController
                 request.setAttribute(fieldError.getField() + "Error", fieldError.getDefaultMessage());
             }
             request.setAttribute("questionType", questionType);
-            return "/manage/questionType/edit";
+            return "/manage/bank/questionType/edit";
         }
         if (questionType.getId() != null && questionType.getId() != 0)
         {
@@ -305,9 +299,8 @@ public class QuestionBankManagerController extends BaseController
         {
             questionTypeEbi.save(questionType);
         }
-        return "redirect:/manage/questionType";
+        return "redirect:/manage/bank/questionType";
     }
-
 
     /**
      * 删除题型
@@ -358,7 +351,6 @@ public class QuestionBankManagerController extends BaseController
         request.setAttribute("subjectSelected", subjectID);
         return "/manage/bank/topic/tree";
     }
-
 
     @ResponseBody
     @RequestMapping("topic/treeBySubject.do")
@@ -468,7 +460,6 @@ public class QuestionBankManagerController extends BaseController
         }
         return "redirect:/manage/bank/topic";
     }
-
 
     /**
      * 删除知识点
@@ -671,7 +662,6 @@ public class QuestionBankManagerController extends BaseController
         }
         return "redirect:/manage/bank/question";
     }
-
 
     //--------------------------------QuestionManager----------END--------------------------------------------
     //--------------------------------QuestionManager----------END--------------------------------------------

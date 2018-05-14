@@ -8,23 +8,23 @@
             题目类型管理
         </h3>
         <div class="table-btns">
-            <a class="btn btn-primary" href="/manage/bank/subject/edit"> 添加题目类型</a>
+            <a class="btn btn-primary" href="/manage/bank/questionType/edit"> 添加题目类型</a>
         </div>
         <script src="/vendor/bootstrap-table/bootstrap-table.js"></script>
         <script>
             window.operateEvents = {
                 'click .js-edit': function (e, value, row, index) {
-                    window.location.href = "/manage/bank/subject/edit?id=" + row.id;
+                    window.location.href = "/manage/bank/questionType/edit?id=" + row.id;
                 },
                 'click .js-view': function (e, value, row, index) {
-                    window.location.href = "/manage/bank/subject/detail?id=" + row.id;
+                    window.location.href = "/manage/bank/questionType/detail?id=" + row.id;
                 },
                 'click .js-del': function (e, value, row, index) {
                     if (confirm("确定要删除吗？") == true)
                     {
                         $.ajax(
                             {
-                                url: '/manage/bank/subject/delete.do?id=' + row.id,
+                                url: '/manage/bank/questionType/delete.do?id=' + row.id,
                                 type: "post",
                                 success:function(res)
                                 {
@@ -39,8 +39,6 @@
                 }
             };
 
-
-
             $(document).ready(
                 function () {
 
@@ -51,7 +49,7 @@
                         {  responseHandler:tableResponseHandler,
                             locale:'zh-CN',
                             queryParams: queryParams,
-                            url: '/manage/bank/subject/list.do',
+                            url: '/manage/bank/questionType/list.do',
                             method: 'get',
                             cache: false,
                             pagination: true,
@@ -68,7 +66,11 @@
                                 {
                                     field: 'name',
                                     title: '题目类型名称'
-                                }, {
+                                },{
+                                    field:'score',
+                                    title:'默认分数',
+                                },
+                                {
                                     field: 'action',
                                     title: '操作',
                                     events: operateEvents,
