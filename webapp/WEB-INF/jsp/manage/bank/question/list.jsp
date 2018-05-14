@@ -15,7 +15,7 @@
                 </option>
             </c:forEach>
         </select>
-        <button id="import" type="button" class="btn"></button>
+        <button id="import" type="button" class="btn">导入题目</button>
     </div>
 </div>
 <div class="question-manage">
@@ -98,62 +98,130 @@
 <script id="js-template-question-view" type="text/html">
     <div class="form-horizontal">
         <div class="form-group">
-            <label class="col-sm-2 control-label">题干</label>
-            <div class="col-sm-8">
+            <label class="col-sm-3 control-label">题干</label>
+            <div class="col-sm-9">
                 <p class="form-control-static" data-field="outline"></p>
             </div>
         </div>
         <div class="form-group">
-            <label class="col-sm-2 control-label">代码</label>
-            <div class="col-sm-8">
+            <label class="col-sm-3 control-label">代码</label>
+            <div class="col-sm-9">
                 <pre><code class="form-control-static" data-field="code"></code></pre>
             </div>
         </div>
         <div class="form-group">
-            <label class="col-sm-2 control-label">选项</label>
-            <div class="col-sm-8">
+            <label class="col-sm-3 control-label">选项</label>
+            <div class="col-sm-9">
                 <div data-field="options"></div>
             </div>
         </div>
         <div class="form-group">
-            <label class="col-sm-2 control-label">答案</label>
-            <div class="col-sm-8">
+            <label class="col-sm-3 control-label">答案</label>
+            <div class="col-sm-9">
                 <p class="form-control-static" data-field="answer"></p>
             </div>
         </div>
         <div class="form-group">
-            <label class="col-sm-2 control-label">题目类型</label>
-            <div class="col-sm-8">
+            <label class="col-sm-3 control-label">题目类型</label>
+            <div class="col-sm-9">
                 <p class="form-control-static" data-field="type"></p>
             </div>
         </div>
         <div class="form-group">
-            <label class="col-sm-2 control-label">所属科目</label>
-            <div class="col-sm-8">
+            <label class="col-sm-3 control-label">所属科目</label>
+            <div class="col-sm-9">
                 <p class="form-control-static" data-field="subject"></p>
             </div>
         </div>
         <div class="form-group">
-            <label class="col-sm-2 control-label">所属知识点</label>
-            <div class="col-sm-8">
+            <label class="col-sm-3 control-label">所属知识点</label>
+            <div class="col-sm-9">
                 <p class="form-control-static" data-field="topic"></p>
             </div>
         </div>
         <div class="form-group">
-            <label class="col-sm-2 control-label">题目id</label>
-            <div class="col-sm-8">
+            <label class="col-sm-3 control-label">题目id</label>
+            <div class="col-sm-9">
                 <p class="form-control-static" data-field="id"></p>
             </div>
         </div>
         <div class="form-group">
-            <label class="col-sm-2 control-label">出题人</label>
-            <div class="col-sm-8">
+            <label class="col-sm-3 control-label">出题人</label>
+            <div class="col-sm-9">
                 <p class="form-control-static" data-field="createTeacher"></p>
             </div>
         </div>
         <div class="form-group">
-            <label class="col-sm-2 control-label">出题时间</label>
-            <div class="col-sm-8">
+            <label class="col-sm-3 control-label">出题时间</label>
+            <div class="col-sm-9">
+                <p class="form-control-static" data-field="createTime"></p>
+            </div>
+        </div>
+    </div>
+</script>
+<script id="js-template-question-edit" type="text/html">
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">题干</label>
+            <div class="col-sm-9">
+                <textarea type="text" class="form-control" data-field="outline"></textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">代码</label>
+            <div class="col-sm-9">
+                <textarea class="form-control" data-field="code"></textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">选项</label>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" data-field="options">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">答案</label>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" data-field="answer">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">题目类型</label>
+            <div class="col-sm-9">
+                <select name="type" id="select-question-type" class="form-control">
+                    <option value="2">单选题</option>
+                    <option value="3">多选题</option>
+                    <option value="5">简答题</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">所属科目</label>
+            <div class="col-sm-9">
+                <p class="form-control-static" data-field="subject"></p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">所属知识点</label>
+            <div class="col-sm-9">
+                <p class="form-control-static" data-field="topic"></p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">题目id</label>
+            <div class="col-sm-9">
+                <p class="form-control-static" data-field="id"></p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">出题人</label>
+            <div class="col-sm-9">
+                <p class="form-control-static" data-field="createTeacher"></p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">出题时间</label>
+            <div class="col-sm-9">
                 <p class="form-control-static" data-field="createTime"></p>
             </div>
         </div>
@@ -239,10 +307,10 @@
                                     $(".question-list").empty();
                                     questionList.map(function (question) {
                                         $(".question-list").append(renderQuestion(question));
-
+                                        //详情
                                         $("#question_" + question.id + " .js-question-view").on("click", function () {
                                                 getQuestionDetail(question.id, function (questionDetail) {
-                                                    $question_detail_form = RenderQuestion_View(questionDetail);
+                                                  var  $question_detail_form = RenderQuestion_View(questionDetail);
                                                     layer.open(
                                                         {
                                                             type: 5,
@@ -252,6 +320,7 @@
                                                             area: ['700px', '500px'],
                                                             content: $question_detail_form.prop("outerHTML"),
                                                             success: function () {
+                                                                $(".layui-layer-content").addClass("layer-form");
                                                                 $(".layui-layer-content pre code").each(function (index, obj) {
                                                                     hljs.highlightBlock(obj);
                                                                 })
@@ -263,9 +332,26 @@
                                                 })
                                             }
                                         )
+                                        //编辑
                                         $("#question_" + question.id + " .js-question-edit").on("click", function () {
                                             getQuestionDetail(question.id, function (questionDetail) {
+                                             var   $question_edit_form = renderQuestion_Edit(questionDetail);
+                                                layer.open(
+                                                    {
+                                                        type: 5,
+                                                        shadeClose: true, //点击遮罩关闭
+                                                        closeBtn: 2,
+                                                        title: '题目详情',
+                                                        area: ['700px', '500px'],
+                                                        content: $question_edit_form.prop("outerHTML"),
+                                                        success: function () {
+                                                            $(".layui-layer-content").addClass("layer-form");
+                                                        },
+                                                        end: function () {
 
+                                                        }
+                                                    }
+                                                )
                                             })
                                         });
                                     })
@@ -359,43 +445,6 @@
     })
 
 
-    var questionList = [
-        {
-            id: "1de729a42212434a87b3771ee1acf717",
-            outline: "世界上最好的语言是什么？",
-            type: 2,
-            code: "",
-            options: [
-                "JAVA",
-                "Python",
-                "PHP",
-                "C++"
-            ],
-            score: 2,
-            answer: "2"
-        }
-        , {
-            id: "22c717969eb24fd187c7717a72425ad0",
-            outline: "面向过程的语言有",
-            type: 3,
-            code: "",
-            options: [
-                "Python",
-                "C",
-                "C#",
-                "JAVA"
-            ],
-            score: 3,
-            answer: "0,1"
-        }, {
-            id: "2ff2af22be1e4276a2a899d3ae8563fc",
-            outline: "JAVA有什么优点？",
-            type: 4,
-            code: "",
-            options: [],
-            score: 10
-        }
-    ]
     var $question_detail_form = $("#js-template-question-panel");
     var $question_option_list = $("#js-template-question-option-list");
     var $question_option = $("#js-template-question-option-radio");
@@ -570,7 +619,10 @@
 
     function renderQuestion_Edit(questionDetail)
     {
+        var $questionForm = $($("#js-template-question-edit").html());
 
+
+        return $questionForm;
     }
 
 
