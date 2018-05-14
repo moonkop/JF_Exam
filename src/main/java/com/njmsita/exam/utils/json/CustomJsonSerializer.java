@@ -79,7 +79,6 @@ public class CustomJsonSerializer
 
     }
 
-
     public ObjectNode toJson_ObjectNode(Object object)
     {
         try
@@ -134,7 +133,6 @@ public class CustomJsonSerializer
         }
         return null;
     }
-
 
     @JsonFilter(DYNC_FILTER)
     interface DynamicFilter

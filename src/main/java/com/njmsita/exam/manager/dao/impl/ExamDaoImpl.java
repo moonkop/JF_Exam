@@ -4,7 +4,10 @@ import com.njmsita.exam.base.BaseImpl;
 import com.njmsita.exam.base.BaseQueryVO;
 import com.njmsita.exam.manager.dao.dao.ExamDao;
 import com.njmsita.exam.manager.model.ExamVo;
+import com.njmsita.exam.manager.model.querymodel.ExamQueryModel;
+import com.njmsita.exam.utils.format.StringUtil;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -18,6 +21,26 @@ public class ExamDaoImpl extends BaseImpl<ExamVo> implements ExamDao
 
     public void doQbc(DetachedCriteria dc, BaseQueryVO qm)
     {
+        ExamQueryModel eqm= (ExamQueryModel) qm;
+        if(eqm.getSubjectVo()!=null
+                && eqm.getSubjectVo().getId()!=null
+                && eqm.getSubjectVo().getId()!=0){
+            dc.createAlias("subjectVo","sb");
+            dc.add(Restrictions.eq("sb.id",eqm.getSubjectVo().getId()));
+        }
+        if(eqm.getCreateTeacher()!=null&& StringUtil.isEmpty(eqm.getCreateTeacher().getId())){
+            dc.createAlias("createTeacher","cre");
+            dc.add(Restrictions.eq("cre.id",eqm.getCreateTeacher().getId()));
+        }
+        if(eqm.getExamStatus()!=null && eqm.getExamStatus()!=0){
+            dc.add(Restrictions.eq("examStatus",eqm.getExamStatus()));
+        }
+        if(eqm.getStartTime()!=null && eqm.getStartTime()!=0){
+            dc.add(Restrictions.ge("openTime",eqm.getStartTime()));
+        }
+        if(eqm.getEndTime()!=null && eqm.getEndTime()!=0){
+            dc.add(Restrictions.le("openTime",eqm.getEndTime()+86400000-1));
+        }
     }
 
     public List<ExamVo> getByCreateTeacher(String teacherId)

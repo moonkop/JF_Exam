@@ -21,7 +21,6 @@ public class LogVo
     private String realName;
     private String userRole;
 
-
     @Basic
     @Column(name = "realName")
     public String getRealName()
@@ -33,7 +32,6 @@ public class LogVo
     {
         this.realName = realName;
     }
-
 
     @Basic
     @Column(name = "userRole")

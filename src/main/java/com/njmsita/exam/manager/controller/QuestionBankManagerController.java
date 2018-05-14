@@ -86,7 +86,6 @@ public class QuestionBankManagerController extends BaseController
                 subjectEbi.getAll(subjectQueryModel, pageNum, pageSize),
                 "id,name",
                 subjectEbi.getCount(subjectQueryModel));
-
     }
 
     /**
@@ -107,7 +106,6 @@ public class QuestionBankManagerController extends BaseController
         request.setAttribute("subject", SubjectVo);
         return "/manage/bank/subject/detail";
     }
-
 
     /**
      * 跳转学科添加/修改页面
@@ -167,7 +165,6 @@ public class QuestionBankManagerController extends BaseController
         return "redirect:/manage/bank/subject";
     }
 
-
     /**
      * 删除学科
      *
@@ -201,10 +198,8 @@ public class QuestionBankManagerController extends BaseController
     //-------------------------------------------QuestionTypeManager-----------------------------------------
     //-------------------------------------------QuestionTypeManager-----------------------------------------
     //-------------------------------------------QuestionTypeManager-----------------------------------------
-
     /**
      * 跳转题型页面(分页)
-     *
      * @param questionTypeQueryModel 该模型存放了题型属性
      * @param pageNum                页码
      * @param pageSize               页面大小
@@ -249,7 +244,6 @@ public class QuestionBankManagerController extends BaseController
         request.setAttribute("questionType", questionTypeVo);
         return "manage/questionType/detail";
     }
-
 
     /**
      * 跳转题型添加/修改页面
@@ -308,7 +302,6 @@ public class QuestionBankManagerController extends BaseController
         return "redirect:/manage/questionType";
     }
 
-
     /**
      * 删除题型
      *
@@ -352,7 +345,6 @@ public class QuestionBankManagerController extends BaseController
         return "/manage/bank/topic/tree";
     }
 
-
     @ResponseBody
     @RequestMapping("topic/treeBySubject.do")
     public JsonResponse topicTreeBySubject(Integer subjectID) throws OperationException
@@ -383,6 +375,7 @@ public class QuestionBankManagerController extends BaseController
         topicEbi.update(topicVo);
         return new JsonResponse();
     }
+
     @ResponseBody
     @RequestMapping("topic/create.do")
     public JsonResponse topicCreate(String parent,String name) throws OperationException
@@ -396,6 +389,7 @@ public class QuestionBankManagerController extends BaseController
         topicEbi.save(topicVo);
         return new JsonResponse();
     }
+
     /**
      * 跳转知识点添加/修改页面
      * <p>
@@ -460,7 +454,6 @@ public class QuestionBankManagerController extends BaseController
         return "redirect:/manage/bank/topic";
     }
 
-
     /**
      * 删除知识点
      *
@@ -523,6 +516,7 @@ public class QuestionBankManagerController extends BaseController
         }
         return new JsonListResponse<>(list,"id,code,outline,[options]option,answer,[type]questionType.id",0);
     }
+
     @ResponseBody
     @RequestMapping("question/detail.do")
     public JsonResponse questionDetail(String id)
@@ -645,7 +639,6 @@ public class QuestionBankManagerController extends BaseController
         }
         return "redirect:/manage/bank/question";
     }
-
 
     //--------------------------------QuestionManager----------END--------------------------------------------
     //--------------------------------QuestionManager----------END--------------------------------------------

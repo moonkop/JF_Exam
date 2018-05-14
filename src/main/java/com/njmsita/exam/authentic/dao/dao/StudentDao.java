@@ -57,6 +57,12 @@ public interface StudentDao extends BaseDao<StudentVo>
      */
     public void bulkInput(List<StudentVo> students);
 
+    /**
+     * 根据班级获取所有学生
+     * @param classroomId
+     * @return
+     */
+    public List<StudentVo> getByClassroom(String classroomId);
 
     public void test();
 }
