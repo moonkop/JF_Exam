@@ -60,7 +60,10 @@ public class QuestionTypeVo
 
     public int hashCode()
     {
-        int result = (int) id;
+        if(id==null){
+            id=0;
+        }
+        int result =  id;
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (score != null ? score.hashCode() : 0);
         return result;

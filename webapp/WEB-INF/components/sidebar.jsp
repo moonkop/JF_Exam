@@ -68,6 +68,9 @@
                     <li>
                         <a href="/manage/bank/question">题目管理</a>
                     </li>
+                    <li>
+                        <a href="/manage/bank/questionType">题目类型管理</a>
+                    </li>
                 </ul>
                 <!-- /.nav-second-level -->
             </li>

@@ -239,15 +239,15 @@ public class QuestionBankManagerController extends BaseController
     @RequestMapping("questionType")
     public String toQuestionTypeList()
     {
-        return "manage/questionType/list";
+        return "/manage/bank/questionType/list";
     }
 
     @RequestMapping("questionType/detail")
-    public String toQuestionTypedetail(String id, HttpServletRequest request)
+    public String toQuestionTypedetail(Integer id, HttpServletRequest request)
     {
         QuestionTypeVo questionTypeVo = questionTypeEbi.get(id);
         request.setAttribute("questionType", questionTypeVo);
-        return "manage/questionType/detail";
+        return "/manage/bank/questionType/detail";
     }
 
 
@@ -256,23 +256,23 @@ public class QuestionBankManagerController extends BaseController
      * <p>
      * （此处将添加和修改页面合并，如果前台传递ID则进行修改否则进入添加页面）
      *
-     * @param questionType 接受前台传递的题型id
+     * @param id 接受前台传递的题型id
      * @param request      HttpServletRequest
      *
      * @return 跳转edit
      */
     @RequestMapping("questionType/edit")
-    public String edit(QuestionTypeVo questionType, HttpServletRequest request)
+    public String edit(Integer id, HttpServletRequest request)
     {
 
         //判断前台是否传递题型ID
-        if (questionType.getId() != 0&&questionType.getId()!=null)
+        if (id!=null &&id!=0)
         {
             //根据题型ID获取题型完整信息从而进行数据回显
-            questionType = questionTypeEbi.get(questionType.getId());
+            QuestionTypeVo questionType = questionTypeEbi.get(id);
             request.setAttribute("questionType", questionType);
         }
-        return "/manage/questionType/edit";
+        return "/manage/bank/questionType/edit";
     }
 
     /**
@@ -296,7 +296,7 @@ public class QuestionBankManagerController extends BaseController
                 request.setAttribute(fieldError.getField() + "Error", fieldError.getDefaultMessage());
             }
             request.setAttribute("questionType", questionType);
-            return "/manage/questionType/edit";
+            return "/manage/bank/questionType/edit";
         }
         if (questionType.getId() !=null&&questionType.getId()!=0)
         {
@@ -305,7 +305,7 @@ public class QuestionBankManagerController extends BaseController
         {
             questionTypeEbi.save(questionType);
         }
-        return "redirect:/manage/questionType";
+        return "redirect:/manage/bank/questionType";
     }
 
 

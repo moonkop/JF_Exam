@@ -57,11 +57,12 @@ public class QuestionTypeEbo implements QuestionTypeEbi
 
     public void update(QuestionTypeVo questionTypeVo) throws OperationException
     {
-        QuestionTypeVo temp=questionTypeDao.getByName(questionTypeVo.getName());
+        QuestionTypeVo temp=questionTypeDao.get(questionTypeVo.getId());
         if (null !=temp&& temp.getId()!= questionTypeVo.getId())
         {
             throw new OperationException("当前题型名称为："+questionTypeVo.getName()+"的题型已存在，请勿重复操作");
         }
+        temp.setScore(questionTypeVo.getScore());
         temp.setName(questionTypeVo.getName());
     }
 
