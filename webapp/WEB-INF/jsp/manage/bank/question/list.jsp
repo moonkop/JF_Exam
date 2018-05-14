@@ -15,111 +15,11 @@
                 </option>
             </c:forEach>
         </select>
+        <button id="import" type="button" class="btn"></button>
     </div>
 </div>
 <div class="question-manage">
 
-    <script type="text/javascript">
-        // AJAX异步拉取数据
-        var treeData = null;
-        var jstree = null;
-
-        function getJstree()
-        {
-            if (jstree == null)
-            {
-                return jstree = $.jstree.reference("#jstree");
-            }
-            return jstree;
-        }
-
-        $(document).ready(function () {
-
-            function initTree()
-            {
-                $('#jstree')
-                    .on("refresh.jstree", function (event, data) {
-                        getJstree().open_all();
-                    })
-                    .jstree({
-                        'core': {
-                            'worker': false,
-                            "check_callback": true,
-                            "themes": {"icons": false}
-                        },
-                        "plugins": [
-                            "contextmenu",
-                        ],
-
-                        'contextmenu': {
-                            'items': function (node) {
-                                var tmp = {
-                                    create: {
-                                        label: "添加题目",
-                                        action: function (data) {
-                                            var node = getJstree().get_node(data.reference);
-                                            layer.open({
-                                                type: 5,
-                                                shadeClose: true, //点击遮罩关闭
-                                                closeBtn: 2,
-                                                title: '请输入题目名称',
-                                                area: ['320px', '170px'],
-                                                content: $("#js-add-form-template").html(),
-                                                success: function () {
-                                                    $("#form-add-topic>input[name='parent']").val(node.id);
-                                                    $(".js-layer-form-add-btn").on("click", function () {
-                                                            $.ajax(
-                                                                {
-                                                                    url: "/manage/bank/topic/create.do",
-                                                                    data: getFormData("form-add-topic"),
-                                                                    success: function (res) {
-                                                                        OnResult(res);
-                                                                        getResourceTree();
-                                                                    }
-                                                                }
-                                                            )
-                                                        }
-                                                    )
-
-                                                },
-                                                end: function () {
-                                                }
-                                            });
-                                        }
-                                    }
-                                };
-                                return tmp;
-                            }
-                        }
-                    });
-
-            }
-
-
-            function getResourceTree()
-            {
-                $.ajax({
-                    url: '/manage/bank/topic/treeBySubject.do?subjectID=' + $("#select-subject").val(),
-                    success: function (res) {
-                        OnResult(res, function () {
-                                getJstree().settings.core.data = res.payload.rows;
-                                getJstree().refresh();
-                            }
-                        )
-                    }
-                })
-            }
-
-            initTree();
-            getResourceTree();
-            $("#select-subject").on("change", function () {
-                getResourceTree();
-
-            })
-        })
-
-
-    </script>
     <div id="jstree">
     </div>
     <div class="question-list">
@@ -127,6 +27,42 @@
 
     </div>
 </div>
+
+<script id="js-template-import" type="text/html">
+
+
+    <form action="/manage/bank/question/import.do" class="form-horizontal" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label class="col-sm-4 control-label">您选择的科目</label>
+            <div class="col-sm-8">
+                <label>科目</label>
+                <select class="input-sm" name="subjectId">
+                    <c:forEach items="${requestScope.subjects}" var="subject">
+                        <option value="${subject.id}"
+                                <c:if test="${subjectSelected==subject.id}">selected</c:if>   >
+                                ${subject.name}
+                        </option>
+                    </c:forEach>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-4 control-label">选择文件</label>
+            <div class="col-sm-8">
+                <input type="file" class="form-control" name="questionFile" data-field="file"/>
+            </div>
+        </div>
+        <div class="form-group">
+
+            <label class="col-sm-4 control-label"></label>
+            <div class="col-sm-8">
+                <button class="form-control" type="submit"> 提交</button>
+            </div>
+
+        </div>
+    </form>
+
+</script>
 
 
 <script id="js-template-question-panel" type="text/html">
@@ -146,12 +82,14 @@
                     </span>
 
                 <span class="question-actions">
-
                     </span>
             </div>
             <div class="question-body">
                     <span class="question-outline">
                     </span>
+                <div class="question-code">
+                    <pre><code></code></pre>
+                </div>
             </div>
         </div>
     </div>
@@ -168,13 +106,13 @@
         <div class="form-group">
             <label class="col-sm-2 control-label">代码</label>
             <div class="col-sm-8">
-                <p class="form-control-static" data-field="codes"></p>
+                <pre><code class="form-control-static" data-field="code"></code></pre>
             </div>
         </div>
         <div class="form-group">
             <label class="col-sm-2 control-label">选项</label>
             <div class="col-sm-8">
-                <div data-field="option"></div>
+                <div data-field="options"></div>
             </div>
         </div>
         <div class="form-group">
@@ -243,6 +181,184 @@
 </script>
 
 <script>
+
+
+    // AJAX异步拉取数据
+    var treeData = null;
+    var jstree = null;
+
+    function getJstree()
+    {
+        if (jstree == null)
+        {
+            return jstree = $.jstree.reference("#jstree");
+        }
+        return jstree;
+    }
+
+    $(document).ready(function () {
+
+        $("#import").on("click", function () {
+            layer.open(
+                {
+                    type: 5,
+                    closeBtn: 2,
+                    title: '批量导入',
+                    area: ['400x', '200px'],
+                    content: $("#js-template-import").html()
+                }
+            )
+        })
+
+        function initTree()
+        {
+            $('#jstree')
+                .on("refresh.jstree", function (event, data) {
+                    getJstree().open_all();
+                })
+                .on("activate_node.jstree", function (event, data) {
+                    $.ajax(
+                        {
+                            url: '/manage/bank/question/list.do',
+                            data: {
+                                'topic.id': data.node.id,
+                                pageSize: 1000,
+                                offset: 0
+                            },
+                            success: function (res) {
+                                OnResult(res, function () {
+                                    var questionList = res.payload.rows;
+                                    questionList.map(function (question) {
+                                        if (question.options == null)
+                                        {
+                                            return;
+                                        }
+
+                                        question.options = JSON.parse(question.options);
+                                    })
+                                    $(".question-list").empty();
+                                    questionList.map(function (question) {
+                                        $(".question-list").append(renderQuestion(question));
+
+                                        $("#question_" + question.id + " .js-question-view").on("click", function () {
+                                                getQuestionDetail(question.id, function (questionDetail) {
+                                                    $question_detail_form = RenderQuestion_View(questionDetail);
+                                                    layer.open(
+                                                        {
+                                                            type: 5,
+                                                            shadeClose: true, //点击遮罩关闭
+                                                            closeBtn: 2,
+                                                            title: '题目详情',
+                                                            area: ['700px', '500px'],
+                                                            content: $question_detail_form.prop("outerHTML"),
+                                                            success: function () {
+                                                                $(".layui-layer-content pre code").each(function (index, obj) {
+                                                                    hljs.highlightBlock(obj);
+                                                                })
+                                                            },
+                                                            end: function () {
+                                                            }
+                                                        }
+                                                    )
+                                                })
+                                            }
+                                        )
+                                        $("#question_" + question.id + " .js-question-edit").on("click", function () {
+                                            getQuestionDetail(question.id, function (questionDetail) {
+
+                                            })
+                                        });
+                                    })
+                                    $("pre code").each(function (index, obj) {
+                                        hljs.highlightBlock(obj);
+                                    })
+
+
+                                })
+                            }
+
+                        }
+                    )
+                    data.node.id
+                })
+                .jstree({
+                    'core': {
+                        'worker': false,
+                        "check_callback": true,
+                        "themes": {"icons": false}
+                    },
+                    "plugins": [
+                        "contextmenu",
+                    ],
+
+                    'contextmenu': {
+                        'items': function (node) {
+                            var tmp = {
+                                create: {
+                                    label: "添加题目",
+                                    action: function (data) {
+                                        var node = getJstree().get_node(data.reference);
+                                        layer.open({
+                                            type: 5,
+                                            shadeClose: true, //点击遮罩关闭
+                                            closeBtn: 2,
+                                            title: '请输入题目名称',
+                                            area: ['320px', '170px'],
+                                            content: $("#js-add-form-template").html(),
+                                            success: function () {
+                                                $("#form-add-topic>input[name='parent']").val(node.id);
+                                                $(".js-layer-form-add-btn").on("click", function () {
+                                                        $.ajax(
+                                                            {
+                                                                url: "/manage/bank/topic/create.do",
+                                                                data: getFormData("form-add-topic"),
+                                                                success: function (res) {
+                                                                    OnResult(res);
+                                                                    getResourceTree();
+                                                                }
+                                                            }
+                                                        )
+                                                    }
+                                                )
+
+                                            },
+                                            end: function () {
+                                            }
+                                        });
+                                    }
+                                }
+                            };
+                            return tmp;
+                        }
+                    }
+                });
+
+        }
+
+
+        function getResourceTree()
+        {
+            $.ajax({
+                url: '/manage/bank/topic/treeBySubject.do?subjectID=' + $("#select-subject").val(),
+                success: function (res) {
+                    OnResult(res, function () {
+                            getJstree().settings.core.data = res.payload.rows;
+                            getJstree().refresh();
+                        }
+                    )
+                }
+            })
+        }
+
+        initTree();
+        getResourceTree();
+        $("#select-subject").on("change", function () {
+            getResourceTree();
+
+        })
+    })
+
+
     var questionList = [
         {
             id: "1de729a42212434a87b3771ee1acf717",
@@ -303,17 +419,45 @@
     function QuestionAnswerNumsToChars(str)
     {
         var res = "";
-        str.split(',').map(function (item) {
+
+        str.split("").map(function (item) {
             res += QuestionAnswerCharMap(item);
         });
         return res;
 
     }
 
+    function getQuestionDetail(questionid, onsuccess)
+    {
+        $.ajax(
+            {
+                url: "/manage/bank/question/detail.do",
+                data: {id: questionid},
+                success: function (res) {
+                    OnResult(res, function (res) {
+                        var questionDetail = res.payload.object;
+                        if (typeof onsuccess == "function")
+                        {
+                            onsuccess(questionDetail);
+                        }
+                    })
+                }
+            }
+        )
+
+
+    }
+
     function renderQuestionOptionList(question)
     {
+        if (question.options == null || question.options == "")
+        {
+            return "";
+        }
         var $question_option_list = $($("#js-template-question-option-list").html());
-        question.options.map(function (item, index) {
+        for (var key in question.options)
+        {
+
             switch (QuestionTypeMap(question.type))
             {
                 case "单选题":
@@ -325,14 +469,14 @@
                 case "简答题":
                     break;
             }
-            $question_option.find("label").text(item);
+            $question_option.find("label").text(question.options[key]);
             $question_option.find("input").attr("name", "question_" + question.id);
-            if (question.answer.indexOf(index) != -1)
+            if (question.answer.indexOf(key) != -1)
             {
                 $question_option.addClass("question-option-correct");
             }
             $question_option_list.append($question_option);
-        });
+        }
         return $question_option_list;
 
     }
@@ -344,10 +488,17 @@
         $question_panel.attr("id", "question_" + question.id);
         $question_panel.find(".question-type").text(QuestionTypeMap(question.type));
         $question_panel.find(".question-index").text(question.id);
-        $question_panel.find(".question-outline").text(question.outline);
         $question_panel.find(".question-actions").append("" +
             "<i class='fa fa-search js-question-view' title='预览'></i>" +
             "<i class='fa fa-pencil js-question-edit' title='修改'></i>");
+        $question_panel.find(".question-outline").text(question.outline);
+        if (question.code != null && question.code != "")
+        {
+            $question_panel.find(".question-code").css("display", "block");
+            var code = $question_panel.find(".question-code code");
+            code.text(question.code);
+        }
+
         if (User.role == 0)
         {
             $question_panel.find(".question-actions").append("<i class='fa fa-trash js-question-del' title='删除'></i>")
@@ -370,10 +521,25 @@
     {
         var $questionForm = $($("#js-template-question-view").html());
         var config = {
-            option: function (value,key) {
-               // return renderQuestionOptionList(value).prop("outerHTML");
+            options: function (value, key) {
+                if (questionDetail.options != null && questionDetail.options != "")
+                {
+                    questionDetail.options = JSON.parse(questionDetail.options);
+                    return renderQuestionOptionList(questionDetail).prop("outerHTML");
+                }
+                return "";
+            },
+            answer: function (value, key) {
+                return QuestionAnswerNumsToChars(value);
+            },
+            type: function (value, key) {
+                return QuestionTypeMap(value);
+            },
+            createTime: function (value, key) {
+                return new Date(value).toLocaleString();
             }
         }
+
 
         var fieldContent;
         for (var key in questionDetail)
@@ -389,48 +555,23 @@
             {
                 fieldContent = questionDetail[key];
             }
-            $questionForm.find("[data-field='" + key+"']").html(fieldContent);
+            if (fieldContent == null || fieldContent == "")
+            {
+                $questionForm.find("[data-field='" + key + "']").parent().parent().hide();
+            } else
+            {
+                $questionForm.find("[data-field='" + key + "']").html(fieldContent);
+
+            }
         }
         return $questionForm;
     }
 
 
-    $(document).ready(function () {
-        questionList.map(function (question) {
-            $(".question-list").append(renderQuestion(question));
-            $("#question_" + question.id + " .js-question-view").on("click",
-                function () {
-                    $.ajax(
-                        {
-                            url:"/manage/bank/question/detail.do",
-                            data:{id:question.id},
-                            success:function (res) {
-                                OnResult(res,function (res) {
-                                    var questionDetail=res.payload.object;
-                                    $question_detail_form = RenderQuestion_View(questionDetail);
-                                    layer.open(
-                                        {
-                                            type: 5,
-                                            shadeClose: true, //点击遮罩关闭
-                                            closeBtn: 2,
-                                            title: '题目详情',
-                                            area: ['700px', '500px'],
-                                            content: $question_detail_form.prop("outerHTML"),
-                                            success: function () {
+    function renderQuestion_Edit(questionDetail)
+    {
 
-                                            },
-                                            end: function () {
-                                            }
-                                        }
-                                    )
-                                })
-                            }
-                        }
-                    )
-                }
-            )
-        })
-    })
+    }
 
 
 </script>

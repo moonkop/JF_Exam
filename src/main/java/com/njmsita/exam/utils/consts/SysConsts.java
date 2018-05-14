@@ -1,5 +1,8 @@
 package com.njmsita.exam.utils.consts;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * 系统常量
  * @author aoyun
@@ -60,8 +63,10 @@ public class SysConsts {
 	public static final Integer EXAM_STATUS_NO_CHECK = 101;
 	public static final Integer EXAM_STATUS_PASS = 111;
 	public static final Integer EXAM_STATUS_NO_PASS = 112;
-	public static final Integer EXAM_STATUS_UNDER_WAY = 121;
+	public static final Integer EXAM_STATUS_OPEN = 121;
+	public static final Integer EXAM_STATUS_CLOSE = 122;
 	public static final Integer EXAM_STATUS_IN_MARK = 131;
+	public static final Integer EXAM_STATUS_IN_CANCEL = 141;
 	public static final Integer EXAM_STATUS_ENDING = 199;
 
 	/**
@@ -70,7 +75,49 @@ public class SysConsts {
 	public static final String EXAM_STATUS_NO_CHECK_VIEW = "待审核";
 	public static final String EXAM_STATUS_PASS_VIEW = "未开始";
 	public static final String EXAM_STATUS_NO_PASS_VIEW = "待修改";
-	public static final String EXAM_STATUS_UNDER_WAY_VIEW = "进行中";
+	public static final String EXAM_STATUS_OPEN_VIEW = "开启考试";
+	public static final String EXAM_STATUS_CLOSE_VIEW = "进行中";
 	public static final String EXAM_STATUS_IN_MARK_VIEW = "阅卷中";
+	public static final String EXAM_STATUS_IN_CANCEL_VIEW = "取消";
 	public static final String EXAM_STATUS_ENDING_VIEW = "结束";
+
+	/**
+	 * 考试操作
+	 */
+	public static final String EXAM_OPERATION_VIEW ="view";
+	public static final String EXAM_OPERATION_TO_EDIT ="edit";
+	public static final String EXAM_OPERATION_CANCEL ="cancle";
+	public static final String EXAM_OPERATION_ADD_MARK_TEACHER ="addMarkTeacher";
+	public static final String EXAM_OPERATION_VIEW_SCORE ="viewScore";
+	public static final String EXAM_OPERATION_NO_CHECK ="noCheck";
+	public static final String EXAM_OPERATION_DELETE ="delete";
+	public static final String EXAM_OPERATION_MARK ="mark";
+	public static final String EXAM_OPERATION_SUBMIT_MARK ="submitMark";
+
+	/**
+	 * 定时任务类型
+	 */
+	public static final Integer SCHEDULEVO_JOB_TYPE_OPEN =0;
+	public static final Integer SCHEDULEVO_JOB_TYPE_CLOSE =1;
+
+	/**
+	 * 定时任务类型视图
+	 */
+	public static final String SCHEDULEVO_JOB_TYPE_CLOSE_VIEW ="开启考试入口";
+	public static final String SCHEDULEVO_JOB_TYPE_OPEN_VIEW ="关闭考试入口";
+	/**
+	 * 定时任务状态
+	 */
+	public static final Integer SCHEDULEVO_JOB_STATUS_FORBIDDEN =0;
+	public static final Integer SCHEDULEVO_JOB_STATUS_START =1;
+	public static final Integer SCHEDULEVO_JOB_STATUS_DELETE =2;
+
+	/**
+	 * 定时任务类型视图转换
+	 */
+	public static Map<Integer,String> SCHEDULEVO_JOB_TYPE_MAP=new HashMap<>();
+	static {
+		SCHEDULEVO_JOB_TYPE_MAP.put(SysConsts.SCHEDULEVO_JOB_TYPE_OPEN,SysConsts.SCHEDULEVO_JOB_TYPE_CLOSE_VIEW);
+		SCHEDULEVO_JOB_TYPE_MAP.put(SysConsts.SCHEDULEVO_JOB_TYPE_CLOSE,SysConsts.SCHEDULEVO_JOB_TYPE_OPEN_VIEW);
+	}
 }

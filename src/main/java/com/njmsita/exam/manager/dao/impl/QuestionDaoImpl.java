@@ -30,11 +30,11 @@ public class QuestionDaoImpl extends BaseImpl<QuestionVo> implements QuestionDao
             dc.createAlias("subject","s1");
             dc.add(Restrictions.eq("s1.id",qqm.getSubject().getId()));
         }
-        if(null!=qqm.getTopic()&& StringUtil.isEmpty(qqm.getTopic().getId())){
+        if(null!=qqm.getTopic()&& !StringUtil.isEmpty(qqm.getTopic().getId())){
             dc.createAlias("topic","to1");
             dc.add(Restrictions.eq("to1.id",qqm.getTopic().getId()));
         }
-        if(null!=qqm.getTeacher()&&StringUtil.isEmpty(qqm.getTeacher().getId())){
+        if(null!=qqm.getTeacher()&&!StringUtil.isEmpty(qqm.getTeacher().getId())){
             dc.createAlias("teacher","te1");
             dc.add(Restrictions.eq("te1.id", qqm.getTeacher().getId()));
         }

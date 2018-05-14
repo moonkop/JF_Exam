@@ -1,5 +1,8 @@
 package com.njmsita.exam.manager.service.ebo;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.njmsita.exam.authentic.dao.dao.TeacherDao;
 import com.njmsita.exam.authentic.model.TeacherVo;
 import com.njmsita.exam.base.BaseQueryVO;
@@ -18,10 +21,10 @@ import com.njmsita.exam.utils.exception.FormatException;
 import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.idutil.IdUtil;
+import com.njmsita.exam.utils.json.CustomJsonSerializer;
 import net.sf.json.JSONArray;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.usermodel.Row;
-import org.codehaus.jackson.map.ser.impl.JsonSerializerMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -364,7 +367,7 @@ public class QuestionEbo implements QuestionEbi
      * @return
      * @throws FormatException
      */
-    private QuestionVo setQuestion(Row row, Integer subjectId) throws FormatException
+    private QuestionVo setQuestion(Row row, Integer subjectId) throws FormatException, JsonProcessingException
     {
         QuestionVo temp=new QuestionVo();
         int num=row.getRowNum()+1;
@@ -431,7 +434,7 @@ public class QuestionEbo implements QuestionEbi
         }
         if(!questionTypeVo.getName().equals(SysConsts.NO_ANSWER_QUESTION_TYPE_NAME)){
             answer=readOptionAndAnswer(row,answer,options);
-            //opstions转json
+            //options转json
             StringBuilder jsonOptions=new StringBuilder();
             Map<String,String> map=new HashMap<>();
             int i=0;
@@ -440,8 +443,9 @@ public class QuestionEbo implements QuestionEbi
                 map.put(i+"",option);
                 i++;
             }
-            JSONArray jsonArray=JSONArray.fromObject(map);
-            temp.setOption(jsonArray.toString());
+             ObjectMapper mapper=CustomJsonSerializer.getDefaultMapper();
+            mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true);
+            temp.setOption( mapper.writeValueAsString(map));
         }
 
 
@@ -480,6 +484,7 @@ public class QuestionEbo implements QuestionEbi
         if(row.getCell(8)!=null){
             answer=row.getCell(8).getStringCellValue().toUpperCase();
             if(!StringUtil.isEmpty(answer)){
+                //如果答案是字母
                 if(StringUtil.isChar(answer)){
                     if (StringUtil.isAnswer(answer,options.size())){
                         String temp1="";
@@ -490,7 +495,9 @@ public class QuestionEbo implements QuestionEbi
                     }else {
                         throw new FormatException("行号："+num+"  答案格式不正确，请核对后重新导入！");
                     }
-                }else if(StringUtil.isNumber(answer)){
+                }
+                //如果答案是数字
+                else if(StringUtil.isNumber(answer)){
                     if (!StringUtil.isAnswer(answer,options.size())){
                         throw new FormatException("行号："+num+"  答案格式不正确，请核对后重新导入！");
                     }

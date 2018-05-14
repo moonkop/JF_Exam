@@ -934,7 +934,7 @@
 		 * @param  {Object} data additional data to pass with the event
 		 */
 		trigger : function (ev, data) {
-			console.log(ev);
+			//console.log(ev);
 			if(!data) {
 				data = {};
 			}

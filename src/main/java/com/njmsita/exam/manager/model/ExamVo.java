@@ -22,8 +22,10 @@ public class ExamVo
         examStatuMap.put(SysConsts.EXAM_STATUS_NO_CHECK,SysConsts.EXAM_STATUS_NO_CHECK_VIEW);
         examStatuMap.put(SysConsts.EXAM_STATUS_PASS,SysConsts.EXAM_STATUS_PASS_VIEW);
         examStatuMap.put(SysConsts.EXAM_STATUS_NO_PASS,SysConsts.EXAM_STATUS_NO_PASS_VIEW);
-        examStatuMap.put(SysConsts.EXAM_STATUS_UNDER_WAY,SysConsts.EXAM_STATUS_UNDER_WAY_VIEW);
+        examStatuMap.put(SysConsts.EXAM_STATUS_OPEN,SysConsts.EXAM_STATUS_OPEN_VIEW);
+        examStatuMap.put(SysConsts.EXAM_STATUS_CLOSE,SysConsts.EXAM_STATUS_CLOSE_VIEW);
         examStatuMap.put(SysConsts.EXAM_STATUS_IN_MARK,SysConsts.EXAM_STATUS_IN_MARK_VIEW);
+        examStatuMap.put(SysConsts.EXAM_STATUS_IN_CANCEL,SysConsts.EXAM_STATUS_IN_CANCEL_VIEW);
         examStatuMap.put(SysConsts.EXAM_STATUS_ENDING,SysConsts.EXAM_STATUS_ENDING_VIEW);
     }
 
@@ -33,6 +35,11 @@ public class ExamVo
     private Integer duration;
     private String paperContent;
     private String classroomIds;
+    private String remark;
+    private String name;
+
+    //该考试对应状态下的操作
+    private Set<String> operation;
 
     //发起考试的教师
     private TeacherVo createTeacher;
@@ -41,14 +48,47 @@ public class ExamVo
     //阅卷教师  n  TO  m
     private Set<TeacherVo> markTeachers;
 
-
     private Integer examStatus;
     //考试状态视图值
     private String examStatusView;
 
+    public Set<String> getOperation()
+    {
+        return operation;
+    }
+
+    public void setOperation(Set<String> operation)
+    {
+        this.operation = operation;
+    }
+
     public String getExamStatusView()
     {
         return examStatusView;
+    }
+
+    @Basic
+    @Column(name = "name")
+    public String getName()
+    {
+        return name;
+    }
+
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+
+    @Basic
+    @Column(name = "remark")
+    public String getRemark()
+    {
+        return remark;
+    }
+
+    public void setRemark(String remark)
+    {
+        this.remark = remark;
     }
 
     @Basic

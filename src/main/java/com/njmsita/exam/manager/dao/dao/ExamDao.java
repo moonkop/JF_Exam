@@ -12,4 +12,17 @@ import java.util.List;
  */
 public interface ExamDao extends BaseDao<ExamVo>
 {
+    /**
+     * 根据创建教师id查询试卷
+     * @param teacherId
+     * @return
+     */
+    public List<ExamVo> getByCreateTeacher(String teacherId);
+
+    /**
+     * 根据阅卷教师id查询试卷
+     * @param teacherId
+     * @return
+     */
+    public List<ExamVo> getByMarkTeacher(String teacherId);
 }
