@@ -218,18 +218,22 @@ public class QuestionBankManagerController extends BaseController
      * @return JSON{ rows: 内容（list） total: 查询结果总数 }
      */
     //TODO 请求转发问题，没有pageNum   pageSize参数
+    @ResponseBody
     @RequestMapping("questionType/list.do")
-    public String toQuestionTypeList(QuestionTypeQueryModel questionTypeQueryModel, Integer pageNum, Integer pageSize, Model model)
+    public JsonListResponse toQuestionTypeList(QuestionTypeQueryModel questionTypeQueryModel, Integer pageNum, Integer pageSize, Model model)
     {
+
+        return new JsonListResponse(questionTypeEbi.getAll(questionTypeQueryModel, pageNum, pageSize),
+                "id,name,score",questionTypeEbi.getCount(questionTypeQueryModel));
         //调用BaseController的方法设置数据总量及最大页码数
-        pageCount = pageSize;
-        setDataTotal(questionTypeEbi.getCount(questionTypeQueryModel));
-
-        //根据查询条件及指定页码查询
-        List<QuestionTypeVo> questionTypeVoList = questionTypeEbi.getAll(questionTypeQueryModel, pageNum, pageSize);
-        model.addAttribute("questionTypeVoList", questionTypeVoList);
-
-        return "manage/questionType/list";
+//        pageCount = pageSize;
+//        setDataTotal(questionTypeEbi.getCount(questionTypeQueryModel));
+//
+//        //根据查询条件及指定页码查询
+//        List<QuestionTypeVo> questionTypeVoList = questionTypeEbi.getAll(questionTypeQueryModel, pageNum, pageSize);
+//        model.addAttribute("questionTypeVoList", questionTypeVoList);
+//
+//        return "manage/questionType/list";
     }
 
     /**
