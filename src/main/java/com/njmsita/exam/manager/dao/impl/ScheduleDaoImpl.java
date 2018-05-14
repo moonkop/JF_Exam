@@ -1,5 +1,6 @@
 package com.njmsita.exam.manager.dao.impl;
 
+import com.njmsita.exam.authentic.model.StudentVo;
 import com.njmsita.exam.base.BaseImpl;
 import com.njmsita.exam.base.BaseQueryVO;
 import com.njmsita.exam.manager.dao.dao.LogDao;
@@ -26,7 +27,8 @@ public class ScheduleDaoImpl extends BaseImpl<ScheduleVo> implements ScheduleDao
 
     public List<ScheduleVo> getByExam(String examId)
     {
-        String hql="from ScheduleVo where examVo.id=?";
+        String hql="select distinct sv from ScheduleVo sv where sv.examVo.id=?";
         return (List<ScheduleVo>) this.getHibernateTemplate().find(hql,examId);
     }
+
 }

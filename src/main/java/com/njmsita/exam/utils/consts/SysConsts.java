@@ -28,14 +28,16 @@ public class SysConsts {
 
 
 	/**
-	 * 教师角色名称
+	 * 教师角色
 	 */
 	public static final String TEACHER_ROLE_NAME ="教师";
+	public static final String TEACHER_ROLE_ID="c2ae048229ae408ea1f3b0bda03d6cc6";
 
 	/**
-	 * 学生角色名称
+	 * 学生角色
 	 */
 	public static final String STUDENT_ROLE_NAME ="学生";
+	public static final String STUDENT_ROLE_ID ="c2ae048229ae408ea1f3b0bda03d6cc5";
 
 	/**
 	 * 批量导入文件类型
@@ -93,6 +95,7 @@ public class SysConsts {
 	public static final String EXAM_OPERATION_DELETE ="delete";
 	public static final String EXAM_OPERATION_MARK ="mark";
 	public static final String EXAM_OPERATION_SUBMIT_MARK ="submitMark";
+	public static final String EXAM_OPERATION_ATTEND ="attend";
 
 	/**
 	 * 定时任务类型
@@ -120,4 +123,10 @@ public class SysConsts {
 		SCHEDULEVO_JOB_TYPE_MAP.put(SysConsts.SCHEDULEVO_JOB_TYPE_OPEN,SysConsts.SCHEDULEVO_JOB_TYPE_CLOSE_VIEW);
 		SCHEDULEVO_JOB_TYPE_MAP.put(SysConsts.SCHEDULEVO_JOB_TYPE_CLOSE,SysConsts.SCHEDULEVO_JOB_TYPE_OPEN_VIEW);
 	}
+
+	/**
+	 * 学生考试过程操作
+	 */
+	public static final Integer STUDENT_EXAM_OPERATION_ARCHIVE=1;//存档
+	public static final Integer STUDENT_EXAM_OPERATION_SUBMIT=2;//提交
 }

@@ -66,6 +66,12 @@ public class StudentDaoImpl extends BaseImpl<StudentVo> implements StudentDao
         }
     }
 
+    public List<StudentVo> getByClassroom(String classroomId)
+    {
+        String hql="from StudentVo where classroom.id=?";
+        return (List<StudentVo>) this.getHibernateTemplate().find(hql,classroomId);
+    }
+
     @Override
     public void test()
     {

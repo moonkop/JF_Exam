@@ -109,7 +109,6 @@ public class PaperVo
         this.comment = comment;
     }
 
-
     @Override
     public int hashCode()
     {
