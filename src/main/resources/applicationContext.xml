@@ -26,7 +26,6 @@
 	<bean name="schedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean"/>
 	<!--=========================================Quartz任务集=========END==========================================-->
 
-
 	<!-- SessionFactory -->
 	<bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
 		<property name="dataSource" ref="dataSource"/>

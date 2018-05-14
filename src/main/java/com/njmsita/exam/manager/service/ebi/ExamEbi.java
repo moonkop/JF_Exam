@@ -72,4 +72,11 @@ public interface ExamEbi extends BaseEbi<ExamVo>
      * @param teacherVo
      */
     public void deleteCancel(ExamVo examVo, TeacherVo teacherVo) throws Exception;
+
+    /**
+     * 更新阅卷教师
+     * @param examVo
+     * @param markTeachers
+     */
+    public void updateMarkTeacher(ExamVo examVo, String[] markTeachers) throws Exception;
 }

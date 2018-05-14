@@ -57,11 +57,8 @@ public class TeacherController extends BaseController
     @Autowired
     private ResourceEbi resourceEbi;
     @Autowired
-    private SchoolEbi schoolEbi;
-    @Autowired
     private LogEbi logEbi;
     @Autowired
-    private SchedulerFactoryBean schedulerFactoryBean;
 
     /**
      * 跳转登陆页

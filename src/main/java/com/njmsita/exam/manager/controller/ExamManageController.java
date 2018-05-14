@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -49,20 +50,22 @@ public class ExamManageController
         request.setAttribute("paperList",paperEbi.getAll());
         request.setAttribute("subjectList",subjectEbi.getAll());
         request.setAttribute("teacherList",teacherEbi.getAll());
-        if(!StringUtil.isEmpty(examVo.getId())){
-            ExamVo tempExam=examEbi.get(examVo.getId());
-            if(tempExam==null){
-                throw new OperationException("所选择的考试不存在，请不要进行非法操作！");
-            }
-            request.setAttribute("examVo",tempExam);
-        }
-        else if(!StringUtil.isEmpty(paperVo.getId())){
+        if(!StringUtil.isEmpty(paperVo.getId())){
             PaperVo tempPaper=paperEbi.get(paperVo.getId());
             if(tempPaper==null){
                 throw new OperationException("所选择的试卷不存在，请不要进行非法操作！");
             }
             request.setAttribute("paperVo",tempPaper);
             request.setAttribute("subjectId",tempPaper.getSubjectVo().getId());
+        }else if(!StringUtil.isEmpty(examVo.getId())){
+            if(StringUtil.isEmpty(examVo.getId())){
+                throw new OperationException("所选的该场考试的id不能为空，请不要进行非法操作！");
+            }
+            ExamVo temp=examEbi.get(examVo.getId());
+            if(temp==null){
+                throw new OperationException("所选的该场考试不能为空，请不要进行非法操作！");
+            }
+            request.setAttribute("examVo",temp);
         }
         return "manage/exam/edit";
     }
@@ -104,21 +107,22 @@ public class ExamManageController
     @RequestMapping("toCheck")
     public String toCheck(ExamVo examVo,HttpServletRequest request) throws OperationException
     {
-        if(!StringUtil.isEmpty(examVo.getId())){
-            ExamVo tempExam=examEbi.get(examVo.getId());
-            if(tempExam==null){
-                throw new OperationException("所选择的考试不存在，请不要进行非法操作！");
-            }
-            request.setAttribute("examVo",tempExam);
-         }
+        if(StringUtil.isEmpty(examVo.getId())){
+            throw new OperationException("所选的该场考试的id不能为空，请不要进行非法操作！");
+        }
+        ExamVo temp=examEbi.get(examVo.getId());
+        if(temp==null){
+            throw new OperationException("所选的该场考试不能为空，请不要进行非法操作！");
+        }
+        request.setAttribute("examVo",temp);
         return "manage/exam/check";
     }
 
     @RequestMapping("pass")
-    public String pass(ExamVo examVo) throws OperationException
+    public String pass(ExamVo examVo,HttpServletRequest request) throws Exception
     {
         if(!StringUtil.isEmpty(examVo.getId())){
-            examEbi.setPass(examVo);
+            examEbi.setPass(examVo,(TeacherVo)request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME));
         }else {
             throw new OperationException("所选择的考试不存在，请不要进行非法操作！");
         }
@@ -126,14 +130,28 @@ public class ExamManageController
     }
 
     @RequestMapping("noPass")
-    public String noPass(ExamVo examVo) throws OperationException
+    public String noPass(ExamVo examVo,HttpServletRequest request) throws Exception
     {
         if(!StringUtil.isEmpty(examVo.getId())){
-            examEbi.setNoPass(examVo);
+            examEbi.setNoPass(examVo,(TeacherVo)request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME));
         }else {
             throw new OperationException("所选择的考试不存在，请不要进行非法操作！");
         }
         return "manage/exam/toList";
+    }
+
+    @RequestMapping("view")
+    public String view(ExamVo examVo,HttpServletRequest request) throws OperationException
+    {
+        if(StringUtil.isEmpty(examVo.getId())){
+            throw new OperationException("所选的该场考试的id不能为空，请不要进行非法操作！");
+        }
+        ExamVo temp=examEbi.get(examVo.getId());
+        if(temp==null){
+            throw new OperationException("所选的该场考试不能为空，请不要进行非法操作！");
+        }
+        request.setAttribute("examVo",temp);
+        return "manage/exam/view";
     }
 
     @RequestMapping("toMyExam")
@@ -149,15 +167,58 @@ public class ExamManageController
 
     @RequestMapping("cancel")
     @ResponseBody
-    public JsonResponse cancel(String examId){
-        return null;
+    public JsonResponse cancel(ExamVo examVo,HttpServletRequest request) throws Exception
+    {
+        if(StringUtil.isEmpty(examVo.getId())){
+            throw new OperationException("所选的该场考试的id不能为空，请不要进行非法操作！");
+        }
+        examEbi.cancel(examVo,(TeacherVo)request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME));
+        return new JsonResponse("取消成功");
     }
 
     @RequestMapping("delete")
     @ResponseBody
-    public JsonResponse delete(){
+    public JsonResponse delete(ExamVo examVo,HttpServletRequest request) throws Exception
+    {
+        if(StringUtil.isEmpty(examVo.getId())){
+            throw new OperationException("所选的该场考试的id不能为空，请不要进行非法操作！");
+        }
+        examEbi.deleteCancel(examVo,(TeacherVo)request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME));
+        return new JsonResponse("删除成功");
+    }
 
-        return null;
+    @RequestMapping("toAddMarkTeacher")
+    public String toAddMarkTeacher(ExamVo examVo,HttpServletRequest request) throws Exception
+    {
+        if(StringUtil.isEmpty(examVo.getId())){
+            throw new OperationException("所选的该场考试的id不能为空，请不要进行非法操作！");
+        }
+        ExamVo temp=examEbi.get(examVo.getId());
+        if(temp==null){
+            throw new OperationException("所选的该场考试不能为空，请不要进行非法操作！");
+        }
+        List<TeacherVo> markTeacherList=new ArrayList<>();
+        request.setAttribute("markTeacherList",markTeacherList.addAll(temp.getMarkTeachers()));
+        request.setAttribute("teacherList",teacherEbi.getAll());
+        return "manage/exam/addMarkTeacher";
+    }
+
+    @RequestMapping("addMarkTeacher")
+    public String addMarkTeacher(ExamVo examVo,@RequestParam("markTeachers") String[] markTeachers,
+                                 HttpServletRequest request) throws Exception
+    {
+
+        if(StringUtil.isEmpty(examVo.getId())){
+            throw new OperationException("所选的该场考试的id不能为空，请不要进行非法操作！");
+        }
+
+        examEbi.updateMarkTeacher(examVo,markTeachers);
+
+        TeacherVo login= (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
+        if(login.getTroleVo().getId().equals(SysConsts.ADMIN_ROLE_ID)){
+            return "redirect:/exam/list.do";
+        }
+        return "redirect:/exam/toMyExam";
     }
 
     @RequestMapping("toList")

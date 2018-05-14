@@ -14,6 +14,7 @@ import com.njmsita.exam.utils.idutil.IdUtil;
 import com.njmsita.exam.utils.timertask.SchedulerJobUtil;
 import net.sf.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +40,7 @@ public class ExamEbo implements ExamEbi
     @Autowired
     private PaperDao paperDao;
     @Autowired
+    @Qualifier("schedulerFactoryBean")
     private SchedulerFactoryBean schedulerFactoryBean;
     @Autowired
     private ScheduleDao scheduleDao;
@@ -198,16 +200,12 @@ public class ExamEbo implements ExamEbi
         examDao.delete(temp);
     }
 
-    /**
-     * 角色校验
-     * @param teacherVo
-     * @throws OperationException
-     */
-    private void roleValid(TeacherVo teacherVo) throws OperationException
+    public void updateMarkTeacher(ExamVo examVo, String[] markTeachers) throws Exception
     {
-        if(teacherVo.getTroleVo().getId()!=SysConsts.ADMIN_ROLE_ID){
-            throw new OperationException("您不是管理员，请不要进行非法操作！");
-        }
+        ExamVo temp=isNull(examVo);
+
+        //TODO 测试：是否可以逻辑更新
+        temp.setMarkTeachers(markTeacherValid(markTeachers));
     }
 
     /**
@@ -252,6 +250,18 @@ public class ExamEbo implements ExamEbi
         logVo.setTime(System.currentTimeMillis());
         logVo.setArgument(scheduleVo.getClass().getName()+"-->"+scheduleVo.toString());
         logDao.save(logVo);
+    }
+
+    /**
+     * 角色校验
+     * @param teacherVo
+     * @throws OperationException
+     */
+    private void roleValid(TeacherVo teacherVo) throws OperationException
+    {
+        if(teacherVo.getTroleVo().getId()!=SysConsts.ADMIN_ROLE_ID){
+            throw new OperationException("您不是管理员，请不要进行非法操作！");
+        }
     }
 
     /**
@@ -357,16 +367,7 @@ public class ExamEbo implements ExamEbi
         if(temp==null){
             throw new OperationException("所选择的科目不存在,请不要进行非法操作！");
         }
-        Set<TeacherVo> teacherSet=new HashSet<>();
-        if(markTeachers!=null&&markTeachers.length>0){
-            for (String markTeacher : markTeachers)
-            {
-                TeacherVo teacherVo=teacherDao.get(markTeacher);
-                if(teacherVo!=null){
-                    teacherSet.add(teacherVo);
-                }
-            }
-        }
+        Set<TeacherVo> teacherSet=markTeacherValid(markTeachers);
         Map<String,ClassroomVo> map=new HashMap<>();
         int i=0;
         for (String classroomId : classroomIds)
@@ -386,5 +387,24 @@ public class ExamEbo implements ExamEbi
         examVo.setMarkTeachers(teacherSet);
         examVo.setClassroomIds(jsonObject.toString());
         examVo.setPaperContent(paperJson.toString());
+    }
+
+    /**
+     * 校验教师ID
+     * @param markTeachers
+     * @return
+     */
+    private Set<TeacherVo> markTeacherValid(String[] markTeachers){
+        Set<TeacherVo> teacherSet=new HashSet<>();
+        if(markTeachers!=null&&markTeachers.length>0){
+            for (String markTeacher : markTeachers)
+            {
+                TeacherVo teacherVo=teacherDao.get(markTeacher);
+                if(teacherVo!=null){
+                    teacherSet.add(teacherVo);
+                }
+            }
+        }
+        return teacherSet;
     }
 }

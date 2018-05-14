@@ -19,7 +19,7 @@
 
         <many-to-one name="subjectVo" column="subject_id" class="com.njmsita.exam.manager.model.SubjectVo"/>
 
-        <set name="markTeachers" table="exam_markteacher">
+        <set name="markTeachers" table="exam_markteacher" lazy="false">
             <key column="exam_id"></key>
             <many-to-many column="teacher_id" class="com.njmsita.exam.authentic.model.TeacherVo"/>
         </set>
