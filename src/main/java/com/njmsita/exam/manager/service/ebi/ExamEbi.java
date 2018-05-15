@@ -4,10 +4,12 @@ import com.njmsita.exam.authentic.model.StudentVo;
 import com.njmsita.exam.authentic.model.TeacherVo;
 import com.njmsita.exam.base.BaseEbi;
 import com.njmsita.exam.manager.model.ExamVo;
+import com.njmsita.exam.manager.model.StudentExamQuestionVo;
 import com.njmsita.exam.manager.model.querymodel.ExamQueryModel;
 import com.njmsita.exam.utils.exception.OperationException;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 考试业务层接口
@@ -95,7 +97,7 @@ public interface ExamEbi extends BaseEbi<ExamVo>
      * @param studentVo
      * @return
      */
-    public ExamVo attendExam(ExamVo examVo, StudentVo studentVo) throws Exception;
+    public Map<String, Object> attendExam(ExamVo examVo, StudentVo studentVo) throws Exception;
 
     /**
      * 管理员考试列表
@@ -107,4 +109,12 @@ public interface ExamEbi extends BaseEbi<ExamVo>
      * @return
      */
     public List<ExamVo> getAllByAdmin(String id, ExamQueryModel examQueryModel, Integer pageNum, Integer pageSize) throws Exception;
+
+    /**
+     * 学生考试存档
+     * @param login
+     * @param studentExamId
+     * @param studentExamQuestionList
+     */
+    public void archive(StudentVo login, String studentExamId, List<StudentExamQuestionVo> studentExamQuestionList) throws Exception;
 }

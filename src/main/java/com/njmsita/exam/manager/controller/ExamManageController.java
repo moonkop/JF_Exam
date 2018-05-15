@@ -4,11 +4,7 @@ import com.njmsita.exam.authentic.model.StudentVo;
 import com.njmsita.exam.authentic.model.TeacherVo;
 import com.njmsita.exam.authentic.model.UserModel;
 import com.njmsita.exam.authentic.service.ebi.TeacherEbi;
-import com.njmsita.exam.manager.dao.dao.SubjectDao;
-import com.njmsita.exam.manager.model.ExamVo;
-import com.njmsita.exam.manager.model.PaperVo;
-import com.njmsita.exam.manager.model.StudentExamVo;
-import com.njmsita.exam.manager.model.SubjectVo;
+import com.njmsita.exam.manager.model.*;
 import com.njmsita.exam.manager.model.querymodel.ExamQueryModel;
 import com.njmsita.exam.manager.service.ebi.ExamEbi;
 import com.njmsita.exam.manager.service.ebi.PaperEbi;
@@ -18,7 +14,6 @@ import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.idutil.IdUtil;
 import com.njmsita.exam.utils.json.JsonListResponse;
-import com.njmsita.exam.utils.json.JsonObjectResponse;
 import com.njmsita.exam.utils.json.JsonResponse;
 import com.njmsita.exam.utils.logutils.SystemLogAnnotation;
 import com.njmsita.exam.utils.validate.validategroup.AddGroup;
@@ -27,6 +22,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -34,6 +30,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 考试管理控制器
@@ -125,7 +122,7 @@ public class ExamManageController
         {
             examEbi.update(examVo,markTeachers,paperId,classroomIds);
         }
-        if(login.getTroleVo().getId().equals(SysConsts.ADMIN_ROLE_ID)){
+        if(login.getRole().getId().equals(SysConsts.ADMIN_ROLE_ID)){
             return "redirect:/exam/list.do";
         }
         return "redirect:/exam/toMyExam";
@@ -293,7 +290,7 @@ public class ExamManageController
         examEbi.updateMarkTeacher(examVo,markTeachers);
 
         TeacherVo login= (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
-        if(login.getTroleVo().getId().equals(SysConsts.ADMIN_ROLE_ID)){
+        if(login.getRole().getId().equals(SysConsts.ADMIN_ROLE_ID)){
             return "redirect:/exam/list.do";
         }
         return "redirect:/exam/toMyExam";
@@ -372,8 +369,29 @@ public class ExamManageController
             throw new OperationException("所选的该场考试的id不能为空，请不要进行非法操作！");
         }
         StudentVo studentVo= (StudentVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
-        examVo=examEbi.attendExam(examVo,studentVo);
-        return new JsonObjectResponse<ExamVo>(examVo,
-                "id,duration,paperContent,name,[subject]subjectVo.name");
+        Map<String,Object> map=examEbi.attendExam(examVo,studentVo);
+
+        //学生作答情况
+        List<StudentExamQuestionVo> studentExamQuestionList= (List<StudentExamQuestionVo>) map.get("studentExamQuestionList");
+        //学生考试信息
+        StudentExamVo studentExam= (StudentExamVo) map.get("studentExam");
+
+        //TODO
+        return null;
+    }
+
+    @RequestMapping("archive")
+    public JsonResponse archive(@RequestBody List<StudentExamQuestionVo> studentExamQuestionList, String studentExamId,
+                                HttpServletRequest request) throws Exception
+    {
+        StudentVo login= (StudentVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
+        examEbi.archive(login,studentExamId,studentExamQuestionList);
+        return null;
+    }
+
+    @RequestMapping("systemTime")
+    public JsonResponse systemTime(){
+        Long time=System.currentTimeMillis();
+        return new JsonResponse().put("time",time);
     }
 }

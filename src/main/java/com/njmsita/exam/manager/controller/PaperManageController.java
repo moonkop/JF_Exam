@@ -76,7 +76,7 @@ public class PaperManageController
                                   HttpServletRequest request)
     {
         TeacherVo teacherVo= (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
-        if(!teacherVo.getTroleVo().getId().equals(SysConsts.ADMIN_ROLE_ID)){
+        if(!teacherVo.getRole().getId().equals(SysConsts.ADMIN_ROLE_ID)){
             paperQueryModel.setTeacher(teacherVo);
         }
         return new JsonListResponse<>(paperEbi.getAll(paperQueryModel,pageNum,pageSize),
@@ -121,10 +121,10 @@ public class PaperManageController
         List list=questionEbi.autoSelectByTopicIdsAndType(topicIds,questionTypeId,questionNum,teacherVo);
         if(list.size()>questionNum){
             return new JsonListResponse<QuestionVo>(list,
-                    "id,code,outline,option,answer,[score]questionType.score",0);
+                    "id,code,outline,option,answer,[score]questionType.score,[questionType]qeustionType.id",0);
         }else {
             return new JsonListResponse<QuestionVo>(list,
-                    "id,code,outline,option,answer,[score]questionType.score",0)
+                    "id,code,outline,option,answer,[score]questionType.score,[questionType]qeustionType.id",0)
                     .put("msg","所设定条件下的题目仅有"+list.size()+"条，请继续选择！");
         }
     }

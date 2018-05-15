@@ -21,7 +21,7 @@ public class ResourceDaoImpl extends BaseImpl<TresourceVo> implements ResourceDa
     public List<TresourceVo> getAllByLoginId(String id)
     {
         //查询逻辑：teacher--->role---->resource
-        String hql ="select res from TeacherVo tv join tv.troleVo rv join rv.reses res where tv.id=? ";
+        String hql ="select res from TeacherVo tv join tv.role rv join rv.reses res where tv.id=? ";
 
         return (List<TresourceVo>) this.getHibernateTemplate().find(hql,id);
     }

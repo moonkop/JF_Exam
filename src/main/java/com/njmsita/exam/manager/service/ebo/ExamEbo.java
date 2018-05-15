@@ -16,6 +16,7 @@ import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.idutil.IdUtil;
 import com.njmsita.exam.utils.timertask.SchedulerJobUtil;
 import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.stereotype.Service;
@@ -51,6 +52,10 @@ public class ExamEbo implements ExamEbi
     private StudentExamDao studentExamDao;
     @Autowired
     private StudentDao studentDao;
+    @Autowired
+    private StudentExamQuestionDao studentExamQuestionDao;
+    @Autowired
+    private QuestionTypeDao questionTypeDao;
 
     /**
      * 作废
@@ -168,7 +173,7 @@ public class ExamEbo implements ExamEbi
     {
         ExamVo temp=isNull(examVo);
         Integer status=temp.getExamStatus();
-        if(login.getTroleVo().getId().equals(SysConsts.ADMIN_ROLE_ID)){
+        if(login.getRole().getId().equals(SysConsts.ADMIN_ROLE_ID)){
             if(status!=SysConsts.EXAM_STATUS_NO_CHECK
                     &&status!=SysConsts.EXAM_STATUS_PASS
                     &&status!=SysConsts.EXAM_STATUS_NO_PASS){
@@ -242,7 +247,7 @@ public class ExamEbo implements ExamEbi
         return list;
     }
 
-    public ExamVo attendExam(ExamVo examVo, StudentVo studentVo) throws Exception
+    public Map<String, Object> attendExam(ExamVo examVo, StudentVo studentVo) throws Exception
     {
         examVo=isNull(examVo);
         StudentExamVo studentExamVo=studentExamDao.getByStudentAndExam(examVo,studentVo);
@@ -253,8 +258,64 @@ public class ExamEbo implements ExamEbi
         if(examVo.getExamStatus()!=SysConsts.EXAM_STATUS_OPEN){
             throw new OperationException("尚未开始考试，请不要进行非法操作！");
         }
-        studentExamVo.setOperation(SysConsts.STUDENT_EXAM_OPERATION_ARCHIVE);
-        return examVo;
+        if(studentExamVo.getOperation()==SysConsts.STUDENT_EXAM_OPERATION_SUBMIT){
+            throw new OperationException("你已经提交该场考试，请不要进行非法操作！");
+        }
+        List<StudentExamQuestionVo> list=new ArrayList<>();
+        if(studentExamVo.getOperation()==SysConsts.STUDENT_EXAM_OPERATION_ARCHIVE){
+            list=studentExamQuestionDao.getAllByStudentExam(studentExamVo);
+        }else {
+            studentExamVo.setOperation(SysConsts.STUDENT_EXAM_OPERATION_ARCHIVE);
+            studentExamVo.setStartTime(System.currentTimeMillis());
+            String paperJson=examVo.getPaperContent();
+            JSONObject jsonObject=JSONObject.fromObject(paperJson);
+            String questionContainJson=jsonObject.getString("questionContain");
+            JSONArray jsonArray=JSONArray.fromObject(questionContainJson);
+            for(int i=0;i<jsonArray.size();i++){
+                StudentExamQuestionVo seq=new StudentExamQuestionVo();
+                seq.setId(IdUtil.getUUID());
+                seq.setStudentExamVo(studentExamVo);
+                seq.setIndext(i+1);
+                JSONObject questionJson=jsonArray.getJSONObject(i);
+                JSONObject questionTypeJson=jsonObject.fromObject(questionJson.getString("questionType"));
+                QuestionTypeVo questionTypeVo=questionTypeDao.get(Integer.parseInt(questionTypeJson.getString("id")));
+                seq.setQuestionTypeVo(questionTypeVo);
+                studentExamQuestionDao.save(seq);
+                list.add(seq);
+            }
+        }
+        Map<String,Object> map=new HashMap<>();
+        map.put("studentExamQuestionList",list);
+        map.put("studentExamVo",studentExamVo);
+        return map;
+    }
+
+    public void archive(StudentVo login, String studentExamId, List<StudentExamQuestionVo> studentExamQuestionList)throws Exception
+    {
+        if(StringUtil.isEmpty(studentExamId)){
+            throw new OperationException("你的考试id不能为空，请不要进行非法操作！");
+        }
+        StudentExamVo studentExamVo=studentExamDao.get(studentExamId);
+        if(studentExamVo==null){
+            throw new OperationException("你的这场考试不存在，请不要进行非法操作！");
+        }
+        ExamVo examVo=studentExamVo.getExamVo();
+        if(examVo.getExamStatus()>=SysConsts.EXAM_STATUS_IN_MARK){
+            throw new OperationException("当前考试的状态不允许保存，请不要进行非法操作！");
+        }
+        if(studentExamQuestionList!=null&&studentExamQuestionList.size()!=0){
+            for (StudentExamQuestionVo studentExamQuestionVo : studentExamQuestionList)
+            {
+                StudentExamQuestionVo temp=studentExamQuestionDao.get(studentExamQuestionVo.getId());
+                if(temp==null){
+                    throw new OperationException("你所保存的题目有可能不存在，请不要进行非法操作！");
+                }
+                if(!temp.getStudentExamVo().getId().equals(studentExamVo.getId())){
+                    throw new OperationException("你所保存的题目有可能不不属于这场考试，请不要进行非法操作！");
+                }
+                temp.setAnswer(studentExamQuestionVo.getAnswer());
+            }
+        }
     }
 
     //-----------------------------------以上为业务操作-------------------------------------
@@ -313,7 +374,7 @@ public class ExamEbo implements ExamEbi
      */
     private void roleValid(TeacherVo teacherVo) throws OperationException
     {
-        if(teacherVo.getTroleVo().getId()!=SysConsts.ADMIN_ROLE_ID){
+        if(teacherVo.getRole().getId()!=SysConsts.ADMIN_ROLE_ID){
             throw new OperationException("您不是管理员，请不要进行非法操作！");
         }
     }
@@ -350,7 +411,7 @@ public class ExamEbo implements ExamEbi
                 continue;
             }
             if(examVo.getExamStatus()== SysConsts.EXAM_STATUS_NO_CHECK){
-                if(login.getTroleVo().getId().equals(SysConsts.ADMIN_ROLE_ID)){
+                if(login.getRole().getId().equals(SysConsts.ADMIN_ROLE_ID)){
                     set.add(SysConsts.EXAM_OPERATION_NO_CHECK);
                 }
                 set.add(SysConsts.EXAM_OPERATION_TO_EDIT);
@@ -359,7 +420,7 @@ public class ExamEbo implements ExamEbi
                 continue;
             }
             if(examVo.getExamStatus()==SysConsts.EXAM_STATUS_PASS){
-                if(login.getTroleVo().getId().equals(SysConsts.ADMIN_ROLE_ID)){
+                if(login.getRole().getId().equals(SysConsts.ADMIN_ROLE_ID)){
                     set.add(SysConsts.EXAM_OPERATION_CANCEL);
                 }
                 set.add(SysConsts.EXAM_OPERATION_ADD_MARK_TEACHER);
@@ -380,7 +441,7 @@ public class ExamEbo implements ExamEbi
                 continue;
             }
             if(examVo.getExamStatus()==SysConsts.EXAM_STATUS_IN_CANCEL){
-                if(login.getTroleVo().getId().equals(SysConsts.ADMIN_ROLE_ID)){
+                if(login.getRole().getId().equals(SysConsts.ADMIN_ROLE_ID)){
                     set.add(SysConsts.EXAM_OPERATION_DELETE);
                 }
                 continue;

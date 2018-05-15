@@ -10,7 +10,6 @@ import com.njmsita.exam.authentic.service.ebi.RoleEbi;
 import com.njmsita.exam.authentic.service.ebi.TeacherEbi;
 import com.njmsita.exam.base.BaseController;
 import com.njmsita.exam.manager.service.ebi.LogEbi;
-import com.njmsita.exam.manager.service.ebi.SchoolEbi;
 import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.exception.FormatException;
 import com.njmsita.exam.utils.exception.OperationException;
@@ -27,7 +26,6 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
-import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -110,7 +108,7 @@ public class TeacherController extends BaseController
             }
             loginTea.setResources(sbd.toString());
             session.setAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME, loginTea);
-            Hibernate.initialize(loginTea.getTroleVo());
+            Hibernate.initialize(loginTea.getRole());
             logEbi.login(loginTea, loginIp);
             return "redirect:/teacher/welcome";
         }
