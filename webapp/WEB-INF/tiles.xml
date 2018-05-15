@@ -118,6 +118,20 @@
         <put-attribute name="body" value="/WEB-INF/jsp/manage/bank/subject/detail.jsp"/>
         <put-attribute name="title" value="学科管理 - 详情"/>
     </definition>
+
+
+    <definition name="/manage/bank/questionType/list" extends="base">
+        <put-attribute name="body" value="/WEB-INF/jsp/manage/bank/questionType/list.jsp"/>
+        <put-attribute name="title" value="题型管理"/>
+    </definition>
+    <definition name="/manage/bank/questionType/edit" extends="base">
+        <put-attribute name="body" value="/WEB-INF/jsp/manage/bank/questionType/edit.jsp"/>
+        <put-attribute name="title" value="题型管理 - 编辑"/>
+    </definition>
+    <definition name="/manage/bank/questionType/detail" extends="base">
+        <put-attribute name="body" value="/WEB-INF/jsp/manage/bank/questionType/detail.jsp"/>
+        <put-attribute name="title" value="题型管理 - 详情"/>
+    </definition>
     
 
     <definition name="/manage/bank/topic/tree" extends="base">

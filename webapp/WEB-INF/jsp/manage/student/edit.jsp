@@ -59,7 +59,6 @@
                                             {
                                                 refreshClassroomSelect();
                                             })
-
                                         })
                                     </script>
 

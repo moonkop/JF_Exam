@@ -15,7 +15,7 @@
                 </option>
             </c:forEach>
         </select>
-        <button id="import" type="button" class="btn"></button>
+        <button id="import" type="button" class="btn">导入题目</button>
     </div>
 </div>
 <div class="question-manage">
@@ -98,63 +98,137 @@
 <script id="js-template-question-view" type="text/html">
     <div class="form-horizontal">
         <div class="form-group">
-            <label class="col-sm-2 control-label">题干</label>
-            <div class="col-sm-8">
+            <label class="col-sm-3 control-label">题干</label>
+            <div class="col-sm-9">
                 <p class="form-control-static" data-field="outline"></p>
             </div>
         </div>
         <div class="form-group">
-            <label class="col-sm-2 control-label">代码</label>
-            <div class="col-sm-8">
+            <label class="col-sm-3 control-label">代码</label>
+            <div class="col-sm-9">
                 <pre><code class="form-control-static" data-field="code"></code></pre>
             </div>
         </div>
         <div class="form-group">
-            <label class="col-sm-2 control-label">选项</label>
-            <div class="col-sm-8">
+            <label class="col-sm-3 control-label">选项</label>
+            <div class="col-sm-9">
                 <div data-field="options"></div>
             </div>
         </div>
         <div class="form-group">
-            <label class="col-sm-2 control-label">答案</label>
-            <div class="col-sm-8">
+            <label class="col-sm-3 control-label">答案</label>
+            <div class="col-sm-9">
                 <p class="form-control-static" data-field="answer"></p>
             </div>
         </div>
         <div class="form-group">
-            <label class="col-sm-2 control-label">题目类型</label>
-            <div class="col-sm-8">
+            <label class="col-sm-3 control-label">题目类型</label>
+            <div class="col-sm-9">
                 <p class="form-control-static" data-field="type"></p>
             </div>
         </div>
         <div class="form-group">
+            <label class="col-sm-3 control-label">所属科目</label>
+            <div class="col-sm-9">
+                <p class="form-control-static" data-field="subject"></p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">所属知识点</label>
+            <div class="col-sm-9">
+                <p class="form-control-static" data-field="topic"></p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">题目id</label>
+            <div class="col-sm-9">
+                <p class="form-control-static" data-field="id"></p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">出题人</label>
+            <div class="col-sm-9">
+                <p class="form-control-static" data-field="createTeacher"></p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">出题时间</label>
+            <div class="col-sm-9">
+                <p class="form-control-static" data-field="createTime"></p>
+            </div>
+        </div>
+    </div>
+</script>
+
+
+<script id="js-template-question-edit" type="text/html">
+    <div class="form-horizontal">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">题干</label>
+            <div class="col-sm-9">
+                <textarea type="text" class="form-control" data-field="outline"></textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">代码</label>
+            <div class="col-sm-9">
+                <textarea class="form-control" data-field="code"></textarea>
+            </div>
+        </div>
+        <div class="form-group-option">
+
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label"></label>
+            <div class="col-sm-9">
+                <input type="button" class="form-control btn btn-add-option" value="添加选项">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">题目类型</label>
+            <div class="col-sm-9">
+                <select name="type" id="select-question-type" class="form-control">
+                    <option value="2">单选题</option>
+                    <option value="3">多选题</option>
+                    <option value="5">简答题</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
             <label class="col-sm-2 control-label">所属科目</label>
-            <div class="col-sm-8">
+            <div class="col-sm-9">
                 <p class="form-control-static" data-field="subject"></p>
             </div>
         </div>
         <div class="form-group">
             <label class="col-sm-2 control-label">所属知识点</label>
-            <div class="col-sm-8">
+            <div class="col-sm-9">
                 <p class="form-control-static" data-field="topic"></p>
             </div>
         </div>
-        <div class="form-group">
-            <label class="col-sm-2 control-label">题目id</label>
-            <div class="col-sm-8">
-                <p class="form-control-static" data-field="id"></p>
-            </div>
+        <div class="col-sm-offset-2">
+            <button class="btn btn-primary js-edit-submit">提交</button>
         </div>
-        <div class="form-group">
-            <label class="col-sm-2 control-label">出题人</label>
-            <div class="col-sm-8">
-                <p class="form-control-static" data-field="createTeacher"></p>
-            </div>
-        </div>
-        <div class="form-group">
-            <label class="col-sm-2 control-label">出题时间</label>
-            <div class="col-sm-8">
-                <p class="form-control-static" data-field="createTime"></p>
+    </div>
+</script>
+
+
+<script id="js-tempalte-question-edit-option" type="text/html">
+    <div class="form-group">
+        <label class="col-sm-2 control-label">选项</label>
+        <div class="col-sm-9">
+            <div class="input-group">
+           <span class="input-group-btn">
+            <button class="btn js-valid" type="button">
+                <i class="fa"></i>
+            </button>
+          </span>
+                <input type="text" class="form-control" data-field="options" name="options[]">
+                <span class="input-group-btn">
+            <button class="btn btn-danger js-remove" type="button">
+                <i class="fa fa-minus"></i>
+            </button>
+          </span>
             </div>
         </div>
     </div>
@@ -239,10 +313,10 @@
                                     $(".question-list").empty();
                                     questionList.map(function (question) {
                                         $(".question-list").append(renderQuestion(question));
-
+                                        //详情
                                         $("#question_" + question.id + " .js-question-view").on("click", function () {
                                                 getQuestionDetail(question.id, function (questionDetail) {
-                                                    $question_detail_form = RenderQuestion_View(questionDetail);
+                                                    var $question_detail_form = RenderQuestion_View(questionDetail);
                                                     layer.open(
                                                         {
                                                             type: 5,
@@ -252,6 +326,7 @@
                                                             area: ['700px', '500px'],
                                                             content: $question_detail_form.prop("outerHTML"),
                                                             success: function () {
+                                                                $(".layui-layer-content").addClass("layer-form");
                                                                 $(".layui-layer-content pre code").each(function (index, obj) {
                                                                     hljs.highlightBlock(obj);
                                                                 })
@@ -263,9 +338,48 @@
                                                 })
                                             }
                                         )
+                                        //编辑
                                         $("#question_" + question.id + " .js-question-edit").on("click", function () {
                                             getQuestionDetail(question.id, function (questionDetail) {
+                                                var $question_edit_form = renderQuestion_Edit(questionDetail);
+                                                layer.open(
+                                                    {
+                                                        type: 5,
+                                                        shadeClose: true, //点击遮罩关闭
+                                                        closeBtn: 2,
+                                                        title: '题目编辑',
+                                                        area: ['700px', '500px'],
+                                                        content: $question_edit_form.prop("outerHTML"),
+                                                        success: function () {
+                                                            question_edit_option_status = {
+                                                                optionid: 1,
+                                                                optionCount: 1
+                                                            }
+                                                            if (questionDetail.options != null && questionDetail.options != "")
+                                                            {
+                                                                questionDetail.options = JSON.parse(questionDetail.options);
+                                                            }
 
+                                                            for(key in questionDetail.options)
+                                                            {
+                                                                var iscorrect = questionDetail.answer.indexOf(key)!=-1;
+
+                                                                question_edit_on_add_option(questionDetail.options[key] ,iscorrect);
+                                                            }
+
+                                                            $(".layui-layer-content").addClass("layer-form");
+
+                                                            //增加选项按钮点击
+                                                            $(".btn-add-option").on("click", function () {
+                                                                question_edit_on_add_option();
+                                                            });
+
+                                                        },
+                                                        end: function () {
+
+                                                        }
+                                                    }
+                                                )
                                             })
                                         });
                                     })
@@ -359,43 +473,6 @@
     })
 
 
-    var questionList = [
-        {
-            id: "1de729a42212434a87b3771ee1acf717",
-            outline: "世界上最好的语言是什么？",
-            type: 2,
-            code: "",
-            options: [
-                "JAVA",
-                "Python",
-                "PHP",
-                "C++"
-            ],
-            score: 2,
-            answer: "2"
-        }
-        , {
-            id: "22c717969eb24fd187c7717a72425ad0",
-            outline: "面向过程的语言有",
-            type: 3,
-            code: "",
-            options: [
-                "Python",
-                "C",
-                "C#",
-                "JAVA"
-            ],
-            score: 3,
-            answer: "0,1"
-        }, {
-            id: "2ff2af22be1e4276a2a899d3ae8563fc",
-            outline: "JAVA有什么优点？",
-            type: 4,
-            code: "",
-            options: [],
-            score: 10
-        }
-    ]
     var $question_detail_form = $("#js-template-question-panel");
     var $question_option_list = $("#js-template-question-option-list");
     var $question_option = $("#js-template-question-option-radio");
@@ -570,26 +647,95 @@
 
     function renderQuestion_Edit(questionDetail)
     {
+        var $questionForm = $($("#js-template-question-edit").html());
 
+        var config = {
+            options: function (value, key) {
+
+                return "";
+            },
+            answer: function (value, key) {
+                return QuestionAnswerNumsToChars(value);
+            },
+            type: function (value, key) {
+                return QuestionTypeMap(value);
+            },
+            createTime: function (value, key) {
+                return new Date(value).toLocaleString();
+            }
+        }
+
+        var fieldContent;
+        for (var key in questionDetail)
+        {
+            var currentConfig = config[key];
+            if (currentConfig != undefined)
+            {
+                if (typeof currentConfig == 'function')
+                {
+                    fieldContent = currentConfig(questionDetail[key], key);
+                }
+            } else
+            {
+                fieldContent = questionDetail[key];
+            }
+
+
+            $questionForm.find("[data-field='" + key + "']").html(fieldContent);
+
+
+        }
+        return $questionForm;
+    }
+
+    var question_edit_option_status;
+
+    function question_edit_on_add_option(content,iscorrect)
+    {
+        if (question_edit_option_status.optionCount > 9)
+        {
+            layer.msg("最多能添加9个选项");
+            return;
+        }
+        question_edit_add_option(question_edit_option_status.optionid,content,iscorrect);
+        question_edit_option_status.optionid++;
+        question_edit_option_status.optionCount++;
+    }
+
+    function question_edit_add_option(optionid,content, iscorrect)
+    {
+        $option = $($("#js-tempalte-question-edit-option").html());
+        $option.attr("id", "option-" + optionid);
+        $(".form-group-option").append($option.prop("outerHTML"));
+        if (iscorrect == true)
+        {
+            question_edit_option_toggle_correct(optionid, true);
+        }
+        //点击正确按钮事件
+        $("#option-" + optionid + " input").val(content);
+        $("#option-" + optionid + " .js-valid").on("click", function () {
+            question_edit_option_toggle_correct(optionid);
+        });
+        //点击删除按钮事件
+        $("#option-" + optionid + " .js-remove").on("click", function () {
+            $("#option-" + optionid).remove();
+            question_edit_option_status.optionCount--;
+        })
+    }
+
+    function question_edit_option_toggle_correct(optionid, iscorrect)
+    {
+        $("#option-" + optionid).toggleClass("option-correct", iscorrect);
+        $("#option-" + optionid + " .js-valid").toggleClass("btn-success", iscorrect).find(".fa").toggleClass("fa-check", iscorrect);
+
+
+    }
+    function question_edit_select_question_type(typeid)
+    {
+        $(".layui-layer-content #select-question-type").val(typeid);
     }
 
 
 </script>
 
-<script id="js-add-form-template" type="text/template">
-    <div class="layer-popup">
-        <form role="form" class="form-horizontal" id="form-add-topic">
-            <input type="hidden" name="parent">
-            <div class="form-group">
-                <label class="col-sm-4 control-label">题干</label>
-                <div class="col-sm-8">
-                    <textarea type="text" class="form-control" id="inputID" name="name"/>
-                </div>
-            </div>
-            <button type="button" class="js-layer-form-add-btn btn btn-primary  pull-right">
-                <i class="glyphicon glyphicon-plus"></i>添加
-            </button>
-        </form>
-    </div>
-</script>
 <!-- end content -->
