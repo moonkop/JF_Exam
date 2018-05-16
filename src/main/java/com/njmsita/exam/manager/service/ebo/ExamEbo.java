@@ -168,7 +168,7 @@ public class ExamEbo implements ExamEbi
     {
         ExamVo temp=isNull(examVo);
         Integer status=temp.getExamStatus();
-        if(login.getTroleVo().getId().equals(SysConsts.ADMIN_ROLE_ID)){
+        if(login.getRole().getId().equals(SysConsts.ADMIN_ROLE_ID)){
             if(status!=SysConsts.EXAM_STATUS_NO_CHECK
                     &&status!=SysConsts.EXAM_STATUS_PASS
                     &&status!=SysConsts.EXAM_STATUS_NO_PASS){
@@ -313,7 +313,7 @@ public class ExamEbo implements ExamEbi
      */
     private void roleValid(TeacherVo teacherVo) throws OperationException
     {
-        if(teacherVo.getTroleVo().getId()!=SysConsts.ADMIN_ROLE_ID){
+        if(teacherVo.getRole().getId()!=SysConsts.ADMIN_ROLE_ID){
             throw new OperationException("您不是管理员，请不要进行非法操作！");
         }
     }
@@ -350,7 +350,7 @@ public class ExamEbo implements ExamEbi
                 continue;
             }
             if(examVo.getExamStatus()== SysConsts.EXAM_STATUS_NO_CHECK){
-                if(login.getTroleVo().getId().equals(SysConsts.ADMIN_ROLE_ID)){
+                if(login.getRole().getId().equals(SysConsts.ADMIN_ROLE_ID)){
                     set.add(SysConsts.EXAM_OPERATION_NO_CHECK);
                 }
                 set.add(SysConsts.EXAM_OPERATION_TO_EDIT);
@@ -359,7 +359,7 @@ public class ExamEbo implements ExamEbi
                 continue;
             }
             if(examVo.getExamStatus()==SysConsts.EXAM_STATUS_PASS){
-                if(login.getTroleVo().getId().equals(SysConsts.ADMIN_ROLE_ID)){
+                if(login.getRole().getId().equals(SysConsts.ADMIN_ROLE_ID)){
                     set.add(SysConsts.EXAM_OPERATION_CANCEL);
                 }
                 set.add(SysConsts.EXAM_OPERATION_ADD_MARK_TEACHER);
@@ -380,7 +380,7 @@ public class ExamEbo implements ExamEbi
                 continue;
             }
             if(examVo.getExamStatus()==SysConsts.EXAM_STATUS_IN_CANCEL){
-                if(login.getTroleVo().getId().equals(SysConsts.ADMIN_ROLE_ID)){
+                if(login.getRole().getId().equals(SysConsts.ADMIN_ROLE_ID)){
                     set.add(SysConsts.EXAM_OPERATION_DELETE);
                 }
                 continue;

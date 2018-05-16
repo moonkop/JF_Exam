@@ -127,7 +127,7 @@ public class StudentController extends BaseController
 
         //用户信息验证失败
         request.setAttribute("msg", "账号或密码不正确！！");
-        return "student/login_student";
+        return "redirect:/student/login";
     }
 
     /**

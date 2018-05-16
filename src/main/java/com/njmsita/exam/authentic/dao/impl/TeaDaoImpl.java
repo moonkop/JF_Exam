@@ -33,7 +33,7 @@ public class TeaDaoImpl extends BaseImpl<TeacherVo> implements TeacherDao
     public List<TeacherVo> getAllByRoleId(String id)
     {
         //teacher---->role
-        String hql="from TeacherVo tv where tv.troleVo.id=?";
+        String hql="from TeacherVo tv where tv.role.id=?";
         return (List<TeacherVo>) this.getHibernateTemplate().find(hql,id);
     }
 

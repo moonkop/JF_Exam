@@ -4,11 +4,8 @@ import com.njmsita.exam.authentic.model.StudentVo;
 import com.njmsita.exam.authentic.model.TeacherVo;
 import com.njmsita.exam.authentic.model.UserModel;
 import com.njmsita.exam.authentic.service.ebi.TeacherEbi;
-import com.njmsita.exam.manager.dao.dao.SubjectDao;
 import com.njmsita.exam.manager.model.ExamVo;
 import com.njmsita.exam.manager.model.PaperVo;
-import com.njmsita.exam.manager.model.StudentExamVo;
-import com.njmsita.exam.manager.model.SubjectVo;
 import com.njmsita.exam.manager.model.querymodel.ExamQueryModel;
 import com.njmsita.exam.manager.service.ebi.ExamEbi;
 import com.njmsita.exam.manager.service.ebi.PaperEbi;
@@ -125,7 +122,7 @@ public class ExamManageController
         {
             examEbi.update(examVo,markTeachers,paperId,classroomIds);
         }
-        if(login.getTroleVo().getId().equals(SysConsts.ADMIN_ROLE_ID)){
+        if(login.getRole().getId().equals(SysConsts.ADMIN_ROLE_ID)){
             return "redirect:/exam/list.do";
         }
         return "redirect:/exam/toMyExam";
@@ -293,7 +290,7 @@ public class ExamManageController
         examEbi.updateMarkTeacher(examVo,markTeachers);
 
         TeacherVo login= (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
-        if(login.getTroleVo().getId().equals(SysConsts.ADMIN_ROLE_ID)){
+        if(login.getRole().getId().equals(SysConsts.ADMIN_ROLE_ID)){
             return "redirect:/exam/list.do";
         }
         return "redirect:/exam/toMyExam";

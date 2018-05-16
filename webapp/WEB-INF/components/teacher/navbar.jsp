@@ -22,14 +22,14 @@
 
                 <li>
                     <a>
-                        <div>身份：${loginUser.troleVo.name}</div>
+                        <div>身份：${loginUser.role.name}</div>
                     </a>
                 </li>
                 <script>
                     var User={
                         id:'${loginUser.id}',
                         name:'${loginUser.name}',
-                        role:'${loginUser.troleVo.id}'
+                        role:'${loginUser.role.id}'
                     }
                 </script>
                 <li class="divider"></li>

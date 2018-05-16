@@ -1,7 +1,5 @@
 package com.njmsita.exam.authentic.model;
 
-import com.njmsita.exam.base.BaseQueryVO;
-import com.njmsita.exam.manager.model.SchoolVo;
 import com.njmsita.exam.utils.validate.annotation.IDCardNoValifatorAnnocation;
 import com.njmsita.exam.utils.validate.annotation.TelephoneValidatorAnnotation;
 import com.njmsita.exam.utils.validate.validategroup.AddGroup;
@@ -49,18 +47,18 @@ public class TeacherVo extends UserModel
     @NotNull(message = "{gender.notempty}",groups = {AddGroup.class, EditGroup.class})
     private Integer gender;
     //所拥有的角色  n TO  1
-    private TroleVo troleVo;
+    private TroleVo role;
 
     @Basic
     @Column(name = "role_id")
-    public TroleVo getTroleVo()
+    public TroleVo getRole()
     {
-        return troleVo;
+        return role;
     }
 
-    public void setTroleVo(TroleVo troleVo)
+    public void setRole(TroleVo troleVo)
     {
-        this.troleVo = troleVo;
+        this.role = troleVo;
         if (troleVo != null)
         {
             super.setUserRole(troleVo.getId());
@@ -269,7 +267,7 @@ public class TeacherVo extends UserModel
                 ", createtime=" + createtime +
                 ", modifytime=" + modifytime +
                 ", gender=" + gender +
-                ", troleVo=" + troleVo +
+                ", troleVo=" + role +
                 '}';
     }
 }

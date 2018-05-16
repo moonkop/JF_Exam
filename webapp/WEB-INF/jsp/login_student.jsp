@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
@@ -42,22 +43,23 @@
                     <h3 class="panel-title">学生登录</h3>
                 </div>
                 <div class="panel-body">
-                    <form role="form" action="${pageContext.request.contextPath}/stu/login" method="post">
+                    <%--<form role="form" action="${pageContext.request.contextPath}/stu/login" method="post">--%>
+                        <form role="form" action="/student/login.do" method="post">
+
                         <fieldset>
 
                             <div class="form-group">
-                                <select class="form-control" placeholder="学号" name="email" type="email" autofocus>
-                                    <option>
-                                        机蜂夏令营
-                                    </option>
-                                    <option>
-                                        清华大学
-                                    </option>
+                                <select class="form-control" placeholder="学号" name="schoolId"  autofocus>
+                                 <c:forEach   items="${schoolList}"  var="item">
+                                     <option value="${item.id}">${item.name}</option>
+
+                                 </c:forEach>
+
                                 </select>
                             </div>
 
                             <div class="form-group">
-                                <input class="form-control" placeholder="学号" name="email" type="studentId" value="123" autofocus>
+                                <input class="form-control" placeholder="学号" name="studentId" type="studentId" value="123" autofocus>
                             </div>
                             <div class="form-group">
                                 <input class="form-control" placeholder="密码" name="password" type="password" value="123">

@@ -512,7 +512,7 @@ public class QuestionBankManagerController extends BaseController
     {
         List<QuestionVo> list = null;
         TeacherVo teacherVo = (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
-        if (teacherVo.getTroleVo().getId().equals(SysConsts.ADMIN_ROLE_ID))
+        if (teacherVo.getRole().getId().equals(SysConsts.ADMIN_ROLE_ID))
         {
             list = questionEbi.getAll(questionQueryModel, offset, pageSize);
         } else

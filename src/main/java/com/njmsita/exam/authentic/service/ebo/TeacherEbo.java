@@ -4,7 +4,6 @@ import com.njmsita.exam.authentic.dao.dao.RoleDao;
 import com.njmsita.exam.authentic.dao.dao.TeacherDao;
 import com.njmsita.exam.authentic.model.TeacherVo;
 import com.njmsita.exam.authentic.model.TroleVo;
-import com.njmsita.exam.authentic.service.ebi.RoleEbi;
 import com.njmsita.exam.authentic.service.ebi.TeacherEbi;
 import com.njmsita.exam.base.BaseQueryVO;
 import com.njmsita.exam.utils.consts.SysConsts;
@@ -14,7 +13,6 @@ import com.njmsita.exam.utils.format.MD5Utils;
 import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.idutil.IdUtil;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -99,7 +97,7 @@ public class TeacherEbo implements TeacherEbi
             temp.setMail(teacherVo.getMail());
             temp.setIdCardNo(teacherVo.getIdCardNo());
             temp.setTelephone(teacherVo.getTelephone());
-            temp.setTroleVo(teacherVo.getTroleVo());
+            temp.setRole(teacherVo.getRole());
             temp.setGender(teacherVo.getGender());
             if (!StringUtil.isEmpty(teacherVo.getPassword()))
             {
@@ -191,7 +189,7 @@ public class TeacherEbo implements TeacherEbi
                     temp.setPassword(MD5Utils.md5(temp.getTeacherId()));
                     temp.setId(IdUtil.getUUID());
                     TroleVo role = roleDao.getByName(SysConsts.TEACHER_ROLE_NAME);
-                    temp.setTroleVo(role);
+                    temp.setRole(role);
 
                     teachers.add(temp);
                 }

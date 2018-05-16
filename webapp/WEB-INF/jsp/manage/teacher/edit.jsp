@@ -57,10 +57,10 @@
                                         <label for="selectRole" class="col-sm-2 control-label">身份</label>
 
                                         <div class="col-sm-8">
-                                            <select name="troleVo.id" id="selectRole" class="form-control">
+                                            <select name="role.id" id="selectRole" class="form-control">
                                                 <c:forEach items="${requestScope.roles}" var="role">
                                                     <option value="${role.id}"
-                                                            <c:if test="${teacher.troleVo==role}">selected</c:if>   >
+                                                            <c:if test="${teacher.role==role}">selected</c:if>   >
                                                             ${role.name}
                                                     </option>
                                                 </c:forEach>
