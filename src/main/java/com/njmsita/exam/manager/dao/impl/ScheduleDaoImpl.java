@@ -25,9 +25,9 @@ public class ScheduleDaoImpl extends BaseImpl<ScheduleVo> implements ScheduleDao
     {
     }
 
-    public List<ScheduleVo> getByExam(String examId)
+    public List<ScheduleVo> getByTarget(String examId)
     {
-        String hql="select distinct sv from ScheduleVo sv where sv.examVo.id=?";
+        String hql="select distinct sv from ScheduleVo sv where sv.targetVoId.id=?";
         return (List<ScheduleVo>) this.getHibernateTemplate().find(hql,examId);
     }
 

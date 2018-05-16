@@ -153,6 +153,7 @@ public class ExamEbo implements ExamEbi
         temp.setExamStatus(SysConsts.EXAM_STATUS_PASS);
         createSchedulerJob(temp,SysConsts.SCHEDULEVO_JOB_TYPE_OPEN);
         createSchedulerJob(temp,SysConsts.SCHEDULEVO_JOB_TYPE_CLOSE);
+        createSchedulerJob(temp,SysConsts.SCHEDULEVO_JOB_TYPE_FINISH);
     }
 
     public void setNoPass(ExamVo examVo, TeacherVo login) throws Exception
@@ -184,7 +185,7 @@ public class ExamEbo implements ExamEbi
         }
         temp.setExamStatus(SysConsts.EXAM_STATUS_IN_CANCEL);
         studentExamDao.deleteAllByExam(examVo);
-        List<ScheduleVo> scheduleList=scheduleDao.getByExam(temp.getId());
+        List<ScheduleVo> scheduleList=scheduleDao.getByTarget(temp.getId());
         for (ScheduleVo scheduleVo : scheduleList)
         {
             scheduleVo.setJobStatus(SysConsts.SCHEDULEVO_JOB_STATUS_FORBIDDEN);
@@ -201,7 +202,7 @@ public class ExamEbo implements ExamEbi
         if(status!=SysConsts.EXAM_STATUS_IN_CANCEL){
             throw new OperationException("所选该场考试不是可删除状态，请不要进行非法操作！");
         }
-        List<ScheduleVo> scheduleList=scheduleDao.getByExam(temp.getId());
+        List<ScheduleVo> scheduleList=scheduleDao.getByTarget(temp.getId());
         for (ScheduleVo scheduleVo : scheduleList)
         {
             scheduleVo.setJobStatus(SysConsts.SCHEDULEVO_JOB_STATUS_DELETE);
@@ -266,23 +267,36 @@ public class ExamEbo implements ExamEbi
             list=studentExamQuestionDao.getAllByStudentExam(studentExamVo);
         }else {
             studentExamVo.setOperation(SysConsts.STUDENT_EXAM_OPERATION_ARCHIVE);
-            studentExamVo.setStartTime(System.currentTimeMillis());
-            String paperJson=examVo.getPaperContent();
-            JSONObject jsonObject=JSONObject.fromObject(paperJson);
-            String questionContainJson=jsonObject.getString("questionContain");
-            JSONArray jsonArray=JSONArray.fromObject(questionContainJson);
+            Long systemTime=System.currentTimeMillis();
+            studentExamVo.setStartTime(systemTime);
+
+            JSONArray jsonArray=getQuestionJsonArray(examVo.getPaperContent());
             for(int i=0;i<jsonArray.size();i++){
                 StudentExamQuestionVo seq=new StudentExamQuestionVo();
                 seq.setId(IdUtil.getUUID());
                 seq.setStudentExamVo(studentExamVo);
                 seq.setIndext(i+1);
                 JSONObject questionJson=jsonArray.getJSONObject(i);
-                JSONObject questionTypeJson=jsonObject.fromObject(questionJson.getString("questionType"));
+                seq.setRightAnswer(questionJson.getString("answer"));
+                JSONObject questionTypeJson=JSONObject.fromObject(questionJson.getString("questionType"));
                 QuestionTypeVo questionTypeVo=questionTypeDao.get(Integer.parseInt(questionTypeJson.getString("id")));
                 seq.setQuestionTypeVo(questionTypeVo);
                 studentExamQuestionDao.save(seq);
                 list.add(seq);
             }
+            //创建自动提交定时任务
+            ScheduleVo scheduleVo=new ScheduleVo();
+            scheduleVo.setId(IdUtil.getUUID());
+            scheduleVo.setJobName("学生考试："+studentExamVo.getId()+":自动提交定时任务");
+            scheduleVo.setJobGroup("default");
+            scheduleVo.setJobStatus(SysConsts.SCHEDULEVO_JOB_STATUS_ONETIME);
+            scheduleVo.setCronexpression(FormatUtil.cronExpression(systemTime+examVo.getDuration()*60*100));
+            scheduleVo.setDescribe(scheduleVo.getJobName());
+            scheduleVo.setDao(studentExamDao);
+            scheduleVo.setTargetVoId(studentExamVo.getId());
+            scheduleVo.setJobType(SysConsts.SCHEDULEVO_JOB_TYPE_ONETIME);
+            SchedulerJobUtil.addJob(scheduleVo);
+            savaLog(scheduleVo,scheduleVo.getDescribe());
         }
         Map<String,Object> map=new HashMap<>();
         map.put("studentExamQuestionList",list);
@@ -298,6 +312,9 @@ public class ExamEbo implements ExamEbi
         StudentExamVo studentExamVo=studentExamDao.get(studentExamId);
         if(studentExamVo==null){
             throw new OperationException("你的这场考试不存在，请不要进行非法操作！");
+        }
+        if(!studentExamVo.getStudentVo().getId().equals(login.getId())){
+            throw new OperationException("无法保存他人的试卷，请不要进行非法操作！");
         }
         ExamVo examVo=studentExamVo.getExamVo();
         if(examVo.getExamStatus()>=SysConsts.EXAM_STATUS_IN_MARK){
@@ -318,6 +335,36 @@ public class ExamEbo implements ExamEbi
         }
     }
 
+    public void submitAnswer(StudentExamVo studentExamVo, StudentVo login) throws Exception
+    {
+        if(StringUtil.isEmpty(studentExamVo.getId())){
+            throw new OperationException("请确认要提交的试卷不为空,不要进行非法操作！");
+        }
+        studentExamVo=studentExamDao.get(studentExamVo.getId());
+        if(studentExamVo==null){
+            throw new OperationException("请确认要提交的试卷不为空,不要进行非法操作！");
+        }
+        if(!studentExamVo.getStudentVo().getId().equals(login.getId())){
+            throw new OperationException("不能提交他人试卷,请不要进行非法操作！");
+        }
+        Set<StudentExamQuestionVo> questions=studentExamVo.getStudentExamQuestionVos();
+        double sum=0;
+        for (StudentExamQuestionVo question : questions)
+        {
+            double score=0;
+            if(question.getRightAnswer().equals(question.getAnswer())){
+                score=question.getQuestionTypeVo().getScore();
+            }else if(question.getRightAnswer().contains(question.getAnswer())){
+                score=question.getQuestionTypeVo().getScore()/2;
+            }
+            question.setScore(FormatUtil.formatScore(score));
+        }
+        studentExamVo.setScore(FormatUtil.formatScore(sum));
+        studentExamVo.setStudentExamQuestionVos(questions);
+        ScheduleVo scheduleVo=scheduleDao.getByTarget(studentExamVo.getId()).get(0);
+        SchedulerJobUtil.delJob(scheduleVo);
+    }
+
     //-----------------------------------以上为业务操作-------------------------------------
     //-----------------------------------以上为业务操作-------------------------------------
     //-----------------------------------以上为业务操作-------------------------------------
@@ -332,26 +379,61 @@ public class ExamEbo implements ExamEbi
     {
         ScheduleVo scheduleVo=new ScheduleVo();
         String jobTypeView=SysConsts.SCHEDULEVO_JOB_TYPE_MAP.get(jobType);
+
         scheduleVo.setId(IdUtil.getUUID());
         scheduleVo.setJobName(temp.getName()+"_"+jobTypeView);
         scheduleVo.setJobGroup(temp.getId());
         scheduleVo.setJobStatus(SysConsts.SCHEDULEVO_JOB_STATUS_START);
         scheduleVo.setDescribe("定时"+jobTypeView+",ExamId："+temp.getId());
         scheduleVo.setJobType(jobType);
-        scheduleVo.setExamVo(temp);
+        scheduleVo.setTargetVoId(temp.getId());
 
-        if(jobType==0){
+        if(jobType==SysConsts.SCHEDULEVO_JOB_TYPE_OPEN){
             scheduleVo.setNowStatu(SysConsts.EXAM_STATUS_PASS);
             scheduleVo.setAffterStatu(SysConsts.EXAM_STATUS_OPEN);
-        }else {
+            scheduleVo.setCronexpression(FormatUtil.cronExpression(temp.getOpenTime()));
+        }else if(jobType==SysConsts.SCHEDULEVO_JOB_TYPE_CLOSE){
             scheduleVo.setNowStatu(SysConsts.EXAM_STATUS_OPEN);
             scheduleVo.setAffterStatu(SysConsts.EXAM_STATUS_CLOSE);
+            scheduleVo.setCronexpression(FormatUtil.cronExpression(temp.getOpenTime()+
+                    SysConsts.EXAM_OPEN_TO_CLOSE_DURING_TIME*60*100));
+        }else {
+            JSONArray questions = getQuestionJsonArray(temp.getPaperContent());
+            boolean flag=true;
+            for(int i=0;i<questions.size();i++)
+            {
+                JSONObject questionJson=questions.getJSONObject(i);
+                JSONObject questionTypeJson=JSONObject.fromObject(questionJson.getString("questionType"));
+                QuestionTypeVo questionTypeVo=questionTypeDao.get(Integer.parseInt(questionTypeJson.getString("id")));
+                if(questionTypeVo.getName().equals(SysConsts.NO_ANSWER_QUESTION_TYPE_NAME)){
+                    flag=false;
+                }
+            }
+            scheduleVo.setNowStatu(SysConsts.EXAM_STATUS_CLOSE);
+            if(flag){
+                scheduleVo.setAffterStatu(SysConsts.EXAM_STATUS_ENDING);
+            }else {
+                scheduleVo.setAffterStatu(SysConsts.EXAM_STATUS_IN_MARK);
+            }
+            scheduleVo.setCronexpression(FormatUtil.cronExpression(temp.getOpenTime()+
+                    (temp.getDuration()+SysConsts.EXAM_OPEN_TO_CLOSE_DURING_TIME)*60*100));
         }
-        scheduleVo.setExamDao(examDao);
-        scheduleVo.setCronexpression(FormatUtil.cronExpression(temp.getOpenTime()));
+        scheduleVo.setDao(examDao);
         scheduleDao.save(scheduleVo);
         new SchedulerJobUtil().createJob(scheduleVo,schedulerFactoryBean.getScheduler());
         savaLog(scheduleVo,scheduleVo.getDescribe());
+    }
+
+    /**
+     * 解析得到题目的JSON数组
+     * @param paperContent
+     * @return
+     */
+    private JSONArray getQuestionJsonArray(String paperContent)
+    {
+        JSONObject jsonObject=JSONObject.fromObject(paperContent);
+        String questionContainJson=jsonObject.getString("questionContain");
+        return JSONArray.fromObject(questionContainJson);
     }
 
     /**
@@ -359,6 +441,7 @@ public class ExamEbo implements ExamEbi
      * @param scheduleVo
      */
     private void savaLog(ScheduleVo scheduleVo,String method){
+
         LogVo logVo = new LogVo();
         logVo.setModule("考试管理");
         logVo.setMethod(method);

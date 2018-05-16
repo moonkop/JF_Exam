@@ -14,13 +14,26 @@ public class StudentExamQuestionVo
     private Double score;
     private String remark;
     private String answer;
+    private String rightAnswer;
 
     //指定学生的考试 n TO 1
     private StudentExamVo studentExamVo;
-    //阅卷教师
+    //阅卷教师   n  TO  1
     private TeacherVo teacherVo;
-    //题型
+    //题型    n  TO  1
     private QuestionTypeVo questionTypeVo;
+
+    @Basic
+    @Column(name = "rightAnswer")
+    public String getRightAnswer()
+    {
+        return rightAnswer;
+    }
+
+    public void setRightAnswer(String rightAnswer)
+    {
+        this.rightAnswer = rightAnswer;
+    }
 
     @Basic
     @Column(name = "answer")

@@ -60,7 +60,7 @@ public class SchedulerJobUtil
     }
 
     /**
-     * 添加一次性执行任务
+     * 添加一次性任务
      * @param scheduleVo
      * @throws SchedulerException
      */
@@ -73,7 +73,6 @@ public class SchedulerJobUtil
         CronTrigger trigger = (CronTrigger) CronScheduleBuilder.cronSchedule(scheduleVo
                 .getCronexpression());
         scheduler.scheduleJob(jobDetail, trigger);// 将任务信息添加到sheduler中
-
     }
 
     /**

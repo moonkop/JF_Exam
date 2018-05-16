@@ -5,6 +5,7 @@ import com.njmsita.exam.authentic.model.TeacherVo;
 import com.njmsita.exam.base.BaseEbi;
 import com.njmsita.exam.manager.model.ExamVo;
 import com.njmsita.exam.manager.model.StudentExamQuestionVo;
+import com.njmsita.exam.manager.model.StudentExamVo;
 import com.njmsita.exam.manager.model.querymodel.ExamQueryModel;
 import com.njmsita.exam.utils.exception.OperationException;
 
@@ -117,4 +118,11 @@ public interface ExamEbi extends BaseEbi<ExamVo>
      * @param studentExamQuestionList
      */
     public void archive(StudentVo login, String studentExamId, List<StudentExamQuestionVo> studentExamQuestionList) throws Exception;
+
+    /**
+     * 提交作答
+     * @param studentExamVo
+     * @param login
+     */
+    public void submitAnswer(StudentExamVo studentExamVo, StudentVo login) throws Exception;
 }

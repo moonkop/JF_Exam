@@ -19,9 +19,9 @@ public class FormatUtil {
 		DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		return  df.format(new Date(time)); 
 	}
-	public static final String formatMoney(Double money){
-		DecimalFormat   df   =new DecimalFormat("#.00");    
-		return df.format(money);
+	public static final Double formatScore(Double money){
+		DecimalFormat   df   =new DecimalFormat("#.0");
+		return Double.parseDouble(df.format(money));
 	}
 
 	public static final String cronExpression(Long time){

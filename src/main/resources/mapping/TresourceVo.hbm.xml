@@ -22,7 +22,7 @@
             <one-to-many class="com.njmsita.exam.authentic.model.TresourceVo"/>
         </set>
 
-        <set name="roles" table="trole_tresource" lazy="false">
+        <set name="roles" table="trole_tresource" lazy="true">
             <key column="tresource_id"></key>
             <many-to-many column="trole_id" class="com.njmsita.exam.authentic.model.TroleVo"/>
         </set>
