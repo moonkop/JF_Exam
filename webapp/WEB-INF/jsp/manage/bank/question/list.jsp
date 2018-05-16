@@ -162,7 +162,12 @@
 
 
 <script id="js-template-question-edit" type="text/html">
+
     <div class="form-horizontal">
+        <div style="display: none;">
+            <input type="text" data-field="id">
+            <input type="text" data-field="topicid">
+        </div>
         <div class="form-group">
             <label class="col-sm-2 control-label">题干</label>
             <div class="col-sm-9">
@@ -175,7 +180,7 @@
                 <textarea class="form-control" data-field="code"></textarea>
             </div>
         </div>
-        <div class="form-group-option">
+        <div class="option-wrapper">
 
         </div>
         <div class="form-group">
@@ -187,7 +192,7 @@
         <div class="form-group">
             <label class="col-sm-2 control-label">题目类型</label>
             <div class="col-sm-9">
-                <select name="type" id="select-question-type" class="form-control">
+                <select name="type" id="select-question-type" data-field="type" class="form-control">
                     <option value="2">单选题</option>
                     <option value="3">多选题</option>
                     <option value="5">简答题</option>
@@ -214,7 +219,7 @@
 
 
 <script id="js-tempalte-question-edit-option" type="text/html">
-    <div class="form-group">
+    <div class="form-group form-group-option">
         <label class="col-sm-2 control-label">选项</label>
         <div class="col-sm-9">
             <div class="input-group">
@@ -341,7 +346,7 @@
                                         //编辑
                                         $("#question_" + question.id + " .js-question-edit").on("click", function () {
                                             getQuestionDetail(question.id, function (questionDetail) {
-                                                var $question_edit_form = renderQuestion_Edit(questionDetail);
+
                                                 layer.open(
                                                     {
                                                         type: 5,
@@ -349,31 +354,10 @@
                                                         closeBtn: 2,
                                                         title: '题目编辑',
                                                         area: ['700px', '500px'],
-                                                        content: $question_edit_form.prop("outerHTML"),
+                                                        content: "",
                                                         success: function () {
-                                                            question_edit_option_status = {
-                                                                optionid: 1,
-                                                                optionCount: 1
-                                                            }
-                                                            if (questionDetail.options != null && questionDetail.options != "")
-                                                            {
-                                                                questionDetail.options = JSON.parse(questionDetail.options);
-                                                            }
-
-                                                            for(key in questionDetail.options)
-                                                            {
-                                                                var iscorrect = questionDetail.answer.indexOf(key)!=-1;
-
-                                                                question_edit_on_add_option(questionDetail.options[key] ,iscorrect);
-                                                            }
-
-                                                            $(".layui-layer-content").addClass("layer-form");
-
-                                                            //增加选项按钮点击
-                                                            $(".btn-add-option").on("click", function () {
-                                                                question_edit_on_add_option();
-                                                            });
-
+                                                            $('.layui-layer-content').append(renderQuestion_Edit(questionDetail));
+                                                            question_edit_after_render(questionDetail);
                                                         },
                                                         end: function () {
 
@@ -504,6 +488,7 @@
 
     }
 
+    //获取题目详细信息
     function getQuestionDetail(questionid, onsuccess)
     {
         $.ajax(
@@ -525,6 +510,7 @@
 
     }
 
+    //显示题目列表
     function renderQuestionOptionList(question)
     {
         if (question.options == null || question.options == "")
@@ -558,6 +544,7 @@
 
     }
 
+    //在列表中显示一个题目
     function renderQuestion(question)
     {
         var $question_panel = $($("#js-template-question-panel").html());
@@ -594,6 +581,7 @@
         return $question_panel;
     }
 
+    //显示题目详情页面
     function RenderQuestion_View(questionDetail)
     {
         var $questionForm = $($("#js-template-question-view").html());
@@ -644,21 +632,20 @@
         return $questionForm;
     }
 
-
+    //显示编辑题目页面
     function renderQuestion_Edit(questionDetail)
     {
         var $questionForm = $($("#js-template-question-edit").html());
 
         var config = {
             options: function (value, key) {
-
                 return "";
             },
             answer: function (value, key) {
-                return QuestionAnswerNumsToChars(value);
+                return "";
             },
             type: function (value, key) {
-                return QuestionTypeMap(value);
+                return "";
             },
             createTime: function (value, key) {
                 return new Date(value).toLocaleString();
@@ -679,34 +666,69 @@
             {
                 fieldContent = questionDetail[key];
             }
+            if (fieldContent != "")
+            {
+                set_data_in_field($questionForm.find("[data-field='" + key + "']"), fieldContent);
 
-
-            $questionForm.find("[data-field='" + key + "']").html(fieldContent);
-
-
+            }
         }
         return $questionForm;
     }
 
+
     var question_edit_option_status;
 
-    function question_edit_on_add_option(content,iscorrect)
+    //在编辑页面显示之后调用
+    function question_edit_after_render(questionDetail)
+    {
+        question_edit_option_status = {
+            optionid: 1,
+            optionCount: 1
+        }
+        if (questionDetail.options != null && questionDetail.options != "")
+        {
+            questionDetail.options = JSON.parse(questionDetail.options);
+        }
+
+        for (key in questionDetail.options)
+        {
+            var iscorrect = questionDetail.answer.indexOf(key) != -1;
+
+            question_edit_on_add_option(questionDetail.options[key], iscorrect);
+        }
+
+        $(".layui-layer-content").addClass("layer-form");
+
+        //增加选项按钮点击
+        $(".btn-add-option").on("click", function () {
+            question_edit_on_add_option();
+        });
+        //提交按钮事件
+        $(".js-edit-submit").on("click", function () {
+            question_edit_on_submit();
+        });
+
+    }
+
+    //添加一个选项并检查是否超过限制
+    function question_edit_on_add_option(content, iscorrect)
     {
         if (question_edit_option_status.optionCount > 9)
         {
             layer.msg("最多能添加9个选项");
             return;
         }
-        question_edit_add_option(question_edit_option_status.optionid,content,iscorrect);
+        question_edit_add_option(question_edit_option_status.optionid, content, iscorrect);
         question_edit_option_status.optionid++;
         question_edit_option_status.optionCount++;
     }
 
-    function question_edit_add_option(optionid,content, iscorrect)
+    //添加一个选项
+    function question_edit_add_option(optionid, content, iscorrect)
     {
         $option = $($("#js-tempalte-question-edit-option").html());
         $option.attr("id", "option-" + optionid);
-        $(".form-group-option").append($option.prop("outerHTML"));
+        $(".option-wrapper").append($option.prop("outerHTML"));
         if (iscorrect == true)
         {
             question_edit_option_toggle_correct(optionid, true);
@@ -720,21 +742,128 @@
         $("#option-" + optionid + " .js-remove").on("click", function () {
             $("#option-" + optionid).remove();
             question_edit_option_status.optionCount--;
+            question_edit_option_group_on_change();
         })
+
+        question_edit_option_group_on_change();
     }
 
+    //更改选项正确性
     function question_edit_option_toggle_correct(optionid, iscorrect)
     {
         $("#option-" + optionid).toggleClass("option-correct", iscorrect);
         $("#option-" + optionid + " .js-valid").toggleClass("btn-success", iscorrect).find(".fa").toggleClass("fa-check", iscorrect);
-
-
+        question_edit_option_group_on_change();
     }
+
+    //更改题目类型
     function question_edit_select_question_type(typeid)
     {
         $(".layui-layer-content #select-question-type").val(typeid);
     }
 
+
+    //在选项数量和正确答案数量变化时触发，自动判断题目类型
+    function question_edit_option_group_on_change()
+    {
+        var optionCount = $(".layui-layer-content .form-group-option").length;
+        var correctOptionCount = $(".layui-layer-content .option-correct").length;
+        if (optionCount == 0)
+        {
+            question_edit_select_question_type(5);
+        }
+        else if (correctOptionCount == 1 || correctOptionCount == 0)
+        {
+            question_edit_select_question_type(2);
+        }
+        else
+        {
+            question_edit_select_question_type(3);
+        }
+    }
+
+    function question_edit_on_submit()
+    {
+        var $question_form = $(".layui-layer-content");
+        var index = 0;
+        var answer = "";
+        var option = [];
+        $question_form.find(".form-group-option").map(function () {
+            var content = $(this).find("input").val();
+            if ($(this).hasClass("option-correct"))
+            {
+                answer += index;
+            }
+            index++;
+            option.push(content);
+        })
+
+        var data = {
+            id: get_data_in_field($question_form.find("[data-field='id']")),
+            outline: get_data_in_field($question_form.find("[data-field='outline']")),
+            code: get_data_in_field($question_form.find("[data-field='code']")),
+            'questionType.id': get_data_in_field($question_form.find("[data-field='type']")),
+            'topic.id': get_data_in_field($question_form.find("[data-field='topicid']")),
+            '_options': option,
+            answer: answer
+        };
+        $.ajax({
+            type: 'post',
+            url: '/manage/bank/question/edit.do',
+            data: data
+        })
+    }
+
+    function get_data_in_field($element)
+    {
+        if ($element == undefined || $element[0] == undefined)
+        {
+            return;
+        }
+        switch ($element[0].tagName)
+        {
+
+            case'TEXTAREA':
+            case'INPUT':
+            case'SELECT':
+                return $element.val();
+
+            case 'P':
+            case 'PRE':
+            case 'CODE':
+            case 'DIV':
+            default:
+                return $element.html();
+                break;
+        }
+    }
+
+    function set_data_in_field($element, data)
+    {
+
+        if ($element == undefined || $element[0] == undefined)
+        {
+            return;
+        }
+        switch ($element[0].tagName)
+        {
+            case 'PRE':
+            case 'CODE':
+            case 'DIV':
+                return $element.html(data);
+                break;
+            case'TEXTAREA':
+            case'INPUT':
+            case'SELECT':
+                return $element.val(data);
+
+        }
+    }
+
+    function question_edit_collect_data()
+    {
+
+    }
 
 </script>
 

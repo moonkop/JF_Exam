@@ -1,11 +1,14 @@
 package com.njmsita.exam.manager.model;
 
 import com.njmsita.exam.authentic.model.TeacherVo;
+import com.njmsita.exam.utils.json.OptionUtil;
 import com.njmsita.exam.utils.validate.validategroup.AddGroup;
 import com.njmsita.exam.utils.validate.validategroup.EditGroup;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Table(name = "question", schema = "jf_exam", catalog = "")
@@ -14,18 +17,17 @@ import javax.persistence.*;
  */
 public class QuestionVo
 {
-    @NotEmpty(message = "{id.notempty}",groups = {EditGroup.class})
+    @NotEmpty(message = "{id.notempty}", groups = {EditGroup.class})
     private String id;
     private Integer isPrivate;
     private Long createTime;
     private String code;
-    @NotEmpty(message = "{outline.notempty}",groups = {AddGroup.class,EditGroup.class})
+    @NotEmpty(message = "{outline.notempty}", groups = {AddGroup.class, EditGroup.class})
     private String outline;
     private String option;
+    private String[] optionList;
     private String answer;
-
     private Integer useTime;
-
     //所属知识点  n TO 1
     private TopicVo topic;
     //出题人   n TO 1
@@ -35,7 +37,16 @@ public class QuestionVo
     //所属科目  n TO 1
     private SubjectVo subject;
 
-    //todo 加一个code 所属语言类型 方便前台渲染 (JAVA,XML,HTML,CSS,JS,....)
+    public String[] getOptionList()
+    {
+        return optionList;
+    }
+
+    public void setOptionList(String[] optionList)
+    {
+        this.optionList = optionList;
+        this.option = OptionUtil.toOptionString(optionList);
+    }
 
     @Basic
     @Column(name = "useTime")
@@ -180,6 +191,8 @@ public class QuestionVo
     {
         this.answer = answer;
     }
+
+
 
     public int hashCode()
     {
