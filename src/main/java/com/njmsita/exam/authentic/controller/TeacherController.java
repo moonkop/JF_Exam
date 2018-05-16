@@ -115,7 +115,7 @@ public class TeacherController extends BaseController
 
         //用户信息验证失败
         request.setAttribute("msg", "账号或密码不正确！！");
-        return "teacher/login_teacher";
+        return "redirect:/teacher/login";
     }
 
     /**
@@ -289,7 +289,7 @@ public class TeacherController extends BaseController
     {
         return new JsonListResponse<>(
                 teaEbi.getAll(teacherQueryVo, pageNum, pageSize),
-                "name,id,teacherId,[role]troleVo.name",
+                "name,id,teacherId,[role]role.name",
                 teaEbi.getCount(teacherQueryVo));
 
     }

@@ -20,6 +20,6 @@
         <property name="modifytime" column="modifytime"/>
         <property name="gender" column="gender"/>
 
-        <many-to-one name="getRoleVo" column="role_id" class="com.njmsita.exam.authentic.model.TroleVo" lazy="false"/>
+        <many-to-one name="role" column="role_id" class="com.njmsita.exam.authentic.model.TroleVo" lazy="false"/>
     </class>
 </hibernate-mapping>

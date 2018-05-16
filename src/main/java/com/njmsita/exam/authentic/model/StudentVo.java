@@ -1,6 +1,5 @@
 package com.njmsita.exam.authentic.model;
 
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.njmsita.exam.manager.model.ClassroomVo;
 import com.njmsita.exam.manager.model.SchoolVo;
 import com.njmsita.exam.utils.validate.annotation.IDCardNoValifatorAnnocation;

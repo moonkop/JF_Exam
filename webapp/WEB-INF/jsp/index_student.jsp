@@ -10,12 +10,15 @@
 <body>
 
 <div id="wrapper">
-    <%@include file="/WEB-INF/components/teacher/navbar.jsp"%>
-    <%@include file="/WEB-INF/components/teacher/sidebar.jsp"%>
+    <%@include file="/WEB-INF/components/student/navbar.jsp"%>
+    <%@include file="/WEB-INF/components/student/sidebar.jsp"%>
 
     <div id="page-wrapper">
 <!-- start content -->
+        <div><span>
+            dsadddddddddddddddddfuckyou !
 
+        </span> </div>
 
 <!-- end content -->
     </div>

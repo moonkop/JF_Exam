@@ -6,81 +6,88 @@
 
     <definition name="base" template="/WEB-INF/layout/basic-template.jsp">
         <put-attribute name="header" value="/WEB-INF/components/header.jsp"/>
-        <put-attribute name="navbar" value="/WEB-INF/components/navbar.jsp"/>
-        <put-attribute name="sidebar" value="/WEB-INF/components/sidebar.jsp"/>
         <put-attribute name="footer" value="/WEB-INF/components/footer.jsp"/>
         <put-attribute name="title" value="机蜂在线考试系统"/>
     </definition>
+    
+    <definition name="teacher_base" extends="base">
+        <put-attribute name="navbar" value="/WEB-INF/components/teacher/navbar.jsp"/>
+        <put-attribute name="sidebar" value="/WEB-INF/components/teacher/sidebar.jsp"/>
+    </definition>
+    
+    <definition name="student_base" extends="base">
+        <put-attribute name="navbar" value="/WEB-INF/components/student/navbar.jsp"/>
+        <put-attribute name="sidebar" value="/WEB-INF/components/student/sidebar.jsp"/>
+    </definition>
 
-
-    <definition name="/manage/school/list" extends="base">
+    <definition name="/manage/school/list" extends="teacher_base">
         <put-attribute name="body" value="/WEB-INF/jsp/manage/school/list.jsp"/>
         <put-attribute name="title" value="学校管理"/>
     </definition>
-    <definition name="/manage/school/edit" extends="base">
+    <definition name="/manage/school/edit" extends="teacher_base">
         <put-attribute name="body" value="/WEB-INF/jsp/manage/school/edit.jsp"/>
         <put-attribute name="title" value="学校管理 - 编辑"/>
     </definition>
-    <definition name="/manage/school/detail" extends="base">
+    <definition name="/manage/school/detail" extends="teacher_base">
         <put-attribute name="body" value="/WEB-INF/jsp/manage/school/detail.jsp"/>
         <put-attribute name="title" value="学校管理 - 详情"/>
     </definition>
 
 
-    <definition name="/manage/classroom/list" extends="base">
+    <definition name="/manage/classroom/list" extends="teacher_base">
         <put-attribute name="body" value="/WEB-INF/jsp/manage/classroom/list.jsp"/>
         <put-attribute name="title" value="班级管理"/>
     </definition>
-    <definition name="/manage/classroom/edit" extends="base">
+    <definition name="/manage/classroom/edit" extends="teacher_base">
         <put-attribute name="body" value="/WEB-INF/jsp/manage/classroom/edit.jsp"/>
         <put-attribute name="title" value="班级管理 - 编辑"/>
     </definition>
-    <definition name="/manage/classroom/detail" extends="base">
+    <definition name="/manage/classroom/detail" extends="teacher_base">
         <put-attribute name="body" value="/WEB-INF/jsp/manage/classroom/detail.jsp"/>
         <put-attribute name="title" value="班级管理 - 详情"/>
     </definition>
 
 
-    <definition name="/manage/student/list" extends="base">
+    <definition name="/manage/student/list" extends="teacher_base">
         <put-attribute name="body" value="/WEB-INF/jsp/manage/student/list.jsp"/>
         <put-attribute name="title" value="学生管理"/>
     </definition>
-    <definition name="/manage/student/edit" extends="base">
+    <definition name="/manage/student/edit" extends="teacher_base">
         <put-attribute name="body" value="/WEB-INF/jsp/manage/student/edit.jsp"/>
         <put-attribute name="title" value="学生管理 - 编辑"/>
     </definition>
-    <definition name="/manage/student/detail" extends="base">
+    <definition name="/manage/student/detail" extends="teacher_base">
         <put-attribute name="body" value="/WEB-INF/jsp/manage/student/detail.jsp"/>
         <put-attribute name="title" value="学生管理 - 详情"/>
     </definition>
 
 
-    <definition name="/manage/teacher/list" extends="base">
+    <definition name="/manage/teacher/list" extends="teacher_base">
         <put-attribute name="body" value="/WEB-INF/jsp/manage/teacher/list.jsp"/>
         <put-attribute name="title" value="教师管理"/>
     </definition>
-    <definition name="/manage/teacher/edit" extends="base">
+    <definition name="/manage/teacher/edit" extends="teacher_base">
         <put-attribute name="body" value="/WEB-INF/jsp/manage/teacher/edit.jsp"/>
         <put-attribute name="title" value="教师管理 - 编辑"/>
     </definition>
-    <definition name="/manage/teacher/detail" extends="base">
+    <definition name="/manage/teacher/detail" extends="teacher_base">
         <put-attribute name="body" value="/WEB-INF/jsp/manage/teacher/detail.jsp"/>
         <put-attribute name="title" value="教师管理 - 详情"/>
     </definition>
 
 
-    <definition name="/manage/role/list" extends="base">
+    <definition name="/manage/role/list" extends="teacher_base">
         <put-attribute name="body" value="/WEB-INF/jsp/manage/role/list.jsp"/>
         <put-attribute name="title" value="角色管理"/>
     </definition>
-    <definition name="/manage/role/edit" extends="base">
+    <definition name="/manage/role/edit" extends="teacher_base">
         <put-attribute name="body" value="/WEB-INF/jsp/manage/role/edit.jsp"/>
         <put-attribute name="title" value="角色管理 - 编辑"/>
         <put-list-attribute name="additional-headers">
             <add-attribute value="/WEB-INF/layout/additional-headers/tree-header.jsp" />
         </put-list-attribute>
     </definition>
-    <definition name="/manage/role/detail" extends="base">
+    <definition name="/manage/role/detail" extends="teacher_base">
         <put-attribute name="body" value="/WEB-INF/jsp/manage/role/detail.jsp"/>
         <put-attribute name="title" value="角色管理 - 详情"/>
         <put-list-attribute name="additional-headers">
@@ -89,62 +96,61 @@
     </definition>
 
 
-    <definition name="/manage/resource/tree" extends="base">
+    <definition name="/manage/resource/tree" extends="teacher_base">
         <put-attribute name="body" value="/WEB-INF/jsp/manage/resource/tree.jsp"/>
         <put-attribute name="title" value="资源管理"/>
         <put-list-attribute name="additional-headers">
             <add-attribute value="/WEB-INF/layout/additional-headers/tree-header.jsp" />
         </put-list-attribute>
     </definition>
-    <definition name="/manage/resource/edit" extends="base">
+    <definition name="/manage/resource/edit" extends="teacher_base">
         <put-attribute name="body" value="/WEB-INF/jsp/manage/resource/edit.jsp"/>
         <put-attribute name="title" value="资源管理 - 编辑"/>
     </definition>
-    <definition name="/manage/resource/detail" extends="base">
+    <definition name="/manage/resource/detail" extends="teacher_base">
         <put-attribute name="body" value="/WEB-INF/jsp/manage/resource/detail.jsp"/>
         <put-attribute name="title" value="资源管理 - 详情"/>
     </definition>
 
 
-    <definition name="/manage/bank/subject/list" extends="base">
+    <definition name="/manage/bank/subject/list" extends="teacher_base">
         <put-attribute name="body" value="/WEB-INF/jsp/manage/bank/subject/list.jsp"/>
         <put-attribute name="title" value="学科管理"/>
     </definition>
-    <definition name="/manage/bank/subject/edit" extends="base">
+    <definition name="/manage/bank/subject/edit" extends="teacher_base">
         <put-attribute name="body" value="/WEB-INF/jsp/manage/bank/subject/edit.jsp"/>
         <put-attribute name="title" value="学科管理 - 编辑"/>
     </definition>
-    <definition name="/manage/bank/subject/detail" extends="base">
+    <definition name="/manage/bank/subject/detail" extends="teacher_base">
         <put-attribute name="body" value="/WEB-INF/jsp/manage/bank/subject/detail.jsp"/>
         <put-attribute name="title" value="学科管理 - 详情"/>
     </definition>
 
 
-    <definition name="/manage/bank/questionType/list" extends="base">
+    <definition name="/manage/bank/questionType/list" extends="teacher_base">
         <put-attribute name="body" value="/WEB-INF/jsp/manage/bank/questionType/list.jsp"/>
         <put-attribute name="title" value="题型管理"/>
     </definition>
-    <definition name="/manage/bank/questionType/edit" extends="base">
+    <definition name="/manage/bank/questionType/edit" extends="teacher_base">
         <put-attribute name="body" value="/WEB-INF/jsp/manage/bank/questionType/edit.jsp"/>
         <put-attribute name="title" value="题型管理 - 编辑"/>
     </definition>
-    <definition name="/manage/bank/questionType/detail" extends="base">
+    <definition name="/manage/bank/questionType/detail" extends="teacher_base">
         <put-attribute name="body" value="/WEB-INF/jsp/manage/bank/questionType/detail.jsp"/>
         <put-attribute name="title" value="题型管理 - 详情"/>
     </definition>
     
-
-    <definition name="/manage/bank/topic/tree" extends="base">
+    
+    <definition name="/manage/bank/topic/tree" extends="teacher_base">
         <put-attribute name="body" value="/WEB-INF/jsp/manage/bank/topic/tree.jsp"/>
         <put-attribute name="title" value="知识点管理"/>
         <put-list-attribute name="additional-headers">
             <add-attribute value="/WEB-INF/layout/additional-headers/tree-header.jsp" />
         </put-list-attribute>
     </definition>
+    
 
-
-
-    <definition name="/manage/bank/question/list" extends="base">
+    <definition name="/manage/bank/question/list" extends="teacher_base">
         <put-attribute name="body" value="/WEB-INF/jsp/manage/bank/question/list.jsp"/>
         <put-attribute name="title" value="题库管理"/>
         <put-list-attribute name="additional-headers">
@@ -152,6 +158,15 @@
             <add-attribute value="/WEB-INF/layout/additional-headers/highlight-header.jsp" />
         </put-list-attribute>
     </definition>
+    
+     <definition name="123" extends="base">
+        <put-attribute name="body" value="/WEB-INF/jsp/manage/bank/question/list.jsp"/>
+        <put-attribute name="title" value="题库管理"/>
+        
+    </definition>
+    
+    
+    
     
     
 </tiles-definitions>
