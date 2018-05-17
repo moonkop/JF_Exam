@@ -1,11 +1,8 @@
 package com.njmsita.exam.manager.model;
 
-import com.njmsita.exam.manager.dao.dao.ExamDao;
-import com.njmsita.exam.utils.consts.SysConsts;
+import com.njmsita.exam.base.BaseDao;
 
 import javax.persistence.*;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 @Entity
@@ -20,22 +17,22 @@ public class ScheduleVo
     private String describe;
     private Integer jobType;
 
-    private ExamVo examVo;
+    private String targetVoId;
 
     private Integer nowStatu;
     private Integer affterStatu;
-    private ExamDao examDao;
+    private BaseDao dao;
 
     @Basic
-    @Column(name = "exam_id")
-    public ExamVo getExamVo()
+    @Column(name = "targetVo_id")
+    public String getTargetVoId()
     {
-        return examVo;
+        return targetVoId;
     }
 
-    public void setExamVo(ExamVo examVo)
+    public void setTargetVoId(String examVo)
     {
-        this.examVo = examVo;
+        this.targetVoId = examVo;
     }
 
     public Integer getNowStatu()
@@ -58,14 +55,14 @@ public class ScheduleVo
         this.affterStatu = affterStatu;
     }
 
-    public ExamDao getExamDao()
+    public BaseDao getDao()
     {
-        return examDao;
+        return dao;
     }
 
-    public void setExamDao(ExamDao examDao)
+    public void setDao(BaseDao examDao)
     {
-        this.examDao = examDao;
+        this.dao = examDao;
     }
 
     @Id
@@ -186,10 +183,10 @@ public class ScheduleVo
                 ", cronexpression='" + cronexpression + '\'' +
                 ", describe='" + describe + '\'' +
                 ", jobType=" + jobType +
-                ", examVo=" + examVo +
+                ", examVo=" + targetVoId +
                 ", nowStatu=" + nowStatu +
                 ", affterStatu=" + affterStatu +
-                ", examDao=" + examDao +
+                ", examDao=" + dao +
                 '}';
     }
 }

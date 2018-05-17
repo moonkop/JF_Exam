@@ -16,8 +16,8 @@ public class QuartzJobFactory implements Job
     {
         System.out.println("任务成功运行");
         ScheduleVo scheduleVo = (ScheduleVo)context.getMergedJobDataMap().get("scheduleVo");
-        ExamDao examDao=scheduleVo.getExamDao();
-        ExamVo exam=examDao.get(scheduleVo.getExamVo().getId());
+        ExamDao examDao= (ExamDao) scheduleVo.getDao();
+        ExamVo exam=examDao.get(scheduleVo.getTargetVoId());
         if(exam.getExamStatus()==scheduleVo.getNowStatu()){
             exam.setExamStatus(scheduleVo.getAffterStatu());
             examDao.update(exam);

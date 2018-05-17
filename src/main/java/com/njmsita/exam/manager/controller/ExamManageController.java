@@ -4,8 +4,8 @@ import com.njmsita.exam.authentic.model.StudentVo;
 import com.njmsita.exam.authentic.model.TeacherVo;
 import com.njmsita.exam.authentic.model.UserModel;
 import com.njmsita.exam.authentic.service.ebi.TeacherEbi;
-import com.njmsita.exam.manager.model.ExamVo;
-import com.njmsita.exam.manager.model.PaperVo;
+import com.njmsita.exam.manager.dao.dao.SubjectDao;
+import com.njmsita.exam.manager.model.*;
 import com.njmsita.exam.manager.model.querymodel.ExamQueryModel;
 import com.njmsita.exam.manager.service.ebi.ExamEbi;
 import com.njmsita.exam.manager.service.ebi.PaperEbi;
@@ -15,7 +15,6 @@ import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.idutil.IdUtil;
 import com.njmsita.exam.utils.json.JsonListResponse;
-import com.njmsita.exam.utils.json.JsonObjectResponse;
 import com.njmsita.exam.utils.json.JsonResponse;
 import com.njmsita.exam.utils.logutils.SystemLogAnnotation;
 import com.njmsita.exam.utils.validate.validategroup.AddGroup;
@@ -24,6 +23,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -31,12 +31,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 考试管理控制器
  */
 @Controller
-@RequestMapping("/exam")
+@RequestMapping("/exam/manage")
 public class ExamManageController
 {
     @Autowired
@@ -344,33 +345,48 @@ public class ExamManageController
     }
 
     /**
-     * 到学生的考试页面
+     * 作答存档
+     *
+     * @param studentExamQuestionList
+     * @param studentExamId
      * @param request
      * @return
+     * @throws Exception
      */
-    @RequestMapping("toStudentExam")
-    public String toStudentExam(HttpServletRequest request){
-        UserModel login= (UserModel) request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
-        request.setAttribute("subjectList",subjectEbi.getAll());
-        List<ExamVo> myExamList=examEbi.getMyExamList(login.getUuid());
-        request.setAttribute("myExamList",myExamList);
-        return "manage/me/studentExam";
-    }
-
-    @RequestMapping("toAttendExam")
-    public String toAttendExam()
+    @RequestMapping("archive")
+    public JsonResponse archive(@RequestBody List<StudentExamQuestionVo> studentExamQuestionList, String studentExamId,
+                                HttpServletRequest request) throws Exception
     {
-        return "examing/attend";
+        StudentVo login= (StudentVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
+        examEbi.archive(login,studentExamId,studentExamQuestionList);
+        return null;
     }
 
-    @RequestMapping("attendExam")
-    public JsonResponse attendExam(ExamVo examVo,HttpServletRequest request) throws Exception{
-        if(StringUtil.isEmpty(examVo.getId())){
-            throw new OperationException("所选的该场考试的id不能为空，请不要进行非法操作！");
-        }
-        StudentVo studentVo= (StudentVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
-        examVo=examEbi.attendExam(examVo,studentVo);
-        return new JsonObjectResponse<ExamVo>(examVo,
-                "id,duration,paperContent,name,[subject]subjectVo.name");
+    /**
+     * 提交试卷作答（提交试卷作答前必须将所有试卷存档）
+     *
+     * @param studentExamVo
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping("submitAnswer")
+    public String submitAnswer(StudentExamVo studentExamVo,HttpServletRequest request) throws Exception
+    {
+        StudentVo login= (StudentVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
+        examEbi.submitAnswer(studentExamVo,login);
+        //TODO 提交作答后返回的页面
+        return "";
+    }
+
+    /**
+     * 获取系统时间
+     *
+     * @return
+     */
+    @RequestMapping("systemTime")
+    public JsonResponse systemTime(){
+        Long time=System.currentTimeMillis();
+        return new JsonResponse().put("time",time);
     }
 }

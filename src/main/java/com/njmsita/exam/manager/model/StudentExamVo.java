@@ -4,6 +4,7 @@ import com.njmsita.exam.authentic.model.StudentVo;
 
 import javax.persistence.*;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "student_exam", schema = "jf_exam", catalog = "")
@@ -21,6 +22,18 @@ public class StudentExamVo
 
     //对应学生 n TO 1
     private StudentVo studentVo;
+
+    private Set<StudentExamQuestionVo> studentExamQuestionVos;
+
+    public Set<StudentExamQuestionVo> getStudentExamQuestionVos()
+    {
+        return studentExamQuestionVos;
+    }
+
+    public void setStudentExamQuestionVos(Set<StudentExamQuestionVo> studentExamQuestionVos)
+    {
+        this.studentExamQuestionVos = studentExamQuestionVos;
+    }
 
     @Basic
     @Column(name = "exam_id")
@@ -83,7 +96,7 @@ public class StudentExamVo
     }
 
     @Basic
-    @Column(name = "score")
+    @Column(name = "totalScore")
     public Double getScore()
     {
         return score;

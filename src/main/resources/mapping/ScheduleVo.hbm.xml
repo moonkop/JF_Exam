@@ -12,7 +12,7 @@
         <property name="cronexpression" column="cronexpression"/>
         <property name="describe" column="describe"/>
         <property name="jobType" column="jobType"/>
+        <property name="targetVoId" column="targetVo_id"/>
 
-        <many-to-one name="examVo" column="exam_id" class="com.njmsita.exam.manager.model.ExamVo"/>
     </class>
 </hibernate-mapping>

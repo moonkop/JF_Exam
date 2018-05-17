@@ -102,18 +102,22 @@ public class SysConsts {
 	 */
 	public static final Integer SCHEDULEVO_JOB_TYPE_OPEN =0;
 	public static final Integer SCHEDULEVO_JOB_TYPE_CLOSE =1;
+	public static final Integer SCHEDULEVO_JOB_TYPE_FINISH =2;
+	public static final Integer SCHEDULEVO_JOB_TYPE_ONETIME =-1;
 
 	/**
 	 * 定时任务类型视图
 	 */
 	public static final String SCHEDULEVO_JOB_TYPE_CLOSE_VIEW ="开启考试入口";
 	public static final String SCHEDULEVO_JOB_TYPE_OPEN_VIEW ="关闭考试入口";
+	public static final String SCHEDULEVO_JOB_TYPE_FINISH_VIEW ="考试结束";
 	/**
 	 * 定时任务状态
 	 */
 	public static final Integer SCHEDULEVO_JOB_STATUS_FORBIDDEN =0;
 	public static final Integer SCHEDULEVO_JOB_STATUS_START =1;
 	public static final Integer SCHEDULEVO_JOB_STATUS_DELETE =2;
+	public static final Integer SCHEDULEVO_JOB_STATUS_ONETIME =-1;
 
 	/**
 	 * 定时任务类型视图转换
@@ -122,7 +126,13 @@ public class SysConsts {
 	static {
 		SCHEDULEVO_JOB_TYPE_MAP.put(SysConsts.SCHEDULEVO_JOB_TYPE_OPEN,SysConsts.SCHEDULEVO_JOB_TYPE_CLOSE_VIEW);
 		SCHEDULEVO_JOB_TYPE_MAP.put(SysConsts.SCHEDULEVO_JOB_TYPE_CLOSE,SysConsts.SCHEDULEVO_JOB_TYPE_OPEN_VIEW);
+		SCHEDULEVO_JOB_TYPE_MAP.put(SysConsts.SCHEDULEVO_JOB_TYPE_FINISH,SysConsts.SCHEDULEVO_JOB_TYPE_FINISH_VIEW);
 	}
+
+	/**
+	 * 考试开放时间
+	 */
+	public static final Integer EXAM_OPEN_TO_CLOSE_DURING_TIME =30;
 
 	/**
 	 * 学生考试过程操作

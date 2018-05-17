@@ -17,7 +17,7 @@ public interface ScheduleDao extends BaseDao<ScheduleVo>
      * @return
      * @param examId
      */
-    public List<ScheduleVo> getByExam(String examId);
+    public List<ScheduleVo> getByTarget(String examId);
 
 
 }
