@@ -512,22 +512,51 @@ public class QuestionBankManagerController extends BaseController
      */
     @ResponseBody
     @RequestMapping("question/list.do")
-    public JsonResponse questionList(QuestionQueryModel questionQueryModel, Integer offset, Integer pageSize,
+    public JsonResponse questionList(QuestionQueryModel questionQueryModel, @RequestParam(value = "_topicIds[]") String[] topicIds, Integer offset, Integer pageSize,
                                      HttpServletRequest request)
     {
-        List<QuestionVo> list=null;
-        TeacherVo teacherVo= (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
-        if(teacherVo.getRole().getId().equals(SysConsts.ADMIN_ROLE_ID)){
-            list=questionEbi.getAll(questionQueryModel,offset,pageSize);
-        }else {
-            if(questionQueryModel.getShowMe()==null){
-                questionQueryModel.setShowMe(false);
-            }
-            if (questionQueryModel.getShowMe())
+        List<QuestionVo> list = null;
+        TeacherVo currentTeacher = (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
+        if (questionQueryModel.getQuestionType().getId() == 0)
+        {
+            questionQueryModel.setQuestionType(null);
+        }
+        if (questionQueryModel.getShowMe() == null)
+        {
+            questionQueryModel.setShowMe(false);
+        }
+        if (questionQueryModel.getTeacher().getId()=="")
+        {
+            questionQueryModel.setTeacher(null);
+        }
+        if (questionQueryModel.getRecursive() == true)
+        {
+            for (String topicID : topicIds)
             {
-                questionQueryModel.setTeacher(teacherVo);
+                questionQueryModel.getTopicIds().addAll(topicEbi.getAllChildren(topicID));
             }
-            list = questionEbi.getAllByTeacher(questionQueryModel, offset, pageSize, teacherVo);
+        }else{
+            for (String topicID : topicIds)
+            {
+                questionQueryModel.getTopicIds().add(topicID);
+            }
+        }
+
+
+        if (questionQueryModel.getShowMe())
+        {
+            questionQueryModel.setTeacher(currentTeacher);
+            list = questionEbi.getAllByTeacher(questionQueryModel, offset, pageSize, currentTeacher);
+        } else
+        {
+            //showMe==false
+            if (currentTeacher.getRole().getId().equals(SysConsts.ADMIN_ROLE_ID))
+            {
+                list = questionEbi.getAll(questionQueryModel, offset, pageSize);
+            } else
+            {
+                list = questionEbi.getAllByTeacher(questionQueryModel, offset, pageSize, currentTeacher);
+            }
         }
         return new JsonListResponse<>(list, "id,code,outline,[options]option,answer,[type]questionType.id", 0);
     }
@@ -545,10 +574,12 @@ public class QuestionBankManagerController extends BaseController
                         "[type]questionType.id," +
                         "[value]questionType.score," +
                         "[createTeacher]teacher.name," +
+                        "[createTeacherId]teacher.id," +
                         "createTime," +
                         "[subject]subject.name," +
                         "[topic]topic.name," +
                         "[topicid]topic.id," +
+                        "isPrivate," +
                         "useTime");
     }
 
@@ -574,11 +605,11 @@ public class QuestionBankManagerController extends BaseController
     @ResponseBody
     @RequestMapping("question/saveAsMine.do")
     @SystemLogAnnotation(module = "题目管理", methods = "保存为我的题目")
-    public JsonResponse saveAsMine(QuestionVo question , @RequestParam(value = "_options[]") String[] options, HttpSession session)
+    public JsonResponse saveAsMine(QuestionVo question, @RequestParam(value = "_options[]",required = false) String[] options, HttpSession session)
     {
         TeacherVo teacherVo = (TeacherVo) session.getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
 
-        return  new JsonResponse();
+        return new JsonResponse();
     }
 
     @ResponseBody
@@ -588,18 +619,18 @@ public class QuestionBankManagerController extends BaseController
     {
         TeacherVo teacherVo = (TeacherVo) session.getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
 
-        return  new JsonResponse();
+        return new JsonResponse();
     }
 
     @ResponseBody
     @RequestMapping("question/edit.do")
     @SystemLogAnnotation(module = "题目管理", methods = "题目编辑")
-    public JsonResponse edit(QuestionVo question,@RequestParam(value = "_options[]") String[] options, HttpSession session) throws OperationException
+    public JsonResponse edit(QuestionVo question, @RequestParam(value = "_options[]") String[] options, HttpSession session) throws OperationException
     {
         TeacherVo teacherVo = (TeacherVo) session.getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
         question.setOptionList(options);
         questionEbi.update(question, teacherVo);
-        return  new JsonResponse();
+        return new JsonResponse("修改成功");
     }
 
     /**
@@ -678,7 +709,10 @@ public class QuestionBankManagerController extends BaseController
     {
         //学科
         List<SubjectVo> subjectVoList = subjectEbi.getAll();
+        List<TeacherVo> teacherVos = teacherEbi.getAll();
+
         request.setAttribute("subjects", subjectVoList);
+        request.setAttribute("teachers", teacherVos);
         return "/manage/bank/question/list";
     }
 

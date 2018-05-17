@@ -95,7 +95,6 @@ public class QuestionEbo implements QuestionEbi
         oldQuestion.setOutline(newQuestion.getOutline());
         oldQuestion.setOption(newQuestion.getOption());
         oldQuestion.setAnswer(newQuestion.getAnswer());
-
         oldQuestion.setTopic(newQuestion.getTopic());
         oldQuestion.setQuestionType(newQuestion.getQuestionType());
         oldQuestion.setSubject(newQuestion.getSubject());
@@ -173,7 +172,6 @@ public class QuestionEbo implements QuestionEbi
             {
                 throw new OperationException("答案格式不正确，请核对后重试！");
             }
-            questionVo.setOption();
             questionVo.setAnswer(StringUtil.sort(answer));
         }
 

@@ -13,7 +13,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.Stack;
 
 /**
  * 知识点业务层实现类
@@ -39,6 +42,26 @@ public class TopicEbo implements TopicEbi
     public List<TopicVo> getAll()
     {
         return topicDao.getAll();
+    }
+
+    @Override
+    public Set<String> getAllChildren(String topicId)
+    {
+        Stack<TopicVo> topicVoStack = new Stack<>();
+        Set<String> children= new HashSet<>();
+        topicVoStack.push(topicDao.get(topicId));
+
+        while (topicVoStack.empty() != true)
+        {
+            TopicVo currentTopic= topicVoStack.pop();
+            children.add(currentTopic.getId());
+            for (TopicVo topic : currentTopic.getChild())
+            {
+                topicVoStack.push(topic);
+            }
+        }
+        return children;
+
     }
 
     public TopicVo get(Serializable uuid)

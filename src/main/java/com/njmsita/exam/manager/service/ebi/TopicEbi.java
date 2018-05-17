@@ -5,6 +5,7 @@ import com.njmsita.exam.manager.model.TopicVo;
 import com.njmsita.exam.utils.exception.OperationException;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * 知识点业务层接口
@@ -19,4 +20,6 @@ public interface TopicEbi extends BaseEbi<TopicVo>
      * @return          知识点集合
      */
     public List<TopicVo> getBySubject(Integer subjectId, String parent) throws OperationException;
+
+    public Set<String> getAllChildren(String topicId);
 }

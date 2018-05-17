@@ -28,9 +28,9 @@ public class QuestionDaoImpl extends BaseImpl<QuestionVo> implements QuestionDao
             dc.createAlias("subject","s1");
             dc.add(Restrictions.eq("s1.id",qqm.getSubject().getId()));
         }
-        if(null!=qqm.getTopic()&& !StringUtil.isEmpty(qqm.getTopic().getId())){
+        if(null!=qqm.getTopicIds()){
             dc.createAlias("topic","to1");
-            dc.add(Restrictions.eq("to1.id",qqm.getTopic().getId()));
+            dc.add(Restrictions.in("to1.id",qqm.getTopicIds()));
         }
         if(null!=qqm.getTeacher()&&!StringUtil.isEmpty(qqm.getTeacher().getId())){
             dc.createAlias("teacher","te1");
@@ -52,9 +52,9 @@ public class QuestionDaoImpl extends BaseImpl<QuestionVo> implements QuestionDao
             dc.createAlias("subject","s1");
             dc.add(Restrictions.eq("s1.id",qqm.getSubject().getId()));
         }
-        if(null!=qqm.getTopic()&& !StringUtil.isEmpty(qqm.getTopic().getId())){
+        if(null!=qqm.getTopicIds()){
             dc.createAlias("topic","to1");
-            dc.add(Restrictions.eq("to1.id",qqm.getTopic().getId()));
+            dc.add(Restrictions.in("to1.id",qqm.getTopicIds()));
         }
         if(null!=qqm.getQuestionType()&&qqm.getQuestionType().getId()!=null&&qqm.getQuestionType().getId()!=0){
             dc.createAlias("questionType","que1");

@@ -10,10 +10,22 @@ import java.util.Map;
 
 public class OptionUtil
 {
-    public static String[] toOptionList(String string) throws IOException
+    public static String[] toOptionList(String string)
     {
-        String[] result = CustomJsonSerializer.getDefaultMapper().readValue(string, String[].class);
-        return result;
+        try
+        {
+            Map<String,String> map = CustomJsonSerializer.getDefaultMapper().readValue(string, Map.class);
+            String[] result = new String[map.size()];
+            for (Map.Entry entry : map.entrySet())
+            {
+                result[Integer.valueOf(entry.getKey().toString())]=entry.getValue().toString();
+            }
+            return  result;
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public static String toOptionString(String[] options)

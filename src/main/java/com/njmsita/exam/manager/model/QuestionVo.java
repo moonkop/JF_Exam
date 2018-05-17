@@ -39,13 +39,22 @@ public class QuestionVo
 
     public String[] getOptionList()
     {
+        if (this.optionList == null)
+        {
+            this.optionList = OptionUtil.toOptionList(this.option);
+        }
         return optionList;
     }
 
     public void setOptionList(String[] optionList)
     {
         this.optionList = optionList;
-        this.option = OptionUtil.toOptionString(optionList);
+        if (this.optionList!=null)
+        {
+            this.option = OptionUtil.toOptionString(optionList);
+        }else {
+            this.option=null;
+        }
     }
 
     @Basic
@@ -178,6 +187,7 @@ public class QuestionVo
     public void setOption(String option)
     {
         this.option = option;
+
     }
 
     @Basic
