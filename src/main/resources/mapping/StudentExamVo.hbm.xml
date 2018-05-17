@@ -8,11 +8,16 @@
         <id name="id" column="id"/>
         <property name="startTime" column="start_time"/>
         <property name="submitTime" column="submit_time"/>
-        <property name="score" column="score"/>
+        <property name="score" column="totalScore"/>
         <property name="answerContent" column="answer_content"/>
         <property name="operation" column="operation"/>
 
         <many-to-one name="examVo" column="exam_id" class="com.njmsita.exam.manager.model.ExamVo"/>
         <many-to-one name="studentVo" column="student_id" class="com.njmsita.exam.authentic.model.StudentVo"/>
+
+        <set name="studentExamQuestionVos" lazy="false">
+            <key column="studentexam_id"></key>
+            <one-to-many class="com.njmsita.exam.manager.model.StudentExamQuestionVo"/>
+        </set>
     </class>
 </hibernate-mapping>
