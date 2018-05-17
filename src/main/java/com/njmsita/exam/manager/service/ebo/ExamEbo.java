@@ -57,6 +57,9 @@ public class ExamEbo implements ExamEbi
     @Autowired
     private QuestionTypeDao questionTypeDao;
 
+    @Autowired
+    private PaperMongoDao paperMongoDao;
+
     /**
      * 作废
      * @param examVo
@@ -111,6 +114,9 @@ public class ExamEbo implements ExamEbi
     {
         infoValid(examVo,markTeachers,paperId,classroomIds);
         examDao.save(examVo);
+        PaperVo paperVo = new PaperVo();
+//        初始化PaperVo
+        this.paperMongoDao.insert(paperVo);
     }
 
     public void update(ExamVo examVo, String[] markTeachers,String paperId ,String[] classroomIds) throws OperationException

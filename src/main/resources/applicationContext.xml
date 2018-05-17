@@ -3,6 +3,7 @@
 	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	   xmlns:context="http://www.springframework.org/schema/context"
 	   xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:mongo="http://www.springframework.org/schema/data/mongo"
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/beans 
 		http://www.springframework.org/schema/beans/spring-beans.xsd
@@ -10,11 +11,12 @@
 		http://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/tx 
 		http://www.springframework.org/schema/tx/spring-tx.xsd
+		http://www.springframework.org/schema/data/mongo http://www.springframework.org/schema/data/mongo/spring-mongo.xsd
 		">
 	<!-- 注解事务驱动 -->
 	<tx:annotation-driven transaction-manager="transactionManager"/>
 
-
+	<context:property-placeholder location="mongodb.properties"/>
 	<context:component-scan base-package="com.njmsita.exam"/>
 	
 	<!-- 事务管理器 -->
@@ -94,6 +96,18 @@
         <property name="jdbcUrl" value="jdbc:mysql://192.168.1.166:3306/jf_exam" />
         <property name="user" value="root" />
         <property name="password" value="root" />
+
     </bean>
+
+	<mongo:mongo-client id="mongo" host="${mongo.host}" port="${mongo.port}" credentials="${mongo.userName}:${mongo.password}@${mongo.dbname}">
+
+		<mongo:client-options write-concern="NORMAL" />
+
+	</mongo:mongo-client>
+
+	<bean class="org.springframework.data.mongodb.core.MongoTemplate" id="mongoTemplate">
+		<constructor-arg name="mongoClient" ref="mongo"/>
+		<constructor-arg name="databaseName" value="${mongo.dbname}"/>
+	</bean>
 </beans>	
 	
