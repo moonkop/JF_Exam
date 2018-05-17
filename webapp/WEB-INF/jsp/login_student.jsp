@@ -23,13 +23,6 @@
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
     <!-- end header.html-->
-    <%--<script type="text/javascript">--%>
-    <%--$(function () {--%>
-    <%--$("#commit").click(function () {--%>
-    <%--$("form:first").submit();--%>
-    <%--})--%>
-    <%--});--%>
-    <%--</script>--%>
     <script type="text/javascript">
         $(document).ready(function () {
             $("#commit").on("click",function () {
