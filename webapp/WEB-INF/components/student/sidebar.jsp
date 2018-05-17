@@ -18,16 +18,16 @@
             </li>
 
             <li>
-                <a href="index_teacher.html"><i class="fa fa-dashboard fa-fw"></i> 开始考试</a>
+                <a href="index_student.html"><i class="fa fa-dashboard fa-fw"></i> 开始考试</a>
             </li>
             <li>
                 <a href="#"><i class="fa fa-sitemap fa-fw"></i> 学生学习网站<span class="fa arrow"></span></a>
                 <ul class="nav nav-second-level">
                     <li>
-                        <a href="/teacher/manage">澳门皇家赌场</a>
+                        <a href="#">澳门皇家赌场</a>
                     </li>
                     <li>
-                        <a href="/manage/school">prohub</a>
+                        <a href="#">prohub</a>
                     </li>
 
                 </ul>

@@ -21,7 +21,7 @@
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">身份</label>
                                 <div class="col-sm-8">
-                                    <p class="form-control-static">${loginUser.troleVo.name}</p>
+                                    <p class="form-control-static">${loginUser.role.name}</p>
                                 </div>
                             </div>
                             <div class="form-group">

@@ -72,7 +72,7 @@ public class TeacherController extends BaseController
     @RequestMapping("welcome")
     public String towelcome()
     {
-        return "index_teacher";
+        return "/index_teacher";
     }
 
     /**
@@ -135,7 +135,7 @@ public class TeacherController extends BaseController
     public String edit()
     {
         //回显数据在session中获取
-        return "/back";
+        return "/manage/me/edit";
     }
 
     /**
