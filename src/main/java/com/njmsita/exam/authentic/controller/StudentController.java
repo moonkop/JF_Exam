@@ -79,7 +79,7 @@ public class StudentController extends BaseController
     @RequestMapping("welcome")
     public String towelcome()
     {
-        return "index_student";
+        return "/index_student";
     }
 
     /**
@@ -92,7 +92,8 @@ public class StudentController extends BaseController
      * @return
      */
     @RequestMapping("login.do")
-    public String login(StudentVo student, String schoolId, HttpServletRequest request, HttpSession session)
+    @ResponseBody
+    public JsonResponse login(StudentVo student, String schoolId, HttpServletRequest request, HttpSession session)
     {
 
         //获取IP地址
@@ -122,12 +123,11 @@ public class StudentController extends BaseController
 
             //TODO 首次登陆强制跳转个人信息页面添加班级信息？还是直接批量导入时设置班级
             //fixme 应该是批量导入时设置班级
-            return "redirect:/student/welcome";
+            return new JsonResponse("登录成功");
         }
 
         //用户信息验证失败
-        request.setAttribute("msg", "账号或密码不正确！！");
-        return "redirect:/student/login";
+        return new JsonResponse(501,"登录失败，账号或密码不正确！！");
     }
 
     /**

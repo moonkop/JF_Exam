@@ -237,7 +237,7 @@ public class StudentEbo implements StudentEbi
     public StudentVo login(String studentId, String password, String schoolId, String loginIp)
     {
         //密码进行MD5加密
-        password = MD5Utils.md5(password);
+//        password = MD5Utils.md5(password);
         StudentVo loginStudent=studentDao.getTeaByStuIdAndPwdFromSchool(studentId,password,schoolId);
         if (loginStudent!=null){
             loginStudent.setLastLoginTime(System.currentTimeMillis());

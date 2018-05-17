@@ -159,14 +159,26 @@
         </put-list-attribute>
     </definition>
     
-     <definition name="123" extends="base">
-        <put-attribute name="body" value="/WEB-INF/jsp/manage/bank/question/list.jsp"/>
-        <put-attribute name="title" value="题库管理"/>
-        
+     <definition name="/index_teacher" extends="teacher_base">
+        <put-attribute name="body" value="/WEB-INF/jsp/index_teacher.jsp"/>
+        <put-attribute name="title" value="机蜂在线考试系统"/>
     </definition>
-    
-    
-    
-    
-    
+
+    <definition name="/index_student" extends="student_base">
+        <put-attribute name="body" value="/WEB-INF/jsp/index_student.jsp"/>
+        <put-attribute name="title" value="机蜂在线考试系统"/>
+    </definition>
+
+    <definition name="/manage/me/detail" extends="teacher_base">
+        <put-attribute name="body" value="/WEB-INF/jsp/manage/me/detail.jsp"/>
+        <put-attribute name="title" value="机蜂在线考试系统"/>
+
+    </definition>
+  <definition name="/manage/me/edit" extends="teacher_base">
+        <put-attribute name="body" value="/WEB-INF/jsp/manage/me/edit.jsp"/>
+        <put-attribute name="title" value="机蜂在线考试系统"/>
+
+    </definition>
+
+
 </tiles-definitions>

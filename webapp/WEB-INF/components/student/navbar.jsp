@@ -34,7 +34,7 @@
                 </script>
                 <li class="divider"></li>
                 <li>
-                    <a class="text-center" href="/teacher/detail">
+                    <a class="text-center" href="/student/detail">
 
                     <strong>详细信息</strong>
                         <i class="fa fa-angle-right"></i>
@@ -42,7 +42,7 @@
                 </li>
                 <li class="divider"></li>
                 <li>
-                    <a class="text-center" href="/student/logout">
+                    <a class="text-center" href="#">
                         <strong>退出登录</strong>
                     </a>
                 </li>
