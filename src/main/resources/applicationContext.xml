@@ -16,7 +16,7 @@
 	<!-- 注解事务驱动 -->
 	<tx:annotation-driven transaction-manager="transactionManager"/>
 
-	<context:property-placeholder location="mongodb.properties"/>
+	<context:property-placeholder location="classpath:mongodb.properties"/>
 	<context:component-scan base-package="com.njmsita.exam"/>
 	
 	<!-- 事务管理器 -->
@@ -106,7 +106,7 @@
 	</mongo:mongo-client>
 
 	<bean class="org.springframework.data.mongodb.core.MongoTemplate" id="mongoTemplate">
-		<constructor-arg name="mongoClient" ref="mongo"/>
+		<constructor-arg name="mongo" ref="mongo"/>
 		<constructor-arg name="databaseName" value="${mongo.dbname}"/>
 	</bean>
 </beans>	
