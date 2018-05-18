@@ -1,6 +1,15 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 
+
+<script>
+    $(document).ready(function () {
+        $("#cancel").on("click",function () {
+            window.history.go(-1);
+        })
+
+    })
+</script>
         <!-- start content -->
         <div class="row">
             <div class="col-lg-12">
@@ -90,7 +99,7 @@
                                     </div>
                                     <div class="col-sm-offset-2">
                                         <button type="submit" class="btn btn-primary">提交</button>
-                                        <button type="submit" class="btn btn-default">取消</button>
+                                        <button id="cancel" class="btn btn-default">取消</button>
                                     </div>
                                 </form>
                             </div>

@@ -15,7 +15,7 @@
             <!--&lt;!&ndash; /input-group &ndash;&gt;-->
             <!--</li>-->
             <li>
-                <a href="index_teacher.html"><i class="fa fa-dashboard fa-fw"></i> 欢迎页</a>
+                <a href="/teacher/welcome"><i class="fa fa-dashboard fa-fw"></i> 欢迎页</a>
             </li>
             <li>
                 <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> 组卷</a>

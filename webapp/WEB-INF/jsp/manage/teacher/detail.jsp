@@ -1,5 +1,37 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8"%>
 
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#reset").on("click",function () {
+
+          // var password=$("#idCardNo").contents().text();
+          var id=$("#id").val();
+            $.ajax({
+                type: "post",
+                dataType: "json",
+                url: "/teacher/manage/resetPassword.do",
+                data: {
+                        // password: password,
+                    id:id
+                },
+                success: function (result) {
+                if (result.code == 100)
+                {
+                    alert("重置成功")
+                }
+                else
+                {
+                    alert(result.message);
+                }
+            }
+
+            })
+        })
+    })
+</script>
+
+
 <!-- start content -->
 <div class="row">
     <div class="col-lg-12">
@@ -14,7 +46,8 @@
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">账号</label>
                                 <div class="col-sm-8">
-                                    <p class="form-control-static">${teacher.teacherId}</p>
+                                    <p class="form-control-static" id="teacherId">${teacher.teacherId}</p>
+                                    <input style="display: none" id="id" value="${teacher.id}">
                                 </div>
                             </div>
                             <div class="form-group">
@@ -38,7 +71,7 @@
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">身份证号码</label>
                                 <div class="col-sm-8">
-                                    <p class="form-control-static">${teacher.idCardNo}</p>
+                                    <p class="form-control-static" id="idCardNo">${teacher.idCardNo}</p>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -55,7 +88,7 @@
                             </div>
                             <div class="col-sm-offset-2">
                                 <a class="btn btn-default" href="/teacher/manage/edit?id=${teacher.id}">编辑</a>
-                                <button class="btn btn-default">重置密码</button>
+                                <button class="btn btn-default" id="reset">重置密码</button>
                             </div>
                         </div>
                     </div>

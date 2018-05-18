@@ -72,7 +72,7 @@ public class TeacherController extends BaseController
     @RequestMapping("welcome")
     public String towelcome()
     {
-        return "index_teacher";
+        return "/index_teacher";
     }
 
     /**
@@ -106,7 +106,7 @@ public class TeacherController extends BaseController
                 sbd.append(resource.getUrl());
                 sbd.append(",");
             }
-            loginTea.setResources(sbd.toString());
+           session.setAttribute(SysConsts.USER_RESOURCE_NAME,sbd.toString());
             session.setAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME, loginTea);
             Hibernate.initialize(loginTea.getRole());
             logEbi.login(loginTea, loginIp);
@@ -135,7 +135,7 @@ public class TeacherController extends BaseController
     public String edit()
     {
         //回显数据在session中获取
-        return "/back";
+        return "/manage/me/edit";
     }
 
     /**
@@ -178,7 +178,6 @@ public class TeacherController extends BaseController
         System.out.println("log out");
      //   System.out.println(session.getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME));
         //将session中的已登陆用户至空
-        //TODO 有疑问？？？？？？？？
         session.invalidate();
         return "redirect:/teacher/login";
     }
@@ -221,7 +220,6 @@ public class TeacherController extends BaseController
         TeacherVo loginTea = (TeacherVo) session.getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
         if (!loginTea.getPassword().equals(oldPassword))
         {
-            //todo 提供一下视图
             return "";
         }
         teaEbi.modifyPassword(loginTea, oldPassword, newPassword);
@@ -305,7 +303,6 @@ public class TeacherController extends BaseController
      *
      * @return 跳转edit
      */
-    //todo 以后添加和修改放一起的时候统一写edit 不用add
     @RequestMapping("manage/edit")
     public String add(TeacherVo teacher, HttpServletRequest request)
     {
@@ -410,29 +407,18 @@ public class TeacherController extends BaseController
      * 密码重置
      *
      * @param teacherVo     教师信息
-     * @param bindingResult
-     * @param request
+     * @param
+     * @param
      *
      * @return
      */
     @RequestMapping("manage/resetPassword.do")
     @SystemLogAnnotation(module = "教师管理", methods = "密码重置")
-    public String resetPassword(@Validated(value = EditGroup.class) TeacherVo teacherVo, BindingResult bindingResult,
-                                HttpServletRequest request)
+    @ResponseBody
+    public JsonResponse resetPassword( TeacherVo teacherVo)
     {
-        if (bindingResult.hasErrors())
-        {
-            List<FieldError> list = bindingResult.getFieldErrors();
-            for (FieldError fieldError : list)
-            {
-                //校验信息，key = 属性名+Error
-                request.setAttribute(fieldError.getField() + "Error", fieldError.getDefaultMessage());
-            }
-            request.setAttribute("teacher", teacherVo);
-            return "/back";
-        }
         teaEbi.resetPassword(teacherVo);
-        return "";
+        return new JsonResponse("重置成功");
     }
 
 

@@ -25,6 +25,14 @@ public interface QuestionEbi extends BaseEbi<QuestionVo>
      */
     public List<QuestionVo> getAllByTeacher(QuestionQueryModel questionQueryModel, Integer offset, Integer pageSize, TeacherVo teacherVo);
 
+
+
+    public void update(QuestionVo questionVo, TeacherVo teacherVo) throws OperationException;
+
+    public void saveAsMine(QuestionVo questionVo, TeacherVo teacherVo) throws OperationException;
+
+    public void saveAsPublic(QuestionVo questionVo, TeacherVo teacherVo) throws OperationException;
+
     /**
      * 更新或保存为据为己有
      * @param questionVo

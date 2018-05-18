@@ -155,6 +155,7 @@ public class TeacherEbo implements TeacherEbi
                 // temp.setIdCardNo(teacherVo.getIdCardNo());
                 temp.setTelephone(teacherVo.getTelephone());
                 temp.setModifytime(l);
+                temp.setResources(teacherVo.getResources());
             }
         } else
         {
@@ -207,8 +208,8 @@ public class TeacherEbo implements TeacherEbi
 
     public void resetPassword(TeacherVo teacherVo)
     {
-        teacherVo=teaDao.get(teacherVo.getTeacherId());
-        teacherVo.setPassword(MD5Utils.md5(teacherVo.getTeacherId()));
+        teacherVo=teaDao.get(teacherVo.getId());
+        teacherVo.setPassword(MD5Utils.md5(teacherVo.getIdCardNo().substring(12,18)));
     }
 
     public void modifyPassword(TeacherVo loginTea, String ordPassword, String newPassword) throws OperationException

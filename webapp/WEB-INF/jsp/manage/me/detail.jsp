@@ -21,7 +21,7 @@
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">身份</label>
                                 <div class="col-sm-8">
-                                    <p class="form-control-static">${loginUser.troleVo.name}</p>
+                                    <p class="form-control-static">${loginUser.role.name}</p>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -44,8 +44,8 @@
                             </div>
                         </div>
                         <div class="col-sm-offset-2">
-                            <a href= '/teacher/edit'>编辑</a>
-                            <a href= '/teacher/setpassword'>修改密码</a>
+                            <a class="btn btn-default" href= '/teacher/edit'>编辑</a>
+                            <a class="btn btn-default" href= '/teacher/setpassword'>修改密码</a>
                         </div>
 
                     </div>

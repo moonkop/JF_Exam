@@ -1,34 +1,61 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <title>机蜂在线考试系统</title>
-<!-- start header.html-->
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="">
-<meta name="author" content="">
+    <!-- start header.html-->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
 
-<link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-<link href="/dist/css/sb-admin-2.css" rel="stylesheet">
-<link href="/vendor/morrisjs/morris.css" rel="stylesheet">
-<link href="/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-<script src="/vendor/jquery/jquery.min.js"></script>
-
-<!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-<![endif]-->
-<!-- end header.html-->
+    <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/dist/css/sb-admin-2.css" rel="stylesheet">
+    <link href="/vendor/morrisjs/morris.css" rel="stylesheet">
+    <link href="/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <script src="/vendor/jquery/jquery.min.js"></script>
+    <script src="/dist/js/md5.js"></script>
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <!-- end header.html-->
     <script type="text/javascript">
-        $(function () {
-            $("#commit").click(function () {
-                $("form:first").submit();
+        $(document).ready(function () {
+            $("#commit").on("click",function () {
+                var school = $("#schoolId").val();
+                var studentId = $("#studentid").val();
+                var password = $("#password").val();
+                password = $.md5(password);
+
+                $.ajax({
+                    type: "post",
+                    dataType: "json",
+                    url: "/student/login.do",
+                    data: {
+                        schoolId: school,
+                        studentId: studentId,
+                        password: password
+                    },
+                    success: function (result) {
+                        if (result.code == 100)
+                        {
+                            window.location.href = "/student/welcome";
+                        }
+                        else
+                        {
+                            alert(result.message);
+                        }
+                    }
+
+                })
             })
-        });
+        })
+
+
     </script>
 </head>
 <body>
@@ -43,26 +70,25 @@
                     <h3 class="panel-title">学生登录</h3>
                 </div>
                 <div class="panel-body">
-                    <%--<form role="form" action="${pageContext.request.contextPath}/stu/login" method="post">--%>
-                        <form role="form" action="/student/login.do" method="post">
+                    <form role="form" method="post">
 
                         <fieldset>
 
                             <div class="form-group">
-                                <select class="form-control" placeholder="学号" name="schoolId"  autofocus>
-                                 <c:forEach   items="${schoolList}"  var="item">
-                                     <option value="${item.id}">${item.name}</option>
-
-                                 </c:forEach>
-
+                                <select class="form-control" placeholder="学号" name="schoolId" id="schoolId" autofocus>
+                                    <c:forEach items="${schoolList}" var="item">
+                                        <option value="${item.id}">${item.name}</option>
+                                    </c:forEach>
                                 </select>
                             </div>
 
                             <div class="form-group">
-                                <input class="form-control" placeholder="学号" name="studentId" type="studentId" value="123" autofocus>
+                                <input class="form-control" id="studentid" placeholder="学号" name="studentId"
+                                       type="studentId" value="123" autofocus>
                             </div>
                             <div class="form-group">
-                                <input class="form-control" placeholder="密码" name="password" type="password" value="123">
+                                <input class="form-control" id="password" placeholder="密码" name="password"
+                                       type="password" value="123">
                             </div>
                             <div class="checkbox text-right">
                                 <label>
