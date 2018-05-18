@@ -125,4 +125,41 @@ public interface ExamEbi extends BaseEbi<ExamVo>
      * @param login
      */
     public void submitAnswer(StudentExamVo studentExamVo, StudentVo login) throws Exception;
+
+    /**
+     * 查看学生个人考试情况
+     * @param examVo
+     * @param login
+     * @return
+     */
+    public StudentExamVo getStudentExam(ExamVo examVo, StudentVo login) throws Exception;
+
+    /**
+     * 获取指定考试所有学生的试卷
+     * @param examVo
+     * @param login
+     * @return
+     */
+    public List<StudentExamVo> getAllStudentExamByExam(ExamVo examVo, TeacherVo login) throws Exception;
+
+    /**
+     * 获取指定学生试卷的所有待批改题目作答情况
+     * @param studentExamVo
+     * @return
+     */
+    public List<StudentExamQuestionVo> getAllStudentexamQuestionByStudentExam(StudentExamVo studentExamVo) throws Exception;
+
+    /**
+     * 保存阅卷存档
+     * @param studentExamQeustionList
+     * @param studentExamId
+     */
+    public void saveMarked(List<StudentExamQuestionVo> studentExamQeustionList, String studentExamId) throws Exception;
+
+    /**
+     * 提交阅卷
+     * @param examVo
+     * @param login
+     */
+    public void submitMarked(ExamVo examVo, TeacherVo login) throws Exception;
 }

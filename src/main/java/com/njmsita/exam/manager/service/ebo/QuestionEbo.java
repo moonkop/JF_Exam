@@ -22,9 +22,11 @@ import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.idutil.IdUtil;
 import com.njmsita.exam.utils.json.CustomJsonSerializer;
+import com.njmsita.exam.utils.json.OptionUtil;
 import net.sf.json.JSONArray;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.ws.commons.schema.constants.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -93,7 +95,6 @@ public class QuestionEbo implements QuestionEbi
         oldQuestion.setOutline(newQuestion.getOutline());
         oldQuestion.setOption(newQuestion.getOption());
         oldQuestion.setAnswer(newQuestion.getAnswer());
-
         oldQuestion.setTopic(newQuestion.getTopic());
         oldQuestion.setQuestionType(newQuestion.getQuestionType());
         oldQuestion.setSubject(newQuestion.getSubject());
@@ -121,12 +122,6 @@ public class QuestionEbo implements QuestionEbi
      */
     private  void infoValidate(QuestionVo questionVo) throws OperationException
     {
-        if(questionVo.getSubject()==null){
-            throw new OperationException("选择科目不能为空，请不要进行非法操作！");
-        }
-        if(questionVo.getSubject().getId()==0||questionVo.getSubject().getId()==null){
-            throw new OperationException("选择科目不能为空，请不要进行非法操作！");
-        }
         if(questionVo.getQuestionType()==null){
             throw new OperationException("选择题型不能为空，请不要进行非法操作！");
         }
@@ -139,13 +134,14 @@ public class QuestionEbo implements QuestionEbi
         if(StringUtil.isEmpty(questionVo.getTopic().getId())){
             throw new OperationException("选择知识点不能为空，请不要进行非法操作！");
         }
-        SubjectVo subject=subjectDao.get(questionVo.getSubject().getId());
-        if (subject==null){
-            throw new OperationException("选择科目不存在，请不要进行非法操作！");
-        }
+
         TopicVo topicVo=topicDao.get(questionVo.getTopic().getId());
         if (topicVo==null){
             throw new OperationException("选择知识点不存在，请不要进行非法操作！");
+        }
+        SubjectVo subject=topicVo.getSubjectVo();
+        if (subject==null){
+            throw new OperationException("选择科目不存在，请不要进行非法操作！");
         }
         QuestionTypeVo questionTypeVo =questionTypeDao.get(questionVo.getQuestionType().getId());
         if (questionTypeVo==null){
@@ -163,25 +159,17 @@ public class QuestionEbo implements QuestionEbi
         questionVo.setQuestionType(questionTypeVo);
         questionVo.setTopic(topicVo);
 
-        if(!questionTypeVo.getName().equals(SysConsts.NO_ANSWER_QUESTION_TYPE_NAME)){
-            String jsonOptions=questionVo.getOption();
-            String[] options=jsonOptions.substring(2,jsonOptions.length()-2).split(",");
-            String answer=questionVo.getAnswer().toUpperCase();
-            if(StringUtil.isChar(answer)){
-                if (StringUtil.isAnswer(answer,options.length)){
-                    String temp1="";
-                    for(int i=0;i<answer.length();i++){
-                        temp1+=answer.charAt(i)-'A';
-                    }
-                    answer=temp1;
-                }else {
+        if (!questionTypeVo.getName().equals(SysConsts.NO_ANSWER_QUESTION_TYPE_NAME))
+        {
+            String answer = questionVo.getAnswer().toUpperCase();
+            if (StringUtil.isNumber(answer))
+            {
+                if (!StringUtil.isAnswer(answer, questionVo.getOptionList().length))
+                {
                     throw new OperationException("答案格式不正确，请核对后重试！");
                 }
-            }else if(StringUtil.isNumber(answer)){
-                if (!StringUtil.isAnswer(answer,options.length)){
-                    throw new OperationException("答案格式不正确，请核对后重试！");
-                }
-            }else {
+            } else
+            {
                 throw new OperationException("答案格式不正确，请核对后重试！");
             }
             questionVo.setAnswer(StringUtil.sort(answer));
@@ -207,6 +195,35 @@ public class QuestionEbo implements QuestionEbi
             this.save(questionVo);
             return questionVo;
         }
+    }
+
+    public void update(QuestionVo questionVo, TeacherVo teacherVo) throws OperationException
+    {
+        infoValidate(questionVo);
+        QuestionVo old=questionDao.get(questionVo.getId());
+        if (old==null)
+        {
+            throw new OperationException("当前编辑题目不存在！");
+        }
+        //如果这道题属于当前用户，或当前用户身份为管理员，则允许编辑
+        if (SysConsts.ADMIN_ROLE_ID.equals(teacherVo.getRole().getId())||old.getTeacher().getId().equals(teacherVo.getId()))
+        {
+            setField(old, questionVo);
+        }else {
+            throw new OperationException("不允许编辑操作！");
+        }
+    }
+
+    @Override
+    public void saveAsMine(QuestionVo questionVo, TeacherVo teacherVo) throws OperationException
+    {
+
+    }
+
+    @Override
+    public void saveAsPublic(QuestionVo questionVo, TeacherVo teacherVo) throws OperationException
+    {
+
     }
 
     public void bulkInputBySheet(HSSFSheet sheet, Integer subjectId) throws Exception

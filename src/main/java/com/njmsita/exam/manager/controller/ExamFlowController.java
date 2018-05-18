@@ -13,6 +13,7 @@ import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.json.JsonResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
@@ -76,6 +77,64 @@ public class ExamFlowController
         StudentExamVo studentExam= (StudentExamVo) map.get("studentExam");
 
         //TODO
+        return null;
+    }
+
+    /**
+     * 作答存档
+     *
+     * @param studentExamQuestionList
+     * @param studentExamId
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping("archive")
+    public JsonResponse archive(@RequestBody List<StudentExamQuestionVo> studentExamQuestionList, String studentExamId,
+                                HttpServletRequest request) throws Exception
+    {
+        StudentVo login= (StudentVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
+        examEbi.archive(login,studentExamId,studentExamQuestionList);
+        return null;
+    }
+
+    /**
+     * 提交试卷作答（提交试卷作答前必须将所有试卷存档）
+     *
+     * @param studentExamVo
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping("submitAnswer")
+    public String submitAnswer(StudentExamVo studentExamVo,HttpServletRequest request) throws Exception
+    {
+        StudentVo login= (StudentVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
+        examEbi.submitAnswer(studentExamVo,login);
+        //TODO 提交作答后返回的页面
+        return "";
+    }
+
+    /**
+     * 获取系统时间
+     *
+     * @return
+     */
+    @RequestMapping("systemTime")
+    public JsonResponse systemTime(){
+        Long time=System.currentTimeMillis();
+        return new JsonResponse().put("time",time);
+    }
+
+    /**
+     * 查看个人成绩
+     */
+    @RequestMapping("checkMyGrages")
+    public String checkMyGrages(ExamVo examVo,HttpServletRequest request) throws Exception
+    {
+        StudentVo login= (StudentVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
+        StudentExamVo studentExamVo=examEbi.getStudentExam(examVo,login);
+        request.setAttribute("studentExam",studentExamVo);
         return null;
     }
 }

@@ -371,6 +371,111 @@ public class ExamEbo implements ExamEbi
         SchedulerJobUtil.delJob(scheduleVo);
     }
 
+    public StudentExamVo getStudentExam(ExamVo examVo, StudentVo login)throws Exception
+    {
+        if(StringUtil.isEmpty(examVo.getId())){
+            throw new OperationException("选择的考试不能为空，请不要进行非法操作！");
+        }
+        examVo=isNull(examVo);
+        if(examVo.getExamStatus()!=SysConsts.EXAM_STATUS_ENDING){
+            throw new OperationException("所选择的考试当前尚未结束，不能查看成绩！");
+        }
+        StudentExamVo studentExamVo=studentExamDao.getByStudentAndExam(examVo,login);
+        if(null==studentExamVo){
+            throw new OperationException("你不存在这场考试，请不要进行非法操作！");
+        }
+        return studentExamVo;
+    }
+
+    public List<StudentExamVo> getAllStudentExamByExam(ExamVo examVo, TeacherVo login)throws Exception
+    {
+        Set<TeacherVo> markTeachers=examVo.getMarkTeachers();
+        if(!markTeachers.contains(login)){
+            throw new OperationException("您不是该场考试的阅卷教师，请不要进行非法操作！");
+        }
+        List<StudentExamVo> list=studentExamDao.getbyExam(examVo);
+        for (StudentExamVo studentExamVo : list)
+        {
+            List<StudentExamQuestionVo> questionList=this.getAllStudentexamQuestionByStudentExam(studentExamVo);
+            if(questionList.size()==0){
+                list.remove(studentExamVo);
+            }
+        }
+        return null;
+    }
+
+    public List<StudentExamQuestionVo> getAllStudentexamQuestionByStudentExam(StudentExamVo studentExamVo)throws Exception
+    {
+        if(StringUtil.isEmpty(studentExamVo.getId())){
+            throw new OperationException("所选择的学生试卷不能为空，请不要进行非法操作！");
+        }
+        studentExamVo=studentExamDao.get(studentExamVo.getId());
+        if(studentExamVo==null){
+            throw new OperationException("所选择的学生试卷不存在，请不要进行非法操作！");
+        }
+        List<StudentExamQuestionVo> list=studentExamQuestionDao.getAllByStudentExam(studentExamVo);
+        for(int i=list.size()-1;i>=0;i--){
+            StudentExamQuestionVo temp=list.get(i);
+            if(!temp.getQuestionTypeVo().getName().equals(SysConsts.NO_ANSWER_QUESTION_TYPE_NAME)){
+                list.remove(temp);
+            }
+            if(null!=temp.getTeacherVo()){
+                list.remove(temp);
+            }
+        }
+        return list;
+    }
+
+    public void saveMarked(List<StudentExamQuestionVo> studentExamQeustionList, String studentExamId)throws Exception
+    {
+        if(studentExamQeustionList==null||studentExamQeustionList.size()>0){
+            throw new OperationException("所保存的题目不能为空,请不要进行非法操作！");
+        }
+        if(StringUtil.isEmpty(studentExamId)){
+            throw new OperationException("所要保存的学生试卷,请不要进行非法操作！");
+        }
+        StudentExamVo studentExamVo = studentExamDao.get(studentExamId);
+        if(null==studentExamVo){
+            throw new OperationException("索要保存的学生试卷不存在,请不要进行非法操作！");
+        }
+        double scores=0;
+        for (StudentExamQuestionVo studentExamQuestionVo : studentExamQeustionList)
+        {
+            StudentExamQuestionVo temp=studentExamQuestionDao.get(studentExamQuestionVo.getId());
+            if(temp==null){
+                throw new OperationException("个别题目不存在,请不要进行非法操作！");
+            }
+            if(!studentExamVo.getId().equals(temp.getStudentExamVo().getId())){
+                throw new OperationException("个别题目属于所提交的学生试卷,请不要进行非法操作！");
+            }
+            scores+=studentExamQuestionVo.getScore();
+            temp.setScore(FormatUtil.formatScore(studentExamQuestionVo.getScore()));
+            temp.setRemark(studentExamQuestionVo.getRemark());
+        }
+        studentExamVo.setScore(FormatUtil.formatScore(scores));
+    }
+
+    public void submitMarked(ExamVo examVo, TeacherVo login)throws Exception
+    {
+        if(StringUtil.isEmpty(examVo.getId())){
+
+        }
+        examVo=isNull(examVo);
+        if(!examVo.getMarkTeachers().contains(login)){
+
+        }
+        List<StudentExamQuestionVo> questionList=studentExamQuestionDao.getByExam(examVo);
+        for (StudentExamQuestionVo studentExamQuestionVo : questionList)
+        {
+            if(studentExamQuestionVo.getQuestionTypeVo().equals(SysConsts.NO_ANSWER_QUESTION_TYPE_NAME)){
+                if(null==studentExamQuestionVo.getTeacherVo()){
+                    throw new OperationException("所选考试下有题目尚未批阅，不能提交阅卷！");
+                }
+            }
+        }
+        examVo.setExamStatus(SysConsts.EXAM_STATUS_ENDING);
+    }
+
     //-----------------------------------以上为业务操作-------------------------------------
     //-----------------------------------以上为业务操作-------------------------------------
     //-----------------------------------以上为业务操作-------------------------------------
@@ -386,10 +491,10 @@ public class ExamEbo implements ExamEbi
         ScheduleVo scheduleVo=new ScheduleVo();
         String jobTypeView=SysConsts.SCHEDULEVO_JOB_TYPE_MAP.get(jobType);
 
+        //设置任务信息
         scheduleVo.setId(IdUtil.getUUID());
         scheduleVo.setJobName(temp.getName()+"_"+jobTypeView);
         scheduleVo.setJobGroup(temp.getId());
-        scheduleVo.setJobStatus(SysConsts.SCHEDULEVO_JOB_STATUS_START);
         scheduleVo.setDescribe("定时"+jobTypeView+",ExamId："+temp.getId());
         scheduleVo.setJobType(jobType);
         scheduleVo.setTargetVoId(temp.getId());

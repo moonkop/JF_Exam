@@ -26,6 +26,7 @@ public class SysConsts {
 	 */
 	public static final String ALL_RESOUCERS_AUTHENTIC_URL_NAME ="allResource";
 
+	public static  final String USER_RESOURCE_NAME="resources";
 
 	/**
 	 * 教师角色

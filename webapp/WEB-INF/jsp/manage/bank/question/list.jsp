@@ -15,7 +15,34 @@
                 </option>
             </c:forEach>
         </select>
-        <button id="import" type="button" class="btn">导入题目</button>
+
+        <label>题目类型</label>
+        <select id="select-question-type-filter" class="input-sm">
+            <option value="0">全部</option>
+            <option value="2">单选题</option>
+            <option value="3">多选题</option>
+            <option value="4">简答题</option>
+        </select>
+
+        <label>出题人</label>
+        <select id="select-question-teacher-filter" class="input-sm">
+            <option value="">全部教师</option>
+            <c:forEach items="${requestScope.teachers}" var="teacher">
+                <option value="${teacher.id}">
+                        ${teacher.name}
+                </option>
+            </c:forEach>
+        </select>
+
+        <input type="checkbox" id="checkbox-question-only-mine-filter">
+        <label>仅显示我的题目</label>
+
+        <input type="checkbox" id="checkbox-question-recursive-filter">
+        <label>显示子知识点题目</label>
+
+
+        <button id="import" type="button" class="btn btn-default">导入题目</button>
+
     </div>
 </div>
 <div class="question-manage">
@@ -34,7 +61,7 @@
     <form action="/manage/bank/question/import.do" class="form-horizontal" method="post" enctype="multipart/form-data">
         <div class="form-group">
             <label class="col-sm-4 control-label">您选择的科目</label>
-            <div class="col-sm-8">
+            <div class="col-sm-7">
                 <label>科目</label>
                 <select class="input-sm" name="subjectId">
                     <c:forEach items="${requestScope.subjects}" var="subject">
@@ -48,14 +75,14 @@
         </div>
         <div class="form-group">
             <label class="col-sm-4 control-label">选择文件</label>
-            <div class="col-sm-8">
+            <div class="col-sm-7">
                 <input type="file" class="form-control" name="questionFile" data-field="file"/>
             </div>
         </div>
         <div class="form-group">
 
             <label class="col-sm-4 control-label"></label>
-            <div class="col-sm-8">
+            <div class="col-sm-7">
                 <button class="form-control" type="submit"> 提交</button>
             </div>
 
@@ -162,7 +189,12 @@
 
 
 <script id="js-template-question-edit" type="text/html">
+
     <div class="form-horizontal">
+        <div style="display: none;">
+            <input type="text" data-field="id">
+            <input type="text" data-field="topicid">
+        </div>
         <div class="form-group">
             <label class="col-sm-2 control-label">题干</label>
             <div class="col-sm-9">
@@ -175,7 +207,7 @@
                 <textarea class="form-control" data-field="code"></textarea>
             </div>
         </div>
-        <div class="form-group-option">
+        <div class="option-wrapper">
 
         </div>
         <div class="form-group">
@@ -187,10 +219,19 @@
         <div class="form-group">
             <label class="col-sm-2 control-label">题目类型</label>
             <div class="col-sm-9">
-                <select name="type" id="select-question-type" class="form-control">
+                <select name="type" id="select-question-type" data-field="type" class="form-control">
                     <option value="2">单选题</option>
                     <option value="3">多选题</option>
-                    <option value="5">简答题</option>
+                    <option value="4" selected>简答题</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">可见性</label>
+            <div class="col-sm-9">
+                <select name="type" id="select-question-private" data-field="isPrivate" class="form-control">
+                    <option value="1">仅自己可见</option>
+                    <option value="0">所有人可见</option>
                 </select>
             </div>
         </div>
@@ -206,15 +247,15 @@
                 <p class="form-control-static" data-field="topic"></p>
             </div>
         </div>
-        <div class="col-sm-offset-2">
-            <button class="btn btn-primary js-edit-submit">提交</button>
+        <div class="col-sm-offset-2 js-btn-group">
+
         </div>
     </div>
 </script>
 
 
 <script id="js-tempalte-question-edit-option" type="text/html">
-    <div class="form-group">
+    <div class="form-group form-group-option">
         <label class="col-sm-2 control-label">选项</label>
         <div class="col-sm-9">
             <div class="input-group">
@@ -260,6 +301,8 @@
     // AJAX异步拉取数据
     var treeData = null;
     var jstree = null;
+    var editLayerIndex = null;
+    var viewLayerIndex = null;
 
     function getJstree()
     {
@@ -278,11 +321,16 @@
                     type: 5,
                     closeBtn: 2,
                     title: '批量导入',
-                    area: ['400x', '200px'],
+                    area: ['600x', '240px'],
                     content: $("#js-template-import").html()
                 }
             )
         })
+        $("#select-question-teacher-filter").on("change", on_filter_change);
+        $("#select-question-type-filter").on("change", on_filter_change);
+        $("#checkbox-question-only-mine-filter").on("change", on_filter_change);
+        $("#checkbox-question-recursive-filter").on("change", on_filter_change);
+
 
         function initTree()
         {
@@ -291,109 +339,7 @@
                     getJstree().open_all();
                 })
                 .on("activate_node.jstree", function (event, data) {
-                    $.ajax(
-                        {
-                            url: '/manage/bank/question/list.do',
-                            data: {
-                                'topic.id': data.node.id,
-                                pageSize: 1000,
-                                offset: 0
-                            },
-                            success: function (res) {
-                                OnResult(res, function () {
-                                    var questionList = res.payload.rows;
-                                    questionList.map(function (question) {
-                                        if (question.options == null)
-                                        {
-                                            return;
-                                        }
-
-                                        question.options = JSON.parse(question.options);
-                                    })
-                                    $(".question-list").empty();
-                                    questionList.map(function (question) {
-                                        $(".question-list").append(renderQuestion(question));
-                                        //详情
-                                        $("#question_" + question.id + " .js-question-view").on("click", function () {
-                                                getQuestionDetail(question.id, function (questionDetail) {
-                                                    var $question_detail_form = RenderQuestion_View(questionDetail);
-                                                    layer.open(
-                                                        {
-                                                            type: 5,
-                                                            shadeClose: true, //点击遮罩关闭
-                                                            closeBtn: 2,
-                                                            title: '题目详情',
-                                                            area: ['700px', '500px'],
-                                                            content: $question_detail_form.prop("outerHTML"),
-                                                            success: function () {
-                                                                $(".layui-layer-content").addClass("layer-form");
-                                                                $(".layui-layer-content pre code").each(function (index, obj) {
-                                                                    hljs.highlightBlock(obj);
-                                                                })
-                                                            },
-                                                            end: function () {
-                                                            }
-                                                        }
-                                                    )
-                                                })
-                                            }
-                                        )
-                                        //编辑
-                                        $("#question_" + question.id + " .js-question-edit").on("click", function () {
-                                            getQuestionDetail(question.id, function (questionDetail) {
-                                                var $question_edit_form = renderQuestion_Edit(questionDetail);
-                                                layer.open(
-                                                    {
-                                                        type: 5,
-                                                        shadeClose: true, //点击遮罩关闭
-                                                        closeBtn: 2,
-                                                        title: '题目编辑',
-                                                        area: ['700px', '500px'],
-                                                        content: $question_edit_form.prop("outerHTML"),
-                                                        success: function () {
-                                                            question_edit_option_status = {
-                                                                optionid: 1,
-                                                                optionCount: 1
-                                                            }
-                                                            if (questionDetail.options != null && questionDetail.options != "")
-                                                            {
-                                                                questionDetail.options = JSON.parse(questionDetail.options);
-                                                            }
-
-                                                            for(key in questionDetail.options)
-                                                            {
-                                                                var iscorrect = questionDetail.answer.indexOf(key)!=-1;
-
-                                                                question_edit_on_add_option(questionDetail.options[key] ,iscorrect);
-                                                            }
-
-                                                            $(".layui-layer-content").addClass("layer-form");
-
-                                                            //增加选项按钮点击
-                                                            $(".btn-add-option").on("click", function () {
-                                                                question_edit_on_add_option();
-                                                            });
-
-                                                        },
-                                                        end: function () {
-
-                                                        }
-                                                    }
-                                                )
-                                            })
-                                        });
-                                    })
-                                    $("pre code").each(function (index, obj) {
-                                        hljs.highlightBlock(obj);
-                                    })
-
-
-                                })
-                            }
-
-                        }
-                    )
-                    data.node.id
+                    on_filter_change();
                 })
                 .jstree({
                     'core': {
@@ -504,6 +450,102 @@
 
     }
 
+    function on_filter_change()
+    {
+        if (getJstree() == null)
+        {
+            return;
+        }
+
+        $.ajax(
+            {
+                url: '/manage/bank/question/list.do',
+                data: {
+                    _topicIds: getJstree().get_selected(),
+                    pageSize: 1000,
+                    offset: 0,
+                    recursive: $("#checkbox-question-recursive-filter")[0].checked,
+                    showMe: $("#checkbox-question-only-mine-filter")[0].checked,
+                    'teacher.id': $("#select-question-teacher-filter").val(),
+                    'questionType.id': $("#select-question-type-filter").val()
+                },
+                success: function (res) {
+                    OnResult(res, function () {
+                        var questionList = res.payload.rows;
+                        questionList.map(function (question) {
+                            if (question.options == null)
+                            {
+                                return;
+                            }
+
+                            question.options = JSON.parse(question.options);
+                        })
+                        $(".question-list").empty();
+                        questionList.map(function (question) {
+                            $(".question-list").append(renderQuestion(question));
+                            //详情
+                            $("#question_" + question.id + " .js-question-view").on("click", function () {
+                                    getQuestionDetail(question.id, function (questionDetail) {
+                                        var $question_detail_form = RenderQuestion_View(questionDetail);
+                                        viewLayerIndex = layer.open(
+                                            {
+                                                type: 5,
+                                                shadeClose: true, //点击遮罩关闭
+                                                closeBtn: 2,
+                                                title: '题目详情',
+                                                area: ['700px', '500px'],
+                                                content: $question_detail_form.prop("outerHTML"),
+                                                success: function () {
+                                                    $(".layui-layer-content").addClass("layer-form");
+                                                    $(".layui-layer-content pre code").each(function (index, obj) {
+                                                        hljs.highlightBlock(obj);
+                                                    })
+                                                },
+                                                end: function () {
+                                                }
+                                            }
+                                        )
+                                    })
+                                }
+                            )
+                            //编辑
+                            $("#question_" + question.id + " .js-question-edit").on("click", function () {
+                                getQuestionDetail(question.id, function (questionDetail) {
+                                    editLayerIndex = layer.open(
+                                        {
+                                            type: 5,
+                                            shadeClose: true, //点击遮罩关闭
+                                            closeBtn: 2,
+                                            title: '题目编辑',
+                                            area: ['800px', '600px'],
+                                            content: "",
+                                            success: function () {
+                                                $('.layui-layer-content').append(renderQuestion_Edit(questionDetail));
+                                                question_edit_after_render(questionDetail);
+                                            },
+                                            end: function () {
+
+                                            }
+                                        }
+                                    )
+                                })
+                            });
+                        })
+                        $("pre code").each(function (index, obj) {
+                            hljs.highlightBlock(obj);
+                        })
+
+
+                    })
+                }
+
+            }
+        )
+
+
+    }
+
+    //获取题目详细信息
     function getQuestionDetail(questionid, onsuccess)
     {
         $.ajax(
@@ -525,6 +567,7 @@
 
     }
 
+    //显示题目列表
     function renderQuestionOptionList(question)
     {
         if (question.options == null || question.options == "")
@@ -558,6 +601,7 @@
 
     }
 
+    //在列表中显示一个题目
     function renderQuestion(question)
     {
         var $question_panel = $($("#js-template-question-panel").html());
@@ -594,6 +638,7 @@
         return $question_panel;
     }
 
+    //显示题目详情页面
     function RenderQuestion_View(questionDetail)
     {
         var $questionForm = $($("#js-template-question-view").html());
@@ -641,24 +686,24 @@
 
             }
         }
+
         return $questionForm;
     }
 
-
+    //显示编辑题目页面
     function renderQuestion_Edit(questionDetail)
     {
         var $questionForm = $($("#js-template-question-edit").html());
 
         var config = {
             options: function (value, key) {
-
                 return "";
             },
             answer: function (value, key) {
-                return QuestionAnswerNumsToChars(value);
+                return "";
             },
             type: function (value, key) {
-                return QuestionTypeMap(value);
+                return "";
             },
             createTime: function (value, key) {
                 return new Date(value).toLocaleString();
@@ -679,34 +724,90 @@
             {
                 fieldContent = questionDetail[key];
             }
+            if (fieldContent !== "" && fieldContent !== null)
+            {
+                set_data_in_field($questionForm.find("[data-field='" + key + "']"), fieldContent);
 
-
-            $questionForm.find("[data-field='" + key + "']").html(fieldContent);
-
-
+            }
         }
+        var showEdit = true;
+        var showSaveAsMine = true;
+        if (questionDetail.createTeacherId == User.id)
+        {
+            showEdit = true;
+            showSaveAsMine = false;
+        } else
+        {
+            showEdit = false;
+            showSaveAsMine = true;
+        }
+        if (questionDetail.isPrivate == 0 && User.role == '0')
+        {
+            showEdit = true;
+        }
+
+        showEdit && $questionForm.find(".js-btn-group").append("<input type=\"button\" class=\"btn btn-primary js-edit-submit\" value=\"编辑并提交\">\n")
+        showSaveAsMine && $questionForm.find(".js-btn-group").append("<input type=\"button\" class=\"btn btn-primary js-save-as-mine\" value=\"保存到我的题库\">\n")
+
         return $questionForm;
     }
 
+
     var question_edit_option_status;
 
-    function question_edit_on_add_option(content,iscorrect)
+    //在编辑页面显示之后调用
+    function question_edit_after_render(questionDetail)
+    {
+        question_edit_option_status = {
+            optionid: 1,
+            optionCount: 1
+        }
+        if (questionDetail.options != null && questionDetail.options != "")
+        {
+            questionDetail.options = JSON.parse(questionDetail.options);
+        }
+
+        for (key in questionDetail.options)
+        {
+            var iscorrect = questionDetail.answer.indexOf(key) != -1;
+
+            question_edit_on_add_option(questionDetail.options[key], iscorrect);
+        }
+
+        $(".layui-layer-content").addClass("layer-form");
+
+        //增加选项按钮点击
+        $(".btn-add-option").on("click", function () {
+            question_edit_on_add_option();
+        });
+        //提交按钮事件
+        $(".js-edit-submit").on("click", function () {
+            question_edit_on_submit();
+        });
+        $(".js-save-as-mine").on("click", function () {
+//question_edit_on_submit();
+        });
+    }
+
+    //添加一个选项并检查是否超过限制
+    function question_edit_on_add_option(content, iscorrect)
     {
         if (question_edit_option_status.optionCount > 9)
         {
             layer.msg("最多能添加9个选项");
             return;
         }
-        question_edit_add_option(question_edit_option_status.optionid,content,iscorrect);
+        question_edit_add_option(question_edit_option_status.optionid, content, iscorrect);
         question_edit_option_status.optionid++;
         question_edit_option_status.optionCount++;
     }
 
-    function question_edit_add_option(optionid,content, iscorrect)
+    //添加一个选项
+    function question_edit_add_option(optionid, content, iscorrect)
     {
         $option = $($("#js-tempalte-question-edit-option").html());
         $option.attr("id", "option-" + optionid);
-        $(".form-group-option").append($option.prop("outerHTML"));
+        $(".option-wrapper").append($option.prop("outerHTML"));
         if (iscorrect == true)
         {
             question_edit_option_toggle_correct(optionid, true);
@@ -720,21 +821,144 @@
         $("#option-" + optionid + " .js-remove").on("click", function () {
             $("#option-" + optionid).remove();
             question_edit_option_status.optionCount--;
+            question_edit_option_group_on_change();
         })
+
+        question_edit_option_group_on_change();
     }
 
+    //更改选项正确性
     function question_edit_option_toggle_correct(optionid, iscorrect)
     {
         $("#option-" + optionid).toggleClass("option-correct", iscorrect);
         $("#option-" + optionid + " .js-valid").toggleClass("btn-success", iscorrect).find(".fa").toggleClass("fa-check", iscorrect);
-
-
+        question_edit_option_group_on_change();
     }
+
+    //更改题目类型
     function question_edit_select_question_type(typeid)
     {
         $(".layui-layer-content #select-question-type").val(typeid);
     }
 
+
+    //在选项数量和正确答案数量变化时触发，自动判断题目类型
+    function question_edit_option_group_on_change()
+    {
+        var optionCount = $(".layui-layer-content .form-group-option").length;
+        var correctOptionCount = $(".layui-layer-content .option-correct").length;
+        if (optionCount == 0)
+        {
+            question_edit_select_question_type(5);
+        }
+        else if (correctOptionCount == 1 || correctOptionCount == 0)
+        {
+            question_edit_select_question_type(2);
+        }
+        else
+        {
+            question_edit_select_question_type(3);
+        }
+    }
+
+    function question_edit_on_submit()
+    {
+        var data = question_edit_collect_data();
+
+        $.ajax(
+            {
+                type: 'post',
+                url: '/manage/bank/question/edit.do',
+                data: data,
+                success: function (res) {
+                    OnResult(res, function (res) {
+                            layer.close(editLayerIndex);
+                            layer.msg(res.message);
+                        },
+                        function () {
+                            layer.alert(res.message);
+                        }
+                    )
+                }
+            }
+        )
+
+    }
+
+    function get_data_in_field($element)
+    {
+        if ($element == undefined || $element[0] == undefined)
+        {
+            return;
+        }
+        switch ($element[0].tagName)
+        {
+
+            case'TEXTAREA':
+            case'INPUT':
+            case'SELECT':
+                return $element.val();
+
+            case 'P':
+            case 'PRE':
+            case 'CODE':
+            case 'DIV':
+            default:
+                return $element.html();
+                break;
+        }
+    }
+
+    function set_data_in_field($element, data)
+    {
+
+        if ($element == undefined || $element[0] == undefined)
+        {
+            return;
+        }
+        switch ($element[0].tagName)
+        {
+            case 'PRE':
+            case 'CODE':
+            case 'DIV':
+                return $element.html(data);
+                break;
+            case'TEXTAREA':
+            case'INPUT':
+            case'SELECT':
+                return $element.val(data);
+
+        }
+    }
+
+    function question_edit_collect_data()
+    {
+        var $question_form = $(".layui-layer-content");
+        var index = 0;
+        var answer = "";
+        var option = [];
+        $question_form.find(".form-group-option").map(function () {
+            var content = $(this).find("input").val();
+            if ($(this).hasClass("option-correct"))
+            {
+                answer += index;
+            }
+            index++;
+            option.push(content);
+        })
+
+        var data = {
+            'id': get_data_in_field($question_form.find("[data-field='id']")),
+            'outline': get_data_in_field($question_form.find("[data-field='outline']")),
+            'code': get_data_in_field($question_form.find("[data-field='code']")),
+            'questionType.id': get_data_in_field($question_form.find("[data-field='type']")),
+            'topic.id': get_data_in_field($question_form.find("[data-field='topicid']")),
+            '_options': option,
+            'answer': answer
+        };
+        return data;
+
+    }
 
 </script>
 

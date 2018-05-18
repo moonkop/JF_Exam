@@ -48,6 +48,7 @@ public class ExamVo
     //考试状态视图值
     private String examStatusView;
 
+
     public Set<String> getOperation()
     {
         return operation;
@@ -194,6 +195,7 @@ public class ExamVo
     public void setPaperContent(String paperContent)
     {
         this.paperContent = paperContent;
+
     }
 
     @Basic

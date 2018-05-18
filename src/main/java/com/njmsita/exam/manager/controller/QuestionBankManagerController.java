@@ -24,8 +24,10 @@ import com.njmsita.exam.utils.idutil.IdUtil;
 import com.njmsita.exam.utils.logutils.SystemLogAnnotation;
 import com.njmsita.exam.utils.ping4j.FirstCharUtil;
 import com.njmsita.exam.utils.validate.validategroup.AddGroup;
+import com.njmsita.exam.utils.validate.validategroup.EditGroup;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,6 +35,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -198,8 +201,10 @@ public class QuestionBankManagerController extends BaseController
     //-------------------------------------------QuestionTypeManager-----------------------------------------
     //-------------------------------------------QuestionTypeManager-----------------------------------------
     //-------------------------------------------QuestionTypeManager-----------------------------------------
+
     /**
      * 跳转题型页面(分页)
+     *
      * @param questionTypeQueryModel 该模型存放了题型属性
      * @param pageNum                页码
      * @param pageSize               页面大小
@@ -214,7 +219,7 @@ public class QuestionBankManagerController extends BaseController
     {
 
         return new JsonListResponse(questionTypeEbi.getAll(questionTypeQueryModel, pageNum, pageSize),
-                "id,name,score",questionTypeEbi.getCount(questionTypeQueryModel));
+                "id,name,score", questionTypeEbi.getCount(questionTypeQueryModel));
         //调用BaseController的方法设置数据总量及最大页码数
 //        pageCount = pageSize;
 //        setDataTotal(questionTypeEbi.getCount(questionTypeQueryModel));
@@ -250,8 +255,8 @@ public class QuestionBankManagerController extends BaseController
      * <p>
      * （此处将添加和修改页面合并，如果前台传递ID则进行修改否则进入添加页面）
      *
-     * @param id 接受前台传递的题型id
-     * @param request      HttpServletRequest
+     * @param id      接受前台传递的题型id
+     * @param request HttpServletRequest
      *
      * @return 跳转edit
      */
@@ -260,7 +265,7 @@ public class QuestionBankManagerController extends BaseController
     {
 
         //判断前台是否传递题型ID
-        if (id!=null&&id!=0)
+        if (id != null && id != 0)
         {
             //根据题型ID获取题型完整信息从而进行数据回显
             QuestionTypeVo questionType = questionTypeEbi.get(id);
@@ -507,22 +512,51 @@ public class QuestionBankManagerController extends BaseController
      */
     @ResponseBody
     @RequestMapping("question/list.do")
-    public JsonResponse questionList(QuestionQueryModel questionQueryModel, Integer offset, Integer pageSize,
+    public JsonResponse questionList(QuestionQueryModel questionQueryModel, @RequestParam(value = "_topicIds[]") String[] topicIds, Integer offset, Integer pageSize,
                                      HttpServletRequest request)
     {
-        List<QuestionVo> list=null;
-        TeacherVo teacherVo= (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
-        if(teacherVo.getRole().getId().equals(SysConsts.ADMIN_ROLE_ID)){
-            list=questionEbi.getAll(questionQueryModel,offset,pageSize);
-        }else {
-            if(questionQueryModel.getShowMe()==null){
-                questionQueryModel.setShowMe(false);
-            }
-            if (questionQueryModel.getShowMe())
+        List<QuestionVo> list = null;
+        TeacherVo currentTeacher = (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
+        if (questionQueryModel.getQuestionType().getId() == 0)
+        {
+            questionQueryModel.setQuestionType(null);
+        }
+        if (questionQueryModel.getShowMe() == null)
+        {
+            questionQueryModel.setShowMe(false);
+        }
+        if (questionQueryModel.getTeacher().getId()=="")
+        {
+            questionQueryModel.setTeacher(null);
+        }
+        if (questionQueryModel.getRecursive() == true)
+        {
+            for (String topicID : topicIds)
             {
-                questionQueryModel.setTeacher(teacherVo);
+                questionQueryModel.getTopicIds().addAll(topicEbi.getAllChildren(topicID));
             }
-            list = questionEbi.getAllByTeacher(questionQueryModel, offset, pageSize, teacherVo);
+        }else{
+            for (String topicID : topicIds)
+            {
+                questionQueryModel.getTopicIds().add(topicID);
+            }
+        }
+
+
+        if (questionQueryModel.getShowMe())
+        {
+            questionQueryModel.setTeacher(currentTeacher);
+            list = questionEbi.getAllByTeacher(questionQueryModel, offset, pageSize, currentTeacher);
+        } else
+        {
+            //showMe==false
+            if (currentTeacher.getRole().getId().equals(SysConsts.ADMIN_ROLE_ID))
+            {
+                list = questionEbi.getAll(questionQueryModel, offset, pageSize);
+            } else
+            {
+                list = questionEbi.getAllByTeacher(questionQueryModel, offset, pageSize, currentTeacher);
+            }
         }
         return new JsonListResponse<>(list, "id,code,outline,[options]option,answer,[type]questionType.id", 0);
     }
@@ -540,9 +574,12 @@ public class QuestionBankManagerController extends BaseController
                         "[type]questionType.id," +
                         "[value]questionType.score," +
                         "[createTeacher]teacher.name," +
+                        "[createTeacherId]teacher.id," +
                         "createTime," +
                         "[subject]subject.name," +
                         "[topic]topic.name," +
+                        "[topicid]topic.id," +
+                        "isPrivate," +
                         "useTime");
     }
 
@@ -564,10 +601,42 @@ public class QuestionBankManagerController extends BaseController
                 "id,name,[parent]parent.id", 0);
     }
 
+
+    @ResponseBody
+    @RequestMapping("question/saveAsMine.do")
+    @SystemLogAnnotation(module = "题目管理", methods = "保存为我的题目")
+    public JsonResponse saveAsMine(QuestionVo question, @RequestParam(value = "_options[]",required = false) String[] options, HttpSession session)
+    {
+        TeacherVo teacherVo = (TeacherVo) session.getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
+
+        return new JsonResponse();
+    }
+
+    @ResponseBody
+    @RequestMapping("question/saveAsPublic.do")
+    @SystemLogAnnotation(module = "题目管理", methods = "添加到公共题库")
+    public JsonResponse saveAsPublic(QuestionVo question, HttpSession session)
+    {
+        TeacherVo teacherVo = (TeacherVo) session.getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
+
+        return new JsonResponse();
+    }
+
+    @ResponseBody
+    @RequestMapping("question/edit.do")
+    @SystemLogAnnotation(module = "题目管理", methods = "题目编辑")
+    public JsonResponse edit(QuestionVo question, @RequestParam(value = "_options[]") String[] options, HttpSession session) throws OperationException
+    {
+        TeacherVo teacherVo = (TeacherVo) session.getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
+        question.setOptionList(options);
+        questionEbi.update(question, teacherVo);
+        return new JsonResponse("修改成功");
+    }
+
     /**
      * 题目的添加/修改
      *
-     * @param questionVo
+     * @param question
      * @param bindingResult
      * @param session
      *
@@ -575,10 +644,10 @@ public class QuestionBankManagerController extends BaseController
      *
      * @throws Exception
      */
-    @RequestMapping("question/edit.do")
+    @RequestMapping("question/edit1.do")
     @ResponseBody
     @SystemLogAnnotation(module = "题目管理", methods = "题目添加/修改")
-    public JsonResponse doAdd(@Validated(value = {AddGroup.class}) QuestionVo questionVo, BindingResult bindingResult,
+    public JsonResponse doAdd(@Validated(value = {AddGroup.class}) QuestionVo question, BindingResult bindingResult,
                               HttpSession session) throws Exception
     {
         JsonListResponse jsonResponse = new JsonListResponse<>();
@@ -593,18 +662,18 @@ public class QuestionBankManagerController extends BaseController
             //操作是否成功
             jsonResponse.setCode(500);
         }
+
         TeacherVo teacherVo = (TeacherVo) session.getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
-        if (null == questionVo.getId() || "".equals(questionVo.getId().trim()))
+        if (null == question.getId() || "".equals(question.getId().trim()))
         {
-            questionVo.setTeacher(teacherVo);
-            questionVo.setId(IdUtil.getUUID());
-            questionEbi.save(questionVo);
+            question.setTeacher(teacherVo);
+            question.setId(IdUtil.getUUID());
+            questionEbi.save(question);
         } else
         {
-            QuestionVo questionUpdate = questionEbi.updateOrSaveToMe(questionVo, teacherVo);
+            QuestionVo questionUpdate = questionEbi.updateOrSaveToMe(question, teacherVo);
             List<QuestionVo> list = new ArrayList<>();
             list.add(questionUpdate);
-            jsonResponse.setRaw(list).setFields("id,code,outline,option,answer,[score]questionType.score").serialize();
         }
         return jsonResponse;
     }
@@ -640,7 +709,10 @@ public class QuestionBankManagerController extends BaseController
     {
         //学科
         List<SubjectVo> subjectVoList = subjectEbi.getAll();
+        List<TeacherVo> teacherVos = teacherEbi.getAll();
+
         request.setAttribute("subjects", subjectVoList);
+        request.setAttribute("teachers", teacherVos);
         return "/manage/bank/question/list";
     }
 

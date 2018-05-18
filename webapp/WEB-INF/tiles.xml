@@ -180,5 +180,10 @@
 
     </definition>
 
+    <definition name="/manage/me/setpassword" extends="teacher_base">
+        <put-attribute name="body" value="/WEB-INF/jsp/manage/me/setpassword.jsp"/>
+        <put-attribute name="title" value="机蜂在线考试系统"/>
+
+    </definition>
 
 </tiles-definitions>
