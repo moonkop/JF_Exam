@@ -36,4 +36,11 @@ public interface StudentExamDao extends BaseDao<StudentExamVo>
      * @return
      */
     public StudentExamVo getByStudentAndExam(ExamVo examVo, StudentVo studentVo);
+
+    /**
+     * 根据考试获取所有学生的试卷
+     * @param examVo
+     * @return
+     */
+    public List<StudentExamVo> getbyExam(ExamVo examVo);
 }

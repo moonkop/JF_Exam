@@ -46,6 +46,12 @@ public class StudentExamDaoImpl extends BaseImpl<StudentExamVo> implements Stude
         return list.size()>0 ? list.get(0) : null;
     }
 
+    public List<StudentExamVo> getbyExam(ExamVo examVo)
+    {
+        String hql="from StudentExamVo where examVo.id=?";
+        return (List<StudentExamVo>) this.getHibernateTemplate().find(hql,examVo.getId());
+    }
+
     private List<StudentExamVo> getAllByExam(ExamVo examVo)
     {
         String hql="from StudentExamVo where examVo.id=?";
