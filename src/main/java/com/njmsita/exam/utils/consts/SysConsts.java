@@ -61,6 +61,15 @@ public class SysConsts {
 	public static final String NO_ANSWER_QUESTION_TYPE_NAME="简答题";
 
 	/**
+	 * 系统菜单
+	 */
+	public static final String SYSTEM_MENU_ID="xtcd";
+	/**
+	 * 菜单类型资源
+	 */
+	public static final String RESOURCE_TYPE_MENU_ID="0";
+
+	/**
 	 * 考试状态码
 	 */
 	public static final Integer EXAM_STATUS_NO_CHECK = 101;

@@ -17,7 +17,7 @@
         <many-to-one name="resourcetype" column="tresourcetype_id" class="com.njmsita.exam.authentic.model.TresourcetypeVo" lazy="false"/>
         <many-to-one name="parent" column="pid" class="com.njmsita.exam.authentic.model.TresourceVo"/>
 
-        <set name="childs" cascade="delete" inverse="true" lazy="false">
+        <set name="childs" cascade="delete" inverse="true" lazy="false" order-by="seq">
             <key column="pid"></key>
             <one-to-many class="com.njmsita.exam.authentic.model.TresourceVo"/>
         </set>

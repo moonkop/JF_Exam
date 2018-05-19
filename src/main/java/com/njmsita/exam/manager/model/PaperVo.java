@@ -31,11 +31,23 @@ public class PaperVo
     @NotEmpty(message = "{questionContain.notempty}",groups = {AddGroup.class, EditGroup.class})
     private String questionContain;
 
+    private String examId;
+
     //出卷教师  n  TO  1
     private TeacherVo teacher;
 
     //所属科目  n  TO  1
     private SubjectVo subjectVo;
+
+    public String getExamId()
+    {
+        return examId;
+    }
+
+    public void setExamId(String examId)
+    {
+        this.examId = examId;
+    }
 
     @Basic
     @Column(name = "questionContain")

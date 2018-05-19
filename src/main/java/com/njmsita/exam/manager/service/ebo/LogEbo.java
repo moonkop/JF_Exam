@@ -71,7 +71,7 @@ public class LogEbo implements LogEbi
         logVo.setUserId(loginUser.getUuid());
         logVo.setCommite("用户登陆");
         logVo.setMethod("登陆");
-        logVo.setUserRole(loginUser.getUuid());
+        logVo.setUserRole(loginUser.getUserRole());
         logVo.setRealName(loginUser.getRealName());
         logVo.setIp(loginIp);
         logVo.setModule("用户个人");

@@ -405,7 +405,7 @@ public class SystemManagerController extends BaseController
             roleEbi.delete(roleVo);
         }
 
-        return "redirect:/manage/role/list";
+        return "redirect:/manage/role";
     }
 
     //-----------------------------------RoleManager-----------END------------------------------------------
@@ -555,7 +555,7 @@ public class SystemManagerController extends BaseController
             classroomEbi.delete(classroomVo);
         }
 
-        return "redirect:/manage/classroom/list";
+        return "redirect:/manage/classroom";
     }
 
     @ResponseBody
@@ -673,7 +673,9 @@ public class SystemManagerController extends BaseController
         {
             //根据资源ID获取资源完整信息从而进行数据回显
             tresourceVo = resourceEbi.get(tresourceVo.getId());
-            request.setAttribute("parent", resourceEbi.get(tresourceVo.getParent().getId()));
+            if(tresourceVo.getParent()!=null){
+                request.setAttribute("parent", resourceEbi.get(tresourceVo.getParent().getId()));
+            }
             request.setAttribute("resource", tresourceVo);
         }
         //如果待编辑资源为空 则会传进来parent.id

@@ -106,7 +106,11 @@ public class TeacherController extends BaseController
                 sbd.append(resource.getUrl());
                 sbd.append(",");
             }
-           session.setAttribute(SysConsts.USER_RESOURCE_NAME,sbd.toString());
+
+            //获取登陆用户的菜单
+            getLoginMenu(request);
+
+            session.setAttribute(SysConsts.USER_RESOURCE_NAME,sbd.toString());
             session.setAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME, loginTea);
             Hibernate.initialize(loginTea.getRole());
             logEbi.login(loginTea, loginIp);
@@ -249,10 +253,6 @@ public class TeacherController extends BaseController
     @RequestMapping("manage/detail")
     public String toTeacherDetail(TeacherQueryModel teacherQueryModel, ModelMap modelMap)
     {
-//        if (StringUtil.isEmpty(teacherQueryModel.getId()))
-//        {
-//
-//        }
         TeacherVo teacherVo = teaEbi.get(teacherQueryModel.getId());
         modelMap.put("teacher", teacherVo);
         return "/manage/teacher/detail";
