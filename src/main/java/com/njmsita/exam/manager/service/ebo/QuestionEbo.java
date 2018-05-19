@@ -6,14 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.njmsita.exam.authentic.dao.dao.TeacherDao;
 import com.njmsita.exam.authentic.model.TeacherVo;
 import com.njmsita.exam.base.BaseQueryVO;
-import com.njmsita.exam.manager.dao.dao.QuestionDao;
-import com.njmsita.exam.manager.dao.dao.QuestionTypeDao;
-import com.njmsita.exam.manager.dao.dao.SubjectDao;
-import com.njmsita.exam.manager.dao.dao.TopicDao;
-import com.njmsita.exam.manager.model.QuestionTypeVo;
-import com.njmsita.exam.manager.model.QuestionVo;
-import com.njmsita.exam.manager.model.SubjectVo;
-import com.njmsita.exam.manager.model.TopicVo;
+import com.njmsita.exam.manager.dao.dao.*;
+import com.njmsita.exam.manager.model.*;
 import com.njmsita.exam.manager.model.querymodel.QuestionQueryModel;
 import com.njmsita.exam.manager.service.ebi.QuestionEbi;
 import com.njmsita.exam.utils.consts.SysConsts;
@@ -23,11 +17,8 @@ import com.njmsita.exam.utils.exception.UnAuthorizedException;
 import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.idutil.IdUtil;
 import com.njmsita.exam.utils.json.CustomJsonSerializer;
-import com.njmsita.exam.utils.json.OptionUtil;
-import net.sf.json.JSONArray;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.ws.commons.schema.constants.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -215,7 +206,6 @@ public class QuestionEbo implements QuestionEbi
         }
     }
 
-    @Override
     public void saveAsMine(QuestionVo questionVo, TeacherVo teacherVo) throws OperationException
     {
         infoValidate(questionVo);
@@ -224,7 +214,6 @@ public class QuestionEbo implements QuestionEbi
         this.save(questionVo);
     }
 
-    @Override
     public void delete(QuestionVo questionVo, TeacherVo teacherVo) throws UnAuthorizedException
     {
         questionVo = questionDao.get(questionVo.getId());
@@ -232,6 +221,7 @@ public class QuestionEbo implements QuestionEbi
         {
             throw new UnAuthorizedException("您不能删除这个题目");
         }
+        questionDao.delete(questionVo);
     }
 
 

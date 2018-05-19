@@ -18,6 +18,8 @@ import com.njmsita.exam.utils.timertask.SchedulerJobUtil;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,8 +42,6 @@ public class ExamEbo implements ExamEbi
     private TeacherDao teacherDao;
     @Autowired
     private ClassroomDao classroomDao;
-    @Autowired
-    private PaperDao paperDao;
     @Autowired
     private SchedulerFactoryBean schedulerFactoryBean;
     @Autowired
@@ -76,7 +76,7 @@ public class ExamEbo implements ExamEbi
 
     public ExamVo get(Serializable uuid)
     {
-        return examDao.get(uuid);
+        return queryPaperFromMongoExamPaper(examDao.get(uuid));
     }
 
     public List<ExamVo> getAll(BaseQueryVO qm, Integer pageNum, Integer pageCount)
@@ -101,6 +101,7 @@ public class ExamEbo implements ExamEbi
     public void delete(ExamVo examVo)
     {
         examDao.delete(examVo);
+        deletePaperFromMongoExamPaper(examVo);
     }
 
 
@@ -114,9 +115,7 @@ public class ExamEbo implements ExamEbi
     {
         infoValid(examVo,markTeachers,paperId,classroomIds);
         examDao.save(examVo);
-        PaperVo paperVo = new PaperVo();
-//        初始化PaperVo
-        this.paperMongoDao.insert(paperVo);
+        savaPaperToMongoExamPaper(examVo);
     }
 
     public void update(ExamVo examVo, String[] markTeachers,String paperId ,String[] classroomIds) throws OperationException
@@ -131,8 +130,8 @@ public class ExamEbo implements ExamEbi
         temp.setMarkTeachers(examVo.getMarkTeachers());
         temp.setSubjectVo(examVo.getSubjectVo());
         temp.setCreateTeacher(examVo.getCreateTeacher());
-        temp.setPaperContent(examVo.getPaperContent());
 
+        updatePaperFromMongoExamPaper(examVo);
     }
 
     public List<ExamVo> getByCreateTeacher(String teacherId)
@@ -216,6 +215,7 @@ public class ExamEbo implements ExamEbi
             savaLog(scheduleVo,"删除任务");
         }
         examDao.delete(temp);
+        deletePaperFromMongoExamPaper(temp);
     }
 
     public void updateMarkTeacher(ExamVo examVo, String[] markTeachers) throws Exception
@@ -276,17 +276,17 @@ public class ExamEbo implements ExamEbi
             Long systemTime=System.currentTimeMillis();
             studentExamVo.setStartTime(systemTime);
 
-            JSONArray jsonArray=getQuestionJsonArray(examVo.getPaperContent());
-            for(int i=0;i<jsonArray.size();i++){
+            examVo=queryPaperFromMongoExamPaper(examVo);
+            List<QuestionVo> questionVoList= examVo.getPaperVo().getQuestionVoList();
+
+            for (int i=0;i<questionVoList.size();i++)
+            {
                 StudentExamQuestionVo seq=new StudentExamQuestionVo();
                 seq.setId(IdUtil.getUUID());
                 seq.setStudentExamVo(studentExamVo);
                 seq.setIndext(i+1);
-                JSONObject questionJson=jsonArray.getJSONObject(i);
-                seq.setRightAnswer(questionJson.getString("answer"));
-                JSONObject questionTypeJson=JSONObject.fromObject(questionJson.getString("questionType"));
-                QuestionTypeVo questionTypeVo=questionTypeDao.get(Integer.parseInt(questionTypeJson.getString("id")));
-                seq.setQuestionTypeVo(questionTypeVo);
+                seq.setRightAnswer(questionVoList.get(i).getAnswer());
+                seq.setQuestionTypeVo(questionVoList.get(i).getQuestionType());
                 studentExamQuestionDao.save(seq);
                 list.add(seq);
             }
@@ -367,6 +367,8 @@ public class ExamEbo implements ExamEbi
         }
         studentExamVo.setScore(FormatUtil.formatScore(sum));
         studentExamVo.setStudentExamQuestionVos(questions);
+
+        //TODO answerContent存入MongoDB
         ScheduleVo scheduleVo=scheduleDao.getByTarget(studentExamVo.getId()).get(0);
         SchedulerJobUtil.delJob(scheduleVo);
     }
@@ -480,6 +482,7 @@ public class ExamEbo implements ExamEbi
     //-----------------------------------以上为业务操作-------------------------------------
     //-----------------------------------以上为业务操作-------------------------------------
     //-----------------------------------以上为业务操作-------------------------------------
+    //-----------------------------------以上为业务操作-------------------------------------
 
     /**
      * 创建定时任务
@@ -509,13 +512,11 @@ public class ExamEbo implements ExamEbi
             scheduleVo.setCronexpression(FormatUtil.cronExpression(temp.getOpenTime()+
                     SysConsts.EXAM_OPEN_TO_CLOSE_DURING_TIME*60*100));
         }else {
-            JSONArray questions = getQuestionJsonArray(temp.getPaperContent());
+            List<QuestionVo> questions = temp.getPaperVo().getQuestionVoList();
             boolean flag=true;
             for(int i=0;i<questions.size();i++)
             {
-                JSONObject questionJson=questions.getJSONObject(i);
-                JSONObject questionTypeJson=JSONObject.fromObject(questionJson.getString("questionType"));
-                QuestionTypeVo questionTypeVo=questionTypeDao.get(Integer.parseInt(questionTypeJson.getString("id")));
+                QuestionTypeVo questionTypeVo=questionTypeDao.get(questions.get(i).getQuestionType().getId());
                 if(questionTypeVo.getName().equals(SysConsts.NO_ANSWER_QUESTION_TYPE_NAME)){
                     flag=false;
                 }
@@ -669,7 +670,7 @@ public class ExamEbo implements ExamEbi
         if(StringUtil.isEmpty(paperId)){
             throw new OperationException("试卷不能为空,请不要进行非法操作！");
         }
-        PaperVo paperVo=paperDao.get(paperId);
+        PaperVo paperVo=paperMongoDao.queryOne(new Query(Criteria.where("id").is(paperId)));
         SubjectVo temp= subjectDao.get(examVo.getSubjectVo().getId());
         if(paperVo==null){
             throw new OperationException("所选择的试卷不存在,请不要进行非法操作！");
@@ -702,12 +703,10 @@ public class ExamEbo implements ExamEbi
             throw new OperationException("所选择的班级均不存在,请不要进行非法操作！");
         }
         JSONArray jsonObject=JSONArray.fromObject(map);
-        JSONArray paperJson=JSONArray.fromObject(paperVo);
-
+        examVo.setPaperVo(paperVo);
         examVo.setSubjectVo(temp);
         examVo.setMarkTeachers(teacherSet);
         examVo.setClassroomIds(jsonObject.toString());
-        examVo.setPaperContent(paperJson.toString());
     }
 
     /**
@@ -727,5 +726,44 @@ public class ExamEbo implements ExamEbi
             }
         }
         return teacherSet;
+    }
+
+    /**
+     * 将考试所需试卷存入指定Collection
+     * @param examVo
+     */
+    private void savaPaperToMongoExamPaper(ExamVo examVo){
+        PaperVo paperVo=examVo.getPaperVo();
+        paperVo.setExamId(examVo.getId());
+        paperMongoDao.insert(paperVo,SysConsts.EXAM_PAPER_SAVA_MONGO_OF_COLLECTION);
+    }
+
+    /**
+     * 从指定Collection取出指定的考试所需试卷
+     * @param examVo
+     * @return
+     */
+    private ExamVo queryPaperFromMongoExamPaper(ExamVo examVo){
+        PaperVo paperVo=paperMongoDao.queryOne(new Query(Criteria.where("examId").is(examVo.getId())),SysConsts.EXAM_PAPER_SAVA_MONGO_OF_COLLECTION);
+        examVo.setPaperVo(paperVo);
+        return examVo;
+    }
+
+    /**
+     * 从指定Collection删除指定的考试所需试卷
+     * @param examVo
+     * @return
+     */
+    private void deletePaperFromMongoExamPaper(ExamVo examVo){
+        paperMongoDao.delete(new Query(Criteria.where("examId").is(examVo.getId())),SysConsts.EXAM_PAPER_SAVA_MONGO_OF_COLLECTION);
+    }
+
+    /**
+     * 更新指定Collection中指定的考试所需试卷
+     * @param examVo
+     * @return
+     */
+    private void updatePaperFromMongoExamPaper(ExamVo examVo){
+        paperMongoDao.save(examVo.getPaperVo(),SysConsts.EXAM_PAPER_SAVA_MONGO_OF_COLLECTION);
     }
 }

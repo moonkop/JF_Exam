@@ -70,6 +70,11 @@ public class SysConsts {
 	public static final String RESOURCE_TYPE_MENU_ID="0";
 
 	/**
+	 * 考试所包含的试卷存入MongoDB中的Collection名称
+	 */
+	public static final String EXAM_PAPER_SAVA_MONGO_OF_COLLECTION="examPaper";
+
+	/**
 	 * 考试状态码
 	 */
 	public static final Integer EXAM_STATUS_NO_CHECK = 101;

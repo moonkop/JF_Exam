@@ -32,7 +32,6 @@ public class ExamVo
     private Long closeTime;
     private Long openTime;
     private Integer duration;
-    private String paperContent;
     private String classroomIds;
     private String remark;
     private String name;
@@ -48,6 +47,18 @@ public class ExamVo
     //考试状态视图值
     private String examStatusView;
 
+    //MongoDB中的ExamPaper
+    private PaperVo paperVo;
+
+    public PaperVo getPaperVo()
+    {
+        return paperVo;
+    }
+
+    public void setPaperVo(PaperVo paperVo)
+    {
+        this.paperVo = paperVo;
+    }
 
     public Set<String> getOperation()
     {
@@ -186,19 +197,6 @@ public class ExamVo
     }
 
     @Basic
-    @Column(name = "paper_content")
-    public String getPaperContent()
-    {
-        return paperContent;
-    }
-
-    public void setPaperContent(String paperContent)
-    {
-        this.paperContent = paperContent;
-
-    }
-
-    @Basic
     @Column(name = "classroom_ids")
     public String getClassroomIds()
     {
@@ -216,7 +214,7 @@ public class ExamVo
     public int hashCode()
     {
 
-        return Objects.hash(id, closeTime, openTime, duration, examStatuMap, paperContent, classroomIds);
+        return Objects.hash(id, closeTime, openTime, duration, examStatuMap, classroomIds);
     }
 
     @Override
@@ -230,7 +228,6 @@ public class ExamVo
                 Objects.equals(openTime, examVo.openTime) &&
                 Objects.equals(duration, examVo.duration) &&
                 Objects.equals(examStatuMap, examVo.examStatuMap) &&
-                Objects.equals(paperContent, examVo.paperContent) &&
                 Objects.equals(classroomIds, examVo.classroomIds);
     }
 }

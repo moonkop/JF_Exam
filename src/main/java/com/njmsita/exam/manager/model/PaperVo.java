@@ -7,6 +7,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -38,6 +39,18 @@ public class PaperVo
 
     //所属科目  n  TO  1
     private SubjectVo subjectVo;
+
+    private List<QuestionVo> questionVoList;
+
+    public List<QuestionVo> getQuestionVoList()
+    {
+        return questionVoList;
+    }
+
+    public void setQuestionVoList(List<QuestionVo> questionVoList)
+    {
+        this.questionVoList = questionVoList;
+    }
 
     public String getExamId()
     {

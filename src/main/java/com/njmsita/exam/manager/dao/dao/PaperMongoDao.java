@@ -1,5 +1,6 @@
 package com.njmsita.exam.manager.dao.dao;
 
+import com.njmsita.exam.base.BaseQueryVO;
 import com.njmsita.exam.manager.model.PaperVo;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -8,15 +9,29 @@ import java.util.List;
 
 
 public interface PaperMongoDao {
-    void insert(PaperVo paperVo);
+    public void insert(PaperVo paperVo);
 
-    PaperVo queryOne(Query query);
+    public PaperVo queryOne(Query query);
 
-    List<PaperVo> query(Query query);
+    public List<PaperVo> query(Query query);
 
-    List<PaperVo> queryAll();
+    public List<PaperVo> queryAll();
 
-    void updateOne(Query query, Update update);
+    public void updateOne(Query query, Update update);
 
-    void delete(Query query);
+    public void delete(Query query);
+
+    public void save(PaperVo temp);
+
+    public List<PaperVo> queryAll(BaseQueryVO qm, Integer pageNum, Integer pageCount);
+
+    public Long getCount(BaseQueryVO qm);
+
+    public void insert(PaperVo paperVo, String collection);
+
+    public PaperVo queryOne(Query query, String collection);
+
+    public void delete(Query query, String collection);
+
+    public void save(PaperVo paperVo, String collection);
 }

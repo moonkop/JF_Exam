@@ -665,7 +665,7 @@ public class QuestionBankManagerController extends BaseController
      *
      * @throws Exception
      */
-    @RequestMapping("question/edit1.do")
+    @RequestMapping("")
     @ResponseBody
     @SystemLogAnnotation(module = "题目管理", methods = "题目添加/修改")
     public JsonResponse doAdd(@Validated(value = {AddGroup.class}) QuestionVo question, BindingResult bindingResult,

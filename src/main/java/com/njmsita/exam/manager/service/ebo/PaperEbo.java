@@ -1,13 +1,15 @@
 package com.njmsita.exam.manager.service.ebo;
 
 import com.njmsita.exam.base.BaseQueryVO;
-import com.njmsita.exam.manager.dao.dao.PaperDao;
+import com.njmsita.exam.manager.dao.dao.PaperMongoDao;
 import com.njmsita.exam.manager.dao.dao.SubjectDao;
 import com.njmsita.exam.manager.model.PaperVo;
 import com.njmsita.exam.manager.model.SubjectVo;
 import com.njmsita.exam.manager.service.ebi.PaperEbi;
 import com.njmsita.exam.utils.exception.OperationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.io.Serializable;
@@ -21,40 +23,40 @@ import java.util.List;
 public class PaperEbo implements PaperEbi
 {
     @Autowired
-    private PaperDao paperDao;
-    @Autowired
     private SubjectDao subjectDao;
+    @Autowired
+    private PaperMongoDao paperMongoDao;
 
     public List<PaperVo> getAll()
     {
-        return paperDao.getAll();
+        return paperMongoDao.queryAll();
     }
 
     public PaperVo get(Serializable uuid)
     {
-        return paperDao.get(uuid);
+        return paperMongoDao.queryOne(new Query(Criteria.where("id").is(uuid)));
     }
 
     public List<PaperVo> getAll(BaseQueryVO qm, Integer pageNum, Integer pageCount)
     {
-        return paperDao.getAll(qm, pageNum, pageCount);
+        return paperMongoDao.queryAll(qm,pageNum,pageCount);
     }
 
     public Integer getCount(BaseQueryVO qm)
     {
-        return paperDao.getCount(qm);
+        return paperMongoDao.getCount(qm).intValue();
     }
 
     public void save(PaperVo paperVo) throws OperationException
     {
         infoValid(paperVo);
-        paperDao.save(paperVo);
+        paperMongoDao.insert(paperVo);
     }
 
     public void update(PaperVo paperVo) throws OperationException
     {
         infoValid(paperVo);
-        PaperVo temp= paperDao.get(paperVo.getId());
+        PaperVo temp= paperMongoDao.queryOne(new Query(Criteria.where("id").is(paperVo.getId())));
         if(temp==null){
             throw new OperationException("当前选择的试卷不存在，请不要进行非法操作！");
         }
@@ -62,11 +64,12 @@ public class PaperEbo implements PaperEbi
         temp.setComment(paperVo.getComment());
         temp.setQuestionContain(paperVo.getQuestionContain());
         temp.setTitle(paperVo.getTitle());
+        paperMongoDao.save(temp);
     }
 
     public void delete(PaperVo paper)
     {
-        paperDao.delete(paper);
+        paperMongoDao.delete(new Query(Criteria.where("id").is(paper.getId())));
     }
 
 
