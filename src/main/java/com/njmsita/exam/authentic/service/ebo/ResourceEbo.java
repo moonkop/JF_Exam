@@ -39,7 +39,7 @@ public class ResourceEbo implements ResourceEbi
 
     public List<TresourceVo> getAll()
     {
-        return resourceDao.getAll();
+        return resourceDao.getAllOrderBySeq();
     }
 
     public TresourceVo get(Serializable uuid)
@@ -90,6 +90,11 @@ public class ResourceEbo implements ResourceEbi
     public List<TresourceVo> getAllByLogin(String id)
     {
         return resourceDao.getAllByLoginId(id);
+    }
+
+    public List<TresourceVo> getMenuByRole(String id)
+    {
+        return resourceDao.getMenuByRole(id);
     }
 
     /**

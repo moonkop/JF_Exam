@@ -1,13 +1,32 @@
 package com.njmsita.exam.base;
 
+import com.njmsita.exam.authentic.model.TresourceVo;
+import com.njmsita.exam.authentic.model.TroleVo;
+import com.njmsita.exam.authentic.model.UserModel;
+import com.njmsita.exam.authentic.service.ebi.ResourceEbi;
+import com.njmsita.exam.authentic.service.ebi.RoleEbi;
+import com.njmsita.exam.utils.consts.SysConsts;
+import com.njmsita.exam.utils.json.JsonResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Controller
 @RequestMapping("base")
 public class BaseController{
 
+	@Autowired
+	private RoleEbi roleEbi;
+	@Autowired
+	private ResourceEbi resourceEbi;
 
 	//默认页面容量为 10
 	public Integer pageCount;
@@ -37,5 +56,32 @@ public class BaseController{
 	@RequestMapping("/{folder}/{jspName}")
 	public String redirectJsp(@PathVariable("folder") String folder, @PathVariable("jspName") String jspName) {
 		return folder + "/" + jspName;
+	}
+
+	/**
+	 * 获取登陆用户的菜单
+	 * @param request
+	 */
+	public void getLoginMenu(HttpServletRequest request){
+
+		UserModel login= (UserModel) request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
+		TroleVo troleVo=roleEbi.get(login.getUserRole());
+		List<TresourceVo> loginMenu=resourceEbi.getMenuByRole(troleVo.getId());
+		for (TresourceVo menu : loginMenu)
+		{
+			menu.setParent(null);
+			Set<TresourceVo> childs=new HashSet<>();
+			Set<TresourceVo> oldChilds=menu.getChilds();
+			if(oldChilds.size()>0){
+				for (TresourceVo child : oldChilds)
+				{
+					if(child.getResourcetype().getId().equals(SysConsts.RESOURCE_TYPE_MENU_ID)){
+						childs.add(child);
+					}
+				}
+				menu.setChilds(childs);
+			}
+		}
+		request.getSession().setAttribute("loginMenu",loginMenu);
 	}
 }

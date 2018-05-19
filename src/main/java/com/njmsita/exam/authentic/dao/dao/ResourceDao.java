@@ -24,4 +24,17 @@ public interface ResourceDao extends BaseDao<TresourceVo>
      * @return
      */
     public List<TresourceVo> getByNameOrUrl(String name, String url);
+
+    /**
+     * 获得排序后的所有资源
+     * @return
+     */
+    public List<TresourceVo> getAllOrderBySeq();
+
+    /**
+     * 根据角色获取菜单
+     * @param roleId
+     * @return
+     */
+    public List<TresourceVo> getMenuByRole(String roleId);
 }

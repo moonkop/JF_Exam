@@ -37,6 +37,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -60,7 +61,6 @@ public class StudentController extends BaseController
     private ClassroomEbi classroomEbi;
     @Autowired
     private LogEbi logEbi;
-
 
     /**
      * 跳转登陆页
@@ -117,6 +117,9 @@ public class StudentController extends BaseController
             }
             loginStudent.setResources(sbd.toString());
             session.setAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME, loginStudent);
+
+            //获取登陆用户的菜单
+            getLoginMenu(request);
 
             //记录登录日志
             logEbi.login(loginStudent, loginIp);
