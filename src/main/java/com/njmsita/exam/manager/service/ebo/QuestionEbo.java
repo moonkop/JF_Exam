@@ -19,6 +19,7 @@ import com.njmsita.exam.manager.service.ebi.QuestionEbi;
 import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.exception.FormatException;
 import com.njmsita.exam.utils.exception.OperationException;
+import com.njmsita.exam.utils.exception.UnAuthorizedException;
 import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.idutil.IdUtil;
 import com.njmsita.exam.utils.json.CustomJsonSerializer;
@@ -217,14 +218,22 @@ public class QuestionEbo implements QuestionEbi
     @Override
     public void saveAsMine(QuestionVo questionVo, TeacherVo teacherVo) throws OperationException
     {
-
+        infoValidate(questionVo);
+        questionVo.setId(IdUtil.getUUID());
+        questionVo.setTeacher(teacherDao.get(teacherVo.getId()));
+        this.save(questionVo);
     }
 
     @Override
-    public void saveAsPublic(QuestionVo questionVo, TeacherVo teacherVo) throws OperationException
+    public void delete(QuestionVo questionVo, TeacherVo teacherVo) throws UnAuthorizedException
     {
-
+        questionVo = questionDao.get(questionVo.getId());
+        if (!teacherVo.getId().equals(questionVo.getTeacher().getId())&&teacherVo.getRole().getId()!=SysConsts.ADMIN_ROLE_ID)
+        {
+            throw new UnAuthorizedException("您不能删除这个题目");
+        }
     }
+
 
     public void bulkInputBySheet(HSSFSheet sheet, Integer subjectId) throws Exception
     {

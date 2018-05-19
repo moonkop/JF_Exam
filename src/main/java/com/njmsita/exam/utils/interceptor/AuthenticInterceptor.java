@@ -9,7 +9,6 @@ import com.njmsita.exam.authentic.model.UserModel;
 import com.njmsita.exam.manager.service.ebi.LogEbi;
 import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.exception.OperationException;
-import org.apache.catalina.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -41,7 +40,6 @@ public class AuthenticInterceptor implements HandlerInterceptor {
 			return true;
 		}
 		//获取并判断用户身份
-		user= (UserModel) request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
 		String containRes= (String)  request.getSession().getAttribute(SysConsts.USER_RESOURCE_NAME);
 		if(containRes.contains(url)){
 			return true;

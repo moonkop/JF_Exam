@@ -2,6 +2,7 @@ package com.njmsita.exam.utils.interceptor;
 
 import com.njmsita.exam.authentic.model.UserModel;
 import com.njmsita.exam.utils.consts.SysConsts;
+import com.njmsita.exam.utils.exception.UnLoginException;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -21,20 +22,27 @@ public class LoginInterceptor implements HandlerInterceptor
     {
         //得到请求的URL
         String url = request.getRequestURI();
-        ServletContext sc=request.getServletContext();
+        ServletContext sc = request.getServletContext();
         //获取权限资源
-        String allResource= (String) sc.getAttribute(SysConsts.ALL_RESOUCERS_AUTHENTIC_URL_NAME);
+        String allResource = (String) sc.getAttribute(SysConsts.ALL_RESOUCERS_AUTHENTIC_URL_NAME);
         //放行公开地址
-        if(!allResource.contains(url)){
+        if (!allResource.contains(url))
+        {
             return true;
         }
         //获取并判断用户身份
-        this.user= (UserModel) request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
-        if (this.user!=null){
+        this.user = (UserModel) request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
+        if (this.user != null)
+        {
             return true;
+        }else {
+            String requestHeader = request.getHeader("x-requested-with");
+            if (requestHeader != null && requestHeader.equals("XMLHttpRequest"))
+            {
+                throw new UnLoginException("登录信息失效，请重新登录");
+            }
+            response.sendRedirect("/teacher/login");
         }
-        request.getRequestDispatcher("/WEB-INF/jsp/login.jsp").forward(request,response);
-
         return false;
     }
 

@@ -187,7 +187,6 @@ public class QuestionVo
     public void setOption(String option)
     {
         this.option = option;
-
     }
 
     @Basic

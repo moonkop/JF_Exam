@@ -5,7 +5,6 @@ package com.njmsita.exam.utils.exception;
  */
 public class FormatException extends UnifyException
 {
-
     public FormatException(String message)
     {
         super(message);

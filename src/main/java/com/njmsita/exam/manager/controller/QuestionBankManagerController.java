@@ -14,6 +14,8 @@ import com.njmsita.exam.manager.service.ebi.QuestionEbi;
 import com.njmsita.exam.manager.service.ebi.QuestionTypeEbi;
 import com.njmsita.exam.manager.service.ebi.SubjectEbi;
 import com.njmsita.exam.manager.service.ebi.TopicEbi;
+import com.njmsita.exam.utils.exception.UnAuthorizedException;
+import com.njmsita.exam.utils.exception.UnLoginException;
 import com.njmsita.exam.utils.json.JsonListResponse;
 import com.njmsita.exam.utils.json.JsonObjectResponse;
 import com.njmsita.exam.utils.json.JsonResponse;
@@ -29,6 +31,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -61,6 +64,10 @@ public class QuestionBankManagerController extends BaseController
     private QuestionEbi questionEbi;
     @Autowired
     private TeacherEbi teacherEbi;
+
+    @Autowired
+    private MongoTemplate mongoTemplate;
+
 
 //======================================================================================================================
 
@@ -512,11 +519,15 @@ public class QuestionBankManagerController extends BaseController
      */
     @ResponseBody
     @RequestMapping("question/list.do")
-    public JsonResponse questionList(QuestionQueryModel questionQueryModel, @RequestParam(value = "_topicIds[]") String[] topicIds, Integer offset, Integer pageSize,
-                                     HttpServletRequest request)
+    public JsonResponse questionList(QuestionQueryModel questionQueryModel, @RequestParam(value = "_topicIds[]", required = false) String[] topicIds, Integer offset, Integer pageSize,
+                                     HttpServletRequest request) throws UnLoginException
     {
         List<QuestionVo> list = null;
         TeacherVo currentTeacher = (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
+        if (currentTeacher == null)
+        {
+            throw new UnLoginException("登录信息失效，请重新登录");
+        }
         if (questionQueryModel.getQuestionType().getId() == 0)
         {
             questionQueryModel.setQuestionType(null);
@@ -525,7 +536,7 @@ public class QuestionBankManagerController extends BaseController
         {
             questionQueryModel.setShowMe(false);
         }
-        if (questionQueryModel.getTeacher().getId()=="")
+        if (questionQueryModel.getTeacher().getId() == "")
         {
             questionQueryModel.setTeacher(null);
         }
@@ -535,7 +546,8 @@ public class QuestionBankManagerController extends BaseController
             {
                 questionQueryModel.getTopicIds().addAll(topicEbi.getAllChildren(topicID));
             }
-        }else{
+        } else
+        {
             for (String topicID : topicIds)
             {
                 questionQueryModel.getTopicIds().add(topicID);
@@ -558,13 +570,31 @@ public class QuestionBankManagerController extends BaseController
                 list = questionEbi.getAllByTeacher(questionQueryModel, offset, pageSize, currentTeacher);
             }
         }
-        return new JsonListResponse<>(list, "id,code,outline,[options]option,answer,[type]questionType.id", 0);
+        return new JsonListResponse<>(list, "id,code,outline,[options]option,answer,[type]questionType.id,[createTeacher]teacher.id", 0);
+    }
+
+    @RequestMapping("question/test")
+    public JsonResponse questiontest()
+    {
+        QuestionVo questionVo = questionEbi.get("7872be652aaa4ab6910a289a13434f3c");
+        questionVo.getOptionList();
+        questionVo.setTeacher(null);
+        questionVo.setTopic(null);
+        questionVo.setSubject(null);
+        questionVo.setOption(null);
+        questionVo.setIsPrivate(null);
+        questionVo.setUseTime(null);
+
+        mongoTemplate.save(questionVo);
+
+        return new JsonResponse();
     }
 
     @ResponseBody
     @RequestMapping("question/detail.do")
     public JsonResponse questionDetail(String id)
     {
+
         return new JsonObjectResponse<QuestionVo>(questionEbi.get(id),
                 "id," +
                         "code," +
@@ -605,27 +635,18 @@ public class QuestionBankManagerController extends BaseController
     @ResponseBody
     @RequestMapping("question/saveAsMine.do")
     @SystemLogAnnotation(module = "题目管理", methods = "保存为我的题目")
-    public JsonResponse saveAsMine(QuestionVo question, @RequestParam(value = "_options[]",required = false) String[] options, HttpSession session)
+    public JsonResponse saveAsMine(QuestionVo question, @RequestParam(value = "_options[]", required = false) String[] options, HttpSession session) throws OperationException
     {
         TeacherVo teacherVo = (TeacherVo) session.getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
-
-        return new JsonResponse();
-    }
-
-    @ResponseBody
-    @RequestMapping("question/saveAsPublic.do")
-    @SystemLogAnnotation(module = "题目管理", methods = "添加到公共题库")
-    public JsonResponse saveAsPublic(QuestionVo question, HttpSession session)
-    {
-        TeacherVo teacherVo = (TeacherVo) session.getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
-
+        question.setOptionList(options);
+        questionEbi.saveAsMine(question, teacherVo);
         return new JsonResponse();
     }
 
     @ResponseBody
     @RequestMapping("question/edit.do")
     @SystemLogAnnotation(module = "题目管理", methods = "题目编辑")
-    public JsonResponse edit(QuestionVo question, @RequestParam(value = "_options[]") String[] options, HttpSession session) throws OperationException
+    public JsonResponse edit(QuestionVo question, @RequestParam(value = "_options[]", required = false) String[] options, HttpSession session) throws OperationException
     {
         TeacherVo teacherVo = (TeacherVo) session.getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
         question.setOptionList(options);
@@ -690,12 +711,18 @@ public class QuestionBankManagerController extends BaseController
     @ResponseBody
     @RequestMapping("question/delete.do")
     @SystemLogAnnotation(module = "题目管理", methods = "题目删除")
-    public JsonResponse questionDelete(QuestionVo questionVo) throws OperationException
+    public JsonResponse questionDelete(QuestionVo questionVo, HttpSession session) throws OperationException, UnLoginException, UnAuthorizedException
     {
-        if (!StringUtil.isEmpty(questionVo.getId()))
+        TeacherVo currentTeacher = (TeacherVo) session.getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
+        if (currentTeacher == null)
         {
-            questionEbi.delete(questionVo);
+            throw new UnLoginException("登录失效");
         }
+        if (StringUtil.isEmpty(questionVo.getId()))
+        {
+            throw new OperationException("输入参数不合法");
+        }
+        questionEbi.delete(questionVo, currentTeacher);
         return new JsonResponse("删除成功");
     }
 

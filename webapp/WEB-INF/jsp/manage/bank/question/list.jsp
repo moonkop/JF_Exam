@@ -357,34 +357,7 @@
                                 create: {
                                     label: "添加题目",
                                     action: function (data) {
-                                        var node = getJstree().get_node(data.reference);
-                                        layer.open({
-                                            type: 5,
-                                            shadeClose: true, //点击遮罩关闭
-                                            closeBtn: 2,
-                                            title: '请输入题目名称',
-                                            area: ['320px', '170px'],
-                                            content: $("#js-add-form-template").html(),
-                                            success: function () {
-                                                $("#form-add-topic>input[name='parent']").val(node.id);
-                                                $(".js-layer-form-add-btn").on("click", function () {
-                                                        $.ajax(
-                                                            {
-                                                                url: "/manage/bank/topic/create.do",
-                                                                data: getFormData("form-add-topic"),
-                                                                success: function (res) {
-                                                                    OnResult(res);
-                                                                    getResourceTree();
-                                                                }
-                                                            }
-                                                        )
-                                                    }
-                                                )
-
-                                            },
-                                            end: function () {
-                                            }
-                                        });
+                                        question_add_on_click();
                                     }
                                 }
                             };
@@ -530,7 +503,20 @@
                                     )
                                 })
                             });
+                            $("#question_" + question.id + " .js-question-delete").on("click", function () {
+                            layer.confirm("你确定要删除吗？",{skin: 'layui-layer-molv', closeBtn: 0},function()
+                            {
+                                $.ajax(
+                                    {
+                                        url:'/manage/bank/question/delete.do',
+                                        data:{id:question.id}
+                                    }
+                                )
+
+                            })
+                            })
                         })
+
                         $("pre code").each(function (index, obj) {
                             hljs.highlightBlock(obj);
                         })
@@ -620,9 +606,9 @@
             code.text(question.code);
         }
 
-        if (User.role == 0)
+        if (User.role == 0||User.id==question.createTeacher)
         {
-            $question_panel.find(".question-actions").append("<i class='fa fa-trash js-question-del' title='删除'></i>")
+            $question_panel.find(".question-actions").append("<i class='fa fa-trash js-question-delete' title='删除'></i>")
         }
 
         switch (QuestionTypeMap(question.type))
@@ -691,7 +677,7 @@
     }
 
     //显示编辑题目页面
-    function renderQuestion_Edit(questionDetail)
+    function renderQuestion_Edit(questionDetail, IsAdd)
     {
         var $questionForm = $($("#js-template-question-edit").html());
 
@@ -727,11 +713,12 @@
             if (fieldContent !== "" && fieldContent !== null)
             {
                 set_data_in_field($questionForm.find("[data-field='" + key + "']"), fieldContent);
-
             }
         }
         var showEdit = true;
         var showSaveAsMine = true;
+        var showSaveAsPublic = false;
+
         if (questionDetail.createTeacherId == User.id)
         {
             showEdit = true;
@@ -746,8 +733,9 @@
             showEdit = true;
         }
 
+
         showEdit && $questionForm.find(".js-btn-group").append("<input type=\"button\" class=\"btn btn-primary js-edit-submit\" value=\"编辑并提交\">\n")
-        showSaveAsMine && $questionForm.find(".js-btn-group").append("<input type=\"button\" class=\"btn btn-primary js-save-as-mine\" value=\"保存到我的题库\">\n")
+        showSaveAsMine && $questionForm.find(".js-btn-group").append("<input type=\"button\" class=\"btn btn-default js-save-as-mine\" value=\"保存到我的题库\">\n")
 
         return $questionForm;
     }
@@ -782,10 +770,10 @@
         });
         //提交按钮事件
         $(".js-edit-submit").on("click", function () {
-            question_edit_on_submit();
+            question_edit_on_submit('/manage/bank/question/edit.do');
         });
         $(".js-save-as-mine").on("click", function () {
-//question_edit_on_submit();
+            question_edit_on_submit('/manage/bank/question/saveAsMine.do');
         });
     }
 
@@ -849,7 +837,7 @@
         var correctOptionCount = $(".layui-layer-content .option-correct").length;
         if (optionCount == 0)
         {
-            question_edit_select_question_type(5);
+            question_edit_select_question_type(4);
         }
         else if (correctOptionCount == 1 || correctOptionCount == 0)
         {
@@ -861,19 +849,22 @@
         }
     }
 
-    function question_edit_on_submit()
+    function question_edit_on_submit(url)
     {
         var data = question_edit_collect_data();
+
+        var url;
 
         $.ajax(
             {
                 type: 'post',
-                url: '/manage/bank/question/edit.do',
+                url: url,
                 data: data,
                 success: function (res) {
                     OnResult(res, function (res) {
                             layer.close(editLayerIndex);
                             layer.msg(res.message);
+                            on_filter_change();
                         },
                         function () {
                             layer.alert(res.message);
@@ -921,6 +912,7 @@
             case 'PRE':
             case 'CODE':
             case 'DIV':
+            case 'P':
                 return $element.html(data);
                 break;
             case'TEXTAREA':
@@ -954,9 +946,32 @@
             'questionType.id': get_data_in_field($question_form.find("[data-field='type']")),
             'topic.id': get_data_in_field($question_form.find("[data-field='topicid']")),
             '_options': option,
-            'answer': answer
+            'answer': answer,
+            'isPrivate':get_data_in_field($question_form.find("[data-field='isPrivate']"))
         };
         return data;
+    }
+
+    function question_add_on_click()
+    {
+        var topicid = getJstree().get_selected();
+
+        viewLayerIndex = layer.open(
+            {
+                type: 5,
+                shadeClose: true, //点击遮罩关闭
+                closeBtn: 2,
+                title: '题目详情',
+                area: ['800px', '600px'],
+                content: "",
+                success: function (res) {
+                    $('.layui-layer-content').append(renderQuestion_Edit({topicid: topicid}));
+                    question_edit_after_render({});
+                },
+                end: function () {
+                }
+            }
+        )
 
     }
 

@@ -5,10 +5,10 @@
         <div class="row">
             <div class="col-lg-12">
                 <h3>
-                    角色管理
+                    试卷管理
                 </h3>
                 <div class="table-btns">
-                    <a class="btn btn-primary" href="/manage/role/edit"> 添加角色</a>
+                    <a class="btn btn-primary" href="/paper/edit"> 添加试卷</a>
                 </div>
                 <script src="/vendor/bootstrap-table/bootstrap-table.js"></script>
                 <script>
@@ -16,15 +16,15 @@
 
                     window.operateEvents = {
                         'click .js-edit': function (e, value, row, index) {
-                            window.location.href = "/manage/role/edit?id=" + row.id;
+                            window.location.href = "/paper/edit?id=" + row.id;
                         },
                         'click .js-view': function (e, value, row, index) {
-                            window.location.href = "/manage/role/detail?id=" + row.id;
+                            window.location.href = "/paper/detail?id=" + row.id;
                         },
                         'click .js-del': function (e, value, row, index) {
                             if (confirm("确定要删除吗？") == true)
                             {
-                                window.location.href = "/manage/role/delete.do?id=" + row.id;
+                                window.location.href = "/paper/delete.do?id=" + row.id;
                             }
                         }
                     };
@@ -41,7 +41,7 @@
                                     queryParams: queryParams,
                                     responseHandler:tableResponseHandler,
                                     locale: 'zh-CN',
-                                    url: '/manage/role/list.do',
+                                    url: '/paper/list.do',
                                     method: 'get',
                                     cache: false,
                                     pagination: true,
@@ -57,7 +57,7 @@
                                         },
                                         {
                                             field: 'name',
-                                            title: '角色名称',
+                                            title: '试卷名称',
                                         }, {
                                             field: 'action',
                                             title: '操作',

@@ -31,6 +31,10 @@
                         name:'${loginUser.name}',
                         role:'${loginUser.role.id}'
                     }
+                    if(User.id=="")
+                    {
+                        window.location.href='/teacher/login'
+                    }
                 </script>
                 <li class="divider"></li>
                 <li>

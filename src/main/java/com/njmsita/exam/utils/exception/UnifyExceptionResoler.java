@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.UndeclaredThrowableException;
 
 /**
  * 统一异常处理器
@@ -24,19 +25,27 @@ public class UnifyExceptionResoler implements HandlerExceptionResolver
         exception.printStackTrace();
 
         //异常信息
-        String message=null;
-        UnifyException unifyException=null;
+        String message = null;
+        UnifyException unifyException = null;
 
-        if(exception instanceof UnifyException){
-            unifyException= (UnifyException) exception;
-        }else{
-            unifyException=new UnifyException("未知错误，测试阶段详情见日志信息！");
+        if (exception instanceof UndeclaredThrowableException)
+        {
+            exception= (Exception) ((UndeclaredThrowableException) exception).getUndeclaredThrowable();
         }
 
-        message=unifyException.getMessage();
+        if (exception instanceof UnifyException)
+        {
+            unifyException = (UnifyException) exception;
+        } else
+        {
+            unifyException = new UnifyException("未知错误，测试阶段详情见日志信息！");
+        }
+
+        message = unifyException.getMessage();
         String requestHeader = request.getHeader("x-requested-with");
         ModelAndView modelAndView = new ModelAndView();
-        if(requestHeader != null && requestHeader.equals("XMLHttpRequest")){
+        if (requestHeader != null && requestHeader.equals("XMLHttpRequest"))
+        {
             try
             {
                 //设置状态码
@@ -45,19 +54,21 @@ public class UnifyExceptionResoler implements HandlerExceptionResolver
                 response.setContentType(MediaType.APPLICATION_JSON_VALUE);
                 //避免乱码
                 response.setCharacterEncoding("UTF-8");
-                response.setHeader("Cache-Control","no-cache,must-revalidate");
+                response.setHeader("Cache-Control", "no-cache,must-revalidate");
                 PrintWriter writer = response.getWriter();
-                writer.write(CustomJsonSerializer.toJsonString_static(new JsonResponse(500,"操作失败"+message)));
+                writer.write(CustomJsonSerializer.toJsonString_static(new JsonResponse(unifyException.getCode(), "操作失败" + message)));
                 writer.flush();
-            }catch (Exception e){
+            } catch (Exception e)
+            {
                 e.printStackTrace();
             }
-        }else {
-            request.setAttribute("exceptionMessage",message);
+        } else
+        {
+            request.setAttribute("exceptionMessage", message);
             try
             {
-                response.setStatus(500);
-                request.getRequestDispatcher("/WEB-INF/jsp/error/500.jsp").forward(request,response);
+                response.setStatus(unifyException.getCode());
+                request.getRequestDispatcher("/WEB-INF/jsp/error/500.jsp").forward(request, response);
             } catch (ServletException e)
             {
                 e.printStackTrace();

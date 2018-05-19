@@ -5,6 +5,7 @@ import com.njmsita.exam.base.BaseEbi;
 import com.njmsita.exam.manager.model.QuestionVo;
 import com.njmsita.exam.manager.model.querymodel.QuestionQueryModel;
 import com.njmsita.exam.utils.exception.OperationException;
+import com.njmsita.exam.utils.exception.UnAuthorizedException;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 
 import java.util.List;
@@ -31,7 +32,8 @@ public interface QuestionEbi extends BaseEbi<QuestionVo>
 
     public void saveAsMine(QuestionVo questionVo, TeacherVo teacherVo) throws OperationException;
 
-    public void saveAsPublic(QuestionVo questionVo, TeacherVo teacherVo) throws OperationException;
+    public void delete(QuestionVo questionVo,TeacherVo teacherVo) throws UnAuthorizedException;
+
 
     /**
      * 更新或保存为据为己有

@@ -10,10 +10,9 @@ queryParams = function (params) {
     return temp;
 }
 
-getFormData=function(formid)
-{
-    data={};
-    $.each($("#"+formid).serializeArray(), function (index, item) {
+getFormData = function (formid) {
+    data = {};
+    $.each($("#" + formid).serializeArray(), function (index, item) {
         data[item.name] = item.value;
     })
     return data;
@@ -67,6 +66,17 @@ function defaultOnSuccess(result)
 
 function defaultOnFailure(res)
 {
+    switch (res.code)
+    {
+        case 401:
+            layer.alert(res.message, {skin: 'layui-layer-molv', closeBtn: 0}, function () {
+                window.location.href = "/";
+            });
+            break;
+        default:
+            layer.alert("操作失败" + res.code + ":" + res.message);
+            break;
 
-    layer.alert("操作失败" + res.code + ":" + res.message);
+    }
+
 }

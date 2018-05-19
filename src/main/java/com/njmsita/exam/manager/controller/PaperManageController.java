@@ -52,14 +52,12 @@ public class PaperManageController
      *
      * @return 跳转试卷列表
      */
-    @RequestMapping("toList")
+    @RequestMapping("")
     public String toPaperList(Integer pageNum, Integer pageSize,HttpServletRequest request)
     {
         List<SubjectVo> subjectList=subjectEbi.getAll();
-        List<PaperVo> paperList=paperEbi.getAll(new PaperQueryModel(),pageNum,pageSize);
         request.setAttribute("subjectList",subjectList);
-        request.setAttribute("paperList",paperList);
-        return "/paper/list";
+        return "/manage/paper/list";
     }
 
     /**
@@ -80,7 +78,7 @@ public class PaperManageController
             paperQueryModel.setTeacher(teacherVo);
         }
         return new JsonListResponse<>(paperEbi.getAll(paperQueryModel,pageNum,pageSize),
-                "id,title,[teacher]teacher.id,[subject]subject.name",0);
+                "id,title,[teacher]teacher.id,[subject]subject.name",paperEbi.getCount(paperQueryModel));
     }
 
     /**

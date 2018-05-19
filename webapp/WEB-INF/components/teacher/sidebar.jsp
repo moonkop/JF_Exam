@@ -18,7 +18,7 @@
                 <a href="/teacher/welcome"><i class="fa fa-dashboard fa-fw"></i> 欢迎页</a>
             </li>
             <li>
-                <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> 组卷</a>
+                <a href="/paper"><i class="fa fa-bar-chart-o fa-fw"></i> 我的试卷</a>
             </li>
             <li>
                 <a href="#"><i class="fa fa-table fa-fw"></i> 发起考试</a>

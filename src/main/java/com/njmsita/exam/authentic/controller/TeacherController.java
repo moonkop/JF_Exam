@@ -1,9 +1,7 @@
 package com.njmsita.exam.authentic.controller;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
-import com.njmsita.exam.authentic.model.TeacherVo;
-import com.njmsita.exam.authentic.model.TresourceVo;
-import com.njmsita.exam.authentic.model.TroleVo;
+import com.njmsita.exam.authentic.model.*;
 import com.njmsita.exam.authentic.model.querymodel.TeacherQueryModel;
 import com.njmsita.exam.authentic.service.ebi.ResourceEbi;
 import com.njmsita.exam.authentic.service.ebi.RoleEbi;
@@ -24,6 +22,7 @@ import com.njmsita.exam.utils.validate.validategroup.SelfEditGroup;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.hibernate.Hibernate;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -56,6 +55,7 @@ public class TeacherController extends BaseController
     private ResourceEbi resourceEbi;
     @Autowired
     private LogEbi logEbi;
+
     @Autowired
 
     /**
@@ -64,8 +64,17 @@ public class TeacherController extends BaseController
      * @return
      */
     @RequestMapping("login")
-    public String toLogin()
+    public String toLogin(HttpSession session)
     {
+        UserModel userModel = (UserModel) session.getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
+        if (userModel instanceof StudentVo)
+        {
+            return "redirect:/student/welcome";
+        }
+        else if (userModel instanceof TeacherVo)
+        {
+            return "redirect:/teacher/welcome";
+        }
         return "login_teacher";
     }
 
@@ -106,7 +115,7 @@ public class TeacherController extends BaseController
                 sbd.append(resource.getUrl());
                 sbd.append(",");
             }
-           session.setAttribute(SysConsts.USER_RESOURCE_NAME,sbd.toString());
+            session.setAttribute(SysConsts.USER_RESOURCE_NAME, sbd.toString());
             session.setAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME, loginTea);
             Hibernate.initialize(loginTea.getRole());
             logEbi.login(loginTea, loginIp);
@@ -176,7 +185,7 @@ public class TeacherController extends BaseController
     public String loginOut(HttpSession session)
     {
         System.out.println("log out");
-     //   System.out.println(session.getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME));
+        //   System.out.println(session.getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME));
         //将session中的已登陆用户至空
         session.invalidate();
         return "redirect:/teacher/login";
@@ -352,7 +361,7 @@ public class TeacherController extends BaseController
         {
             teaEbi.update(teacher);
         }
-        return "redirect:/teacher/manage/detail?id="+id;
+        return "redirect:/teacher/manage/detail?id=" + id;
     }
 
 
@@ -406,7 +415,7 @@ public class TeacherController extends BaseController
     /**
      * 密码重置
      *
-     * @param teacherVo     教师信息
+     * @param teacherVo 教师信息
      * @param
      * @param
      *
@@ -415,7 +424,7 @@ public class TeacherController extends BaseController
     @RequestMapping("manage/resetPassword.do")
     @SystemLogAnnotation(module = "教师管理", methods = "密码重置")
     @ResponseBody
-    public JsonResponse resetPassword( TeacherVo teacherVo)
+    public JsonResponse resetPassword(TeacherVo teacherVo)
     {
         teaEbi.resetPassword(teacherVo);
         return new JsonResponse("重置成功");

@@ -4,6 +4,7 @@ import com.njmsita.exam.authentic.model.UserModel;
 import com.njmsita.exam.manager.model.LogVo;
 import com.njmsita.exam.manager.service.ebi.LogEbi;
 import com.njmsita.exam.utils.consts.SysConsts;
+import com.njmsita.exam.utils.exception.UnLoginException;
 import com.njmsita.exam.utils.format.IPUtil;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
@@ -101,6 +102,10 @@ public class LogAopAspect
                 log.setModule(systemlog.module());
                 log.setMethod(systemlog.methods());
                 UserModel user = (UserModel) request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
+                if (user == null)
+                {
+                    throw new UnLoginException("登录信息失效，请重新登录");
+                }
                 log.setUserId(user.getUuid());
                 log.setRealName(user.getRealName());
                 log.setUserRole(user.getUserRole());

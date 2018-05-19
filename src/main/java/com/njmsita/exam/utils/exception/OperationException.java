@@ -8,5 +8,6 @@ public class OperationException extends UnifyException
     public OperationException(String message)
     {
         super(message);
+
     }
 }
