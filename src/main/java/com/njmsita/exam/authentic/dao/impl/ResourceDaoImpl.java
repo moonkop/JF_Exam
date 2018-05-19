@@ -45,7 +45,7 @@ public class ResourceDaoImpl extends BaseImpl<TresourceVo> implements ResourceDa
 
     public List<TresourceVo> getMenuByRole(String roleId)
     {
-        String hql="from TresourceVo rv join TroleVo rov where rv.parent.id=? and rov.id=?";
+        String hql="from TresourceVo rv left outer join fetch rv.roles rov where rv.parent.id=? and rov.id=? order by rv.seq";
         return (List<TresourceVo>) this.getHibernateTemplate().find(hql, SysConsts.SYSTEM_MENU_ID,roleId);
     }
 }
