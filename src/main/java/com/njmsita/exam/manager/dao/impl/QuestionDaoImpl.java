@@ -28,7 +28,7 @@ public class QuestionDaoImpl extends BaseImpl<QuestionVo> implements QuestionDao
             dc.createAlias("subject","s1");
             dc.add(Restrictions.eq("s1.id",qqm.getSubject().getId()));
         }
-        if(null!=qqm.getTopicIds()){
+        if(null!=qqm.getTopicIds()&&qqm.getTopicIds().size()!=0){
             dc.createAlias("topic","to1");
             dc.add(Restrictions.in("to1.id",qqm.getTopicIds()));
         }
@@ -52,7 +52,7 @@ public class QuestionDaoImpl extends BaseImpl<QuestionVo> implements QuestionDao
             dc.createAlias("subject","s1");
             dc.add(Restrictions.eq("s1.id",qqm.getSubject().getId()));
         }
-        if(null!=qqm.getTopicIds()){
+        if(null!=qqm.getTopicIds()&&qqm.getTopicIds().size()!=0){
             dc.createAlias("topic","to1");
             dc.add(Restrictions.in("to1.id",qqm.getTopicIds()));
         }

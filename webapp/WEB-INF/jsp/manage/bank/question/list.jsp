@@ -62,7 +62,7 @@
 <script>
     var app={
         name:'question-manage',
-        render_question_actions:function(question,$question_panel)
+        question_manage_actions:function(question, $question_panel)
         {
             $question_panel.find(".question-actions").append("" +
                 "<i class='fa fa-search js-question-view' title='预览'></i>" +

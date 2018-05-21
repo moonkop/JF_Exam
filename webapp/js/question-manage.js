@@ -118,7 +118,6 @@ function question_add_on_click()
             content: "",
             success: function (res) {
                 $('.layui-layer-content').append(render_question_manage_edit({topicid: topicid}));
-                question_edit_after_render({});
             },
             end: function () {
             }
@@ -140,7 +139,6 @@ function question_edit_on_click(questionID)
                 content: "",
                 success: function () {
                     $('.layui-layer-content').append(render_question_manage_edit(questionDetail));
-                    question_edit_after_render(questionDetail);
                 },
                 end: function () {
 
@@ -178,12 +176,37 @@ function question_view_on_click(questionID)
 
 function question_add_to_paper_on_click(questionid)
 {
+    for (var i = 0, len = app.paper.paperContent.length; i < len; i++)
+    {
+        if (app.paper.paperContent[i].id == questionid)
+        {
+            layer.confirm("您已添加过该题，是否继续添加", function () {
+                paper_add_question(questionid);
+                layer.msg('添加成功');
+            });
+            return;
+        }
+    }
+    paper_add_question(questionid);
+    layer.msg('添加成功');
+}
+
+function paper_add_question(questionid)
+{
     get_question_detail(questionid, function (questionDetail) {
             var question = question_detail_to_paper_question(questionDetail);
             app.paper.paperContent.push(question);
-            render_paper_question_list(app.paper.paperContent);
+            render_paper_question_list();
         }
     )
+}
+
+function paper_question_set_index(question_list)
+{
+    for (var i = 0, len = question_list.length; i < len; i++)
+    {
+        question_list[i]['index'] = i;
+    }
 }
 
 //将详细的题目仅保留答案等必要信息
@@ -238,7 +261,7 @@ function render_manage_question_list(question_list)
             );
             //删除
             $("#question_" + question.id + " .js-question-delete").on("click", function () {
-                layer.confirm("你确定要删除吗？", {skin: 'layui-layer-molv', closeBtn: 0}, function () {
+                layer.confirm("你确定要删除吗？", function () {
                     $.ajax(
                         {
                             url: '/manage/bank/question/delete.do',
@@ -251,27 +274,120 @@ function render_manage_question_list(question_list)
     )
 }
 
-function render_paper_question_list(question_list)
+function render_paper_question_list()
 {
+    var question_list = app.paper.paperContent;
+
+    paper_question_set_index(question_list);
     render_question_list(question_list, $(".paper-question-list"),
         function (question) {
             $(".paper-question-list").append(render_paper_question(question));
-            $("#question_" + question.id + " .js-question-edit").on("click", function () {
 
+            function bind_action(actionClassName, action)
+            {
+                $("#paper_question_" + question.index + " ." + actionClassName).on("click", action);
+            }
+            // 交换数组元素
+            var swapItems = function (arr, index1, index2) {
+                arr[index1] = arr.splice(index2, 1, arr[index1])[0];
+                return arr;
+            };
+            // 上移
+            move_up = function (arr, $index) {
+                if ($index == 0)
+                {
+                    return;
                 }
-            );
-            $("#question_" + question.id + " .js-question-delete").on("click", function () {
-                layer.confirm("你确定要删除吗？", {skin: 'layui-layer-molv', closeBtn: 0}, function () {
+                swapItems(arr, $index, $index - 1);
+            };
 
+            // 下移
+            move_down = function (arr, $index) {
+                if ($index == arr.length - 1)
+                {
+                    return;
+                }
+                swapItems(arr, $index, $index + 1);
+            };
+
+            bind_action("js-question-edit", function () {
+                editLayerIndex = layer.open(
+                    {
+                        type: 5,
+                        shadeClose: true, //点击遮罩关闭
+                        closeBtn: 2,
+                        title: '题目编辑',
+                        area: ['800px', '600px'],
+                        content: "",
+                        success: function (a) {
+                            console.log(a);
+                            $('.layui-layer-content').append(render_paper_question_edit(question));
+                        },
+                        end: function () {
+
+                        }
+                    }
+                )
+            });
+            bind_action("js-question-move-up", function () {
+                move_up(app.paper.paperContent, question.index);
+                render_paper_question_list();
+            });
+            bind_action("js-question-move-down", function () {
+                move_down(app.paper.paperContent, question.index);
+                render_paper_question_list();
+            });
+            bind_action("js-question-view", function () {
+
+            });
+            bind_action("js-question-delete", function () {
+                layer.confirm("你确定要删除吗？", function () {
+                    app.paper.paperContent.splice(question.index, 1);
+                    render_paper_question_list();
+                    layer.msg('删除成功');
                 })
-            })
+            });
 
         })
 }
 
 function render_paper_question(question)
 {
- return  render_question_manage_question(question);
+    var $question_panel = $($("#js-template-question-panel").html());
+    $question_panel.attr("id", "paper_question_" + question.index);
+    $question_panel.find(".question-type").text(QuestionTypeMap(question.type));
+    $question_panel.find(".question-index").text(question.index + 1 + ". ");
+    $question_panel.find(".question-value").text(question.value + "分");
+
+    $question_panel.find(".question-actions").append("" +
+        "<i class='fa fa-arrow-up js-question-move-up' title='上移'></i>" +
+        "<i class='fa fa-arrow-down js-question-move-down' title='下移'></i>" +
+        "<i class='fa fa-search js-question-view' title='预览'></i>" +
+        "<i class='fa fa-pencil js-question-edit' title='修改'></i>" +
+        "<i class='fa fa-minus js-question-delete' title='删除'></i>"
+    );
+
+    $question_panel.find(".question-outline").text(question.outline);
+    if (question.code != null && question.code != "")
+    {
+        $question_panel.find(".question-code").css("display", "block");
+        var code = $question_panel.find(".question-code code");
+        code.text(question.code);
+    }
+
+    switch (QuestionTypeMap(question.type))
+    {
+        case "单选题":
+        case "多选题":
+            $question_panel.find(".question-body").append(render_question_option_list(question));
+            $question_panel.find(".question-answer").text("答案：" + QuestionAnswerNumsToChars(question.answer));
+            break;
+        case "简答题":
+            break;
+    }
+
+
+    return $question_panel;
 }
 
 //在列表中显示一个题目
@@ -284,9 +400,9 @@ function render_question_manage_question(question)
     $question_panel.find(".question-index").text(question.id);
 
     //action---
-    if (typeof app.render_question_actions == 'function')
+    if (typeof app.question_manage_actions == 'function')
     {
-        app.render_question_actions(question, $question_panel);
+        app.question_manage_actions(question, $question_panel);
     }
     //action---end
 
@@ -296,7 +412,6 @@ function render_question_manage_question(question)
         $question_panel.find(".question-code").css("display", "block");
         var code = $question_panel.find(".question-code code");
         code.text(question.code);
-
     }
 
     switch (QuestionTypeMap(question.type))
@@ -398,11 +513,13 @@ function render_question_manage_view(questionDetail)
     return $questionForm;
 }
 
+var question_edit_option_status;
 
 //显示编辑题目页面
-function render_question_manage_edit(questionDetail, IsAdd)
+function render_question_manage_edit(questionDetail)
 {
     var $questionForm = $($("#js-template-question-edit").html());
+    app.currentLayer = $questionForm;
 
     var config = {
         options: function (value, key) {
@@ -438,6 +555,7 @@ function render_question_manage_edit(questionDetail, IsAdd)
             set_data_in_field($questionForm.find("[data-field='" + key + "']"), fieldContent);
         }
     }
+
     var showEdit = true;
     var showSaveAsMine = true;
     var showSaveAsPublic = false;
@@ -460,22 +578,12 @@ function render_question_manage_edit(questionDetail, IsAdd)
     showEdit && $questionForm.find(".js-btn-group").append("<input type=\"button\" class=\"btn btn-primary js-edit-submit\" value=\"编辑并提交\">\n")
     showSaveAsMine && $questionForm.find(".js-btn-group").append("<input type=\"button\" class=\"btn btn-default js-save-as-mine\" value=\"保存到我的题库\">\n")
 
-    return $questionForm;
-}
 
-var question_edit_option_status;
-
-//在编辑页面显示之后调用
-function question_edit_after_render(questionDetail)
-{
     question_edit_option_status = {
         optionid: 1,
         optionCount: 1
     }
-    if (questionDetail.options != null && questionDetail.options != "")
-    {
-        questionDetail.options = JSON.parse(questionDetail.options);
-    }
+    question_option_parse_json(questionDetail);
 
     for (key in questionDetail.options)
     {
@@ -487,16 +595,51 @@ function question_edit_after_render(questionDetail)
     $(".layui-layer-content").addClass("layer-form");
 
     //增加选项按钮点击
-    $(".btn-add-option").on("click", function () {
+    app.currentLayer.find(".btn-add-option").on("click", function () {
         question_edit_on_add_option();
     });
     //提交按钮事件
-    $(".js-edit-submit").on("click", function () {
+    app.currentLayer.find(".js-edit-submit").on("click", function () {
         question_edit_on_submit('/manage/bank/question/edit.do');
     });
-    $(".js-save-as-mine").on("click", function () {
+    app.currentLayer.find(".js-save-as-mine").on("click", function () {
         question_edit_on_submit('/manage/bank/question/saveAsMine.do');
     });
+
+
+    return $questionForm;
+}//显示编辑题目页面
+function render_paper_question_edit(question)
+{
+    var $questionForm = $($("#js-template-paper-question-edit").html());
+    app.currentLayer = $questionForm;
+
+    set_data_in_field($questionForm.find("[data-field='code']"), question.code);
+    set_data_in_field($questionForm.find("[data-field='outline']"), question.outline);
+
+    question_edit_option_status = {
+        optionid: 1,
+        optionCount: 1
+    }
+    question_option_parse_json(question);
+
+    for (key in question.options)
+    {
+        var iscorrect = question.answer.indexOf(key) != -1;
+        question_edit_on_add_option(question.options[key], iscorrect);
+    }
+
+    $(".layui-layer-content").addClass("layer-form");
+
+    //增加选项按钮点击
+    app.currentLayer.find(".btn-add-option").on("click", function () {
+        question_edit_on_add_option();
+    });
+    //提交按钮事件
+    app.currentLayer.find(".js-submit").on("click", function () {
+ console.log(question_edit_collect_data());
+    });
+    return $questionForm;
 }
 
 //添加一个选项并检查是否超过限制
@@ -517,18 +660,18 @@ function question_edit_add_option(optionid, content, iscorrect)
 {
     $option = $($("#js-tempalte-question-edit-option").html());
     $option.attr("id", "option-" + optionid);
-    $(".option-wrapper").append($option.prop("outerHTML"));
+    app.currentLayer.find(".option-wrapper").append($option.prop("outerHTML"));
     if (iscorrect == true)
     {
         question_edit_option_toggle_correct(optionid, true);
     }
     //点击正确按钮事件
-    $("#option-" + optionid + " input").val(content);
-    $("#option-" + optionid + " .js-valid").on("click", function () {
+    app.currentLayer.find("#option-" + optionid + " input").val(content);
+    app.currentLayer.find("#option-" + optionid + " .js-valid").on("click", function () {
         question_edit_option_toggle_correct(optionid);
     });
     //点击删除按钮事件
-    $("#option-" + optionid + " .js-remove").on("click", function () {
+    app.currentLayer.find("#option-" + optionid + " .js-remove").on("click", function () {
         $("#option-" + optionid).remove();
         question_edit_option_status.optionCount--;
         question_edit_option_group_on_change();
@@ -540,8 +683,8 @@ function question_edit_add_option(optionid, content, iscorrect)
 //更改选项正确性
 function question_edit_option_toggle_correct(optionid, iscorrect)
 {
-    $("#option-" + optionid).toggleClass("option-correct", iscorrect);
-    $("#option-" + optionid + " .js-valid").toggleClass("btn-success", iscorrect).find(".fa").toggleClass("fa-check", iscorrect);
+    app.currentLayer.find("#option-" + optionid).toggleClass("option-correct", iscorrect);
+    app.currentLayer.find("#option-" + optionid + " .js-valid").toggleClass("btn-success", iscorrect).find(".fa").toggleClass("fa-check", iscorrect);
     question_edit_option_group_on_change();
 }
 
@@ -549,14 +692,14 @@ function question_edit_option_toggle_correct(optionid, iscorrect)
 //更改题目类型
 function question_edit_select_question_type(typeid)
 {
-    $(".layui-layer-content #select-question-type").val(typeid);
+    app.currentLayer.find("#select-question-type").val(typeid);
 }
 
 //在选项数量和正确答案数量变化时触发，自动判断题目类型
 function question_edit_option_group_on_change()
 {
-    var optionCount = $(".layui-layer-content .form-group-option").length;
-    var correctOptionCount = $(".layui-layer-content .option-correct").length;
+    var optionCount = app.currentLayer.find(".form-group-option").length;
+    var correctOptionCount = app.currentLayer.find(".option-correct").length;
     if (optionCount == 0)
     {
         question_edit_select_question_type(4);

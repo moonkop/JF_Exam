@@ -168,6 +168,51 @@
         </div>
     </div>
 </script>
+<script id="js-template-paper-question-edit" type="text/html">
+
+    <div class="form-horizontal">
+        <div style="display: none;">
+            <input type="text" data-field="id">
+            <input type="text" data-field="topicid">
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">题干</label>
+            <div class="col-sm-9">
+                <textarea type="text" class="form-control" data-field="outline"></textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">代码</label>
+            <div class="col-sm-9">
+                <textarea class="form-control" data-field="code"></textarea>
+            </div>
+        </div>
+        <div class="option-wrapper">
+
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label"></label>
+            <div class="col-sm-9">
+                <input type="button" class="form-control btn btn-add-option" value="添加选项">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">题目类型</label>
+            <div class="col-sm-9">
+                <select name="type" id="select-question-type" data-field="type" class="form-control">
+                    <option value="2">单选题</option>
+                    <option value="3">多选题</option>
+                    <option value="4" selected>简答题</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-sm-offset-2 js-btn-group">
+            <div class="btn btn-primary js-submit">
+                确认修改
+            </div>
+        </div>
+    </div>
+</script>
 
 
 <script id="js-tempalte-question-edit-option" type="text/html">

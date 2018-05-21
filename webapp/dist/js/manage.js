@@ -117,7 +117,7 @@ function defaultOnFailure(res)
     switch (res.code)
     {
         case 401:
-            layer.alert(res.message, {skin: 'layui-layer-molv', closeBtn: 0}, function () {
+            layer.alert(res.message, function () {
                 window.location.href = "/";
             });
             break;
@@ -128,3 +128,5 @@ function defaultOnFailure(res)
     }
 
 }
+
+layer.config({skin: 'layui-layer-molv'});

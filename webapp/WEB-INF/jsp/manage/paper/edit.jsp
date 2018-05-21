@@ -3,8 +3,8 @@
 
 <!-- start content -->
 <div style="display: flex;">
-<div class="question-pick" style="height: 100%; width: 55%;">
-    <div style="margin-top: 10px">
+    <div class="question-pick">
+        <div style="margin: 10px">
             <label>题目类型</label>
             <select id="select-question-type-filter" class="input-sm">
                 <option value="0">全部</option>
@@ -21,34 +21,56 @@
                     </option>
                 </c:forEach>
             </select>
-            <input type="checkbox" id="checkbox-question-only-mine-filter">
-            <label>仅显示我的题目</label>
-            <input type="checkbox" id="checkbox-question-recursive-filter">
-            <label>显示子知识点题目</label>
+            <div style="display: inline-block;">
+                <input type="checkbox" id="checkbox-question-only-mine-filter">
+                <label>仅显示我的题目</label>
+            </div>
+            <div style="display: inline-block;">
+
+                <input type="checkbox" id="checkbox-question-recursive-filter">
+                <label>显示子知识点题目</label>
+            </div>
+
+
+        </div>
+        <div class="question-manage">
+
+            <div id="jstree">
+            </div>
+            <div class="question-list">
+            </div>
+        </div>
+    </div>
+
+
+    <div class="paper-edit">
+        <div style="margin: 10px" class="text-right">
+
+
+            <button class="btn btn-primary">
+                编辑标题
+            </button>
+
+            <button class="btn btn-primary">
+                设置分值
+            </button>
+
+            <button class="btn btn-primary">
+                提交修改
+            </button>
+
+
+        </div>
+        <h3>这是一张试卷</h3>
+        <div><span>注意事项：</span><span>在填写本张试卷时，请不要使用铅笔，水笔，钢笔，圆珠笔，毛笔，蜡笔，水彩笔，粉笔等</span></div>
+
+        <div class="paper-question-list">
+
+        </div>
+
 
     </div>
-    <div class="question-manage" style="">
-
-        <div id="jstree">
-        </div>
-        <div class="question-list">
-        </div>
-    </div>
 </div>
-
-
-<div class="paper-edit" style="height: 100%; width: 45%">
-    <h3>这是一张试卷</h3>
-    <div><span>注意事项：</span><span>在填写本张试卷时，请不要使用铅笔，水笔，钢笔，圆珠笔，毛笔，蜡笔，水彩笔，粉笔等</span></div>
-
-<div class="paper-question-list">
-
-</div>
-
-
-</div>
-</div>
-
 
 
 <%@include file="/WEB-INF/components/question-manage-templates.jsp" %>
@@ -57,8 +79,7 @@
 
     var app = {
         name: 'paper-edit',
-        render_question_actions:function(question,$question_panel)
-        {
+        question_manage_actions: function (question, $question_panel) {
             $question_panel.find(".question-actions").append("" +
                 "<i class='fa fa-plus js-question-add-to-paper' title='添加到试卷'></i>" +
                 "<i class='fa fa-search js-question-view' title='预览'></i>" +
@@ -71,27 +92,19 @@
         paper: {
             name: '这是一张试卷',
             remark: '不要作弊',
-            paperContent: [
-                {
-                    id: '1c55323ef7cb4f6ca616e768b38b99d3',
-                    outline: '下面的哪些声明是合法的？（ ）',
-                    options: {"0": "long 1 = 499", "1": "int i = 4L", "2": "float f =1.1", "3": "char d = 34.4"},
-                    index: '1',
-                    score: '3'
-                }
-            ],
+            paperContent: [],
         }
     };
 
     $(document).ready(
-        function()
-        {
+
+        function () {
             $("#select-question-teacher-filter").on("change", on_filter_change);
             $("#select-question-type-filter").on("change", on_filter_change);
             $("#checkbox-question-only-mine-filter").on("change", on_filter_change);
             $("#checkbox-question-recursive-filter").on("change", on_filter_change);
 
-
+            $(".side-visible-line").click();
             function initTree()
             {
                 $('#jstree')
@@ -120,9 +133,9 @@
                                             question_add_on_click();
                                         }
                                     },
-                                    addToPaper:{
-                                        label:'批量添加到试卷',
-                                        action:function (data) {
+                                    addToPaper: {
+                                        label: '批量添加到试卷',
+                                        action: function (data) {
                                             question_add_to_paper();
                                         }
                                     }
@@ -135,16 +148,16 @@
             }
 
 
-
             initTree();
             getResourceTree(9);
 
         }
     )
+
     function getResourceTree(subjectid)
     {
         $.ajax({
-            url: '/manage/bank/topic/treeBySubject.do?subjectID='+subjectid ,
+            url: '/manage/bank/topic/treeBySubject.do?subjectID=' + subjectid,
             success: function (res) {
                 OnResult(res, function () {
                         get_jstree().settings.core.data = res.payload.rows;
@@ -159,6 +172,7 @@
     {
 
     }
+
     function renderPaper(paper)
     {
 
