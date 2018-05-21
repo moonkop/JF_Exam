@@ -540,20 +540,22 @@ public class QuestionBankManagerController extends BaseController
         {
             questionQueryModel.setTeacher(null);
         }
-        if (questionQueryModel.getRecursive() == true)
+        if (topicIds != null)
         {
-            for (String topicID : topicIds)
+            if (questionQueryModel.getRecursive() == true)
             {
-                questionQueryModel.getTopicIds().addAll(topicEbi.getAllChildren(topicID));
-            }
-        } else
-        {
-            for (String topicID : topicIds)
+                for (String topicID : topicIds)
+                {
+                    questionQueryModel.getTopicIds().addAll(topicEbi.getAllChildren(topicID));
+                }
+            } else
             {
-                questionQueryModel.getTopicIds().add(topicID);
+                for (String topicID : topicIds)
+                {
+                    questionQueryModel.getTopicIds().add(topicID);
+                }
             }
         }
-
 
         if (questionQueryModel.getShowMe())
         {

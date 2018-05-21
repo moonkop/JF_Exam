@@ -88,7 +88,7 @@ public class PaperManageController
      * @return
      * @throws Exception
      */
-    @RequestMapping("toEdit")
+    @RequestMapping("edit")
     public String editPaper(PaperVo paperVo,HttpServletRequest request) throws Exception{
         request.setAttribute("subjectList",subjectEbi.getAll());
         if(!StringUtil.isEmpty(paperVo.getId())){
@@ -98,7 +98,7 @@ public class PaperManageController
             }
             request.setAttribute("paperVo",paperVo);
         }
-        return "/paper/eidt";
+        return "/manage/paper/edit";
     }
 
     /**
@@ -111,7 +111,7 @@ public class PaperManageController
      * @throws Exception
      */
     @ResponseBody
-    @RequestMapping("autoSelect")
+    @RequestMapping("autoSelect.do")
     public JsonResponse autoSelectQuestion(@RequestParam(value = "topicIds") String[] topicIds,
            Integer questionTypeId, Integer questionNum, HttpSession session)throws Exception
     {

@@ -10,7 +10,7 @@
         <property name="openTime" column="open_time"/>
         <property name="duration" column="duration"/>
         <property name="examStatus" column="exam_status"/>
-        <property name="paperContent" column="paper_content"/>
+        <!--<property name="paperContent" column="paper_content"/>-->
         <property name="classroomIds" column="classroom_ids"/>
         <property name="remark" column="remark"/>
         <property name="name" column="name"/>

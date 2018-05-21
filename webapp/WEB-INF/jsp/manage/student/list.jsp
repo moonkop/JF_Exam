@@ -32,7 +32,6 @@
                                         success: function (res) {
                                             OnResult(res);
                                             $("#table").bootstrapTable('refresh');
-                                            //未测试
                                         }
                                     }
                                 );

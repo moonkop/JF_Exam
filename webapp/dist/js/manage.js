@@ -19,6 +19,54 @@ getFormData = function (formid) {
 
 }
 
+ get_data_in_field=function($element)
+{
+    if ($element == undefined || $element[0] == undefined)
+    {
+        return;
+    }
+    switch ($element[0].tagName)
+    {
+
+        case'TEXTAREA':
+        case'INPUT':
+        case'SELECT':
+            return $element.val();
+
+        case 'P':
+        case 'PRE':
+        case 'CODE':
+        case 'DIV':
+        default:
+            return $element.html();
+            break;
+    }
+}
+
+set_data_in_field= function($element, data)
+{
+
+    if ($element == undefined || $element[0] == undefined)
+    {
+        return;
+    }
+    switch ($element[0].tagName)
+    {
+        case 'PRE':
+        case 'CODE':
+        case 'DIV':
+        case 'P':
+            return $element.html(data);
+            break;
+        case'TEXTAREA':
+        case'INPUT':
+        case'SELECT':
+            return $element.val(data);
+
+    }
+}
+
+
 
 function OnResult(result, onsuccess, onfailure)
 {

@@ -1,0 +1,629 @@
+var treeData = null;
+var jstree = null;
+var editLayerIndex = null;
+var viewLayerIndex = null;
+
+
+function QuestionTypeMap(str)
+{
+    var QuestionTypeMap = {
+        "2": "单选题",
+        "3": "多选题",
+        "4": "简答题"
+    };
+    return QuestionTypeMap[str];
+}
+
+function QuestionAnswerCharMap(char)
+{
+    return String.fromCharCode(char.charCodeAt() + 1 + 16);
+}
+
+function QuestionAnswerNumsToChars(str)
+{
+    var res = "";
+
+    str.split("").map(function (item) {
+        res += QuestionAnswerCharMap(item);
+    });
+    return res;
+}
+
+function question_option_parse_json(question)
+{
+    if (question.options == "" || question.options == null || typeof question.options != "string")
+    {
+        return question;
+    }
+    question.options = JSON.parse(question.options);
+    return question;
+}
+
+function get_jstree()
+{
+    if (jstree == null)
+    {
+        return jstree = $.jstree.reference("#jstree");
+    }
+    return jstree;
+}
+
+//获取题目详细信息
+function get_question_detail(questionid, onsuccess)
+{
+    $.ajax(
+        {
+            url: "/manage/bank/question/detail.do",
+            data: {id: questionid},
+            success: function (res) {
+                OnResult(res, function (res) {
+                    var questionDetail = res.payload.object;
+                    if (typeof onsuccess == "function")
+                    {
+                        onsuccess(questionDetail);
+                    }
+                })
+            }
+        }
+    )
+}
+
+var $question_detail_form = $("#js-template-question-panel");
+var $question_option_list = $("#js-template-question-option-list");
+var $question_option = $("#js-template-question-option-radio");
+var $question_option_checkbox = $("#js-template-question-option-checkbox");
+
+
+function on_filter_change()
+{
+    if (get_jstree() == null)
+    {
+        return;
+    }
+
+    $.ajax(
+        {
+            url: '/manage/bank/question/list.do',
+            data: {
+                _topicIds: get_jstree().get_selected(),
+                pageSize: 1000,
+                offset: 0,
+                recursive: $("#checkbox-question-recursive-filter")[0].checked,
+                showMe: $("#checkbox-question-only-mine-filter")[0].checked,
+                'teacher.id': $("#select-question-teacher-filter").val(),
+                'questionType.id': $("#select-question-type-filter").val()
+            },
+            success: function (res) {
+                OnResult(res, function () {
+                    app['questionList'] = res.payload.rows;
+                    render_manage_question_list(app['questionList']);
+                })
+            }
+
+        }
+    )
+}
+
+function question_add_on_click()
+{
+    var topicid = get_jstree().get_selected();
+
+    viewLayerIndex = layer.open(
+        {
+            type: 5,
+            shadeClose: true, //点击遮罩关闭
+            closeBtn: 2,
+            title: '题目详情',
+            area: ['800px', '600px'],
+            content: "",
+            success: function (res) {
+                $('.layui-layer-content').append(render_question_manage_edit({topicid: topicid}));
+                question_edit_after_render({});
+            },
+            end: function () {
+            }
+        }
+    )
+}
+
+
+function question_edit_on_click(questionID)
+{
+    get_question_detail(questionID, function (questionDetail) {
+        editLayerIndex = layer.open(
+            {
+                type: 5,
+                shadeClose: true, //点击遮罩关闭
+                closeBtn: 2,
+                title: '题目编辑',
+                area: ['800px', '600px'],
+                content: "",
+                success: function () {
+                    $('.layui-layer-content').append(render_question_manage_edit(questionDetail));
+                    question_edit_after_render(questionDetail);
+                },
+                end: function () {
+
+                }
+            }
+        )
+    })
+
+}
+
+function question_view_on_click(questionID)
+{
+    get_question_detail(questionID, function (questionDetail) {
+        var $question_detail_form = render_question_manage_view(questionDetail);
+        viewLayerIndex = layer.open(
+            {
+                type: 5,
+                shadeClose: true, //点击遮罩关闭
+                closeBtn: 2,
+                title: '题目详情',
+                area: ['700px', '500px'],
+                content: $question_detail_form.prop("outerHTML"),
+                success: function () {
+                    $(".layui-layer-content").addClass("layer-form");
+                    $(".layui-layer-content pre code").each(function (index, obj) {
+                        hljs.highlightBlock(obj);
+                    })
+                },
+                end: function () {
+                }
+            }
+        )
+    })
+}
+
+function question_add_to_paper_on_click(questionid)
+{
+    get_question_detail(questionid, function (questionDetail) {
+            var question = question_detail_to_paper_question(questionDetail);
+            app.paper.paperContent.push(question);
+            render_paper_question_list(app.paper.paperContent);
+        }
+    )
+}
+
+//将详细的题目仅保留答案等必要信息
+function question_detail_to_paper_question(questionDetail)
+{
+    question_option_parse_json(questionDetail);
+
+    var question = {
+        outline: questionDetail.outline,
+        id: questionDetail.id,
+        options: questionDetail.options,
+        answer: questionDetail.answer,
+        code: questionDetail.code,
+        type: questionDetail.type,
+        value: questionDetail.value,
+    };
+    return question;
+}
+
+function render_question_list(question_list, $question_list, question_render_function)
+{
+    question_list.map(function (question) {
+        question_option_parse_json(question);
+    });
+    $question_list.empty();
+    question_list.map(question_render_function);
+    $("pre code").each(function (index, obj) {
+        hljs.highlightBlock(obj);
+    })
+
+}
+
+function render_manage_question_list(question_list)
+{
+    render_question_list(question_list, $(".question-list"),
+        function (question) {
+            $(".question-list").append(render_question_manage_question(question));
+            //详情
+            $("#question_" + question.id + " .js-question-view").on("click", function () {
+                    question_view_on_click(question.id);
+                }
+            )
+            //编辑
+            $("#question_" + question.id + " .js-question-edit").on("click", function () {
+                    question_edit_on_click(question.id);
+                }
+            );
+            //添加到试卷
+            $("#question_" + question.id + " .js-question-add-to-paper").on("click", function () {
+                    question_add_to_paper_on_click(question.id);
+                }
+            );
+            //删除
+            $("#question_" + question.id + " .js-question-delete").on("click", function () {
+                layer.confirm("你确定要删除吗？", {skin: 'layui-layer-molv', closeBtn: 0}, function () {
+                    $.ajax(
+                        {
+                            url: '/manage/bank/question/delete.do',
+                            data: {id: question.id}
+                        }
+                    )
+                })
+            })
+        }
+    )
+}
+
+function render_paper_question_list(question_list)
+{
+    render_question_list(question_list, $(".paper-question-list"),
+        function (question) {
+            $(".paper-question-list").append(render_paper_question(question));
+            $("#question_" + question.id + " .js-question-edit").on("click", function () {
+
+                }
+            );
+            $("#question_" + question.id + " .js-question-delete").on("click", function () {
+                layer.confirm("你确定要删除吗？", {skin: 'layui-layer-molv', closeBtn: 0}, function () {
+
+                })
+            })
+
+        })
+}
+
+function render_paper_question(question)
+{
+ return  render_question_manage_question(question);
+}
+
+//在列表中显示一个题目
+function render_question_manage_question(question)
+{
+    var $question_panel = $($("#js-template-question-panel").html());
+
+    $question_panel.attr("id", "question_" + question.id);
+    $question_panel.find(".question-type").text(QuestionTypeMap(question.type));
+    $question_panel.find(".question-index").text(question.id);
+
+    //action---
+    if (typeof app.render_question_actions == 'function')
+    {
+        app.render_question_actions(question, $question_panel);
+    }
+    //action---end
+
+    $question_panel.find(".question-outline").text(question.outline);
+    if (question.code != null && question.code != "")
+    {
+        $question_panel.find(".question-code").css("display", "block");
+        var code = $question_panel.find(".question-code code");
+        code.text(question.code);
+
+    }
+
+    switch (QuestionTypeMap(question.type))
+    {
+        case "单选题":
+        case "多选题":
+            $question_panel.find(".question-body").append(render_question_option_list(question));
+            $question_panel.find(".question-answer").text("答案：" + QuestionAnswerNumsToChars(question.answer));
+            break;
+        case "简答题":
+            break;
+    }
+    return $question_panel;
+}
+
+//显示题目列表
+function render_question_option_list(question)
+{
+    if (question.options == null || question.options == "")
+    {
+        return "";
+    }
+    var $question_option_list = $($("#js-template-question-option-list").html());
+    for (var key in question.options)
+    {
+
+        switch (QuestionTypeMap(question.type))
+        {
+            case "单选题":
+                $question_option = $($("#js-template-question-option-radio").html());
+                break;
+            case "多选题":
+                $question_option = $($("#js-template-question-option-checkbox").html());
+                break;
+            case "简答题":
+                break;
+        }
+        $question_option.find("label").text(question.options[key]);
+        $question_option.find("input").attr("name", "question_" + question.id);
+        if (question.answer.indexOf(key) != -1)
+        {
+            $question_option.addClass("question-option-correct");
+        }
+        $question_option_list.append($question_option);
+    }
+    return $question_option_list;
+
+}
+
+//显示题目详情页面
+function render_question_manage_view(questionDetail)
+{
+    var $questionForm = $($("#js-template-question-view").html());
+    var config = {
+        options: function (value, key) {
+            if (questionDetail.options != null && questionDetail.options != "")
+            {
+                questionDetail.options = JSON.parse(questionDetail.options);
+                return render_question_option_list(questionDetail).prop("outerHTML");
+            }
+            return "";
+        },
+        answer: function (value, key) {
+            return QuestionAnswerNumsToChars(value);
+        },
+        type: function (value, key) {
+            return QuestionTypeMap(value);
+        },
+        createTime: function (value, key) {
+            return new Date(value).toLocaleString();
+        }
+    }
+
+
+    var fieldContent;
+    for (var key in questionDetail)
+    {
+        var currentConfig = config[key];
+        if (currentConfig != undefined)
+        {
+            if (typeof currentConfig == 'function')
+            {
+                fieldContent = currentConfig(questionDetail[key], key);
+            }
+        } else
+        {
+            fieldContent = questionDetail[key];
+        }
+        if (fieldContent == null || fieldContent == "")
+        {
+            $questionForm.find("[data-field='" + key + "']").parent().parent().hide();
+        } else
+        {
+            $questionForm.find("[data-field='" + key + "']").html(fieldContent);
+
+        }
+    }
+
+    return $questionForm;
+}
+
+
+//显示编辑题目页面
+function render_question_manage_edit(questionDetail, IsAdd)
+{
+    var $questionForm = $($("#js-template-question-edit").html());
+
+    var config = {
+        options: function (value, key) {
+            return "";
+        },
+        answer: function (value, key) {
+            return "";
+        },
+        type: function (value, key) {
+            return "";
+        },
+        createTime: function (value, key) {
+            return new Date(value).toLocaleString();
+        }
+    }
+
+    var fieldContent;
+    for (var key in questionDetail)
+    {
+        var currentConfig = config[key];
+        if (currentConfig != undefined)
+        {
+            if (typeof currentConfig == 'function')
+            {
+                fieldContent = currentConfig(questionDetail[key], key);
+            }
+        } else
+        {
+            fieldContent = questionDetail[key];
+        }
+        if (fieldContent !== "" && fieldContent !== null)
+        {
+            set_data_in_field($questionForm.find("[data-field='" + key + "']"), fieldContent);
+        }
+    }
+    var showEdit = true;
+    var showSaveAsMine = true;
+    var showSaveAsPublic = false;
+
+    if (questionDetail.createTeacherId == User.id)
+    {
+        showEdit = true;
+        showSaveAsMine = false;
+    } else
+    {
+        showEdit = false;
+        showSaveAsMine = true;
+    }
+    if (questionDetail.isPrivate == 0 && User.role == '0')
+    {
+        showEdit = true;
+    }
+
+
+    showEdit && $questionForm.find(".js-btn-group").append("<input type=\"button\" class=\"btn btn-primary js-edit-submit\" value=\"编辑并提交\">\n")
+    showSaveAsMine && $questionForm.find(".js-btn-group").append("<input type=\"button\" class=\"btn btn-default js-save-as-mine\" value=\"保存到我的题库\">\n")
+
+    return $questionForm;
+}
+
+var question_edit_option_status;
+
+//在编辑页面显示之后调用
+function question_edit_after_render(questionDetail)
+{
+    question_edit_option_status = {
+        optionid: 1,
+        optionCount: 1
+    }
+    if (questionDetail.options != null && questionDetail.options != "")
+    {
+        questionDetail.options = JSON.parse(questionDetail.options);
+    }
+
+    for (key in questionDetail.options)
+    {
+        var iscorrect = questionDetail.answer.indexOf(key) != -1;
+
+        question_edit_on_add_option(questionDetail.options[key], iscorrect);
+    }
+
+    $(".layui-layer-content").addClass("layer-form");
+
+    //增加选项按钮点击
+    $(".btn-add-option").on("click", function () {
+        question_edit_on_add_option();
+    });
+    //提交按钮事件
+    $(".js-edit-submit").on("click", function () {
+        question_edit_on_submit('/manage/bank/question/edit.do');
+    });
+    $(".js-save-as-mine").on("click", function () {
+        question_edit_on_submit('/manage/bank/question/saveAsMine.do');
+    });
+}
+
+//添加一个选项并检查是否超过限制
+function question_edit_on_add_option(content, iscorrect)
+{
+    if (question_edit_option_status.optionCount > 9)
+    {
+        layer.msg("最多能添加9个选项");
+        return;
+    }
+    question_edit_add_option(question_edit_option_status.optionid, content, iscorrect);
+    question_edit_option_status.optionid++;
+    question_edit_option_status.optionCount++;
+}
+
+//添加一个选项
+function question_edit_add_option(optionid, content, iscorrect)
+{
+    $option = $($("#js-tempalte-question-edit-option").html());
+    $option.attr("id", "option-" + optionid);
+    $(".option-wrapper").append($option.prop("outerHTML"));
+    if (iscorrect == true)
+    {
+        question_edit_option_toggle_correct(optionid, true);
+    }
+    //点击正确按钮事件
+    $("#option-" + optionid + " input").val(content);
+    $("#option-" + optionid + " .js-valid").on("click", function () {
+        question_edit_option_toggle_correct(optionid);
+    });
+    //点击删除按钮事件
+    $("#option-" + optionid + " .js-remove").on("click", function () {
+        $("#option-" + optionid).remove();
+        question_edit_option_status.optionCount--;
+        question_edit_option_group_on_change();
+    })
+
+    question_edit_option_group_on_change();
+}
+
+//更改选项正确性
+function question_edit_option_toggle_correct(optionid, iscorrect)
+{
+    $("#option-" + optionid).toggleClass("option-correct", iscorrect);
+    $("#option-" + optionid + " .js-valid").toggleClass("btn-success", iscorrect).find(".fa").toggleClass("fa-check", iscorrect);
+    question_edit_option_group_on_change();
+}
+
+
+//更改题目类型
+function question_edit_select_question_type(typeid)
+{
+    $(".layui-layer-content #select-question-type").val(typeid);
+}
+
+//在选项数量和正确答案数量变化时触发，自动判断题目类型
+function question_edit_option_group_on_change()
+{
+    var optionCount = $(".layui-layer-content .form-group-option").length;
+    var correctOptionCount = $(".layui-layer-content .option-correct").length;
+    if (optionCount == 0)
+    {
+        question_edit_select_question_type(4);
+    }
+    else if (correctOptionCount == 1 || correctOptionCount == 0)
+    {
+        question_edit_select_question_type(2);
+    }
+    else
+    {
+        question_edit_select_question_type(3);
+    }
+}
+
+
+function question_edit_on_submit(url)
+{
+    var data = question_edit_collect_data();
+
+    var url;
+
+    $.ajax(
+        {
+            type: 'post',
+            url: url,
+            data: data,
+            success: function (res) {
+                OnResult(res, function (res) {
+                        layer.close(editLayerIndex);
+                        layer.msg(res.message);
+                        on_filter_change();
+                    },
+                    function () {
+                        layer.alert(res.message);
+                    }
+                )
+            }
+        }
+    )
+
+}
+
+function question_edit_collect_data()
+{
+    var $question_form = $(".layui-layer-content");
+    var index = 0;
+    var answer = "";
+    var option = [];
+    $question_form.find(".form-group-option").map(function () {
+        var content = $(this).find("input").val();
+        if ($(this).hasClass("option-correct"))
+        {
+            answer += index;
+        }
+        index++;
+        option.push(content);
+    })
+
+    var data = {
+        'id': get_data_in_field($question_form.find("[data-field='id']")),
+        'outline': get_data_in_field($question_form.find("[data-field='outline']")),
+        'code': get_data_in_field($question_form.find("[data-field='code']")),
+        'questionType.id': get_data_in_field($question_form.find("[data-field='type']")),
+        'topic.id': get_data_in_field($question_form.find("[data-field='topicid']")),
+        '_options': option,
+        'answer': answer,
+        'isPrivate': get_data_in_field($question_form.find("[data-field='isPrivate']"))
+    };
+    return data;
+}

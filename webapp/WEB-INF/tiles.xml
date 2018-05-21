@@ -163,6 +163,14 @@
         <put-attribute name="body" value="/WEB-INF/jsp/manage/paper/list.jsp"/>
         <put-attribute name="title" value="我的试卷"/>
     </definition>
+    <definition name="/manage/paper/edit" extends="teacher_base">
+        <put-attribute name="body" value="/WEB-INF/jsp/manage/paper/edit.jsp"/>
+        <put-attribute name="title" value="试卷编辑"/>
+        <put-list-attribute name="additional-headers">
+            <add-attribute value="/WEB-INF/layout/additional-headers/tree-header.jsp"/>
+            <add-attribute value="/WEB-INF/layout/additional-headers/highlight-header.jsp"/>
+        </put-list-attribute>
+    </definition>
 
 
     <definition name="/index_teacher" extends="teacher_base">
