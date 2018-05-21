@@ -265,7 +265,13 @@ function render_manage_question_list(question_list)
                     $.ajax(
                         {
                             url: '/manage/bank/question/delete.do',
-                            data: {id: question.id}
+                            data: {id: question.id},
+                            success: function (res) {
+                                OnResult(res, function () {
+                                    layer.msg('删除成功');
+                                    on_filter_change();
+                                })
+                            }
                         }
                     )
                 })
@@ -287,6 +293,7 @@ function render_paper_question_list()
             {
                 $("#paper_question_" + question.index + " ." + actionClassName).on("click", action);
             }
+
             // 交换数组元素
             var swapItems = function (arr, index1, index2) {
                 arr[index1] = arr.splice(index2, 1, arr[index1])[0];
@@ -321,6 +328,7 @@ function render_paper_question_list()
                         content: "",
                         success: function (a) {
                             console.log(a);
+
                             $('.layui-layer-content').append(render_paper_question_edit(question));
                         },
                         end: function () {
@@ -559,7 +567,7 @@ function render_question_manage_edit(questionDetail)
     var showEdit = true;
     var showSaveAsMine = true;
     var showSaveAsPublic = false;
-
+    //如果是自己的题目，允许编辑
     if (questionDetail.createTeacherId == User.id)
     {
         showEdit = true;
@@ -569,9 +577,15 @@ function render_question_manage_edit(questionDetail)
         showEdit = false;
         showSaveAsMine = true;
     }
+    //如果是管理员，则对公共题目可以编辑
     if (questionDetail.isPrivate == 0 && User.role == '0')
     {
         showEdit = true;
+    }
+    //如果不是本人创建的题目，不能编辑可见性
+    if (questionDetail.createTeacherId != User.id)
+    {
+        $questionForm.find('[data-field="isPrivate"]').attr("disabled", true);
     }
 
 
@@ -605,10 +619,12 @@ function render_question_manage_edit(questionDetail)
     app.currentLayer.find(".js-save-as-mine").on("click", function () {
         question_edit_on_submit('/manage/bank/question/saveAsMine.do');
     });
-
-
+//根据选项自动设置题目类型
+    question_edit_option_group_on_change();
     return $questionForm;
-}//显示编辑题目页面
+}
+
+//试卷中的题目编辑页面
 function render_paper_question_edit(question)
 {
     var $questionForm = $($("#js-template-paper-question-edit").html());
@@ -616,6 +632,7 @@ function render_paper_question_edit(question)
 
     set_data_in_field($questionForm.find("[data-field='code']"), question.code);
     set_data_in_field($questionForm.find("[data-field='outline']"), question.outline);
+    set_data_in_field($questionForm.find("[data-field='value']"), question.value);
 
     question_edit_option_status = {
         optionid: 1,
@@ -636,9 +653,16 @@ function render_paper_question_edit(question)
         question_edit_on_add_option();
     });
     //提交按钮事件
+    console.log(question);
     app.currentLayer.find(".js-submit").on("click", function () {
- console.log(question_edit_collect_data());
+        console.log(question);
+        question=question_edit_collect_data();
+        console.log(question);
     });
+    app.currentLayer.find(".js-submit1").on("click", function () {
+        console.log(question);
+    });
+    question_edit_option_group_on_change();
     return $questionForm;
 }
 
@@ -766,7 +790,17 @@ function question_edit_collect_data()
         'topic.id': get_data_in_field($question_form.find("[data-field='topicid']")),
         '_options': option,
         'answer': answer,
-        'isPrivate': get_data_in_field($question_form.find("[data-field='isPrivate']"))
+        'isPrivate': get_data_in_field($question_form.find("[data-field='isPrivate']")),
+        'value':get_data_in_field($question_form.find("[data-field='value']"))
     };
+
+    for (key in data)
+    {
+        if (data[key] == null || data[key] == "" || data[key] == undefined)
+        {
+            delete data[key];
+        }
+    }
+
     return data;
 }

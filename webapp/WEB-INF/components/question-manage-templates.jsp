@@ -138,7 +138,7 @@
                 <select name="type" id="select-question-type" data-field="type" class="form-control">
                     <option value="2">单选题</option>
                     <option value="3">多选题</option>
-                    <option value="4" selected>简答题</option>
+                    <option value="4">简答题</option>
                 </select>
             </div>
         </div>
@@ -173,7 +173,6 @@
     <div class="form-horizontal">
         <div style="display: none;">
             <input type="text" data-field="id">
-            <input type="text" data-field="topicid">
         </div>
         <div class="form-group">
             <label class="col-sm-2 control-label">题干</label>
@@ -206,9 +205,18 @@
                 </select>
             </div>
         </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">分值</label>
+            <div class="col-sm-9">
+                <input type="text" class="form-control" data-field="value">
+            </div>
+        </div>
         <div class="col-sm-offset-2 js-btn-group">
             <div class="btn btn-primary js-submit">
                 确认修改
+            </div>
+            <div class="btn btn-primary js-submit1">
+                确认修改1
             </div>
         </div>
     </div>

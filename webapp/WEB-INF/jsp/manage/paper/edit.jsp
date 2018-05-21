@@ -91,12 +91,15 @@
         },
         paper: {
             name: '这是一张试卷',
-            remark: '不要作弊',
+            remark: '注意事项：在填写本张试卷时，请不要携带脑子，禁止使用笔作答。',
             paperContent: [],
         }
     };
 
     $(document).ready(
+
+
+
 
         function () {
             $("#select-question-teacher-filter").on("change", on_filter_change);
@@ -151,6 +154,21 @@
             initTree();
             getResourceTree(9);
 
+            function fun()
+            {
+                var a=0;
+                $("#button1").on("click",function () {
+                    console.log('a='+a);
+                    a=10;
+                    console.log('a='+a);
+                })
+                $("#button2").on("click",function () {
+                    console.log('a='+a);
+                    a=20;
+                    console.log('a='+a);
+                })
+            }
+            fun();
         }
     )
 
