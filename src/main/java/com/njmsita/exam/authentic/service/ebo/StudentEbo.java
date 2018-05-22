@@ -185,6 +185,7 @@ public class StudentEbo implements StudentEbi
         {
             studentToEdit.setPassword(MD5Utils.md5(studentVo.getPassword()));
         }
+        studentToEdit.setGender(studentVo.getGender());
         studentToEdit.setModifytime(System.currentTimeMillis());
         studentToEdit.setSchool(schoolVo);
         studentToEdit.setClassroom(classroomVo);

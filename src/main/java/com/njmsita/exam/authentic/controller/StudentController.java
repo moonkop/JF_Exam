@@ -335,7 +335,7 @@ public class StudentController extends BaseController
      */
     @RequestMapping("manage/edit.do")
     @SystemLogAnnotation(module = "学生管理", methods = "学生添加/修改")
-    public String doAdd(@Validated(value = {StudentAddGroup.class}) StudentVo studentVo, BindingResult bindingResult,
+    public String doAdd(@Validated(value = {StudentAddGroup.class}) StudentVo studentVo, BindingResult bindingResult,String schoolID,
                         HttpServletRequest request) throws OperationException
     {
         if (bindingResult.hasErrors())
@@ -353,6 +353,9 @@ public class StudentController extends BaseController
         if (null == studentVo.getId() || "".equals(studentVo.getStudentId().trim()))
         {
             studentVo.setId(IdUtil.getUUID());
+            SchoolVo schoolVo=new SchoolVo();
+            schoolVo.setId(schoolID);
+            studentVo.setSchool(schoolVo);
             studentEbi.save(studentVo);
         } else
         {

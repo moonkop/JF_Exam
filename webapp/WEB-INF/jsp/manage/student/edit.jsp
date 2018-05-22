@@ -1,6 +1,14 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 
+<script>
+    $(document).ready(function () {
+        $("#cancel").on("click",function () {
+            window.history.go(-1);
+        })
+
+    })
+</script>
         <!-- start content -->
         <div class="row">
             <div class="col-lg-12">
@@ -22,8 +30,8 @@
                                         <label for="selectSchool" class="col-sm-2 control-label">学校</label>
 
                                         <div class="col-sm-8">
-                                            <select name="schoolID" id="selectSchool" class="form-control">
-                                                <c:forEach items="${requestScope.schools}" var="subject">
+                                            <select name="schoolID" id="selectSchool" class="form-control" >
+                                                <c:forEach items="${requestScope.schools}" var="subject" >
                                                     <option value="${subject.id}"
                                                             <c:if test="${student.school==subject}">selected</c:if>   >
                                                             ${subject.name}
@@ -66,7 +74,15 @@
                                         <label for="selectSchool" class="col-sm-2 control-label">班级</label>
 
                                         <div class="col-sm-8">
-                                            <select name="classroomID" id="selectClassroom" class="form-control">
+                                            <select name="classroomID" id="selectClassroom" class="form-control" >
+
+                                                <c:forEach items="${requestScope.classroom}" var="subject" >
+                                                    <option value="${subject.id}"
+                                                            <c:if test="${student.classroom==subject}">selected</c:if>   >
+                                                            ${subject.name}
+                                                    </option>
+                                                </c:forEach>
+
                                             </select>
                                         </div>
                                     </div>
@@ -95,6 +111,20 @@
                                                    value="${student.name}">
                                         </div>
                                     </div>
+
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">性别</label>
+                                        <div class="col-sm-8">
+                                            <label class="radio-inline">
+                                                <input type="radio" name="gender" value="1" checked> 男
+                                            </label>
+                                            <label class="radio-inline">
+                                                <input type="radio" name="gender" value="0"> 女
+                                            </label>
+                                        </div>
+                                    </div>
+
+
                                     <div class="form-group">
                                         <label for="selectRole" class="col-sm-2 control-label">身份</label>
 
@@ -132,7 +162,7 @@
                                     </div>
                                     <div class="col-sm-offset-2">
                                         <button type="submit" class="btn btn-primary">提交</button>
-                                        <button type="submit" class="btn btn-default">取消</button>
+                                        <button id="cancel" class="btn btn-default">取消</button>
                                     </div>
                                 </form>
                             </div>
