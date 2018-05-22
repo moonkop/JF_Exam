@@ -65,6 +65,7 @@ public class PaperManageController
         return "/manage/paper/list";
     }
 
+
     /**
      * 试卷列表
      *
