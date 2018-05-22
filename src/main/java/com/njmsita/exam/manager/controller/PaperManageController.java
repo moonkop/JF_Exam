@@ -13,6 +13,7 @@ import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.idutil.IdUtil;
+import com.njmsita.exam.utils.json.CustomJsonSerializer;
 import com.njmsita.exam.utils.json.JsonListResponse;
 import com.njmsita.exam.utils.json.JsonResponse;
 import com.njmsita.exam.utils.logutils.SystemLogAnnotation;
@@ -100,7 +101,7 @@ public class PaperManageController
             {
                 throw new OperationException("所选试卷不存在，请不要进行非法操作！");
             }
-            request.setAttribute("paperVo", paperVo);
+            request.setAttribute("paper", CustomJsonSerializer.toJsonString_static(paperVo));
         }
         return "/manage/paper/edit";
     }
@@ -143,15 +144,7 @@ public class PaperManageController
         }
     }
 
-    /**
-     * 试卷生成
-     *
-     * @param paperVo       试卷信息
-     * @param bindingResult
-     * @param request
-     * @return
-     * @throws OperationException
-     */
+
     @RequestMapping("edit.do")
     @SystemLogAnnotation(module = "试卷管理", methods = "试卷修改")
     public String paperDoAdd(PaperVo paperVo, BindingResult bindingResult,

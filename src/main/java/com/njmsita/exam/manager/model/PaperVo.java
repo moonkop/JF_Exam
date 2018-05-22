@@ -24,7 +24,11 @@ public class PaperVo
     @NotEmpty(message = "{title.notempty}",groups = {AddGroup.class, EditGroup.class})
     private String title;
 
+    @NotNull(message = "{comment.notempty}",groups = {AddGroup.class, EditGroup.class})
+    @NotEmpty(message = "{comment.notempty}",groups = {AddGroup.class, EditGroup.class})
     private String comment;
+
+    private String examId;
 
     //出卷教师  n  TO  1
     private TeacherVo teacher;
@@ -44,6 +48,17 @@ public class PaperVo
         this.questionList = questionVoList;
     }
 
+    public String getExamId()
+    {
+        return examId;
+    }
+
+    public void setExamId(String examId)
+    {
+        this.examId = examId;
+    }
+
+
     @Basic
     @Column(name = "create_teacher_id")
     public TeacherVo getTeacher()
@@ -56,7 +71,7 @@ public class PaperVo
         this.teacher = teacher;
     }
 
-
+    @Basic
     @Column(name = "subject_id")
     public SubjectVo getSubject()
     {
@@ -108,7 +123,7 @@ public class PaperVo
     public int hashCode()
     {
 
-        return Objects.hash(id, title, comment, questionList);
+        return Objects.hash(id, title, comment);
     }
 
     @Override

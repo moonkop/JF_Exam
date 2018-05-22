@@ -91,11 +91,7 @@
                 $question_panel.find(".question-actions").append("<i class='fa fa-trash js-question-delete' title='删除'></i>")
             }
         },
-        paper: {
-            title: '这是一张试卷',
-            remark: '注意事项：在填写本张试卷时，请不要携带脑子，禁止使用笔作答。',
-            paperContent: [],
-        }
+        paper: ${paper}
     };
 
 
