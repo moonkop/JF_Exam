@@ -1,5 +1,36 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8"%>
 
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#resetpassword").on("click",function () {
+
+            // var password=$("#idCardNo").contents().text();
+            var id=$("#id").val();
+            $.ajax({
+                type: "post",
+                dataType: "json",
+                url: "/student/manage/resetPassword.do",
+                data: {
+                    // password: password,
+                    id:id
+                },
+                success: function (result) {
+                    if (result.code == 100)
+                    {
+                        alert("重置成功")
+                    }
+                    else
+                    {
+                        alert(result.message);
+                    }
+                }
+
+            })
+        })
+    })
+</script>
+
+
 <!-- start content -->
 <div class="row">
     <div class="col-lg-12">
@@ -61,7 +92,7 @@
                             </div>
                             <div class="col-sm-offset-2">
                                 <a class="btn btn-default" href="/student/manage/edit?id=${student.id}">编辑</a>
-                                <button class="btn btn-default">重置密码</button>
+                                <button class="btn btn-default" id="resetpassword">重置密码</button>
                             </div>
                         </div>
                     </div>

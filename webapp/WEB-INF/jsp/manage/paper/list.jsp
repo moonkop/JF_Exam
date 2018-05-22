@@ -8,7 +8,7 @@
                     试卷管理
                 </h3>
                 <div class="table-btns">
-                    <a class="btn btn-primary" href="/paper/edit"> 添加试卷</a>
+                    <a class="btn btn-primary" href="/paper/add"> 添加试卷</a>
                 </div>
                 <script src="/vendor/bootstrap-table/bootstrap-table.js"></script>
                 <script>
