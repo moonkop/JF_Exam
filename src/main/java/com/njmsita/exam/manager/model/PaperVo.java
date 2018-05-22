@@ -24,54 +24,24 @@ public class PaperVo
     @NotEmpty(message = "{title.notempty}",groups = {AddGroup.class, EditGroup.class})
     private String title;
 
-    @NotNull(message = "{comment.notempty}",groups = {AddGroup.class, EditGroup.class})
-    @NotEmpty(message = "{comment.notempty}",groups = {AddGroup.class, EditGroup.class})
     private String comment;
-
-    @NotNull(message = "{questionContain.notempty}",groups = {AddGroup.class, EditGroup.class})
-    @NotEmpty(message = "{questionContain.notempty}",groups = {AddGroup.class, EditGroup.class})
-    private String questionContain;
-
-    private String examId;
 
     //出卷教师  n  TO  1
     private TeacherVo teacher;
 
     //所属科目  n  TO  1
-    private SubjectVo subjectVo;
+    private SubjectVo subject;
 
-    private List<QuestionVo> questionVoList;
+    private List<QuestionVo> questionList;
 
-    public List<QuestionVo> getQuestionVoList()
+    public List<QuestionVo> getQuestionList()
     {
-        return questionVoList;
+        return questionList;
     }
 
-    public void setQuestionVoList(List<QuestionVo> questionVoList)
+    public void setQuestionList(List<QuestionVo> questionVoList)
     {
-        this.questionVoList = questionVoList;
-    }
-
-    public String getExamId()
-    {
-        return examId;
-    }
-
-    public void setExamId(String examId)
-    {
-        this.examId = examId;
-    }
-
-    @Basic
-    @Column(name = "questionContain")
-    public String getQuestionContain()
-    {
-        return questionContain;
-    }
-
-    public void setQuestionContain(String questionContain)
-    {
-        this.questionContain = questionContain;
+        this.questionList = questionVoList;
     }
 
     @Basic
@@ -86,16 +56,16 @@ public class PaperVo
         this.teacher = teacher;
     }
 
-    @Basic
+
     @Column(name = "subject_id")
-    public SubjectVo getSubjectVo()
+    public SubjectVo getSubject()
     {
-        return subjectVo;
+        return subject;
     }
 
-    public void setSubjectVo(SubjectVo subjectVo)
+    public void setSubject(SubjectVo subjectVo)
     {
-        this.subjectVo = subjectVo;
+        this.subject = subjectVo;
     }
 
     @Id
@@ -138,7 +108,7 @@ public class PaperVo
     public int hashCode()
     {
 
-        return Objects.hash(id, title, comment);
+        return Objects.hash(id, title, comment, questionList);
     }
 
     @Override

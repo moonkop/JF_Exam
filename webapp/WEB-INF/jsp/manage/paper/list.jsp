@@ -22,9 +22,18 @@
                             window.location.href = "/paper/detail?id=" + row.id;
                         },
                         'click .js-del': function (e, value, row, index) {
-                            if (confirm("确定要删除吗？") == true)
-                            {
-                                window.location.href = "/paper/delete.do?id=" + row.id;
+                            if(confirm("确定要删除吗?")==true){
+                                $.ajax(
+                                    {
+                                        url: '/paper/delete.do?id=' + row.id,
+                                        type: "post",
+                                        success:function(res)
+                                        {
+                                            OnResult(res);
+                                            $("#table").bootstrapTable('refresh');
+                                        }
+                                    }
+                                )
                             }
                         }
                     };
@@ -56,9 +65,18 @@
                                             visible: false,
                                         },
                                         {
-                                            field: 'name',
+                                            field: 'title',
                                             title: '试卷名称',
-                                        }, {
+                                        },
+                                        {
+                                            field: 'teacher',
+                                            title: '出卷人',
+                                        },
+                                        {
+                                            field: 'subject',
+                                            title: '科目',
+                                        },
+                                        {
                                             field: 'action',
                                             title: '操作',
 

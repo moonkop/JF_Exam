@@ -20,9 +20,9 @@ public class PaperDaoImpl extends BaseImpl<PaperVo> implements PaperDao
     public void doQbc(DetachedCriteria dc, BaseQueryVO qm)
     {
         PaperQueryModel pqm= (PaperQueryModel) qm;
-        if(null!=pqm.getSubjectVo()&&null!=pqm.getSubjectVo().getId()&&pqm.getSubjectVo().getId()!=0){
+        if(null!=pqm.getSubject()&&null!=pqm.getSubject().getId()&&pqm.getSubject().getId()!=0){
             dc.createAlias("subject","sb");
-            dc.add(Restrictions.eq("sb.id",pqm.getSubjectVo().getId()));
+            dc.add(Restrictions.eq("sb.id",pqm.getSubject().getId()));
         }
         if(null!=pqm.getTeacher()&&null!=pqm.getTeacher().getId()&& StringUtil.isEmpty(pqm.getTeacher().getId())){
             dc.createAlias("teacher","te1");

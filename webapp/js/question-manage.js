@@ -108,7 +108,7 @@ function question_add_on_click()
 {
     var topicid = get_jstree().get_selected();
 
-    viewLayerIndex = layer.open(
+    app.currentLayerIndex = layer.open(
         {
             type: 5,
             shadeClose: true, //点击遮罩关闭
@@ -116,8 +116,8 @@ function question_add_on_click()
             title: '题目详情',
             area: ['800px', '600px'],
             content: "",
-            success: function (res) {
-                $('.layui-layer-content').append(render_question_manage_edit({topicid: topicid}));
+            success: function (a) {
+                a.find('.layui-layer-content').append(render_question_manage_edit({topicid: topicid}));
             },
             end: function () {
             }
@@ -129,7 +129,7 @@ function question_add_on_click()
 function question_edit_on_click(questionID)
 {
     get_question_detail(questionID, function (questionDetail) {
-        editLayerIndex = layer.open(
+        app.currentLayerIndex = layer.open(
             {
                 type: 5,
                 shadeClose: true, //点击遮罩关闭
@@ -137,8 +137,8 @@ function question_edit_on_click(questionID)
                 title: '题目编辑',
                 area: ['800px', '600px'],
                 content: "",
-                success: function () {
-                    $('.layui-layer-content').append(render_question_manage_edit(questionDetail));
+                success: function (a) {
+                    a.find('.layui-layer-content').append(render_question_manage_edit(questionDetail));
                 },
                 end: function () {
 
@@ -153,7 +153,7 @@ function question_view_on_click(questionID)
 {
     get_question_detail(questionID, function (questionDetail) {
         var $question_detail_form = render_question_manage_view(questionDetail);
-        viewLayerIndex = layer.open(
+        app.currentLayerIndex = layer.open(
             {
                 type: 5,
                 shadeClose: true, //点击遮罩关闭
@@ -318,7 +318,7 @@ function render_paper_question_list()
             };
 
             bind_action("js-question-edit", function () {
-                editLayerIndex = layer.open(
+                app.currentLayerIndex = layer.open(
                     {
                         type: 5,
                         shadeClose: true, //点击遮罩关闭
@@ -327,9 +327,7 @@ function render_paper_question_list()
                         area: ['800px', '600px'],
                         content: "",
                         success: function (a) {
-                            console.log(a);
-
-                            $('.layui-layer-content').append(render_paper_question_edit(question));
+                            a.find('.layui-layer-content').append(render_paper_question_edit(question));
                         },
                         end: function () {
 
@@ -653,11 +651,9 @@ function render_paper_question_edit(question)
         question_edit_on_add_option();
     });
     //提交按钮事件
-    console.log(question);
     app.currentLayer.find(".js-submit").on("click", function () {
-        console.log(question);
-        question=question_edit_collect_data();
-        console.log(question);
+        paper_question_edit_on_submit();
+
     });
     app.currentLayer.find(".js-submit1").on("click", function () {
         console.log(question);
@@ -682,7 +678,7 @@ function question_edit_on_add_option(content, iscorrect)
 //添加一个选项
 function question_edit_add_option(optionid, content, iscorrect)
 {
-    $option = $($("#js-tempalte-question-edit-option").html());
+    var $option = $($("#js-tempalte-question-edit-option").html());
     $option.attr("id", "option-" + optionid);
     app.currentLayer.find(".option-wrapper").append($option.prop("outerHTML"));
     if (iscorrect == true)
@@ -712,12 +708,12 @@ function question_edit_option_toggle_correct(optionid, iscorrect)
     question_edit_option_group_on_change();
 }
 
-
 //更改题目类型
 function question_edit_select_question_type(typeid)
 {
     app.currentLayer.find("#select-question-type").val(typeid);
 }
+
 
 //在选项数量和正确答案数量变化时触发，自动判断题目类型
 function question_edit_option_group_on_change()
@@ -738,12 +734,81 @@ function question_edit_option_group_on_change()
     }
 }
 
-
 function question_edit_on_submit(url)
 {
     var data = question_edit_collect_data();
+    if ($.trim(data.outline) == "")
+    {
+        layer.alert("题干不能为空");
+        return;
+    }
+    if ($.trim(data['topic.id']) == "")
+    {
+        layer.alert("题干不能为空");
+        return;
+    }
+    if ($.trim(data['isPrivate']) == undefined)
+    {
+        layer.alert("可见性不能为空");
+        return;
+    }
+    if ($.trim(data['id']) == "" || data['id'] == undefined || data['id'] == null)
+    {
+        layer.alert("id不能为空");
+        return;
+    }
 
-    var url;
+    switch (data['questionType.id'])
+    {
+        case '2':
+            if (data._options.length <= 1)
+            {
+                layer.alert("单选题至少有两个选项");
+                return;
+            }
+            if (data.answer.length != 1)
+            {
+                layer.alert("答案必须为一个选项");
+                return;
+            }
+            for (key in data._options)
+            {
+                if (data._options[key] == "")
+                {
+                    layer.alert("选项不能为空");
+                    return;
+                }
+            }
+            break;
+        case '3':
+            if (data._options.length <= 1)
+            {
+                layer.alert("多选题至少有两个选项");
+                return;
+            }
+            if (data.answer.length <= 1)
+            {
+                layer.alert("多选题至少有两个正确答案");
+                return;
+            }
+            for (key in data._options)
+            {
+                if (data._options[key] == "")
+                {
+                    layer.alert("选项不能为空");
+                    return;
+                }
+            }
+            break;
+        case '4':
+            if (data._options.length > 0)
+            {
+                layer.alert("简答题不能有选项");
+                return;
+            }
+            break;
+    }
+
 
     $.ajax(
         {
@@ -752,7 +817,7 @@ function question_edit_on_submit(url)
             data: data,
             success: function (res) {
                 OnResult(res, function (res) {
-                        layer.close(editLayerIndex);
+                        layer.close(app.currentLayerIndex);
                         layer.msg(res.message);
                         on_filter_change();
                     },
@@ -766,41 +831,191 @@ function question_edit_on_submit(url)
 
 }
 
+
+function paper_question_edit_on_submit()
+{
+    app.paper.paperContent[question.index] = paper_question_edit_collect_data();
+    if ($.trim(data.outline) == "")
+    {
+        layer.alert("题干不能为空");
+        return;
+    }
+    if ($.trim(data['id']) == "" || data['id'] == undefined || data['id'] == null)
+    {
+        layer.alert("id不能为空");
+        return;
+    }
+
+    switch (data['questionType.id'])
+    {
+        case '2':
+            if (data.options.length <= 1)
+            {
+                layer.alert("单选题至少有两个选项");
+                return;
+            }
+            if (data.answer.length != 1)
+            {
+                layer.alert("答案必须为一个选项");
+                return;
+            }
+            for (key in data.options)
+            {
+                if (data.options[key] == "")
+                {
+                    layer.alert("选项不能为空");
+                    return;
+                }
+            }
+            break;
+        case '3':
+            if (data.options.length <= 1)
+            {
+                layer.alert("多选题至少有两个选项");
+                return;
+            }
+            if (data.answer.length <= 1)
+            {
+                layer.alert("多选题至少有两个正确答案");
+                return;
+            }
+            for (key in data.options)
+            {
+                if (data.options[key] == "")
+                {
+                    layer.alert("选项不能为空");
+                    return;
+                }
+            }
+            break;
+        case '4':
+            if (data.options.length > 0)
+            {
+                layer.alert("简答题不能有选项");
+                return;
+            }
+            break;
+    }
+
+    layer.close(app.currentLayerIndex);
+    render_paper_question_list();
+}
+
 function question_edit_collect_data()
 {
-    var $question_form = $(".layui-layer-content");
     var index = 0;
     var answer = "";
-    var option = [];
-    $question_form.find(".form-group-option").map(function () {
+    var options = [];
+    app.currentLayer.find(".form-group-option").map(function () {
         var content = $(this).find("input").val();
         if ($(this).hasClass("option-correct"))
         {
             answer += index;
         }
         index++;
-        option.push(content);
+        options.push(content);
     })
-
     var data = {
-        'id': get_data_in_field($question_form.find("[data-field='id']")),
-        'outline': get_data_in_field($question_form.find("[data-field='outline']")),
-        'code': get_data_in_field($question_form.find("[data-field='code']")),
-        'questionType.id': get_data_in_field($question_form.find("[data-field='type']")),
-        'topic.id': get_data_in_field($question_form.find("[data-field='topicid']")),
-        '_options': option,
+        'id': get_data_in_field(app.currentLayer.find("[data-field='id']")),
+        'outline': get_data_in_field(app.currentLayer.find("[data-field='outline']")),
+        'code': get_data_in_field(app.currentLayer.find("[data-field='code']")),
+        'questionType.id': get_data_in_field(app.currentLayer.find("[data-field='type']")),
+        'topic.id': get_data_in_field(app.currentLayer.find("[data-field='topicid']")),
+        '_options': options,
         'answer': answer,
-        'isPrivate': get_data_in_field($question_form.find("[data-field='isPrivate']")),
-        'value':get_data_in_field($question_form.find("[data-field='value']"))
+        'isPrivate': get_data_in_field(app.currentLayer.find("[data-field='isPrivate']")),
+    };
+
+    return data;
+
+}
+
+function paper_question_edit_collect_data()
+{
+    var index = 0;
+    var answer = "";
+    var options = [];
+    app.currentLayer.find(".form-group-option").map(function () {
+        var content = $(this).find("input").val();
+        if ($(this).hasClass("option-correct"))
+        {
+            answer += index;
+        }
+        index++;
+        options.push(content);
+    })
+    var data = {
+        'id': get_data_in_field(app.currentLayer.find("[data-field='id']")),
+        'outline': get_data_in_field(app.currentLayer.find("[data-field='outline']")),
+        'code': get_data_in_field(app.currentLayer.find("[data-field='code']")),
+        'type': get_data_in_field(app.currentLayer.find("[data-field='type']")),
+        'value': get_data_in_field(app.currentLayer.find("[data-field='value']")),
+        'options': options,
+        'answer': answer,
     };
 
     for (key in data)
     {
-        if (data[key] == null || data[key] == "" || data[key] == undefined)
+        if (data[key] == null || data[key] == "" || data[key] == undefined || data[key] == [])
         {
             delete data[key];
         }
     }
 
     return data;
+}
+
+
+function render_paper_title_edit()
+{
+    var $editForm = $($("#js-template-edit-title").html());
+    app.currentLayer = $editForm;
+    $editForm.find("[name='title']").val(app.paper.title);
+    $editForm.find("[name='remark']").val(app.paper.remark);
+    $editForm.find(".js-paper-edit-title-submit").on("click", function () {
+            var data = {
+                title: $editForm.find("[name='title']").val(),
+                remark: $editForm.find("[name='remark']").val()
+            }
+            app.paper.title = data.title;
+            app.paper.remark = data.remark;
+            render_paper_title();
+            layer.close(app.currentLayerIndex);
+            layer.msg("编辑成功");
+        }
+    );
+
+    return $editForm;
+}
+
+function on_edit_title_click()
+{
+    app.currentLayerIndex = layer.open(
+        {
+            type: 5,
+            shadeClose: true, //点击遮罩关闭
+            closeBtn: 2,
+            title: '标题编辑',
+            area: ['700px', '280px'],
+            content: "",
+            success: function (a) {
+                a.find('.layui-layer-content').append(render_paper_title_edit());
+            },
+            end: function () {
+
+            }
+        }
+    )
+}
+
+function on_paper_edit_submit_click()
+{
+
+}
+
+
+function render_paper_title()
+{
+    $(".title-area .title").text(app.paper.title);
+    $(".title-area .remark").text(app.paper.remark);
 }

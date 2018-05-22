@@ -60,7 +60,7 @@ public class PaperEbo implements PaperEbi
         if(temp==null){
             throw new OperationException("当前选择的试卷不存在，请不要进行非法操作！");
         }
-        temp.setSubjectVo(paperVo.getSubjectVo());
+        temp.setSubject(paperVo.getSubject());
         temp.setComment(paperVo.getComment());
         temp.setQuestionContain(paperVo.getQuestionContain());
         temp.setTitle(paperVo.getTitle());
@@ -85,17 +85,17 @@ public class PaperEbo implements PaperEbi
      */
     private void infoValid(PaperVo paperVo) throws OperationException
     {
-        if(paperVo.getSubjectVo()==null){
+        if(paperVo.getSubject()==null){
             throw new OperationException("选择科目不能为空，请不要进行非法操作！");
         }
-        if(paperVo.getSubjectVo().getId()==0||paperVo.getSubjectVo().getId()==null){
+        if(paperVo.getSubject().getId()==0||paperVo.getSubject().getId()==null){
             throw new OperationException("选择科目不能为空，请不要进行非法操作！");
         }
-        SubjectVo subject=subjectDao.get(paperVo.getSubjectVo().getId());
+        SubjectVo subject=subjectDao.get(paperVo.getSubject().getId());
         if (subject==null){
             throw new OperationException("选择科目不存在，请不要进行非法操作！");
         }
-        paperVo.setSubjectVo(subject);
+        paperVo.setSubject(subject);
     }
 
 }

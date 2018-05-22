@@ -63,7 +63,7 @@ public class ExamManageController
                 throw new OperationException("所选择的试卷不存在，请不要进行非法操作！");
             }
             request.setAttribute("paperVo",tempPaper);
-            request.setAttribute("subjectId",tempPaper.getSubjectVo().getId());
+            request.setAttribute("subjectId",tempPaper.getSubject().getId());
         }else if(!StringUtil.isEmpty(examVo.getId())){
             if(StringUtil.isEmpty(examVo.getId())){
                 throw new OperationException("所选的该场考试的id不能为空，请不要进行非法操作！");

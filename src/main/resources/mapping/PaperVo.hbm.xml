@@ -11,6 +11,6 @@
         <property name="questionContain" column="questionContain"/>
 
         <many-to-one name="teacher" column="create_teacher_id" class="com.njmsita.exam.authentic.model.TeacherVo"/>
-        <many-to-one name="subjectVo" column="subject_id" class="com.njmsita.exam.manager.model.SubjectVo"/>
+        <many-to-one name="getSubject" column="subject_id" class="com.njmsita.exam.manager.model.SubjectVo"/>
     </class>
 </hibernate-mapping>

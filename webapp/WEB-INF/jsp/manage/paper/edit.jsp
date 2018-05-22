@@ -47,7 +47,7 @@
         <div style="margin: 10px" class="text-right">
 
 
-            <button class="btn btn-primary">
+            <button class="btn btn-primary" id="js-btn-edit-title">
                 编辑标题
             </button>
 
@@ -55,14 +55,16 @@
                 设置分值
             </button>
 
-            <button class="btn btn-primary">
+            <button class="btn btn-primary" id="js-btn-submit">
                 提交修改
             </button>
 
 
         </div>
-        <h3>这是一张试卷</h3>
-        <div><span>注意事项：</span><span>在填写本张试卷时，请不要使用铅笔，水笔，钢笔，圆珠笔，毛笔，蜡笔，水彩笔，粉笔等</span></div>
+        <div class="title-area">
+            <div class="title">这是一张试卷</div>
+            <div class="remark">在填写本张试卷时，请不要使用铅笔，水笔，钢笔，圆珠笔，毛笔，蜡笔，水彩笔，粉笔等</div>
+        </div>
 
         <div class="paper-question-list">
 
@@ -90,24 +92,27 @@
             }
         },
         paper: {
-            name: '这是一张试卷',
+            title: '这是一张试卷',
             remark: '注意事项：在填写本张试卷时，请不要携带脑子，禁止使用笔作答。',
             paperContent: [],
         }
     };
 
+
     $(document).ready(
-
-
-
-
         function () {
             $("#select-question-teacher-filter").on("change", on_filter_change);
             $("#select-question-type-filter").on("change", on_filter_change);
             $("#checkbox-question-only-mine-filter").on("change", on_filter_change);
             $("#checkbox-question-recursive-filter").on("change", on_filter_change);
-
+            $("#js-btn-edit-title").on("click", function () {
+                on_edit_title_click();
+            })
+            $("#js-btn-submit").on("click", function () {
+                on_paper_edit_submit_click()
+            })
             $(".side-visible-line").click();
+
             function initTree()
             {
                 $('#jstree')
@@ -156,18 +161,19 @@
 
             function fun()
             {
-                var a=0;
-                $("#button1").on("click",function () {
-                    console.log('a='+a);
-                    a=10;
-                    console.log('a='+a);
+                var a = 0;
+                $("#button1").on("click", function () {
+                    console.log('a=' + a);
+                    a = 10;
+                    console.log('a=' + a);
                 })
-                $("#button2").on("click",function () {
-                    console.log('a='+a);
-                    a=20;
-                    console.log('a='+a);
+                $("#button2").on("click", function () {
+                    console.log('a=' + a);
+                    a = 20;
+                    console.log('a=' + a);
                 })
             }
+
             fun();
         }
     )

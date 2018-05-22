@@ -80,7 +80,7 @@ public class PaperManageController
             paperQueryModel.setTeacher(teacherVo);
         }
         return new JsonListResponse<>(paperEbi.getAll(paperQueryModel, pageNum, pageSize),
-                "id,title,[teacher]teacher.id,[subject]subject.name", paperEbi.getCount(paperQueryModel));
+                "id,title,[teacher]teacher.name,[subject]subject.name", paperEbi.getCount(paperQueryModel));
     }
 
     /**
@@ -152,8 +152,8 @@ public class PaperManageController
      * @return
      * @throws OperationException
      */
-    @RequestMapping("manage/edit.do")
-    @SystemLogAnnotation(module = "试卷管理", methods = "试卷添加/修改")
+    @RequestMapping("edit.do")
+    @SystemLogAnnotation(module = "试卷管理", methods = "试卷修改")
     public String paperDoAdd(PaperVo paperVo, BindingResult bindingResult,
                              HttpServletRequest request) throws OperationException
     {
@@ -177,7 +177,7 @@ public class PaperManageController
      * @throws OperationException
      */
     @ResponseBody
-    @RequestMapping("paper/delete.do")
+    @RequestMapping("delete.do")
     @SystemLogAnnotation(module = "试卷管理", methods = "试卷删除")
     public JsonResponse paperDelete(PaperVo paperVo) throws OperationException
     {

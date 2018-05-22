@@ -295,5 +295,31 @@
 
         </div>
     </form>
+</script>
 
+
+<script id="js-template-edit-title" type="text/html">
+
+    <div class="form-horizontal">
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label">标题</label>
+            <div class="col-sm-9">
+                <input class="form-control" type="text" name="title">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">备注</label>
+            <div class="col-sm-9">
+                <textarea  class="form-control" name="remark"  rows="5"></textarea>
+            </div>
+        </div>
+
+
+        <div class="col-sm-offset-2 js-btn-group">
+            <button class="btn btn-primary js-paper-edit-title-submit">
+                提交
+            </button>
+        </div>
+    </div>
 </script>

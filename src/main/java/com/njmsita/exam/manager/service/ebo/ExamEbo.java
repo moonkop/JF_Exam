@@ -277,7 +277,7 @@ public class ExamEbo implements ExamEbi
             studentExamVo.setStartTime(systemTime);
 
             examVo=queryPaperFromMongoExamPaper(examVo);
-            List<QuestionVo> questionVoList= examVo.getPaperVo().getQuestionVoList();
+            List<QuestionVo> questionVoList= examVo.getPaperVo().getQuestionList();
 
             for (int i=0;i<questionVoList.size();i++)
             {
@@ -512,7 +512,7 @@ public class ExamEbo implements ExamEbi
             scheduleVo.setCronexpression(FormatUtil.cronExpression(temp.getOpenTime()+
                     SysConsts.EXAM_OPEN_TO_CLOSE_DURING_TIME*60*100));
         }else {
-            List<QuestionVo> questions = temp.getPaperVo().getQuestionVoList();
+            List<QuestionVo> questions = temp.getPaperVo().getQuestionList();
             boolean flag=true;
             for(int i=0;i<questions.size();i++)
             {

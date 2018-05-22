@@ -33,7 +33,6 @@
                                 {
                                     OnResult(res);
                                     $("#table").bootstrapTable('refresh');
-                                    //未测试
                                 }
                             }
                         );
