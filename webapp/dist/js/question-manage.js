@@ -68,6 +68,11 @@ function get_question_detail(questionid, onsuccess)
     )
 }
 
+function get_question_list()
+{
+
+}
+
 var $question_detail_form = $("#js-template-question-panel");
 var $question_option_list = $("#js-template-question-option-list");
 var $question_option = $("#js-template-question-option-radio");
@@ -176,9 +181,9 @@ function question_view_on_click(questionID)
 
 function question_add_to_paper_on_click(questionid)
 {
-    for (var i = 0, len = app.paper.paperContent.length; i < len; i++)
+    for (var i = 0, len = app.paper.questionList.length; i < len; i++)
     {
-        if (app.paper.paperContent[i].id == questionid)
+        if (app.paper.questionList[i].id == questionid)
         {
             layer.confirm("您已添加过该题，是否继续添加", function () {
                 paper_add_question(questionid);
@@ -195,7 +200,7 @@ function paper_add_question(questionid)
 {
     get_question_detail(questionid, function (questionDetail) {
             var question = question_detail_to_paper_question(questionDetail);
-            app.paper.paperContent.push(question);
+            app.paper.questionList.push(question);
             render_paper_question_list();
         }
     )
@@ -282,7 +287,7 @@ function render_manage_question_list(question_list)
 
 function render_paper_question_list()
 {
-    var question_list = app.paper.paperContent;
+    var question_list = app.paper.questionList;
 
     paper_question_set_index(question_list);
     render_question_list(question_list, $(".paper-question-list"),
@@ -336,11 +341,11 @@ function render_paper_question_list()
                 )
             });
             bind_action("js-question-move-up", function () {
-                move_up(app.paper.paperContent, question.index);
+                move_up(app.paper.questionList, question.index);
                 render_paper_question_list();
             });
             bind_action("js-question-move-down", function () {
-                move_down(app.paper.paperContent, question.index);
+                move_down(app.paper.questionList, question.index);
                 render_paper_question_list();
             });
             bind_action("js-question-view", function () {
@@ -348,7 +353,7 @@ function render_paper_question_list()
             });
             bind_action("js-question-delete", function () {
                 layer.confirm("你确定要删除吗？", function () {
-                    app.paper.paperContent.splice(question.index, 1);
+                    app.paper.questionList.splice(question.index, 1);
                     render_paper_question_list();
                     layer.msg('删除成功');
                 })
@@ -834,7 +839,7 @@ function question_edit_on_submit(url)
 
 function paper_question_edit_on_submit()
 {
-    app.paper.paperContent[question.index] = paper_question_edit_collect_data();
+    app.paper.questionList[question.index] = paper_question_edit_collect_data();
     if ($.trim(data.outline) == "")
     {
         layer.alert("题干不能为空");
@@ -971,14 +976,14 @@ function render_paper_title_edit()
     var $editForm = $($("#js-template-edit-title").html());
     app.currentLayer = $editForm;
     $editForm.find("[name='title']").val(app.paper.title);
-    $editForm.find("[name='remark']").val(app.paper.remark);
+    $editForm.find("[name='comment']").val(app.paper.comment);
     $editForm.find(".js-paper-edit-title-submit").on("click", function () {
             var data = {
                 title: $editForm.find("[name='title']").val(),
-                remark: $editForm.find("[name='remark']").val()
+                comment: $editForm.find("[name='comment']").val()
             }
             app.paper.title = data.title;
-            app.paper.remark = data.remark;
+            app.paper.comment = data.comment;
             render_paper_title();
             layer.close(app.currentLayerIndex);
             layer.msg("编辑成功");
@@ -1010,12 +1015,25 @@ function on_edit_title_click()
 
 function on_paper_edit_submit_click()
 {
-
+    $.ajax(
+        {
+            url: '/paper/edit.do',
+            type:"POST",
+            contentType : "application/json",
+            dataType : "json",
+            data: JSON.stringify(app.paper),
+            success: function (res) {
+                OnResult(res, function (res) {
+                    layer.msg("提交成功")
+                })
+            }
+        }
+    )
 }
 
 
 function render_paper_title()
 {
     $(".title-area .title").text(app.paper.title);
-    $(".title-area .remark").text(app.paper.remark);
+    $(".title-area .comment").text(app.paper.comment);
 }

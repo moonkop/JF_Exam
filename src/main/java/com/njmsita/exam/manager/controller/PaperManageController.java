@@ -15,20 +15,24 @@ import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.idutil.IdUtil;
 import com.njmsita.exam.utils.json.CustomJsonSerializer;
 import com.njmsita.exam.utils.json.JsonListResponse;
+import com.njmsita.exam.utils.json.JsonObjectResponse;
 import com.njmsita.exam.utils.json.JsonResponse;
 import com.njmsita.exam.utils.logutils.SystemLogAnnotation;
 import com.njmsita.exam.utils.validate.validategroup.AddGroup;
+import org.apache.poi.ss.formula.functions.Rows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.awt.print.Paper;
 import java.util.List;
 
 /**
@@ -68,6 +72,7 @@ public class PaperManageController
      * @param pageNum         页码
      * @param pageSize        页面大小
      * @param request
+     *
      * @return
      */
     @ResponseBody
@@ -87,22 +92,22 @@ public class PaperManageController
     /**
      * @param paperVo
      * @param request
+     *
      * @return
+     *
      * @throws Exception
      */
     @RequestMapping("edit")
     public String editPaper(PaperVo paperVo, HttpServletRequest request) throws Exception
     {
-        request.setAttribute("subjectList", subjectEbi.getAll());
-        if (!StringUtil.isEmpty(paperVo.getId()))
+        if (StringUtil.isEmpty(paperVo.getId()))
         {
-            paperVo = paperEbi.get(paperVo.getId());
-            if (paperVo == null)
-            {
-                throw new OperationException("所选试卷不存在，请不要进行非法操作！");
-            }
-            request.setAttribute("paper", CustomJsonSerializer.toJsonString_static(paperVo));
+            throw new OperationException("所选试卷不存在，请不要进行非法操作！");
         }
+        paperVo = paperEbi.get(paperVo.getId());
+        request.setAttribute("paper", paperVo);
+        JsonListResponse<QuestionVo> response = new JsonListResponse<QuestionVo>(paperVo.getQuestionList(), "id,outline.options,value,code,index", 0);
+        request.setAttribute("questionList", CustomJsonSerializer.toJsonString_static(response.getPayload().get("rows")));
         return "/manage/paper/edit";
     }
 
@@ -122,7 +127,9 @@ public class PaperManageController
      * @param questionTypeId 题型
      * @param questionNum    所需题目数量
      * @param session
+     *
      * @return
+     *
      * @throws Exception
      */
     @ResponseBody
@@ -144,21 +151,18 @@ public class PaperManageController
         }
     }
 
+    @ResponseBody
+    @RequestMapping("getPaper.do")
+    public JsonResponse getPaper(String id)
+    {
+        return new JsonObjectResponse<PaperVo>(paperEbi.get(id), "title,comment,id,questionList");
+    }
 
     @RequestMapping("edit.do")
     @SystemLogAnnotation(module = "试卷管理", methods = "试卷修改")
-    public String paperDoAdd(PaperVo paperVo, BindingResult bindingResult,
-                             HttpServletRequest request) throws OperationException
+    public String paperDoAdd(@RequestBody PaperVo paperVo) throws OperationException
     {
-        TeacherVo teacherVo1 = new TeacherVo();
-        TeacherVo teacherVo = (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
-        teacherVo1.setId(teacherVo.getId());
-        teacherVo1.setName(teacherVo.getName());
-        teacherVo1.setRole(null);
-        paperVo.setTeacher(teacherVo1);
-        paperVo.setId(IdUtil.getUUID());
-        paperEbi.save(paperVo);
-
+        paperEbi.update(paperVo);
         return "redirect:/paper";
     }
 
@@ -166,7 +170,9 @@ public class PaperManageController
      * 试卷删除
      *
      * @param paperVo
+     *
      * @return
+     *
      * @throws OperationException
      */
     @ResponseBody

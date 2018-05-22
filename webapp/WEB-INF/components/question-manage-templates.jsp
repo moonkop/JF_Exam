@@ -311,7 +311,7 @@
         <div class="form-group">
             <label class="col-sm-2 control-label">备注</label>
             <div class="col-sm-9">
-                <textarea  class="form-control" name="remark"  rows="5"></textarea>
+                <textarea  class="form-control" name="comment"  rows="5"></textarea>
             </div>
         </div>
 

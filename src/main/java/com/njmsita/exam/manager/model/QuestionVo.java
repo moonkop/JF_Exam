@@ -4,11 +4,13 @@ import com.njmsita.exam.authentic.model.TeacherVo;
 import com.njmsita.exam.utils.json.OptionUtil;
 import com.njmsita.exam.utils.validate.validategroup.AddGroup;
 import com.njmsita.exam.utils.validate.validategroup.EditGroup;
+import com.sun.applet2.preloader.event.InitEvent;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 @Table(name = "question", schema = "jf_exam", catalog = "")
@@ -28,6 +30,7 @@ public class QuestionVo
     private String[] optionList;
     private String answer;
     private Integer useTime;
+
     //所属知识点  n TO 1
     private TopicVo topic;
     //出题人   n TO 1
@@ -36,6 +39,52 @@ public class QuestionVo
     private QuestionTypeVo questionType;
     //所属科目  n TO 1
     private SubjectVo subject;
+    //------试卷中的题目-----//
+    private Integer value;
+    private Integer index;
+    private Integer type;
+    private Map<Integer, String> options;
+
+    public Map<Integer, String> getOptions()
+    {
+        return options;
+    }
+
+    public void setOptions(Map<Integer, String> options)
+    {
+        this.options = options;
+    }
+
+    public Integer getValue()
+    {
+        return value;
+    }
+
+    public void setValue(Integer value)
+    {
+        this.value = value;
+    }
+
+    public Integer getIndex()
+    {
+        return index;
+    }
+
+    public void setIndex(Integer index)
+    {
+        this.index = index;
+    }
+
+    public Integer getType()
+    {
+        return type;
+    }
+
+    public void setType(Integer type)
+    {
+        this.type = type;
+    }
+
 
     public String[] getOptionList()
     {
@@ -49,11 +98,12 @@ public class QuestionVo
     public void setOptionList(String[] optionList)
     {
         this.optionList = optionList;
-        if (this.optionList!=null)
+        if (this.optionList != null)
         {
             this.option = OptionUtil.toOptionString(optionList);
-        }else {
-            this.option=null;
+        } else
+        {
+            this.option = null;
         }
     }
 
@@ -200,7 +250,6 @@ public class QuestionVo
     {
         this.answer = answer;
     }
-
 
 
     public int hashCode()

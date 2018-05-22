@@ -55,14 +55,13 @@ public class PaperEbo implements PaperEbi
 
     public void update(PaperVo paperVo) throws OperationException
     {
-        infoValid(paperVo);
         PaperVo temp= paperMongoDao.queryOne(new Query(Criteria.where("id").is(paperVo.getId())));
         if(temp==null){
             throw new OperationException("当前选择的试卷不存在，请不要进行非法操作！");
         }
-        temp.setSubject(paperVo.getSubject());
         temp.setComment(paperVo.getComment());
         temp.setTitle(paperVo.getTitle());
+        temp.setQuestionList(paperVo.getQuestionList());
         paperMongoDao.save(temp);
     }
 

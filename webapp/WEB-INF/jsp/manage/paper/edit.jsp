@@ -62,8 +62,8 @@
 
         </div>
         <div class="title-area">
-            <div class="title">这是一张试卷</div>
-            <div class="remark">在填写本张试卷时，请不要使用铅笔，水笔，钢笔，圆珠笔，毛笔，蜡笔，水彩笔，粉笔等</div>
+            <div class="title"></div>
+            <div class="comment"></div>
         </div>
 
         <div class="paper-question-list">
@@ -91,7 +91,12 @@
                 $question_panel.find(".question-actions").append("<i class='fa fa-trash js-question-delete' title='删除'></i>")
             }
         },
-        paper: ${paper}
+        paper: {
+            id:'${paper.id}',
+            title:'${paper.title}',
+            comment:'${paper.comment}',
+            questionList:${questionList},
+        }
     };
 
 
@@ -154,23 +159,8 @@
 
             initTree();
             getResourceTree(9);
-
-            function fun()
-            {
-                var a = 0;
-                $("#button1").on("click", function () {
-                    console.log('a=' + a);
-                    a = 10;
-                    console.log('a=' + a);
-                })
-                $("#button2").on("click", function () {
-                    console.log('a=' + a);
-                    a = 20;
-                    console.log('a=' + a);
-                })
-            }
-
-            fun();
+            render_paper_title();
+            render_paper_question_list();
         }
     )
 
