@@ -107,7 +107,8 @@ public class PaperManageController
         }
         paperVo = paperEbi.get(paperVo.getId());
         request.setAttribute("paper", paperVo);
-        JsonListResponse<QuestionVo> response = new JsonListResponse<QuestionVo>(paperVo.getQuestionList(), "id,outline.options,value,code,index", 0);
+        JsonListResponse<QuestionVo> response = new JsonListResponse<QuestionVo>(paperVo.getQuestionList(),
+                "id,outline,options,value,code,index,type,answer", 0);
         request.setAttribute("questionList", CustomJsonSerializer.toJsonString_static(response.getPayload().get("rows")));
         return "/manage/paper/edit";
     }
@@ -182,12 +183,13 @@ public class PaperManageController
         return new JsonObjectResponse<PaperVo>(paperEbi.get(id), "title,comment,id,questionList");
     }
 
+    @ResponseBody
     @RequestMapping("edit.do")
     @SystemLogAnnotation(module = "试卷管理", methods = "试卷修改")
-    public String paperDoAdd(@RequestBody PaperVo paperVo) throws OperationException
+    public JsonResponse paperDoAdd(@RequestBody PaperVo paperVo) throws OperationException
     {
         paperEbi.update(paperVo);
-        return "redirect:/paper";
+        return new JsonResponse();
     }
 
     /**

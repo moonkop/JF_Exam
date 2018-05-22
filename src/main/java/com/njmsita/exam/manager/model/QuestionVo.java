@@ -40,17 +40,21 @@ public class QuestionVo
     //所属科目  n TO 1
     private SubjectVo subject;
     //------试卷中的题目-----//
+    //分值
     private Integer value;
+    //序号
     private Integer index;
+    //题目类型
     private Integer type;
-    private Map<Integer, String> options;
+    //选项
+    private List<String> options;
 
-    public Map<Integer, String> getOptions()
+    public  List<String> getOptions()
     {
         return options;
     }
 
-    public void setOptions(Map<Integer, String> options)
+    public void setOptions( List<String> options)
     {
         this.options = options;
     }

@@ -22,11 +22,17 @@ function QuestionAnswerCharMap(char)
 function QuestionAnswerNumsToChars(str)
 {
     var res = "";
-
-    str.split("").map(function (item) {
+    str.split(",").map(function (item) {
         res += QuestionAnswerCharMap(item);
     });
     return res;
+}
+
+function to_answer_array(str)
+{
+    return str.split(',').map(function (item) {
+        return item;
+    });
 }
 
 function question_option_parse_json(question)
@@ -358,7 +364,6 @@ function render_paper_question_list()
                     layer.msg('删除成功');
                 })
             });
-
         })
 }
 
@@ -373,7 +378,7 @@ function render_paper_question(question)
     $question_panel.find(".question-actions").append("" +
         "<i class='fa fa-arrow-up js-question-move-up' title='上移'></i>" +
         "<i class='fa fa-arrow-down js-question-move-down' title='下移'></i>" +
-        "<i class='fa fa-search js-question-view' title='预览'></i>" +
+       // "<i class='fa fa-search js-question-view' title='预览'></i>" +
         "<i class='fa fa-pencil js-question-edit' title='修改'></i>" +
         "<i class='fa fa-minus js-question-delete' title='删除'></i>"
     );
@@ -462,7 +467,7 @@ function render_question_option_list(question)
         }
         $question_option.find("label").text(question.options[key]);
         $question_option.find("input").attr("name", "question_" + question.id);
-        if (question.answer.indexOf(key) != -1)
+        if (to_answer_array(question.answer).indexOf(key) != -1)
         {
             $question_option.addClass("question-option-correct");
         }
@@ -604,7 +609,7 @@ function render_question_manage_edit(questionDetail)
 
     for (key in questionDetail.options)
     {
-        var iscorrect = questionDetail.answer.indexOf(key) != -1;
+        var iscorrect = to_answer_array(questionDetail.answer).indexOf(key) != -1;
 
         question_edit_on_add_option(questionDetail.options[key], iscorrect);
     }
@@ -636,6 +641,7 @@ function render_paper_question_edit(question)
     set_data_in_field($questionForm.find("[data-field='code']"), question.code);
     set_data_in_field($questionForm.find("[data-field='outline']"), question.outline);
     set_data_in_field($questionForm.find("[data-field='value']"), question.value);
+    set_data_in_field($questionForm.find("[data-field='id']"), question.id);
 
     question_edit_option_status = {
         optionid: 1,
@@ -645,7 +651,7 @@ function render_paper_question_edit(question)
 
     for (key in question.options)
     {
-        var iscorrect = question.answer.indexOf(key) != -1;
+        var iscorrect = to_answer_array(question.answer).indexOf(key) != -1;
         question_edit_on_add_option(question.options[key], iscorrect);
     }
 
@@ -657,7 +663,7 @@ function render_paper_question_edit(question)
     });
     //提交按钮事件
     app.currentLayer.find(".js-submit").on("click", function () {
-        paper_question_edit_on_submit();
+        paper_question_edit_on_submit(question.index);
 
     });
     app.currentLayer.find(".js-submit1").on("click", function () {
@@ -741,44 +747,44 @@ function question_edit_option_group_on_change()
 
 function question_edit_on_submit(url)
 {
-    var data = question_edit_collect_data();
-    if ($.trim(data.outline) == "")
+    var question = question_edit_collect_data();
+    if ($.trim(question.outline) == "")
     {
         layer.alert("题干不能为空");
         return;
     }
-    if ($.trim(data['topic.id']) == "")
+    if ($.trim(question['topic.id']) == "")
     {
         layer.alert("题干不能为空");
         return;
     }
-    if ($.trim(data['isPrivate']) == undefined)
+    if ($.trim(question['isPrivate']) == undefined)
     {
         layer.alert("可见性不能为空");
         return;
     }
-    if ($.trim(data['id']) == "" || data['id'] == undefined || data['id'] == null)
+    if ($.trim(question['id']) == "" || question['id'] == undefined || question['id'] == null)
     {
         layer.alert("id不能为空");
         return;
     }
 
-    switch (data['questionType.id'])
+    switch (question['questionType.id'])
     {
         case '2':
-            if (data._options.length <= 1)
+            if (question._options.length <= 1)
             {
                 layer.alert("单选题至少有两个选项");
                 return;
             }
-            if (data.answer.length != 1)
+            if (question.answer.length != 1)
             {
                 layer.alert("答案必须为一个选项");
                 return;
             }
-            for (key in data._options)
+            for (key in question._options)
             {
-                if (data._options[key] == "")
+                if (question._options[key] == "")
                 {
                     layer.alert("选项不能为空");
                     return;
@@ -786,19 +792,19 @@ function question_edit_on_submit(url)
             }
             break;
         case '3':
-            if (data._options.length <= 1)
+            if (question._options.length <= 1)
             {
                 layer.alert("多选题至少有两个选项");
                 return;
             }
-            if (data.answer.length <= 1)
+            if (question.answer.length <= 1)
             {
                 layer.alert("多选题至少有两个正确答案");
                 return;
             }
-            for (key in data._options)
+            for (key in question._options)
             {
-                if (data._options[key] == "")
+                if (question._options[key] == "")
                 {
                     layer.alert("选项不能为空");
                     return;
@@ -806,7 +812,7 @@ function question_edit_on_submit(url)
             }
             break;
         case '4':
-            if (data._options.length > 0)
+            if (question.options!=null&&question.options.length > 0)
             {
                 layer.alert("简答题不能有选项");
                 return;
@@ -819,7 +825,7 @@ function question_edit_on_submit(url)
         {
             type: 'post',
             url: url,
-            data: data,
+            data: question,
             success: function (res) {
                 OnResult(res, function (res) {
                         layer.close(app.currentLayerIndex);
@@ -837,36 +843,38 @@ function question_edit_on_submit(url)
 }
 
 
-function paper_question_edit_on_submit()
+function paper_question_edit_on_submit(index)
 {
-    app.paper.questionList[question.index] = paper_question_edit_collect_data();
-    if ($.trim(data.outline) == "")
+    var question = paper_question_edit_collect_data();
+    question.index = index;
+
+    if ($.trim(question.outline) == "")
     {
         layer.alert("题干不能为空");
         return;
     }
-    if ($.trim(data['id']) == "" || data['id'] == undefined || data['id'] == null)
+    if ($.trim(question['id']) == "" || question['id'] == undefined || question['id'] == null)
     {
         layer.alert("id不能为空");
         return;
     }
 
-    switch (data['questionType.id'])
+    switch (question.type)
     {
         case '2':
-            if (data.options.length <= 1)
+            if (question.options.length <= 1)
             {
                 layer.alert("单选题至少有两个选项");
                 return;
             }
-            if (data.answer.length != 1)
+            if (question.answer.split(',').length != 1)
             {
                 layer.alert("答案必须为一个选项");
                 return;
             }
-            for (key in data.options)
+            for (key in question.options)
             {
-                if (data.options[key] == "")
+                if (question.options[key] == "")
                 {
                     layer.alert("选项不能为空");
                     return;
@@ -874,19 +882,19 @@ function paper_question_edit_on_submit()
             }
             break;
         case '3':
-            if (data.options.length <= 1)
+            if (question.options.length <= 1)
             {
                 layer.alert("多选题至少有两个选项");
                 return;
             }
-            if (data.answer.length <= 1)
+            if (question.answer.split(',').length <= 1)
             {
                 layer.alert("多选题至少有两个正确答案");
                 return;
             }
-            for (key in data.options)
+            for (key in question.options)
             {
-                if (data.options[key] == "")
+                if (question.options[key] == "")
                 {
                     layer.alert("选项不能为空");
                     return;
@@ -894,31 +902,33 @@ function paper_question_edit_on_submit()
             }
             break;
         case '4':
-            if (data.options.length > 0)
+            if (question.options!=null&&question.options.length > 0)
             {
                 layer.alert("简答题不能有选项");
                 return;
             }
             break;
     }
-
+    app.paper.questionList[index] = question;
     layer.close(app.currentLayerIndex);
     render_paper_question_list();
+
 }
 
 function question_edit_collect_data()
 {
     var index = 0;
-    var answer = "";
+    var answer = [];
     var options = [];
+
     app.currentLayer.find(".form-group-option").map(function () {
         var content = $(this).find("input").val();
         if ($(this).hasClass("option-correct"))
         {
-            answer += index;
+            answer.push(index);
         }
-        index++;
         options.push(content);
+        index++;
     })
     var data = {
         'id': get_data_in_field(app.currentLayer.find("[data-field='id']")),
@@ -927,7 +937,7 @@ function question_edit_collect_data()
         'questionType.id': get_data_in_field(app.currentLayer.find("[data-field='type']")),
         'topic.id': get_data_in_field(app.currentLayer.find("[data-field='topicid']")),
         '_options': options,
-        'answer': answer,
+        'answer': answer.join(","),
         'isPrivate': get_data_in_field(app.currentLayer.find("[data-field='isPrivate']")),
     };
 
@@ -938,16 +948,16 @@ function question_edit_collect_data()
 function paper_question_edit_collect_data()
 {
     var index = 0;
-    var answer = "";
+    var answer = [];
     var options = [];
     app.currentLayer.find(".form-group-option").map(function () {
         var content = $(this).find("input").val();
         if ($(this).hasClass("option-correct"))
         {
-            answer += index;
+            answer.push(index);
         }
-        index++;
         options.push(content);
+        index++;
     })
     var data = {
         'id': get_data_in_field(app.currentLayer.find("[data-field='id']")),
@@ -956,7 +966,7 @@ function paper_question_edit_collect_data()
         'type': get_data_in_field(app.currentLayer.find("[data-field='type']")),
         'value': get_data_in_field(app.currentLayer.find("[data-field='value']")),
         'options': options,
-        'answer': answer,
+        'answer': answer.join(","),
     };
 
     for (key in data)
@@ -1018,9 +1028,9 @@ function on_paper_edit_submit_click()
     $.ajax(
         {
             url: '/paper/edit.do',
-            type:"POST",
-            contentType : "application/json",
-            dataType : "json",
+            type: "POST",
+            contentType: "application/json",
+            dataType: "json",
             data: JSON.stringify(app.paper),
             success: function (res) {
                 OnResult(res, function (res) {

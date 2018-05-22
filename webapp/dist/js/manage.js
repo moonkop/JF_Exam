@@ -129,4 +129,4 @@ function defaultOnFailure(res)
 
 }
 
-layer.config({skin: 'layui-layer-molv'});
+layer.config({skin: 'layui-layer-exam'});

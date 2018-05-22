@@ -14,13 +14,9 @@ public class OptionUtil
     {
         try
         {
-            Map<String,String> map = CustomJsonSerializer.getDefaultMapper().readValue(string, Map.class);
-            String[] result = new String[map.size()];
-            for (Map.Entry entry : map.entrySet())
-            {
-                result[Integer.valueOf(entry.getKey().toString())]=entry.getValue().toString();
-            }
-            return  result;
+            List<String> map = CustomJsonSerializer.getDefaultMapper().readValue(string, List.class);
+            String[] res = new String[map.size()];
+            return map.toArray(res);
         } catch (IOException e)
         {
             e.printStackTrace();

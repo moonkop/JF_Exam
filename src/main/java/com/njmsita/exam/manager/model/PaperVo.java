@@ -7,6 +7,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -40,6 +41,10 @@ public class PaperVo
 
     public List<QuestionVo> getQuestionList()
     {
+        if (questionList == null)
+        {
+            questionList = new ArrayList<>();
+        }
         return questionList;
     }
 
