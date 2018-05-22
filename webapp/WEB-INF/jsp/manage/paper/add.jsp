@@ -20,7 +20,7 @@
             <div class="panel-body">
                 <div class="row">
                     <div class="col-lg-12">
-                        <form role="form" class="form-horizontal" action="/paper/manage/edit.do"
+                        <form role="form" class="form-horizontal" action="/paper/manage/add.do"
                               method="post">
 
 
@@ -48,7 +48,7 @@
                                 <label class="col-sm-2 control-label">科目</label>
 
                                 <div class="col-sm-8">
-                                    <select name="subjectVo.id" id="subject_id" class="form-control">
+                                    <select name="subject_id" id="subject_id" class="form-control">
                                         <c:forEach items="${subjectList}" var="subject">
                                             <option value="${subject.id}">
                                                     ${subject.name}

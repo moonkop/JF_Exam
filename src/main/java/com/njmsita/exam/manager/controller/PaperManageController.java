@@ -120,6 +120,29 @@ public class PaperManageController
     }
 
 
+    @RequestMapping("manage/add.do")
+    @SystemLogAnnotation(module = "试卷管理", methods = "试卷添加/修改")
+    public String paperAdd(PaperVo paperVo, BindingResult bindingResult,
+                             HttpServletRequest request,int subject_id) throws OperationException
+    {
+
+        TeacherVo teacherVo1 = new TeacherVo();
+        TeacherVo teacherVo = (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
+        teacherVo1.setId(teacherVo.getId());
+        teacherVo1.setName(teacherVo.getName());
+        teacherVo1.setRole(null);
+        paperVo.setTeacher(teacherVo1);
+        paperVo.setId(IdUtil.getUUID());
+
+        SubjectVo subjectVo=new SubjectVo();
+        subjectVo.setId(subject_id);
+        paperVo.setSubject(subjectVo);
+        paperEbi.save(paperVo);
+
+        return "redirect:/paper/edit?id="+paperVo.getId();
+    }
+
+
     /**
      * 自动组卷
      *
