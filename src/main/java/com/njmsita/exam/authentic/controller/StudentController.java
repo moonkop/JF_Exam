@@ -88,7 +88,6 @@ public class StudentController extends BaseController
      * @param student 前端获取学生用户登陆数据
      * @param request HttpServletRequest
      * @param session HttpSession
-     *
      * @return
      */
     @RequestMapping("login.do")
@@ -130,7 +129,7 @@ public class StudentController extends BaseController
         }
 
         //用户信息验证失败
-        return new JsonResponse(501,"登录失败，账号或密码不正确！！");
+        return new JsonResponse(501, "登录失败，账号或密码不正确！！");
     }
 
     /**
@@ -218,7 +217,6 @@ public class StudentController extends BaseController
      * @param oldPassword 原始密码
      * @param newPassword 新密码
      * @param session
-     *
      * @return
      */
     @RequestMapping("manage/modifyPassword")
@@ -261,7 +259,6 @@ public class StudentController extends BaseController
      *
      * @param studentQueryModel 该模型存放了学生属性  查询条件
      * @param request
-     *
      * @return
      */
     @RequestMapping("list")
@@ -292,11 +289,11 @@ public class StudentController extends BaseController
         return new JsonListResponse<>(
                 studentEbi.getAll(studentQueryModel, pageNum, pageSize),
                 "name," +
-                "id," +
-                "studentId," +
-                "[school]school.name," +
-                "[classroom]classroom.name," +
-                "[role]role.name",
+                        "id," +
+                        "studentId," +
+                        "[school]school.name," +
+                        "[classroom]classroom.name," +
+                        "[role]role.name",
                 studentEbi.getCount(studentQueryModel));
     }
 
@@ -307,7 +304,6 @@ public class StudentController extends BaseController
      *
      * @param studentVo 接受前台传递的学生id
      * @param request   HttpServletRequest
-     *
      * @return 跳转edit
      */
     @RequestMapping("manage/edit")
@@ -330,12 +326,11 @@ public class StudentController extends BaseController
      * 添加学生
      *
      * @param studentVo 需要添加的信息
-     *
      * @return 跳转学生列表页面
      */
     @RequestMapping("manage/edit.do")
     @SystemLogAnnotation(module = "学生管理", methods = "学生添加/修改")
-    public String doAdd(@Validated(value = {StudentAddGroup.class}) StudentVo studentVo, BindingResult bindingResult,String schoolID,
+    public String doAdd(@Validated(value = {StudentAddGroup.class}) StudentVo studentVo, BindingResult bindingResult, String schoolID, String classroomID,
                         HttpServletRequest request) throws OperationException
     {
         if (bindingResult.hasErrors())
@@ -350,12 +345,23 @@ public class StudentController extends BaseController
             return "/manage/student/edit";
         }
 
-        if (null == studentVo.getId() || "".equals(studentVo.getStudentId().trim()))
+        if (null == studentVo.getId() || "".equals(studentVo.getStudentId().trim()) || "".equals(studentVo.getId()))
         {
             studentVo.setId(IdUtil.getUUID());
-            SchoolVo schoolVo=new SchoolVo();
+
+
+            SchoolVo schoolVo = new SchoolVo();
             schoolVo.setId(schoolID);
             studentVo.setSchool(schoolVo);
+
+
+            ClassroomVo classroomVo = new ClassroomVo();
+            if (classroomID != null && classroomID != "")
+            {
+                classroomVo.setId(classroomID);
+                studentVo.setClassroom(classroomVo);
+            }
+
             studentEbi.save(studentVo);
         } else
         {
@@ -368,7 +374,6 @@ public class StudentController extends BaseController
      * 删除学生
      *
      * @param studentVo 需要删除的学生
-     *
      * @return 跳转学生列表页面
      */
     @ResponseBody
@@ -385,6 +390,7 @@ public class StudentController extends BaseController
 
     /**
      * 批量导入学生信息
+     *
      * @param studentInfo
      * @param schoolId
      * @return
@@ -415,7 +421,6 @@ public class StudentController extends BaseController
      * @param studentVo     学生信息
      * @param bindingResult
      * @param request
-     *
      * @return
      */
     @RequestMapping("manage/resetPassword.do")
