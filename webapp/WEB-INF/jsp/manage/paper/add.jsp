@@ -20,7 +20,7 @@
             <div class="panel-body">
                 <div class="row">
                     <div class="col-lg-12">
-                        <form role="form" class="form-horizontal" action="/paper/manage/add.do"
+                        <form role="form" class="form-horizontal" action="/paper/add.do"
                               method="post">
 
 

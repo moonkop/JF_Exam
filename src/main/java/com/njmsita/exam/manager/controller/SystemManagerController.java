@@ -615,14 +615,7 @@ public class SystemManagerController extends BaseController
                 resourceEbi.getAll(),
                 "id,[text],[parent]parent.id",
                 0, true)
-                .addCustomJsonElementFormater("text", new CustomJsonElementFormater<TresourceVo>()
-                {
-                    @Override
-                    public Object format(TresourceVo obj)
-                    {
-                        return obj.getName() + "   -   " + obj.getUrl();
-                    }
-                })
+                .addCustomJsonElementFormater("text", obj -> obj.getName() + "   -   " + obj.getUrl())
                 .addNullValue("parent", "#")
                 .serialize();
 
@@ -659,27 +652,33 @@ public class SystemManagerController extends BaseController
      * <p>
      * （此处将添加和修改页面合并，如果前台传递ID则进行修改否则进入添加页面）
      *
-     * @param tresourceVo 接受前台传递的资源id
+     * @param parent 接受前台传递的资源id
+     *
      * @param request     HttpServletRequest
      *
      * @return 跳转edit
      */
     @RequestMapping("resource/edit")
-    public String resourceEdit(TresourceVo tresourceVo, HttpServletRequest request)
+    public String resourceEdit(String id, String parent, HttpServletRequest request)
     {
         //判断前台是否传递资源ID
         request.setAttribute("types", resourcetypeEbi.getAll());
-        if (!StringUtil.isEmpty(tresourceVo.getId()))
+        if (!StringUtil.isEmpty(id))
         {
             //根据资源ID获取资源完整信息从而进行数据回显
-            tresourceVo = resourceEbi.get(tresourceVo.getId());
-            if(tresourceVo.getParent()!=null){
+            TresourceVo tresourceVo = resourceEbi.get(id);
+            if (tresourceVo.getParent() != null)
+            {
                 request.setAttribute("parent", resourceEbi.get(tresourceVo.getParent().getId()));
             }
             request.setAttribute("resource", tresourceVo);
         }
+        if (!StringUtil.isEmpty(parent))
+        {
+            request.setAttribute("parent", resourceEbi.get(parent));
+
+        }
         //如果待编辑资源为空 则会传进来parent.id
-        request.setAttribute("parent", resourceEbi.get(tresourceVo.getParent().getId()));
 
         return "/manage/resource/edit";
     }
@@ -706,7 +705,7 @@ public class SystemManagerController extends BaseController
                 request.setAttribute(fieldError.getField() + "Error", fieldError.getDefaultMessage());
             }
             request.setAttribute("tresourceVo", tresourceVo);
-            return "/manage/resource/edit";
+            return "redirect:/back";
         }
         if (null == tresourceVo.getId() || "".equals(tresourceVo.getId().trim()))
         {

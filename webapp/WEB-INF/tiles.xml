@@ -172,11 +172,25 @@
         </put-list-attribute>
     </definition>
 
-
+    <definition name="/manage/paper/detail" extends="teacher_base">
+        <put-attribute name="body" value="/WEB-INF/jsp/manage/paper/detail.jsp"/>
+        <put-attribute name="title" value="试卷浏览"/>
+        <put-list-attribute name="additional-headers">
+            <add-attribute value="/WEB-INF/layout/additional-headers/highlight-header.jsp"/>
+        </put-list-attribute>
+    </definition>
 
     <definition name="/manage/paper/add" extends="teacher_base">
         <put-attribute name="body" value="/WEB-INF/jsp/manage/paper/add.jsp"/>
-        <put-attribute name="title" value="添加试卷主题"/>
+        <put-attribute name="title" value="添加试卷"/>
+    </definition>
+
+    <definition name="/manage/exam/detail" extends="teacher_base">
+        <put-attribute name="body" value="/WEB-INF/jsp/manage/exam/detail.jsp"/>
+        <put-attribute name="title" value="考试详情"/>
+        <put-list-attribute name="additional-headers">
+            <add-attribute value="/WEB-INF/layout/additional-headers/highlight-header.jsp"/>
+        </put-list-attribute>
     </definition>
 
 

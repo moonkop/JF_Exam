@@ -21,13 +21,7 @@
                 <a href="/paper"><i class="fa fa-bar-chart-o fa-fw"></i> 我的试卷</a>
             </li>
             <li>
-                <a href="#"><i class="fa fa-table fa-fw"></i> 发起考试</a>
-            </li>
-            <li>
-                <a href="#"><i class="fa fa-edit fa-fw"></i> 查看题库</a>
-            </li>
-            <li>
-                <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> 查看分数</a>
+                <a href="/exam/manage"><i class="fa fa-table fa-fw"></i> 我的考试</a>
             </li>
             <li>
                 <a href="#"><i class="fa fa-edit fa-fw"></i> 批改</a>

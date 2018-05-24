@@ -1,6 +1,8 @@
 package com.njmsita.exam.utils.json;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -8,7 +10,7 @@ public class JsonElement<T>
 {
     String key;
     String fieldPath;
-    Object nullValue=null;
+    Object nullValue = null;
     T object;
     CustomJsonElementFormater<T> formater;
 
@@ -34,12 +36,13 @@ public class JsonElement<T>
         {
             fieldPath = fieldRawString;
         }
-        this.key= key;
-        this.fieldPath=fieldPath;
+        this.key = key;
+        this.fieldPath = fieldPath;
     }
+
     public Object serialize(T object)
     {
-        this.object=object;
+        this.object = object;
         if (this.formater != null)
         {
             return formater.format(this.object);
@@ -57,21 +60,30 @@ public class JsonElement<T>
         {
             if (objtemp == null)
             {
-                objtemp=this.nullValue;
+                objtemp = this.nullValue;
                 break;
             }
             try
             {
                 Class<?> classType = objtemp.getClass();
-                Field field = classType.getDeclaredField(props);
-                field.setAccessible(true); // 抑制Java对修饰符的检查
-                objtemp = field.get(objtemp);
-            } catch (NoSuchFieldException e)
-            {
-                objtemp=null;
-            } catch (IllegalAccessException e)
-            {
+                //若为函数 则调用函数
+                if (props.indexOf("()") != -1)
+                {
+                   props= props.replace("()", "");
+                    Method method = classType.getDeclaredMethod(props);
+                    method.setAccessible(true);
+                    objtemp = method.invoke(objtemp);
+                } else
+                {
+                    Field field = classType.getDeclaredField(props);
+                    field.setAccessible(true); // 抑制Java对修饰符的检查
+                    objtemp = field.get(objtemp);
+                }
 
+            } catch (Exception e)
+            {
+                System.out.println(e.getMessage());
+                objtemp = null;
             }
         }
         return objtemp;

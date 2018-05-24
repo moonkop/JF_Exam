@@ -87,10 +87,10 @@
                 }
             )
         })
-        $("#select-question-teacher-filter").on("change", on_filter_change);
-        $("#select-question-type-filter").on("change", on_filter_change);
-        $("#checkbox-question-only-mine-filter").on("change", on_filter_change);
-        $("#checkbox-question-recursive-filter").on("change", on_filter_change);
+        $("#select-question-teacher-filter").on("change", question_manage_refresh_question_list);
+        $("#select-question-type-filter").on("change", question_manage_refresh_question_list);
+        $("#checkbox-question-only-mine-filter").on("change", question_manage_refresh_question_list);
+        $("#checkbox-question-recursive-filter").on("change", question_manage_refresh_question_list);
 
 
         function initTree()
@@ -100,7 +100,7 @@
                     get_jstree().open_all();
                 })
                 .on("activate_node.jstree", function (event, data) {
-                    on_filter_change();
+                    question_manage_refresh_question_list();
                 })
                 .jstree({
                     'core': {

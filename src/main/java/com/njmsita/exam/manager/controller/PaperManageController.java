@@ -90,27 +90,22 @@ public class PaperManageController
                 "id,title,[teacher]teacher.name,[subject]subject.name", paperEbi.getCount(paperQueryModel));
     }
 
-    /**
-     * @param paperVo
-     * @param request
-     *
-     * @return
-     *
-     * @throws Exception
-     */
-    @RequestMapping("edit")
-    public String editPaper(PaperVo paperVo, HttpServletRequest request) throws Exception
+    @RequestMapping("detail")
+    public String paperDetail(String id, HttpServletRequest request) throws OperationException
     {
-        if (StringUtil.isEmpty(paperVo.getId()))
+        if (StringUtil.isEmpty(id))
         {
             throw new OperationException("所选试卷不存在，请不要进行非法操作！");
         }
-        paperVo = paperEbi.get(paperVo.getId());
+        PaperVo paperVo = paperEbi.get(id);
         request.setAttribute("paper", paperVo);
-        JsonListResponse<QuestionVo> response = new JsonListResponse<QuestionVo>(paperVo.getQuestionList(),
-                "id,outline,options,value,code,index,type,answer", 0);
-        request.setAttribute("questionList", CustomJsonSerializer.toJsonString_static(response.getPayload().get("rows")));
-        return "/manage/paper/edit";
+        request.setAttribute("questionList", CustomJsonSerializer.toJsonString_static
+                (
+                        new JsonListResponse<QuestionVo>(paperVo.getQuestionList(),"id,outline,options,value,code,index,type,answer")
+                                .getJsonList()
+                )
+        );
+        return "/manage/paper/detail";
     }
 
 
@@ -122,10 +117,10 @@ public class PaperManageController
     }
 
 
-    @RequestMapping("manage/add.do")
+    @RequestMapping("add.do")
     @SystemLogAnnotation(module = "试卷管理", methods = "试卷添加/修改")
     public String paperAdd(PaperVo paperVo, BindingResult bindingResult,
-                             HttpServletRequest request,int subject_id) throws OperationException
+                           HttpServletRequest request, int subject_id) throws OperationException
     {
 
         TeacherVo teacherVo1 = new TeacherVo();
@@ -136,12 +131,12 @@ public class PaperManageController
         paperVo.setTeacher(teacherVo1);
         paperVo.setId(IdUtil.getUUID());
 
-        SubjectVo subjectVo=new SubjectVo();
+        SubjectVo subjectVo = new SubjectVo();
         subjectVo.setId(subject_id);
         paperVo.setSubject(subjectVo);
         paperEbi.save(paperVo);
 
-        return "redirect:/paper/edit?id="+paperVo.getId();
+        return "redirect:/paper/edit?id=" + paperVo.getId();
     }
 
 
@@ -176,11 +171,27 @@ public class PaperManageController
         }
     }
 
-    @ResponseBody
-    @RequestMapping("getPaper.do")
-    public JsonResponse getPaper(String id)
+    /**
+     * @param paperVo
+     * @param request
+     *
+     * @return
+     *
+     * @throws Exception
+     */
+    @RequestMapping("edit")
+    public String editPaper(PaperVo paperVo, HttpServletRequest request) throws Exception
     {
-        return new JsonObjectResponse<PaperVo>(paperEbi.get(id), "title,comment,id,questionList");
+        if (StringUtil.isEmpty(paperVo.getId()))
+        {
+            throw new OperationException("所选试卷不存在，请不要进行非法操作！");
+        }
+        paperVo = paperEbi.get(paperVo.getId());
+        request.setAttribute("paper", paperVo);
+        JsonListResponse<QuestionVo> response = new JsonListResponse<QuestionVo>(paperVo.getQuestionList(),
+                "id,outline,options,value,code,index,type,answer", 0);
+        request.setAttribute("questionList", CustomJsonSerializer.toJsonString_static(response.getPayload().get("rows")));
+        return "/manage/paper/edit";
     }
 
     @ResponseBody
@@ -211,5 +222,12 @@ public class PaperManageController
             paperEbi.delete(paperVo);
         }
         return new JsonResponse("删除成功");
+    }
+
+    @ResponseBody
+    @RequestMapping("getPaper.do")
+    public JsonResponse getPaper(String id)
+    {
+        return new JsonObjectResponse<PaperVo>(paperEbi.get(id), "title,comment,id,questionList");
     }
 }

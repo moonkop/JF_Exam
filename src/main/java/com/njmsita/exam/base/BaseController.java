@@ -7,6 +7,7 @@ import com.njmsita.exam.authentic.service.ebi.ResourceEbi;
 import com.njmsita.exam.authentic.service.ebi.RoleEbi;
 import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.json.JsonResponse;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -67,6 +68,7 @@ public class BaseController{
 		UserModel login= (UserModel) request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
 		TroleVo troleVo=roleEbi.get(login.getUserRole());
 		List<TresourceVo> loginMenu=resourceEbi.getMenuByRole(troleVo.getId());
+
 		for (TresourceVo menu : loginMenu)
 		{
 			menu.setParent(null);

@@ -130,3 +130,10 @@ function defaultOnFailure(res)
 }
 
 layer.config({skin: 'layui-layer-exam'});
+$(document).ready(function()
+{
+    $(".js-back").on("click",function()
+    {
+        window.history.go(-1);
+    })
+})

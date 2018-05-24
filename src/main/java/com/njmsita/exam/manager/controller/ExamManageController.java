@@ -7,14 +7,17 @@ import com.njmsita.exam.manager.model.querymodel.ExamQueryModel;
 import com.njmsita.exam.manager.service.ebi.ExamEbi;
 import com.njmsita.exam.manager.service.ebi.PaperEbi;
 import com.njmsita.exam.manager.service.ebi.SubjectEbi;
+import com.njmsita.exam.manager.service.ebo.ExamEbo;
 import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.idutil.IdUtil;
+import com.njmsita.exam.utils.json.CustomJsonSerializer;
 import com.njmsita.exam.utils.json.JsonListResponse;
 import com.njmsita.exam.utils.json.JsonResponse;
 import com.njmsita.exam.utils.logutils.SystemLogAnnotation;
 import com.njmsita.exam.utils.validate.validategroup.AddGroup;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -74,7 +77,35 @@ public class ExamManageController
             }
             request.setAttribute("examVo",temp);
         }
-        return "manage/exam/edit";
+        return "/manage/exam/edit";
+    }
+    @RequestMapping("detail")
+    public String examDetail(String id,HttpServletRequest request) throws OperationException
+    {
+        if (StringUtil.isEmpty(id))
+        {
+            throw new OperationException("该考试不存在");
+        }
+
+        ExamVo examVo = examEbi.get(id);
+        Hibernate.initialize(examVo.getCreateTeacher());
+        if (examVo == null)
+        {
+            throw new OperationException("该考试不存在");
+        }
+        request.setAttribute("exam", examVo);
+        if (examVo.getPaperVo() != null)
+        {
+            request.setAttribute("paper", examVo.getPaperVo());
+            request.setAttribute("questionList", CustomJsonSerializer.toJsonString_static
+                    (
+                            new JsonListResponse<QuestionVo>(examVo.getPaperVo().getQuestionList(),"id,outline,options,value,code,index,type,answer")
+                                    .getJsonList()
+                    )
+            );
+        }
+
+        return "/manage/exam/detail";
     }
 
     /**
@@ -146,12 +177,11 @@ public class ExamManageController
      * @param request
      * @return
      */
-    @RequestMapping("toList")
+    @RequestMapping("")
     public String toList(HttpServletRequest request){
 
         request.setAttribute("subjectList",subjectEbi.getAll());
         request.setAttribute("teacherList",teacherEbi.getAll());
-        request.setAttribute("examList",examEbi.getAll());
         return "manage/exam/list";
     }
 
@@ -169,7 +199,7 @@ public class ExamManageController
     {
         TeacherVo login= (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
         return new JsonListResponse<ExamVo>(examEbi.getAllByAdmin(login.getId(),examQueryModel,pageNum,pageSize),
-                "id,name,opentime,duration,remark,operation,[teacher]createTeacher.name,[subject]subjectVo.name,examStatusView",0);
+                "id,name,openTime,duration,remark,operation,[teacher]getCreateTeacher().getName(),[subject]subjectVo.name,examStatusView",0);
     }
 
 }

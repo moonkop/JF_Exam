@@ -66,7 +66,7 @@
             <div class="comment"></div>
         </div>
 
-        <div class="paper-question-list">
+        <div class="question-list">
 
         </div>
 
@@ -92,9 +92,9 @@
             }
         },
         paper: {
-            id:'${paper.id}',
-            title:'${paper.title}',
-            comment:'${paper.comment}',
+            id: '${paper.id}',
+            title: '${paper.title}',
+            comment: '${paper.comment}',
             questionList:${questionList},
         }
     };
@@ -102,15 +102,15 @@
 
     $(document).ready(
         function () {
-            $("#select-question-teacher-filter").on("change", on_filter_change);
-            $("#select-question-type-filter").on("change", on_filter_change);
-            $("#checkbox-question-only-mine-filter").on("change", on_filter_change);
-            $("#checkbox-question-recursive-filter").on("change", on_filter_change);
+            $("#select-question-teacher-filter").on("change", question_manage_refresh_question_list);
+            $("#select-question-type-filter").on("change", question_manage_refresh_question_list);
+            $("#checkbox-question-only-mine-filter").on("change", question_manage_refresh_question_list);
+            $("#checkbox-question-recursive-filter").on("change", question_manage_refresh_question_list);
             $("#js-btn-edit-title").on("click", function () {
-                on_edit_title_click();
+                paper_edit_on_edit_title();
             })
             $("#js-btn-submit").on("click", function () {
-                on_paper_edit_submit_click()
+                paper_edit_on_submit()
             })
             $(".side-visible-line").click();
 
@@ -121,7 +121,7 @@
                         get_jstree().open_all();
                     })
                     .on("activate_node.jstree", function (event, data) {
-                        on_filter_change();
+                        question_manage_refresh_question_list();
                     })
                     .jstree({
                         'core': {
@@ -155,15 +155,74 @@
                     });
 
             }
-
-
             initTree();
             getResourceTree(9);
             render_paper_title();
-            render_paper_question_list();
+            paper_edit_render_question_list();
+            question_manage_bind_actions();
+
+            $(".paper-edit .question-list").on("click", ".js-question-move-up", function (sender) {
+                var question = app.paper.questionList[$(this).parents('.panel-question').attr("data-index")];
+                move_up(app.paper.questionList, question.index);
+                paper_edit_render_question_list();
+            });
+            $(".paper-edit .question-list").on("click", ".js-question-move-down", function (sender) {
+                var question = app.paper.questionList[$(this).parents('.panel-question').attr("data-index")];
+                move_down(app.paper.questionList, question.index);
+                paper_edit_render_question_list();
+            });
+            $(".paper-edit .question-list").on("click", ".js-question-view", function (sender) {
+                var question = app.paper.questionList[$(this).parents('.panel-question').attr("data-index")];
+            });
+            $(".paper-edit .question-list").on("click", ".js-question-delete", function (sender) {
+                var question = app.paper.questionList[$(this).parents('.panel-question').attr("data-index")];
+                app.paper.questionList.splice(question.index, 1);
+                paper_edit_render_question_list();
+                layer.msg('删除成功');
+            });
+            $(".paper-edit .question-list").on("click", ".js-question-edit", function (sender) {
+                var question = app.paper.questionList[$(this).parents('.panel-question').attr("data-index")];
+                app.currentLayerIndex = layer.open(
+                    {
+                        type: 5,
+                        shadeClose: true, //点击遮罩关闭
+                        closeBtn: 2,
+                        title: '题目编辑',
+                        area: ['800px', '600px'],
+                        content: "",
+                        success: function (a) {
+                            a.find('.layui-layer-content').append(paper_edit_render_question_edit(question));
+                        },
+                        end: function () {
+
+                        }
+                    }
+                )
+            });
         }
     )
 
+    // 交换数组元素
+    var swapItems = function (arr, index1, index2) {
+        arr[index1] = arr.splice(index2, 1, arr[index1])[0];
+        return arr;
+    };
+    // 上移
+    move_up = function (arr, $index) {
+        if ($index == 0)
+        {
+            return;
+        }
+        swapItems(arr, $index, $index - 1);
+    };
+    // 下移
+    move_down = function (arr, $index) {
+        if ($index == arr.length - 1)
+        {
+            return;
+        }
+        swapItems(arr, $index, $index + 1);
+    };
     function getResourceTree(subjectid)
     {
         $.ajax({
@@ -178,15 +237,7 @@
         })
     }
 
-    function question_add_to_paper()
-    {
 
-    }
-
-    function renderPaper(paper)
-    {
-
-    }
 
 </script>
 

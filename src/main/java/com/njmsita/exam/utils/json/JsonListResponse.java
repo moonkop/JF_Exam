@@ -3,7 +3,6 @@ package com.njmsita.exam.utils.json;
 import org.codehaus.jackson.annotate.JsonIgnore;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,12 +41,21 @@ public class JsonListResponse<T> extends JsonObjectResponse<T>
         this(raw, fields, total, false);
     }
 
+    public JsonListResponse(List<T> raw, String fields)
+    {
+        this(raw, fields, raw.size());
+    }
+
     public JsonListResponse<T> setRaw(List<T> raw)
     {
         this.raw = raw;
         return this;
     }
 
+    public List<Map<String, Object>> getJsonList()
+    {
+        return rows;
+    }
     @Override
     public JsonListResponse<T> addCustomJsonElementFormater(String key, CustomJsonElementFormater<T> formater)
     {
@@ -71,19 +79,23 @@ public class JsonListResponse<T> extends JsonObjectResponse<T>
 
     public JsonListResponse<T> serialize()
     {
-        try
+        if (this.raw != null)
         {
-            for (T obj : raw)
+            try
             {
-                Map<String, Object> row = this.serializeObject(obj);
-                rows.add(row);
-            }
-            this.payload.put("rows", rows);
+                for (T obj : raw)
+                {
+                    Map<String, Object> row = this.serializeObject(obj);
+                    rows.add(row);
+                }
 
-        } catch (Exception e)
-        {
-            e.printStackTrace();
+
+            } catch (Exception e)
+            {
+                e.printStackTrace();
+            }
         }
+        this.payload.put("rows", rows);
         return this;
     }
 

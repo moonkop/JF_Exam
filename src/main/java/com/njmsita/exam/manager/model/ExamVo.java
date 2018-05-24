@@ -29,9 +29,13 @@ public class ExamVo
     }
 
     private String id;
-    private Long closeTime;
+    //时间戳 考试开启时间
     private Long openTime;
+    //时间戳 考试入口关闭时间
+    private Long closeTime;
+    //考试持续时间
     private Integer duration;
+
     private String classroomIds;
     private String remark;
     private String name;
