@@ -195,6 +195,13 @@
 
 
 
+    <definition name="manage/exam/list" extends="teacher_base">
+        <put-attribute name="body" value="/WEB-INF/jsp/manage/exam/list.jsp"/>
+        <put-attribute name="title" value="我的考试"/>
+    </definition>
+
+
+
     <definition name="/index_teacher" extends="teacher_base">
         <put-attribute name="body" value="/WEB-INF/jsp/index_teacher.jsp"/>
     </definition>

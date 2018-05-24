@@ -198,8 +198,17 @@ public class ExamManageController
                              HttpServletRequest request) throws Exception
     {
         TeacherVo login= (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
-        return new JsonListResponse<ExamVo>(examEbi.getAllByAdmin(login.getId(),examQueryModel,pageNum,pageSize),
-                "id,name,openTime,duration,remark,operation,[teacher]getCreateTeacher().getName(),[subject]subjectVo.name,examStatusView",0);
+        List<ExamVo> list=examEbi.getAllByAdmin(login.getId(),examQueryModel,pageNum,pageSize);
+        for (ExamVo exam :
+                list)
+        {
+            TeacherVo teacherVo = exam.getCreateTeacher();
+            System.out.println(teacherVo.getName());
+            exam.setCreateTeacher(teacherVo);
+        }
+
+        return new JsonListResponse<ExamVo>(list,
+                "id,name,openTime,duration,remark,operation,[teacher]getCreateTeacher().getName(),[subject]subjectVo.name,examStatusView",examEbi.getCount(examQueryModel));
     }
 
 }
