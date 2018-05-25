@@ -128,15 +128,15 @@
 
 
     <definition name="/manage/bank/questionType/list" extends="teacher_base">
-        <put-attribute name="body" value="/WEB-INF/jsp/manage/bank/questiontype/list.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/manage/bank/questionType/list.jsp"/>
         <put-attribute name="title" value="题型管理"/>
     </definition>
     <definition name="/manage/bank/questionType/edit" extends="teacher_base">
-        <put-attribute name="body" value="/WEB-INF/jsp/manage/bank/questiontype/edit.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/manage/bank/questionType/edit.jsp"/>
         <put-attribute name="title" value="题型管理 - 编辑"/>
     </definition>
     <definition name="/manage/bank/questionType/detail" extends="teacher_base">
-        <put-attribute name="body" value="/WEB-INF/jsp/manage/bank/questiontype/detail.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/manage/bank/questionType/detail.jsp"/>
         <put-attribute name="title" value="题型管理 - 详情"/>
     </definition>
 

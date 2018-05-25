@@ -12,6 +12,7 @@ import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.idutil.IdUtil;
+import com.njmsita.exam.utils.json.CustomJsonElementFormater;
 import com.njmsita.exam.utils.json.CustomJsonSerializer;
 import com.njmsita.exam.utils.json.JsonListResponse;
 import com.njmsita.exam.utils.json.JsonResponse;
@@ -27,6 +28,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -206,6 +210,10 @@ public class ExamManageController
             System.out.println(teacherVo.getName());
             exam.setCreateTeacher(teacherVo);
         }
+
+
+
+
 
         return new JsonListResponse<ExamVo>(list,
                 "id,name,openTime,duration,remark,operation,[teacher]getCreateTeacher().getName(),[subject]subjectVo.name,examStatusView",examEbi.getCount(examQueryModel));

@@ -25,7 +25,7 @@ public interface ExamEbi extends BaseEbi<ExamVo>
      * @param classroomIds  参加班级
      * @param paperId       试卷id
      */
-    public void save(ExamVo examVo, String[] markTeachers,String paperId ,String[] classroomIds) throws OperationException;
+    public void save(ExamVo examVo, String[] markTeachers,String paperId,String[] classroomIds) throws OperationException;
 
     /**
      * 修改考试

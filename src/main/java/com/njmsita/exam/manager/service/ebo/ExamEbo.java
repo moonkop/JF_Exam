@@ -569,7 +569,7 @@ public class ExamEbo implements ExamEbi
      */
     private void roleValid(TeacherVo teacherVo) throws OperationException
     {
-        if(teacherVo.getRole().getId()!=SysConsts.ADMIN_ROLE_ID){
+        if(!SysConsts.ADMIN_ROLE_ID.equals(teacherVo.getRole().getId())  ){
             throw new OperationException("您不是管理员，请不要进行非法操作！");
         }
     }

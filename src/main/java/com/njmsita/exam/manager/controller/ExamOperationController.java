@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -144,12 +145,13 @@ public class ExamOperationController
     @RequestMapping("cancel")
     @ResponseBody
     @SystemLogAnnotation(module = "考试管理", methods = "取消考试")
-    public JsonResponse cancel(ExamVo examVo, HttpServletRequest request) throws Exception
+    public JsonResponse cancel(ExamVo examVo, HttpSession session) throws Exception
     {
         if(StringUtil.isEmpty(examVo.getId())){
             throw new OperationException("所选的该场考试的id不能为空，请不要进行非法操作！");
         }
-        examEbi.cancel(examVo,(TeacherVo)request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME));
+        TeacherVo teacherVo= (TeacherVo) session.getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
+        examEbi.cancel(examVo,teacherVo);
         return new JsonResponse("取消成功");
     }
 
