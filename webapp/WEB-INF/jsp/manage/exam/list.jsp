@@ -14,31 +14,6 @@
         <script>
 
 
-            window.operateEvents = {
-                'click .js-edit': function (e, value, row, index) {
-                    window.location.href = "/exam/manage/edit?id=" + row.id;
-                },
-                'click .js-view': function (e, value, row, index) {
-                    window.location.href = "/exam/manage/detail?id=" + row.id;
-                },
-                'click .js-cel': function (e, value, row, index) {
-                    if (confirm("确定要取消本场考试吗？") == true)
-                    {
-                        $.ajax(
-                            {
-                                url: '/exam/operation/cancel?id=' + row.id,
-                                type: "post",
-                                success: function (res) {
-                                    OnResult(res);
-                                    $("#table").bootstrapTable('refresh');
-                                }
-                            }
-                        );
-
-                    }
-                }
-            };
-
 
             $(document).ready(
                 function () {
@@ -98,50 +73,76 @@
                                 {
                                     field: 'examStatusView',
                                     title: '状态',
+
                                     formatter: function (value, row, index) {
                                         var temp = value;
-                                        var html = "";
-                                        if (temp == "待审核")
-                                        {
-                                            html = '<span class="label label-danger">待审核</span>\n';
+                                        var dic = {
+                                            '待审核': 'label-warning',
+                                            '未开始': 'label-success',
+                                            '待修改': 'label-warning',
+                                            '开启考试': 'label-info',
+                                            '进行中': 'label-danger',
+                                            '阅卷中': 'label-danger',
+                                            '取消': 'label-warning',
+                                            '结束': 'label-success',
                                         }
-                                        if(temp=="未开始"){
-                                            html ='<span class="label label-warning">未开始</span>\n';
-                                        }
-                                        if(temp=="待修改"){
-                                            html ='<span class="label label-warning">待修改</span>\n';
-                                        }
-                                        if(temp=="开启考试"){
-                                            html ='<span class="label label-warning">开启考试</span>\n';
-                                        }
-                                        if(temp=="进行中"){
-                                            html ='<span class="label label-warning">进行中</span>\n';
-                                        }
-                                        if(temp=="阅卷中"){
-                                            html ='<span class="label label-warning">阅卷中</span>\n';
-                                        }
-                                        if(temp=="取消"){
-                                            html ='<span class="label label-warning">取消</span>\n';
-                                        }
-                                        if(temp=="结束"){
-                                            html ='<span class="label label-warning">结束</span>\n';
-                                        }
+                                        var html = "<span class='label " + dic[temp] + "'>" + temp + "</span>";
                                         return html;
                                     }
-
-
                                 },
                                 {
-                                    field: 'action',
+                                    field: 'operation',
                                     title: '操作',
-                                    events: operateEvents,
-                                    formatter: function (value, row, index) {
-                                        var html = '';
+                                    events: {
+                                        'click .js-edit': function (e, value, row, index) {
+                                            window.location.href = "/exam/manage/edit?id=" + row.id;
+                                        },
+                                        'click .js-view': function (e, value, row, index) {
+                                            window.location.href = "/exam/manage/detail?id=" + row.id;
+                                        },
+                                        'click .js-cel': function (e, value, row, index) {
+                                            if (confirm("确定要取消本场考试吗？") == true)
+                                            {
+                                                $.ajax(
+                                                    {
+                                                        url: '/exam/operation/cancel?id=' + row.id,
+                                                        type: "post",
+                                                        success: function (res) {
+                                                            OnResult(res);
+                                                            $("#table").bootstrapTable('refresh');
+                                                        }
+                                                    }
+                                                );
 
-                                        html += '<i class="fa fa-search del js-view cursor" title="预览"></i>';
-                                        html += '<i class="fa fa-pencil edit js-edit cursor " title="修改"></i>';
-                                        html += '<i class="fa fa-times cancel js-cel cursor" title="取消"></i>';
-                                        html += '<i class="fa fa-plus js-add cursor" title="添加批卷教师"></i>';
+                                            }
+                                        }
+                                    },
+                                    formatter: function (value, row, index) {
+                                        var act = value; var html = '';
+                                        for (var i = 0; i < act.length; i++)
+                                        {
+
+
+                                            if (act[i] == "view")
+                                            {
+                                                html += '<i class="fa fa-search del js-view cursor" title="预览"></i>';
+
+                                            }
+                                            if (act[i] == "edit")
+                                            {
+                                                html += '<i class="fa fa-pencil edit js-edit cursor " title="修改"></i>';
+
+                                            }
+                                            if (act[i]=="cancle")
+                                            {
+                                                html += '<i class="fa fa-times cancel js-cel cursor" title="取消"></i>';
+
+                                            }
+                                            if (act[i]=="addMarkTeacher")
+                                            {
+                                                html += '<i class="fa fa-plus js-add cursor" title="添加批卷教师"></i>';
+                                            }
+                                        }
                                         return html;
                                     }
                                 }
