@@ -2,6 +2,7 @@ package com.njmsita.exam.manager.model;
 
 import com.njmsita.exam.authentic.model.TeacherVo;
 import com.njmsita.exam.utils.consts.SysConsts;
+
 import javax.persistence.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,43 +17,69 @@ import java.util.Set;
 public class ExamVo
 {
     //状态码与状态视图对应的map
-    private static Map<Integer,String> examStatuMap = new HashMap<>();
-    static {
-        examStatuMap.put(SysConsts.EXAM_STATUS_NO_CHECK,SysConsts.EXAM_STATUS_NO_CHECK_VIEW);
-        examStatuMap.put(SysConsts.EXAM_STATUS_PASS,SysConsts.EXAM_STATUS_PASS_VIEW);
-        examStatuMap.put(SysConsts.EXAM_STATUS_NO_PASS,SysConsts.EXAM_STATUS_NO_PASS_VIEW);
-        examStatuMap.put(SysConsts.EXAM_STATUS_OPEN,SysConsts.EXAM_STATUS_OPEN_VIEW);
-        examStatuMap.put(SysConsts.EXAM_STATUS_CLOSE,SysConsts.EXAM_STATUS_CLOSE_VIEW);
-        examStatuMap.put(SysConsts.EXAM_STATUS_IN_MARK,SysConsts.EXAM_STATUS_IN_MARK_VIEW);
-        examStatuMap.put(SysConsts.EXAM_STATUS_IN_CANCEL,SysConsts.EXAM_STATUS_IN_CANCEL_VIEW);
-        examStatuMap.put(SysConsts.EXAM_STATUS_ENDING,SysConsts.EXAM_STATUS_ENDING_VIEW);
+    private static Map<Integer, String> examStatuMap = new HashMap<>();
+
+    static
+    {
+        examStatuMap.put(SysConsts.EXAM_STATUS_NO_CHECK, SysConsts.EXAM_STATUS_NO_CHECK_VIEW);
+        examStatuMap.put(SysConsts.EXAM_STATUS_PASS, SysConsts.EXAM_STATUS_PASS_VIEW);
+        examStatuMap.put(SysConsts.EXAM_STATUS_NO_PASS, SysConsts.EXAM_STATUS_NO_PASS_VIEW);
+        examStatuMap.put(SysConsts.EXAM_STATUS_OPEN, SysConsts.EXAM_STATUS_OPEN_VIEW);
+        examStatuMap.put(SysConsts.EXAM_STATUS_CLOSE, SysConsts.EXAM_STATUS_CLOSE_VIEW);
+        examStatuMap.put(SysConsts.EXAM_STATUS_IN_MARK, SysConsts.EXAM_STATUS_IN_MARK_VIEW);
+        examStatuMap.put(SysConsts.EXAM_STATUS_IN_CANCEL, SysConsts.EXAM_STATUS_IN_CANCEL_VIEW);
+        examStatuMap.put(SysConsts.EXAM_STATUS_ENDING, SysConsts.EXAM_STATUS_ENDING_VIEW);
     }
 
     private String id;
     //时间戳 考试开启时间
     private Long openTime;
-    //时间戳 考试入口关闭时间
+    //考试入口开放时间 单位分钟
+    private Integer openDuration;
+    //时间戳 考试最终关闭时间（阅卷时间）
     private Long closeTime;
-    //考试持续时间
+    //考试作答时间 单位分钟、
     private Integer duration;
-
     private String classroomIds;
     private String remark;
     private String name;
     //该考试对应状态下的操作
-    private Set<String> operation;
-    //发起考试的教师
     private TeacherVo createTeacher;
+    //发起考试的教师
+    private SubjectVo subject;
     //所属科目  n  TO  1
-    private SubjectVo subjectVo;
-    //阅卷教师  n  TO  m
     private Set<TeacherVo> markTeachers;
+    //阅卷教师  n  TO  m
     private Integer examStatus;
     //考试状态视图值
+    @Transient
     private String examStatusView;
-
     //MongoDB中的ExamPaper
+    @Transient
     private PaperVo paperVo;
+    @Transient
+    private Set<String> operation;
+
+    @Transient
+    public String[] getClassroomIdArray()
+    {
+        return this.classroomIds.split(",");
+    }
+
+    public void setClassroomIdArray(String[] classroomIdArray)
+    {
+        this.classroomIds = String.join(",", classroomIdArray);
+    }
+
+    public Integer getOpenDuration()
+    {
+        return openDuration;
+    }
+
+    public void setOpenDuration(Integer openDuration)
+    {
+        this.openDuration = openDuration;
+    }
 
     public PaperVo getPaperVo()
     {
@@ -78,6 +105,8 @@ public class ExamVo
     {
         return examStatusView;
     }
+
+
 
     @Basic
     @Column(name = "name")
@@ -127,14 +156,14 @@ public class ExamVo
 
     @Basic
     @Column(name = "subject_id")
-    public SubjectVo getSubjectVo()
+    public SubjectVo getSubject()
     {
-        return subjectVo;
+        return subject;
     }
 
-    public void setSubjectVo(SubjectVo subjectVo)
+    public void setSubject(SubjectVo subjectVo)
     {
-        this.subjectVo = subjectVo;
+        this.subject = subjectVo;
     }
 
     @Id
@@ -195,8 +224,9 @@ public class ExamVo
     public void setExamStatus(Integer examStatus)
     {
         this.examStatus = examStatus;
-        if(examStatus!=null){
-            this.examStatusView=examStatuMap.get(examStatus);
+        if (examStatus != null)
+        {
+            this.examStatusView = examStatuMap.get(examStatus);
         }
     }
 
@@ -213,7 +243,6 @@ public class ExamVo
     }
 
 
-
     @Override
     public int hashCode()
     {
@@ -227,7 +256,7 @@ public class ExamVo
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ExamVo examVo = (ExamVo) o;
-        return  Objects.equals(id, examVo.id) &&
+        return Objects.equals(id, examVo.id) &&
                 Objects.equals(closeTime, examVo.closeTime) &&
                 Objects.equals(openTime, examVo.openTime) &&
                 Objects.equals(duration, examVo.duration) &&

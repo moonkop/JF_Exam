@@ -35,7 +35,6 @@ public class JsonListResponse<T> extends JsonObjectResponse<T>
         this.put("total", total);
     }
 
-
     public JsonListResponse(List<T> raw, String fields, int total)
     {
         this(raw, fields, total, false);

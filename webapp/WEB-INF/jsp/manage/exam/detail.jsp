@@ -4,7 +4,7 @@
 <div class="row">
     <div class="col-lg-12">
         <h3>
-            学校管理 - 详细信息
+            考试详情
         </h3>
         <div class="panel panel-primary main-panel">
             <div class="panel-body">
@@ -36,7 +36,17 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="col-sm-2 control-label">持续时间</label>
+                                <label class="col-sm-2 control-label">答题时间</label>
+                                <div class="col-sm-8">
+                                    <p class="form-control-static">${exam.duration}</p>
+                                </div>
+                            </div>      <div class="form-group">
+                                <label class="col-sm-2 control-label">答题时间</label>
+                                <div class="col-sm-8">
+                                    <p class="form-control-static">${exam.duration}</p>
+                                </div>
+                            </div>      <div class="form-group">
+                                <label class="col-sm-2 control-label">答题时间</label>
                                 <div class="col-sm-8">
                                     <p class="form-control-static">${exam.duration}</p>
                                 </div>
@@ -50,7 +60,7 @@
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">考试科目</label>
                                 <div class="col-sm-8">
-                                    <p class="form-control-static">${exam.subjectVo.name}</p>
+                                    <p class="form-control-static">${exam.subject.name}</p>
                                 </div>
                             </div>
                             <div class="form-group">

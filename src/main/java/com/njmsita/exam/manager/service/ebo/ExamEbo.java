@@ -127,9 +127,11 @@ public class ExamEbo implements ExamEbi
         temp.setOpenTime(examVo.getOpenTime());
         temp.setDuration(examVo.getDuration());
         temp.setClassroomIds(examVo.getClassroomIds());
-        temp.setMarkTeachers(examVo.getMarkTeachers());
-        temp.setSubjectVo(examVo.getSubjectVo());
-        temp.setCreateTeacher(examVo.getCreateTeacher());
+        temp.setSubject(examVo.getSubject());
+        temp.setName(examVo.getName());
+        temp.setPaperVo(temp.getPaperVo());
+        temp.setOpenDuration(temp.getOpenDuration());
+        temp.setRemark(examVo.getRemark());
 
         updatePaperFromMongoExamPaper(examVo);
     }
@@ -658,10 +660,10 @@ public class ExamEbo implements ExamEbi
      */
     private void infoValid(ExamVo examVo, String[] markTeachers,String paperId ,String[] classroomIds) throws OperationException
     {
-        if(examVo.getSubjectVo()==null){
+        if(examVo.getSubject()==null){
             throw new OperationException("科目不能为空,请不要进行非法操作！");
         }
-        if (examVo.getSubjectVo().getId()==null||examVo.getSubjectVo().getId()==0){
+        if (examVo.getSubject().getId()==null||examVo.getSubject().getId()==0){
             throw new OperationException("科目不能为空,请不要进行非法操作！");
         }
         if(classroomIds==null||classroomIds.length==0){
@@ -671,7 +673,7 @@ public class ExamEbo implements ExamEbi
             throw new OperationException("试卷不能为空,请不要进行非法操作！");
         }
         PaperVo paperVo=paperMongoDao.queryOne(new Query(Criteria.where("id").is(paperId)));
-        SubjectVo temp= subjectDao.get(examVo.getSubjectVo().getId());
+        SubjectVo temp= subjectDao.get(examVo.getSubject().getId());
         if(paperVo==null){
             throw new OperationException("所选择的试卷不存在,请不要进行非法操作！");
         }
@@ -704,7 +706,7 @@ public class ExamEbo implements ExamEbi
         }
         JSONArray jsonObject=JSONArray.fromObject(map);
         examVo.setPaperVo(paperVo);
-        examVo.setSubjectVo(temp);
+        examVo.setSubject(temp);
         examVo.setMarkTeachers(teacherSet);
         examVo.setClassroomIds(jsonObject.toString());
     }

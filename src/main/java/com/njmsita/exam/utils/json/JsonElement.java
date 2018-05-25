@@ -63,9 +63,9 @@ public class JsonElement<T>
                 objtemp = this.nullValue;
                 break;
             }
+            Class<?> classType = objtemp.getClass();
             try
             {
-                Class<?> classType = objtemp.getClass();
                 //若为函数 则调用函数
                 if (props.indexOf("()") != -1)
                 {
@@ -82,7 +82,8 @@ public class JsonElement<T>
 
             } catch (Exception e)
             {
-                System.out.println(e.getMessage());
+                String message= e.getClass()+"  "+e.getMessage()+" in class:"+classType.getName();
+                System.out.println(message);
                 objtemp = null;
             }
         }

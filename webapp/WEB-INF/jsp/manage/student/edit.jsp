@@ -25,22 +25,6 @@
                                     <input type="text" class="form-control" id="id" name="id" style="display: none"
                                            value="${student.id}">
 
-
-                                    <div class="form-group">
-                                        <label for="selectSchool" class="col-sm-2 control-label">学校</label>
-
-                                        <div class="col-sm-8">
-                                            <select name="schoolID" id="selectSchool" class="form-control" >
-                                                <c:forEach items="${requestScope.schools}" var="subject" >
-                                                    <option value="${subject.id}"
-                                                            <c:if test="${student.school==subject}">selected</c:if>   >
-                                                            ${subject.name}
-                                                    </option>
-                                                </c:forEach>
-                                            </select>
-                                        </div>
-                                    </div>
-
                                     <script>
                                         $(document).ready(function () {
                                             function refreshClassroomSelect()
@@ -71,7 +55,7 @@
                                     </script>
 
                                     <div class="form-group">
-                                        <label for="selectSchool" class="col-sm-2 control-label">班级</label>
+                                        <label for="selectClassroom" class="col-sm-2 control-label">班级</label>
 
                                         <div class="col-sm-8">
                                             <select name="classroomID" id="selectClassroom" class="form-control" >

@@ -3,8 +3,10 @@ package com.njmsita.exam.manager.dao.impl;
 import com.njmsita.exam.base.BaseQueryVO;
 import com.njmsita.exam.manager.dao.dao.PaperMongoDao;
 import com.njmsita.exam.manager.model.PaperVo;
+import com.njmsita.exam.manager.model.querymodel.PaperQueryModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
@@ -16,7 +18,15 @@ public class PaperMongoDaoImpl implements PaperMongoDao {
     private MongoTemplate mongoTemplate;
 
     public void doCriteria(BaseQueryVO qm,Query query){
-
+        PaperQueryModel paperQueryModel= (PaperQueryModel) qm;
+        if (paperQueryModel.getSubject() != null)
+        {
+            query.addCriteria(Criteria.where("subject.id").is(paperQueryModel.getSubject().getId()));
+        }
+        if (paperQueryModel.getTeacher() != null)
+        {
+            query.addCriteria(Criteria.where("teacher.id").is(paperQueryModel.getSubject().getId()));
+        }
     }
     public void insert(PaperVo paperVo) {
         this.mongoTemplate.insert(paperVo);

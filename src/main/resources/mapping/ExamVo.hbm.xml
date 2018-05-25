@@ -8,6 +8,7 @@
         <id name="id" column="id"/>
         <property name="closeTime" column="close_time"/>
         <property name="openTime" column="open_time"/>
+        <property name="openDuration" column="open_duration"/>
         <property name="duration" column="duration"/>
         <property name="examStatus" column="exam_status"/>
         <!--<property name="paperContent" column="paper_content"/>-->
@@ -17,7 +18,7 @@
 
         <many-to-one name="createTeacher" column="create_teacher_id" class="com.njmsita.exam.authentic.model.TeacherVo"/>
 
-        <many-to-one name="subjectVo" column="subject_id" class="com.njmsita.exam.manager.model.SubjectVo" lazy="false"/>
+        <many-to-one name="subject" column="subject_id" class="com.njmsita.exam.manager.model.SubjectVo" lazy="false"/>
 
         <set name="markTeachers" table="exam_markteacher" lazy="false">
             <key column="exam_id"></key>

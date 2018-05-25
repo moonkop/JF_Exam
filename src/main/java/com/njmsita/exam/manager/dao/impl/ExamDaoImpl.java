@@ -22,11 +22,11 @@ public class ExamDaoImpl extends BaseImpl<ExamVo> implements ExamDao
     public void doQbc(DetachedCriteria dc, BaseQueryVO qm)
     {
         ExamQueryModel eqm= (ExamQueryModel) qm;
-        if(eqm.getSubjectVo()!=null
-                && eqm.getSubjectVo().getId()!=null
-                && eqm.getSubjectVo().getId()!=0){
+        if(eqm.getSubject()!=null
+                && eqm.getSubject().getId()!=null
+                && eqm.getSubject().getId()!=0){
             dc.createAlias("subjectVo","sb");
-            dc.add(Restrictions.eq("sb.id",eqm.getSubjectVo().getId()));
+            dc.add(Restrictions.eq("sb.id",eqm.getSubject().getId()));
         }
         if(eqm.getCreateTeacher()!=null&& StringUtil.isEmpty(eqm.getCreateTeacher().getId())){
             dc.createAlias("createTeacher","cre");
