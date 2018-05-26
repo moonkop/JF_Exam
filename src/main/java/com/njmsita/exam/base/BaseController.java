@@ -6,16 +6,12 @@ import com.njmsita.exam.authentic.model.UserModel;
 import com.njmsita.exam.authentic.service.ebi.ResourceEbi;
 import com.njmsita.exam.authentic.service.ebi.RoleEbi;
 import com.njmsita.exam.utils.consts.SysConsts;
-import com.njmsita.exam.utils.json.JsonResponse;
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -65,7 +61,7 @@ public class BaseController{
 	 */
 	public void getLoginMenu(HttpServletRequest request){
 
-		UserModel login= (UserModel) request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
+		UserModel login= (UserModel) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
 		TroleVo troleVo=roleEbi.get(login.getUserRole());
 		List<TresourceVo> loginMenu=resourceEbi.getMenuByRole(troleVo.getId());
 

@@ -101,7 +101,7 @@ public class LogAopAspect
                 SystemLogAnnotation systemlog = method.getAnnotation(SystemLogAnnotation.class);
                 log.setModule(systemlog.module());
                 log.setMethod(systemlog.methods());
-                UserModel user = (UserModel) request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
+                UserModel user = (UserModel) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
                 if (user == null)
                 {
                     throw new UnLoginException("登录信息失效，请重新登录");

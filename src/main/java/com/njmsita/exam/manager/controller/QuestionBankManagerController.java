@@ -26,10 +26,8 @@ import com.njmsita.exam.utils.idutil.IdUtil;
 import com.njmsita.exam.utils.logutils.SystemLogAnnotation;
 import com.njmsita.exam.utils.ping4j.FirstCharUtil;
 import com.njmsita.exam.utils.validate.validategroup.AddGroup;
-import com.njmsita.exam.utils.validate.validategroup.EditGroup;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Controller;
@@ -523,7 +521,7 @@ public class QuestionBankManagerController extends BaseController
                                      HttpServletRequest request) throws UnLoginException
     {
         List<QuestionVo> list = null;
-        TeacherVo currentTeacher = (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
+        TeacherVo currentTeacher = (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
         if (currentTeacher == null)
         {
             throw new UnLoginException("登录信息失效，请重新登录");
@@ -639,7 +637,7 @@ public class QuestionBankManagerController extends BaseController
     @SystemLogAnnotation(module = "题目管理", methods = "保存为我的题目")
     public JsonResponse saveAsMine(QuestionVo question, @RequestParam(value = "_options[]", required = false) String[] options, HttpSession session) throws OperationException
     {
-        TeacherVo teacherVo = (TeacherVo) session.getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
+        TeacherVo teacherVo = (TeacherVo) session.getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
         question.setOptionList(options);
         questionEbi.saveAsMine(question, teacherVo);
         return new JsonResponse();
@@ -650,7 +648,7 @@ public class QuestionBankManagerController extends BaseController
     @SystemLogAnnotation(module = "题目管理", methods = "题目编辑")
     public JsonResponse edit(QuestionVo question, @RequestParam(value = "_options[]", required = false) String[] options, HttpSession session) throws OperationException
     {
-        TeacherVo teacherVo = (TeacherVo) session.getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
+        TeacherVo teacherVo = (TeacherVo) session.getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
         question.setOptionList(options);
         questionEbi.update(question, teacherVo);
         return new JsonResponse("修改成功");
@@ -686,7 +684,7 @@ public class QuestionBankManagerController extends BaseController
             jsonResponse.setCode(500);
         }
 
-        TeacherVo teacherVo = (TeacherVo) session.getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
+        TeacherVo teacherVo = (TeacherVo) session.getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
         if (null == question.getId() || "".equals(question.getId().trim()))
         {
             question.setTeacher(teacherVo);
@@ -715,7 +713,7 @@ public class QuestionBankManagerController extends BaseController
     @SystemLogAnnotation(module = "题目管理", methods = "题目删除")
     public JsonResponse questionDelete(QuestionVo questionVo, HttpSession session) throws OperationException, UnLoginException, UnAuthorizedException
     {
-        TeacherVo currentTeacher = (TeacherVo) session.getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
+        TeacherVo currentTeacher = (TeacherVo) session.getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
         if (currentTeacher == null)
         {
             throw new UnLoginException("登录失效");

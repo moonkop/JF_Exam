@@ -17,12 +17,10 @@ import com.njmsita.exam.utils.json.JsonListResponse;
 import com.njmsita.exam.utils.json.JsonResponse;
 import com.njmsita.exam.utils.logutils.SystemLogAnnotation;
 import com.njmsita.exam.utils.validate.validategroup.AddGroup;
-import com.njmsita.exam.utils.validate.validategroup.EditGroup;
 import com.njmsita.exam.utils.validate.validategroup.SelfEditGroup;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.hibernate.Hibernate;
-import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -66,7 +64,7 @@ public class TeacherController extends BaseController
     @RequestMapping("login")
     public String toLogin(HttpSession session)
     {
-        UserModel userModel = (UserModel) session.getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
+        UserModel userModel = (UserModel) session.getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
         if (userModel instanceof StudentVo)
         {
             return "redirect:/student/welcome";
@@ -116,7 +114,7 @@ public class TeacherController extends BaseController
                 sbd.append(",");
             }
             session.setAttribute(SysConsts.USER_RESOURCE_NAME, sbd.toString());
-            session.setAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME, loginTea);
+            session.setAttribute(SysConsts.USER_LOGIN_OBJECT_NAME, loginTea);
             Hibernate.initialize(loginTea.getRole());
 
             //获取登陆用户的菜单
@@ -169,14 +167,14 @@ public class TeacherController extends BaseController
             request.setAttribute("teacherQuery", teacherQuery);
             return "redirect:/teacher/edit";
         }
-        TeacherVo teacherVo = (TeacherVo) session.getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
+        TeacherVo teacherVo = (TeacherVo) session.getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
         if (null != teacherQuery)
         {
             teacherQuery.setId(teacherVo.getId());
             //不能直接进行物理更新
             TeacherVo newteacher = teaEbi.updateByLogic(teacherQuery, System.currentTimeMillis());
             //重新将数据保存到session用于修改成功后的回显
-            session.setAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME, newteacher);
+            session.setAttribute(SysConsts.USER_LOGIN_OBJECT_NAME, newteacher);
         }
         return "redirect:/teacher/detail";
     }
@@ -189,7 +187,7 @@ public class TeacherController extends BaseController
     public String loginOut(HttpSession session)
     {
         System.out.println("log out");
-        //   System.out.println(session.getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME));
+        //   System.out.println(session.getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME));
         //将session中的已登陆用户至空
         session.invalidate();
         return "redirect:/teacher/login";
@@ -230,7 +228,7 @@ public class TeacherController extends BaseController
     public String modifyPassword(String oldPassword, String newPassword, HttpSession session) throws OperationException
     {
 
-        TeacherVo loginTea = (TeacherVo) session.getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
+        TeacherVo loginTea = (TeacherVo) session.getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
         if (!loginTea.getPassword().equals(oldPassword))
         {
             return "";

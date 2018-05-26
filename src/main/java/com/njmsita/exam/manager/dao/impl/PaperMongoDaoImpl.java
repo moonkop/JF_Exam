@@ -2,8 +2,10 @@ package com.njmsita.exam.manager.dao.impl;
 
 import com.njmsita.exam.base.BaseQueryVO;
 import com.njmsita.exam.manager.dao.dao.PaperMongoDao;
+import com.njmsita.exam.manager.model.ExamVo;
 import com.njmsita.exam.manager.model.PaperVo;
 import com.njmsita.exam.manager.model.querymodel.PaperQueryModel;
+import com.njmsita.exam.utils.consts.SysConsts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -92,4 +94,52 @@ public class PaperMongoDaoImpl implements PaperMongoDao {
     {
         this.mongoTemplate.save(paperVo,collection);
     }
+
+
+
+    public void savaPaperToMongoExamPaper(ExamVo examVo)
+    {
+        PaperVo paperVo = examVo.getPaperVo();
+        paperVo.setExamId(examVo.getId());
+        this.insert(paperVo, SysConsts.EXAM_PAPER_SAVA_MONGO_OF_COLLECTION);
+    }
+
+    /**
+     * 从指定Collection取出指定的考试所需试卷
+     *
+     * @param examVo
+     *
+     * @return
+     */
+    public ExamVo queryPaperFromMongoExamPaper(ExamVo examVo)
+    {
+        PaperVo paperVo = this.queryOne(new Query(Criteria.where("examId").is(examVo.getId())), SysConsts.EXAM_PAPER_SAVA_MONGO_OF_COLLECTION);
+        examVo.setPaperVo(paperVo);
+        return examVo;
+    }
+
+    /**
+     * 从指定Collection删除指定的考试所需试卷
+     *
+     * @param examVo
+     *
+     * @return
+     */
+    public void deletePaperFromMongoExamPaper(ExamVo examVo)
+    {
+        this.delete(new Query(Criteria.where("examId").is(examVo.getId())), SysConsts.EXAM_PAPER_SAVA_MONGO_OF_COLLECTION);
+    }
+
+    /**
+     * 更新指定Collection中指定的考试所需试卷
+     *
+     * @param examVo
+     *
+     * @return
+     */
+    public void updatePaperFromMongoExamPaper(ExamVo examVo)
+    {
+        this.save(examVo.getPaperVo(), SysConsts.EXAM_PAPER_SAVA_MONGO_OF_COLLECTION);
+    }
+
 }

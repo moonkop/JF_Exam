@@ -1,3 +1,8 @@
+<%@ page import="com.njmsita.exam.manager.model.ClassroomVo" %>
+<%@ page import="java.util.List" %>
+<%@ page import="com.njmsita.exam.manager.model.ExamVo" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.Arrays" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 
@@ -128,6 +133,14 @@
     </div>
 </div>
 <script>
+
+    var app = {
+        name: "exam-edit",
+        exam: {
+            openTime: emptyToUndefined(${exam.openTime}),
+            closeTime: emptyToUndefined(${exam.closeTime})
+        }
+    }
     $(document).ready(function () {
 
         function getPapers()
@@ -194,34 +207,26 @@
             elem: '#input-finish_time'
             , type: 'datetime'
         });
-        $("#input-start_time").val(TimeStampTDateTimeString(${exam.openTime}));
-        $("#input-finish_time").val(TimeStampTDateTimeString(${exam.closeTime}));
+        if (app.exam.closeTime == undefined)
+        {
+            app.exam.closeTime = Date.now();
+        }
+        if (app.exam.openTime == undefined)
+        {
+            app.exam.openTime = Date.now();
+        }
+        $("#input-start_time").val(TimeStampTDateTimeString(app.exam.openTime));
+        $("#input-finish_time").val(TimeStampTDateTimeString(app.exam.closeTime));
+        var classroomIdStr = emptyToUndefined("${exam.classroomIds}");
+        if (classroomIdStr!=undefined)
+        {
+            strs=classroomIdStr.split(",");
+            $(".js-select2").val(strs);
+        }
+
         $(".js-select2").select2();
     })
 
-    function DateTimeStringToTimeStamp(string)
-    {
-        try
-        {
-            return new Date(string).getTime();
-        } catch (err)
-        {
-            console.error(err);
-            return null;
-        }
-    }
-
-    function TimeStampTDateTimeString(timestamp)
-    {
-        try
-        {
-            return new Date(timestamp).Format("yyyy-MM-dd hh:mm:ss");
-        } catch (err)
-        {
-            console.error(err);
-            return null;
-        }
-    }
 
     function exam_edit_form_collect_data()
     {

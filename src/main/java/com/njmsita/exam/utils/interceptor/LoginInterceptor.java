@@ -31,7 +31,7 @@ public class LoginInterceptor implements HandlerInterceptor
             return true;
         }
         //获取并判断用户身份
-        this.user = (UserModel) request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
+        this.user = (UserModel) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
         if (this.user != null)
         {
             return true;

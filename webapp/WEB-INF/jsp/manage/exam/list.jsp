@@ -121,8 +121,6 @@
                                         var act = value; var html = '';
                                         for (var i = 0; i < act.length; i++)
                                         {
-
-
                                             if (act[i] == "view")
                                             {
                                                 html += '<i class="fa fa-search del js-view cursor" title="预览"></i>';
@@ -133,7 +131,7 @@
                                                 html += '<i class="fa fa-pencil edit js-edit cursor " title="修改"></i>';
 
                                             }
-                                            if (act[i]=="cancle")
+                                            if (act[i]=="cancel")
                                             {
                                                 html += '<i class="fa fa-times cancel js-cel cursor" title="取消"></i>';
 

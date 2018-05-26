@@ -5,7 +5,8 @@ import com.njmsita.exam.authentic.model.UserModel;
 import com.njmsita.exam.manager.model.ExamVo;
 import com.njmsita.exam.manager.model.StudentExamQuestionVo;
 import com.njmsita.exam.manager.model.StudentExamVo;
-import com.njmsita.exam.manager.service.ebi.ExamEbi;
+import com.njmsita.exam.manager.service.ebi.ExamManageEbi;
+import com.njmsita.exam.manager.service.ebi.ExamStudentEbi;
 import com.njmsita.exam.manager.service.ebi.SubjectEbi;
 import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.exception.OperationException;
@@ -30,7 +31,9 @@ public class ExamFlowController
     @Autowired
     private SubjectEbi subjectEbi;
     @Autowired
-    private ExamEbi examEbi;
+    private ExamManageEbi examManageEbi;
+    @Autowired
+    private ExamStudentEbi examStudentEbi;
 
     /**
      * 到学生的考试页面
@@ -39,9 +42,9 @@ public class ExamFlowController
      */
     @RequestMapping("toStudentExam")
     public String toStudentExam(HttpServletRequest request){
-        UserModel login= (UserModel) request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
+        UserModel loginStudent= (UserModel) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
         request.setAttribute("subjectList",subjectEbi.getAll());
-        List<ExamVo> myExamList=examEbi.getMyExamList(login.getUuid());
+        List<ExamVo> myExamList= examManageEbi.getStudentExamList(loginStudent.getUuid());
         request.setAttribute("myExamList",myExamList);
         return "manage/me/studentExam";
     }
@@ -68,8 +71,8 @@ public class ExamFlowController
         if(StringUtil.isEmpty(examVo.getId())){
             throw new OperationException("所选的该场考试的id不能为空，请不要进行非法操作！");
         }
-        StudentVo studentVo= (StudentVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
-        Map<String,Object> map=examEbi.attendExam(examVo,studentVo);
+        StudentVo studentVo= (StudentVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
+        Map<String,Object> map= examStudentEbi.attendExam(examVo,studentVo);
 
         //学生作答情况
         List<StudentExamQuestionVo> studentExamQuestionList= (List<StudentExamQuestionVo>) map.get("studentExamQuestionList");
@@ -93,8 +96,8 @@ public class ExamFlowController
     public JsonResponse archive(@RequestBody List<StudentExamQuestionVo> studentExamQuestionList, String studentExamId,
                                 HttpServletRequest request) throws Exception
     {
-        StudentVo login= (StudentVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
-        examEbi.archive(login,studentExamId,studentExamQuestionList);
+        StudentVo login= (StudentVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
+        examStudentEbi.archive(login,studentExamId,studentExamQuestionList);
         return null;
     }
 
@@ -109,8 +112,8 @@ public class ExamFlowController
     @RequestMapping("submitAnswer")
     public String submitAnswer(StudentExamVo studentExamVo,HttpServletRequest request) throws Exception
     {
-        StudentVo login= (StudentVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
-        examEbi.submitAnswer(studentExamVo,login);
+        StudentVo login= (StudentVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
+        examStudentEbi.submitAnswer(studentExamVo,login);
         //TODO 提交作答后返回的页面
         return "";
     }
@@ -132,8 +135,8 @@ public class ExamFlowController
     @RequestMapping("checkMyGrages")
     public String checkMyGrages(ExamVo examVo,HttpServletRequest request) throws Exception
     {
-        StudentVo login= (StudentVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
-        StudentExamVo studentExamVo=examEbi.getStudentExam(examVo,login);
+        StudentVo login= (StudentVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
+        StudentExamVo studentExamVo= examStudentEbi.getStudentExam(examVo,login);
         request.setAttribute("studentExam",studentExamVo);
         return null;
     }

@@ -5,15 +5,14 @@ import com.njmsita.exam.authentic.service.ebi.TeacherEbi;
 import com.njmsita.exam.manager.model.*;
 import com.njmsita.exam.manager.model.querymodel.ExamQueryModel;
 import com.njmsita.exam.manager.service.ebi.ClassroomEbi;
-import com.njmsita.exam.manager.service.ebi.ExamEbi;
+import com.njmsita.exam.manager.service.ebi.ExamManageEbi;
 import com.njmsita.exam.manager.service.ebi.PaperEbi;
 import com.njmsita.exam.manager.service.ebi.SubjectEbi;
-import com.njmsita.exam.manager.service.ebo.ExamEbo;
 import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.exception.OperationException;
+import com.njmsita.exam.utils.exception.UnAuthorizedException;
 import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.idutil.IdUtil;
-import com.njmsita.exam.utils.json.CustomJsonElementFormater;
 import com.njmsita.exam.utils.json.CustomJsonSerializer;
 import com.njmsita.exam.utils.json.JsonListResponse;
 import com.njmsita.exam.utils.json.JsonResponse;
@@ -30,9 +29,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -43,7 +39,7 @@ import java.util.List;
 public class ExamManageController
 {
     @Autowired
-    private ExamEbi examEbi;
+    private ExamManageEbi examEbi;
     @Autowired
     private SubjectEbi subjectEbi;
     @Autowired
@@ -56,8 +52,8 @@ public class ExamManageController
     /**
      * 到编辑页面
      *
-     * @param examVo
-     * @param paperVo
+     * @param id
+     * @param paperId
      * @param request
      *
      * @return
@@ -65,7 +61,7 @@ public class ExamManageController
      * @throws OperationException
      */
     @RequestMapping("edit")
-    public String toEdit(String id, String paperId, HttpServletRequest request) throws OperationException
+    public String toEdit(String id, String paperId, HttpServletRequest request) throws OperationException, UnAuthorizedException
     {
         request.setAttribute("papers", paperEbi.getAll());
         request.setAttribute("subjects", subjectEbi.getAll());
@@ -74,6 +70,7 @@ public class ExamManageController
         if (!StringUtil.isEmpty(id))
         {
             ExamVo examVo = examEbi.get(id);
+            examEbi.checkPermission(SysConsts.EXAM_OPERATION_EDIT, (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME), examVo);
             if (examVo == null)
             {
                 throw new OperationException("所选的该场考试不能为空，请不要进行非法操作！");
@@ -93,7 +90,7 @@ public class ExamManageController
     }
 
     @RequestMapping("detail")
-    public String examDetail(String id, HttpServletRequest request) throws OperationException
+    public String examDetail(String id, HttpServletRequest request) throws OperationException, UnAuthorizedException
     {
         if (StringUtil.isEmpty(id))
         {
@@ -101,6 +98,7 @@ public class ExamManageController
         }
 
         ExamVo examVo = examEbi.get(id);
+        examEbi.checkPermission(SysConsts.EXAM_OPERATION_VIEW, (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME), examVo);
         Hibernate.initialize(examVo.getCreateTeacher());
         if (examVo == null)
         {
@@ -139,9 +137,9 @@ public class ExamManageController
     @RequestMapping("edit.do")
     @SystemLogAnnotation(module = "考试管理", methods = "发起/修改考试")
     public JsonResponse examDoAdd(@Validated(value = {AddGroup.class}) ExamVo examVo, BindingResult bindingResult,
-                            @RequestParam(name = "markTeachers[]", required = false) String[] markTeachers, String paperId,
-                            @RequestParam(name = "_classroomIds[]", required = false) String[] classroomIds,
-                            HttpServletRequest request) throws Exception
+                                  @RequestParam(name = "markTeachers[]", required = false) String[] markTeachers, String paperId,
+                                  @RequestParam(name = "_classroomIds[]", required = false) String[] classroomIds,
+                                  HttpServletRequest request) throws Exception
     {
         JsonResponse response = new JsonResponse();
         if (bindingResult.hasErrors())
@@ -154,7 +152,7 @@ public class ExamManageController
             }
             return response.setCode(417);
         }
-        TeacherVo login = (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
+        TeacherVo login = (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
         if (StringUtil.isEmpty(examVo.getId()))
         {
             examVo.setCreateTeacher(login);
@@ -162,6 +160,7 @@ public class ExamManageController
             examEbi.save(examVo, markTeachers, paperId, classroomIds);
         } else
         {
+            examEbi.checkPermission(SysConsts.EXAM_OPERATION_EDIT, (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME), examVo);
             examEbi.update(examVo, markTeachers, paperId, classroomIds);
         }
         return response;
@@ -186,7 +185,7 @@ public class ExamManageController
         {
             throw new OperationException("所选的该场考试的id不能为空，请不要进行非法操作！");
         }
-        examEbi.deleteCancel(examVo, (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME));
+        examEbi.deleteCanceled(examVo, (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME));
         return new JsonResponse("删除成功");
     }
 
@@ -220,7 +219,7 @@ public class ExamManageController
     public JsonResponse list(ExamQueryModel examQueryModel, Integer pageNum, Integer pageSize,
                              HttpServletRequest request) throws Exception
     {
-        TeacherVo login = (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
+        TeacherVo login = (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
         List<ExamVo> list = examEbi.getAllByAdmin(login.getId(), examQueryModel, pageNum, pageSize);
         return new JsonListResponse<ExamVo>(list,
                 "id,name,openTime,duration,remark,operation,[teacher]getCreateTeacher().getName(),[subject]subject.name,examStatusView", examEbi.getCount(examQueryModel));

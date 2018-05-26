@@ -135,6 +135,36 @@ function defaultOnFailure(res)
 
 }
 
+
+function DateTimeStringToTimeStamp(string)
+{
+    try
+    {
+        return new Date(string).getTime();
+    } catch (err)
+    {
+        console.error(err);
+        return null;
+    }
+}
+
+function TimeStampTDateTimeString(timestamp)
+{
+    try
+    {
+        return new Date(timestamp).Format("yyyy-MM-dd hh:mm:ss");
+    } catch (err)
+    {
+        console.error(err);
+        return null;
+    }
+}
+function emptyToUndefined(obj)
+{
+    return obj;
+}
+
+
 layer.config({skin: 'layui-layer-exam'});
 $(document).ready(function()
 {

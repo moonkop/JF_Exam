@@ -37,7 +37,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -115,7 +114,7 @@ public class StudentController extends BaseController
                 sbd.append(",");
             }
             loginStudent.setResources(sbd.toString());
-            session.setAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME, loginStudent);
+            session.setAttribute(SysConsts.USER_LOGIN_OBJECT_NAME, loginStudent);
 
             //获取登陆用户的菜单
             getLoginMenu(request);
@@ -170,7 +169,7 @@ public class StudentController extends BaseController
             request.setAttribute("studentVo", studentVo);
             return "/back";
         }
-        StudentVo studentLogin = (StudentVo) session.getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
+        StudentVo studentLogin = (StudentVo) session.getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
         if (null != studentVo)
         {
             studentVo.setId(studentLogin.getId());
@@ -180,7 +179,7 @@ public class StudentController extends BaseController
             //不能直接进行物理更新
             StudentVo newStudent = studentEbi.updateByLogic(studentVo, System.currentTimeMillis());
             //重新将数据保存到session用于修改成功后的回显
-            session.setAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME, newStudent);
+            session.setAttribute(SysConsts.USER_LOGIN_OBJECT_NAME, newStudent);
         }
         return "redirect:/student/detail";
     }
@@ -194,7 +193,7 @@ public class StudentController extends BaseController
     {
         //将session中的已登陆用户至空
         //TODO 有疑问？？？？？？？？
-        session.setAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME, null);
+        session.setAttribute(SysConsts.USER_LOGIN_OBJECT_NAME, null);
         return "redirect:/student/login";
     }
 
@@ -224,7 +223,7 @@ public class StudentController extends BaseController
     public String modifyPassword(String oldPassword, String newPassword, HttpSession session) throws OperationException
     {
 
-        StudentVo loginStudent = (StudentVo) session.getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
+        StudentVo loginStudent = (StudentVo) session.getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
         if (!loginStudent.getPassword().equals(oldPassword))
         {
             //todo 提供一下视图

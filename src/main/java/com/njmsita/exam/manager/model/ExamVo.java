@@ -16,20 +16,6 @@ import java.util.Set;
 @Table(name = "exam", schema = "jf_exam", catalog = "")
 public class ExamVo
 {
-    //状态码与状态视图对应的map
-    private static Map<Integer, String> examStatuMap = new HashMap<>();
-
-    static
-    {
-        examStatuMap.put(SysConsts.EXAM_STATUS_NO_CHECK, SysConsts.EXAM_STATUS_NO_CHECK_VIEW);
-        examStatuMap.put(SysConsts.EXAM_STATUS_PASS, SysConsts.EXAM_STATUS_PASS_VIEW);
-        examStatuMap.put(SysConsts.EXAM_STATUS_NO_PASS, SysConsts.EXAM_STATUS_NO_PASS_VIEW);
-        examStatuMap.put(SysConsts.EXAM_STATUS_OPEN, SysConsts.EXAM_STATUS_OPEN_VIEW);
-        examStatuMap.put(SysConsts.EXAM_STATUS_CLOSE, SysConsts.EXAM_STATUS_CLOSE_VIEW);
-        examStatuMap.put(SysConsts.EXAM_STATUS_IN_MARK, SysConsts.EXAM_STATUS_IN_MARK_VIEW);
-        examStatuMap.put(SysConsts.EXAM_STATUS_IN_CANCEL, SysConsts.EXAM_STATUS_IN_CANCEL_VIEW);
-        examStatuMap.put(SysConsts.EXAM_STATUS_ENDING, SysConsts.EXAM_STATUS_ENDING_VIEW);
-    }
 
     private String id;
     //时间戳 考试开启时间
@@ -226,7 +212,7 @@ public class ExamVo
         this.examStatus = examStatus;
         if (examStatus != null)
         {
-            this.examStatusView = examStatuMap.get(examStatus);
+            this.examStatusView = SysConsts.ExamStatusViewMap.get(examStatus);
         }
     }
 
@@ -247,7 +233,7 @@ public class ExamVo
     public int hashCode()
     {
 
-        return Objects.hash(id, closeTime, openTime, duration, examStatuMap, classroomIds);
+        return Objects.hash(id, closeTime, openTime, duration, classroomIds);
     }
 
     @Override
@@ -260,7 +246,6 @@ public class ExamVo
                 Objects.equals(closeTime, examVo.closeTime) &&
                 Objects.equals(openTime, examVo.openTime) &&
                 Objects.equals(duration, examVo.duration) &&
-                Objects.equals(examStatuMap, examVo.examStatuMap) &&
                 Objects.equals(classroomIds, examVo.classroomIds);
     }
 }

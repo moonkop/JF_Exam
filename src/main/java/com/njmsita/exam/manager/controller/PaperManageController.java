@@ -18,13 +18,9 @@ import com.njmsita.exam.utils.json.JsonListResponse;
 import com.njmsita.exam.utils.json.JsonObjectResponse;
 import com.njmsita.exam.utils.json.JsonResponse;
 import com.njmsita.exam.utils.logutils.SystemLogAnnotation;
-import com.njmsita.exam.utils.validate.validategroup.AddGroup;
-import org.apache.poi.ss.formula.functions.Rows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -32,7 +28,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.awt.print.Paper;
 import java.util.List;
 
 /**
@@ -81,7 +76,7 @@ public class PaperManageController
     public JsonResponse paperList(PaperQueryModel paperQueryModel, Integer pageNum, Integer pageSize,
                                   HttpServletRequest request)
     {
-        TeacherVo teacherVo = (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
+        TeacherVo teacherVo = (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
         if (!teacherVo.getRole().getId().equals(SysConsts.ADMIN_ROLE_ID))
         {
             paperQueryModel.setTeacher(teacherVo);
@@ -124,7 +119,7 @@ public class PaperManageController
     {
 
         TeacherVo teacherVo1 = new TeacherVo();
-        TeacherVo teacherVo = (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
+        TeacherVo teacherVo = (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
         teacherVo1.setId(teacherVo.getId());
         teacherVo1.setName(teacherVo.getName());
         teacherVo1.setRole(null);
@@ -157,7 +152,7 @@ public class PaperManageController
     public JsonResponse autoSelectQuestion(@RequestParam(value = "topicIds") String[] topicIds,
                                            Integer questionTypeId, Integer questionNum, HttpSession session) throws Exception
     {
-        TeacherVo teacherVo = (TeacherVo) session.getAttribute(SysConsts.USER_LOGIN_TEACHER_OBJECT_NAME);
+        TeacherVo teacherVo = (TeacherVo) session.getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
         List list = questionEbi.autoSelectByTopicIdsAndType(topicIds, questionTypeId, questionNum, teacherVo);
         if (list.size() > questionNum)
         {
