@@ -11,6 +11,7 @@ import com.njmsita.exam.manager.model.StudentExamVo;
 import com.njmsita.exam.manager.model.querymodel.ExamQueryModel;
 import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.exception.UnAuthorizedException;
+import com.njmsita.exam.utils.exception.UnLoginException;
 
 import java.util.List;
 import java.util.Map;
@@ -49,7 +50,7 @@ public interface ExamManageEbi extends BaseEbi<ExamVo>
      *
      * @return
      */
-    public List<ExamVo> getByCreateTeacher(String teacherId);
+    public List<ExamVo> getByCreateTeacher(String teacherId) throws Exception;
 
     /**
      * 查询当前教师所参与阅卷的试卷
@@ -58,7 +59,7 @@ public interface ExamManageEbi extends BaseEbi<ExamVo>
      *
      * @return
      */
-    public List<ExamVo> getByMarkTeacher(String teacherId);
+    public List<ExamVo> getByMarkTeacher(String teacherId) throws Exception;
 
     /**
      * 审核通过
@@ -107,7 +108,7 @@ public interface ExamManageEbi extends BaseEbi<ExamVo>
      *
      * @return
      */
-    public List<ExamVo> getStudentExamList(String studentId);
+    public List<ExamVo> getStudentExamList(String studentId) throws UnLoginException;
 
 
     /**
@@ -118,7 +119,7 @@ public interface ExamManageEbi extends BaseEbi<ExamVo>
      *
      * @return
      */
-    public Set<String> getValidOperations(ExamVo exam, UserModel loginUser);
+    public Set<String> getValidOperations(ExamVo exam, UserModel loginUser) throws UnLoginException;
 
     /**
      * 验证是否有当前操作的权限
@@ -131,7 +132,7 @@ public interface ExamManageEbi extends BaseEbi<ExamVo>
      *
      * @throws UnAuthorizedException
      */
-    public boolean checkPermission(String permission, UserModel loginUser, ExamVo exam) throws UnAuthorizedException;
+    public boolean checkPermission(String permission, UserModel loginUser, ExamVo exam) throws UnAuthorizedException, UnLoginException, Exception;
 
     /**
      * 判断该考试该教师可以进行的操作

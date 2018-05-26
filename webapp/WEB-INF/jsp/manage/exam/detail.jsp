@@ -50,7 +50,7 @@
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">答题时间</label>
                                     <div class="col-sm-8">
-                                        <p class="form-control-static" >${exam.duration}分钟</p>
+                                        <p class="form-control-static">${exam.duration}分钟</p>
                                     </div>
                                 </div>
                             </c:if>
@@ -59,7 +59,7 @@
                                 <div class="form-group">
                                     <label class="col-sm-2 control-label">入场时间</label>
                                     <div class="col-sm-8">
-                                        <p class="form-control-static" >${exam.openDuration}分钟</p>
+                                        <p class="form-control-static">${exam.openDuration}分钟</p>
                                     </div>
                                 </div>
                             </c:if>
@@ -68,6 +68,18 @@
                                 <label class="col-sm-2 control-label">发起者</label>
                                 <div class="col-sm-8">
                                     <p class="form-control-static">${exam.createTeacher.name}</p>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">考试班级</label>
+                                <div class="col-sm-8">
+                                    <p class="form-control-static">
+                                        <c:forEach items="${requestScope.classrooms}" var="classroom">
+                                            <span>
+                                                    ${classroom.name}&nbsp;
+                                            </span>
+                                        </c:forEach>
+                                    </p>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -84,7 +96,7 @@
                             </div>
 
                             <div class="col-sm-offset-2">
-                            <a class="btn btn-default" href="/exam/manage/edit?id=${exam.id}">编辑</a>
+                                <a class="btn btn-default" href="/exam/manage/edit?id=${exam.id}">编辑</a>
                             </div>
                         </div>
                     </div>
@@ -95,8 +107,11 @@
                 </div>
             </div>
         </div>
-        <div class="panel">
-            <div class="panel-body">
+        <div class="panel panel-default">
+            <div class="panel-body ">
+                <div class="panel-heading">
+                    试卷详情
+                </div>
                 <div class="paper-view">
                     <div class="title-area">
                         <div class="title"></div>

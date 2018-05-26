@@ -26,7 +26,7 @@ public class ExamVo
     private Long closeTime;
     //考试作答时间 单位分钟、
     private Integer duration;
-    private String classroomIds;
+
     private String remark;
     private String name;
     //该考试对应状态下的操作
@@ -35,6 +35,7 @@ public class ExamVo
     private SubjectVo subject;
     //所属科目  n  TO  1
     private Set<TeacherVo> markTeachers;
+    private Set<ClassroomVo> classrooms;
     //阅卷教师  n  TO  m
     private Integer examStatus;
     //考试状态视图值
@@ -46,15 +47,14 @@ public class ExamVo
     @Transient
     private Set<String> operation;
 
-    @Transient
-    public String[] getClassroomIdArray()
+    public Set<ClassroomVo> getClassrooms()
     {
-        return this.classroomIds.split(",");
+        return classrooms;
     }
 
-    public void setClassroomIdArray(String[] classroomIdArray)
+    public void setClassrooms(Set<ClassroomVo> classrooms)
     {
-       this.setClassroomIds(String.join(",", classroomIdArray)); ;
+        this.classrooms = classrooms;
     }
 
     public Integer getOpenDuration()
@@ -91,7 +91,6 @@ public class ExamVo
     {
         return examStatusView;
     }
-
 
 
     @Basic
@@ -214,38 +213,5 @@ public class ExamVo
         {
             this.examStatusView = SysConsts.ExamStatusViewMap.get(examStatus);
         }
-    }
-
-    @Basic
-    @Column(name = "classroom_ids")
-    public String getClassroomIds()
-    {
-        return classroomIds;
-    }
-
-    public void setClassroomIds(String classroomIds)
-    {
-        this.classroomIds = classroomIds;
-    }
-
-
-    @Override
-    public int hashCode()
-    {
-
-        return Objects.hash(id, closeTime, openTime, duration, classroomIds);
-    }
-
-    @Override
-    public boolean equals(Object o)
-    {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ExamVo examVo = (ExamVo) o;
-        return Objects.equals(id, examVo.id) &&
-                Objects.equals(closeTime, examVo.closeTime) &&
-                Objects.equals(openTime, examVo.openTime) &&
-                Objects.equals(duration, examVo.duration) &&
-                Objects.equals(classroomIds, examVo.classroomIds);
     }
 }

@@ -48,7 +48,8 @@ public class ExamOperationController
      * @return
      */
     @RequestMapping("toTeacherExam")
-    public String toTeacherExam(HttpServletRequest request){
+    public String toTeacherExam(HttpServletRequest request) throws Exception
+    {
         UserModel login= (UserModel) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
         request.setAttribute("subjectList",subjectEbi.getAll());
         List<ExamVo> createList= examManageEbi.getByCreateTeacher(login.getUuid());

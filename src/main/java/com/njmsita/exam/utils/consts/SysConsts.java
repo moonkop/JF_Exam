@@ -125,8 +125,40 @@ public class SysConsts
 	public static final String EXAM_OPERATION_SUBMIT_MARK = "submitMark";
 	public static final String EXAM_OPERATION_ATTEND = "attend";
 	public static final String EXAM_OPERATION_VIEW_BRIEF = "viewBrief";
-
 	/**
+	 * 考试操作
+	 */
+	public static final String EXAM_OPERATION_VIEW_VIEW = "查看";
+	public static final String EXAM_OPERATION_EDIT_VIEW = "编辑";
+	public static final String EXAM_OPERATION_CANCEL_VIEW = "取消";
+	public static final String EXAM_OPERATION_ADD_MARK_TEACHER_VIEW = "添加批阅教师";
+	public static final String EXAM_OPERATION_VIEW_SCORE_VIEW = "查看分数";
+	public static final String EXAM_OPERATION_JUDGE_VIEW = "审核";
+	public static final String EXAM_OPERATION_DELETE_VIEW = "删除";
+	public static final String EXAM_OPERATION_MARK_VIEW = "批阅";
+	public static final String EXAM_OPERATION_SUBMIT_MARK_VIEW = "提交批阅";
+	public static final String EXAM_OPERATION_ATTEND_VIEW = "参加考试";
+	public static final String EXAM_OPERATION_VIEW_BRIEF_VIEW = "查看概要";
+
+    public final static Map<String, String> ExamOperationViewMap = new HashMap<>();
+
+    static
+    {
+        ExamOperationViewMap.put(SysConsts.EXAM_OPERATION_VIEW, SysConsts.EXAM_OPERATION_VIEW_VIEW);
+        ExamOperationViewMap.put(SysConsts.EXAM_OPERATION_EDIT, SysConsts.EXAM_OPERATION_EDIT_VIEW);
+        ExamOperationViewMap.put(SysConsts.EXAM_OPERATION_CANCEL, SysConsts.EXAM_OPERATION_CANCEL_VIEW);
+        ExamOperationViewMap.put(SysConsts.EXAM_OPERATION_ADD_MARK_TEACHER, SysConsts.EXAM_OPERATION_ADD_MARK_TEACHER_VIEW);
+        ExamOperationViewMap.put(SysConsts.EXAM_OPERATION_VIEW_SCORE, SysConsts.EXAM_OPERATION_VIEW_SCORE_VIEW);
+        ExamOperationViewMap.put(SysConsts.EXAM_OPERATION_JUDGE, SysConsts.EXAM_OPERATION_JUDGE_VIEW);
+        ExamOperationViewMap.put(SysConsts.EXAM_OPERATION_DELETE, SysConsts.EXAM_OPERATION_DELETE_VIEW);
+        ExamOperationViewMap.put(SysConsts.EXAM_OPERATION_MARK, SysConsts.EXAM_OPERATION_MARK_VIEW);
+        ExamOperationViewMap.put(SysConsts.EXAM_OPERATION_SUBMIT_MARK, SysConsts.EXAM_OPERATION_SUBMIT_MARK_VIEW);
+        ExamOperationViewMap.put(SysConsts.EXAM_OPERATION_ATTEND, SysConsts.EXAM_OPERATION_ATTEND_VIEW);
+        ExamOperationViewMap.put(SysConsts.EXAM_OPERATION_VIEW_BRIEF, SysConsts.EXAM_OPERATION_VIEW_BRIEF_VIEW);
+    }
+
+
+    /**
 	 * 定时任务类型
 	 */
 	public static final int SCHEDULEVO_JOB_TYPE_OPEN = 0;

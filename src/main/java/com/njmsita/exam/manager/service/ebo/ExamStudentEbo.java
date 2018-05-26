@@ -160,8 +160,7 @@ public class ExamStudentEbo implements ExamStudentEbi
             studentExamVo.setOperation(SysConsts.STUDENT_EXAM_OPERATION_ARCHIVE);
             Long systemTime = System.currentTimeMillis();
             studentExamVo.setStartTime(systemTime);
-
-            examVo = paperMongoDao.queryPaperFromMongoExamPaper(examVo);
+            examVo = examManageEbi.get(examVo.getId());
             List<QuestionVo> questionVoList = examVo.getPaperVo().getQuestionList();
 
             for (int i = 0; i < questionVoList.size(); i++)

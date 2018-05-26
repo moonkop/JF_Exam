@@ -11,8 +11,6 @@
         <property name="openDuration" column="open_duration"/>
         <property name="duration" column="duration"/>
         <property name="examStatus" column="exam_status"/>
-        <!--<property name="paperContent" column="paper_content"/>-->
-        <property name="classroomIds" column="classroom_ids"/>
         <property name="remark" column="remark"/>
         <property name="name" column="name"/>
 
@@ -23,6 +21,10 @@
         <set name="markTeachers" table="exam_markteacher" lazy="false">
             <key column="exam_id"></key>
             <many-to-many column="teacher_id" class="com.njmsita.exam.authentic.model.TeacherVo"/>
+        </set>
+        <set name="classrooms" table="exam_classroom" lazy="true">
+            <key column="exam_id"></key>
+            <many-to-many column="classroom_id" class="com.njmsita.exam.manager.model.ClassroomVo"/>
         </set>
     </class>
 </hibernate-mapping>

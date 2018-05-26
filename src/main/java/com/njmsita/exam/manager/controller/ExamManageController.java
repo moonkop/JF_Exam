@@ -61,12 +61,12 @@ public class ExamManageController
      * @throws OperationException
      */
     @RequestMapping("edit")
-    public String toEdit(String id, String paperId, HttpServletRequest request) throws OperationException, UnAuthorizedException
+    public String toEdit(String id, String paperId, HttpServletRequest request) throws Exception
     {
         request.setAttribute("papers", paperEbi.getAll());
         request.setAttribute("subjects", subjectEbi.getAll());
         request.setAttribute("teachers", teacherEbi.getAll());
-        request.setAttribute("classrooms", classroomEbi.getAll());
+        request.setAttribute("classroomList", classroomEbi.getAll());
         if (!StringUtil.isEmpty(id))
         {
             ExamVo examVo = examEbi.get(id);
@@ -90,7 +90,7 @@ public class ExamManageController
     }
 
     @RequestMapping("detail")
-    public String examDetail(String id, HttpServletRequest request) throws OperationException, UnAuthorizedException
+    public String examDetail(String id, HttpServletRequest request) throws Exception
     {
         if (StringUtil.isEmpty(id))
         {

@@ -1,7 +1,6 @@
 package com.njmsita.exam.manager.dao.dao;
 
 import com.njmsita.exam.base.BaseQueryVO;
-import com.njmsita.exam.manager.model.ExamVo;
 import com.njmsita.exam.manager.model.PaperVo;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -37,13 +36,11 @@ public interface PaperMongoDao
 
     public void save(PaperVo paperVo, String collection);
 
-    public void savaPaperToMongoExamPaper(ExamVo examVo);
+    public void savaPaperToMongoExamPaper(PaperVo paperVo, String ExamId);
+    public PaperVo getPaperVoByExamId(String examId);
+    public void deletePaperFromMongoExamPaper(String ExamId);
 
-    public ExamVo queryPaperFromMongoExamPaper(ExamVo examVo);
-
-    public void deletePaperFromMongoExamPaper(ExamVo examVo);
-
-    public void updatePaperFromMongoExamPaper(ExamVo examVo);
+    public void updatePaperFromMongoExamPaper(PaperVo paperVo, String examId);
     public PaperVo get(String id);
 
 }

@@ -10,6 +10,7 @@ import com.njmsita.exam.manager.service.ebi.ExamStudentEbi;
 import com.njmsita.exam.manager.service.ebi.SubjectEbi;
 import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.exception.OperationException;
+import com.njmsita.exam.utils.exception.UnLoginException;
 import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.json.JsonResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +42,8 @@ public class ExamFlowController
      * @return
      */
     @RequestMapping("toStudentExam")
-    public String toStudentExam(HttpServletRequest request){
+    public String toStudentExam(HttpServletRequest request) throws UnLoginException
+    {
         UserModel loginStudent= (UserModel) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
         request.setAttribute("subjectList",subjectEbi.getAll());
         List<ExamVo> myExamList= examManageEbi.getStudentExamList(loginStudent.getUuid());

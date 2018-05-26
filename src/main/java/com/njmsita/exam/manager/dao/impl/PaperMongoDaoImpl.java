@@ -2,7 +2,6 @@ package com.njmsita.exam.manager.dao.impl;
 
 import com.njmsita.exam.base.BaseQueryVO;
 import com.njmsita.exam.manager.dao.dao.PaperMongoDao;
-import com.njmsita.exam.manager.model.ExamVo;
 import com.njmsita.exam.manager.model.PaperVo;
 import com.njmsita.exam.manager.model.querymodel.PaperQueryModel;
 import com.njmsita.exam.utils.consts.SysConsts;
@@ -97,49 +96,48 @@ public class PaperMongoDaoImpl implements PaperMongoDao {
 
 
 
-    public void savaPaperToMongoExamPaper(ExamVo examVo)
+    public void savaPaperToMongoExamPaper(PaperVo paperVo, String ExamId)
     {
-        PaperVo paperVo = examVo.getPaperVo();
-        paperVo.setExamId(examVo.getId());
+        paperVo.setExamId(ExamId);
         this.insert(paperVo, SysConsts.EXAM_PAPER_SAVA_MONGO_OF_COLLECTION);
     }
 
     /**
      * 从指定Collection取出指定的考试所需试卷
      *
-     * @param examVo
+     * @param examId
      *
      * @return
      */
-    public ExamVo queryPaperFromMongoExamPaper(ExamVo examVo)
+    public PaperVo getPaperVoByExamId(String examId)
     {
-        PaperVo paperVo = this.queryOne(new Query(Criteria.where("examId").is(examVo.getId())), SysConsts.EXAM_PAPER_SAVA_MONGO_OF_COLLECTION);
-        examVo.setPaperVo(paperVo);
-        return examVo;
-    }
+        PaperVo paperVo = this.queryOne(new Query(Criteria.where("examId").is(examId)), SysConsts.EXAM_PAPER_SAVA_MONGO_OF_COLLECTION);
 
+        return paperVo;
+    }
     /**
      * 从指定Collection删除指定的考试所需试卷
      *
-     * @param examVo
      *
-     * @return
+     * @param ExamId@return
      */
-    public void deletePaperFromMongoExamPaper(ExamVo examVo)
+    public void deletePaperFromMongoExamPaper(String ExamId)
     {
-        this.delete(new Query(Criteria.where("examId").is(examVo.getId())), SysConsts.EXAM_PAPER_SAVA_MONGO_OF_COLLECTION);
+        this.delete(new Query(Criteria.where("examId").is(ExamId)), SysConsts.EXAM_PAPER_SAVA_MONGO_OF_COLLECTION);
     }
 
     /**
      * 更新指定Collection中指定的考试所需试卷
      *
-     * @param examVo
+     * @param paperVo
      *
+     * @param examId
      * @return
      */
-    public void updatePaperFromMongoExamPaper(ExamVo examVo)
+    public void updatePaperFromMongoExamPaper(PaperVo paperVo, String examId)
     {
-        this.save(examVo.getPaperVo(), SysConsts.EXAM_PAPER_SAVA_MONGO_OF_COLLECTION);
+        this.deletePaperFromMongoExamPaper(examId);
+        this.savaPaperToMongoExamPaper(paperVo, examId);
     }
 
     public PaperVo get(String id)
