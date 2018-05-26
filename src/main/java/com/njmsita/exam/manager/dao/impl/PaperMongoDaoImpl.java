@@ -142,4 +142,10 @@ public class PaperMongoDaoImpl implements PaperMongoDao {
         this.save(examVo.getPaperVo(), SysConsts.EXAM_PAPER_SAVA_MONGO_OF_COLLECTION);
     }
 
+    public PaperVo get(String id)
+    {
+        return  this.queryOne(new Query(Criteria.where("id").is(id)));
+
+    }
+
 }

@@ -160,8 +160,7 @@ public class ExamManageController
             examEbi.save(examVo, markTeachers, paperId, classroomIds);
         } else
         {
-            examEbi.checkPermission(SysConsts.EXAM_OPERATION_EDIT, (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME), examVo);
-            examEbi.update(examVo, markTeachers, paperId, classroomIds);
+            examEbi.update(examVo, markTeachers, paperId, classroomIds,(TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME));
         }
         return response;
     }

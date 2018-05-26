@@ -54,7 +54,7 @@ public class ExamVo
 
     public void setClassroomIdArray(String[] classroomIdArray)
     {
-        this.classroomIds = String.join(",", classroomIdArray);
+       this.setClassroomIds(String.join(",", classroomIdArray)); ;
     }
 
     public Integer getOpenDuration()

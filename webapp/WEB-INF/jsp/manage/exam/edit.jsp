@@ -242,7 +242,6 @@
             'closeTime': DateTimeStringToTimeStamp($("form [name='closeTime']").val()),
             '_classroomIds': $("form [name='classroom']").val(),
         };
-        debugger;
         return data
     }
 

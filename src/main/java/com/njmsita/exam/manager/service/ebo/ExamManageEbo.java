@@ -20,8 +20,6 @@ import com.njmsita.exam.utils.timertask.SchedulerJobUtil;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -117,27 +115,29 @@ public class ExamManageEbo implements ExamManageEbi
 
     public void save(ExamVo examVo, String[] markTeachers, String paperId, String[] classroomIds) throws OperationException
     {
-        infoValid(examVo, markTeachers, paperId, classroomIds);
+        setFieldsAndValidate(examVo, markTeachers, paperId, classroomIds);
+        examVo.setExamStatus(SysConsts.EXAM_STATUS_NO_CHECK);
         examDao.save(examVo);
+        createStudentExamByExam(examVo, classroomIds);
         paperMongoDao.savaPaperToMongoExamPaper(examVo);
     }
 
-    public void update(ExamVo examVo, String[] markTeachers, String paperId, String[] classroomIds) throws OperationException
+    public void update(ExamVo examVo, String[] markTeachers, String paperId, String[] classroomIds, TeacherVo teacherVo) throws Exception
     {
-        ExamVo temp = getExamNotNull(examVo);
+        ExamVo examPo = getExamNotNull(examVo);
+        checkPermission(SysConsts.EXAM_OPERATION_EDIT, teacherVo, examPo);
+        examPo.setCloseTime(examVo.getCloseTime());
+        examPo.setOpenTime(examVo.getOpenTime());
+        examPo.setDuration(examVo.getDuration());
+        examPo.setSubject(examVo.getSubject());
+        examPo.setName(examVo.getName());
+        examPo.setPaperVo(examPo.getPaperVo());
+        examPo.setOpenDuration(examPo.getOpenDuration());
+        examPo.setRemark(examVo.getRemark());
+        setFieldsAndValidate(examPo, markTeachers, paperId, classroomIds);
+        createStudentExamByExam(examPo, classroomIds);
+        paperMongoDao.updatePaperFromMongoExamPaper(examPo);
 
-        infoValid(examVo, markTeachers, paperId, classroomIds);
-        temp.setCloseTime(examVo.getCloseTime());
-        temp.setOpenTime(examVo.getOpenTime());
-        temp.setDuration(examVo.getDuration());
-        temp.setClassroomIds(examVo.getClassroomIds());
-        temp.setSubject(examVo.getSubject());
-        temp.setName(examVo.getName());
-        temp.setPaperVo(temp.getPaperVo());
-        temp.setOpenDuration(temp.getOpenDuration());
-        temp.setRemark(examVo.getRemark());
-
-        paperMongoDao.updatePaperFromMongoExamPaper(examVo);
     }
 
     public List<ExamVo> getByCreateTeacher(String teacherId)
@@ -171,7 +171,7 @@ public class ExamManageEbo implements ExamManageEbi
         checkPermission(SysConsts.EXAM_OPERATION_JUDGE, loginTeacher, examVo);
         if (StringUtil.isEmpty(examVo.getRemark()))
         {
-            throw new OperationException("驳回考试请求时“备注”不能为空，请不要进行非法操作！");
+            throw new OperationException("驳回考试请求时“备注”不能为空");
         }
         temp.setRemark(examVo.getRemark());
         temp.setExamStatus(SysConsts.EXAM_STATUS_NO_PASS);
@@ -214,7 +214,7 @@ public class ExamManageEbo implements ExamManageEbi
         ExamVo temp = getExamNotNull(examVo);
 
         //TODO 测试：是否可以逻辑更新
-        temp.setMarkTeachers(markTeacherValid(markTeachers));
+        temp.setMarkTeachers(getMarkTeachers(markTeachers));
     }
 
 
@@ -245,7 +245,7 @@ public class ExamManageEbo implements ExamManageEbi
         {
             return operationSet;
         }
-        if (loginUser.getClass().getName() == TeacherVo.class.getName())
+        if (loginUser instanceof TeacherVo)
         {
             TeacherVo loginTeacher = (TeacherVo) loginUser;
             //所有状态下
@@ -258,6 +258,10 @@ public class ExamManageEbo implements ExamManageEbi
                 operationSet.add(SysConsts.EXAM_OPERATION_VIEW);
             }
 
+            if (exam.getExamStatus() == null)
+            {
+                return operationSet;
+            }
             switch (exam.getExamStatus())
             {
                 case SysConsts.EXAM_STATUS_NO_CHECK:
@@ -306,7 +310,7 @@ public class ExamManageEbo implements ExamManageEbi
                     operationSet.add(SysConsts.EXAM_OPERATION_VIEW_SCORE);
                     break;
             }
-        } else if (loginUser.getClass().getName() == StudentVo.class.getName())
+        } else if (loginUser instanceof StudentVo)
         {
             StudentVo loginStudent = (StudentVo) loginUser;
             switch (exam.getExamStatus())
@@ -340,6 +344,15 @@ public class ExamManageEbo implements ExamManageEbi
 
     }
 
+    public boolean checkPermission(String permission, UserModel loginTeacher, ExamVo exam) throws UnAuthorizedException
+    {
+        if (!getValidOperations(exam, loginTeacher).contains(permission))
+        {
+            throw new UnAuthorizedException("您没有当前" + SysConsts.ExamStatusViewMap.get(permission) + "操作的权限");
+        }
+        return true;
+    }
+
     public Set<String> getValidOperations(ExamVo exam, String id)
     {
         UserModel user = studentDao.get(id);
@@ -348,15 +361,6 @@ public class ExamManageEbo implements ExamManageEbi
             user = teacherDao.get(id);
         }
         return getValidOperations(exam, id);
-    }
-
-    public boolean checkPermission(String permission, UserModel loginTeacher, ExamVo exam) throws UnAuthorizedException
-    {
-        if (!getValidOperations(exam, loginTeacher).contains(permission))
-        {
-            throw new UnAuthorizedException("您没有当前" + SysConsts.ExamStatusViewMap.get(permission) + "操作的权限");
-        }
-        return true;
     }
 
     public boolean checkPermission(String permission, String LoginUserId, ExamVo exam) throws UnAuthorizedException
@@ -388,7 +392,7 @@ public class ExamManageEbo implements ExamManageEbi
         Set<TeacherVo> markTeachers = examVo.getMarkTeachers();
         if (!markTeachers.contains(login))
         {
-            throw new OperationException("您不是该场考试的阅卷教师，请不要进行非法操作！");
+            throw new OperationException("您不是该场考试的阅卷教师");
         }
         List<StudentExamVo> list = studentExamDao.getbyExam(examVo);
         for (StudentExamVo studentExamVo : list)
@@ -406,12 +410,12 @@ public class ExamManageEbo implements ExamManageEbi
     {
         if (StringUtil.isEmpty(studentExamVo.getId()))
         {
-            throw new OperationException("所选择的学生试卷不能为空，请不要进行非法操作！");
+            throw new OperationException("所选择的学生试卷不能为空");
         }
         studentExamVo = studentExamDao.get(studentExamVo.getId());
         if (studentExamVo == null)
         {
-            throw new OperationException("所选择的学生试卷不存在，请不要进行非法操作！");
+            throw new OperationException("所选择的学生试卷不存在");
         }
         List<StudentExamQuestionVo> list = studentExamQuestionDao.getAllByStudentExam(studentExamVo);
         for (int i = list.size() - 1; i >= 0; i--)
@@ -443,7 +447,7 @@ public class ExamManageEbo implements ExamManageEbi
         ExamVo temp = examDao.get(examVo.getId());
         if (temp == null)
         {
-            throw new OperationException("所选该场考试不存在，请不要进行非法操作！");
+            throw new OperationException("所选该场考试不存在");
         }
         return temp;
     }
@@ -549,7 +553,7 @@ public class ExamManageEbo implements ExamManageEbi
     {
         if (!SysConsts.ADMIN_ROLE_ID.equals(teacherVo.getRole().getId()))
         {
-            throw new OperationException("您不是管理员，请不要进行非法操作！");
+            throw new OperationException("您不是管理员");
         }
     }
 
@@ -568,48 +572,72 @@ public class ExamManageEbo implements ExamManageEbi
         }
     }
 
-    /**
-     * 信息校验
-     *
-     * @param examVo
-     * @param markTeachers
-     * @param paperId
-     * @param classroomIds
-     *
-     * @throws OperationException
-     */
-    private void infoValid(ExamVo examVo, String[] markTeachers, String paperId, String[] classroomIds) throws OperationException
+    public void setFieldsAndValidate(ExamVo examVo, String[] markTeacherIds, String paperId, String[] classroomIds) throws OperationException
     {
-        if (examVo.getSubject() == null)
-        {
-            throw new OperationException("科目不能为空,请不要进行非法操作！");
-        }
-        if (examVo.getSubject().getId() == null || examVo.getSubject().getId() == 0)
-        {
-            throw new OperationException("科目不能为空,请不要进行非法操作！");
-        }
         if (classroomIds == null || classroomIds.length == 0)
         {
-            throw new OperationException("参加考试的班级不能为空,请不要进行非法操作！");
+            throw new OperationException("参加考试的班级不能为空");
         }
-        if (StringUtil.isEmpty(paperId))
+        examVo.setClassroomIdArray(classroomIds);
+
+        SubjectVo subjectVo;
+        if (examVo.getSubject() == null
+                || examVo.getSubject().getId() == null
+                || examVo.getSubject().getId() == 0
+                || ((subjectVo = subjectDao.get(examVo.getSubject().getId())) == null))
         {
-            throw new OperationException("试卷不能为空,请不要进行非法操作！");
+            throw new OperationException("科目不能为空");
         }
-        PaperVo paperVo = paperMongoDao.queryOne(new Query(Criteria.where("id").is(paperId)));
-        SubjectVo temp = subjectDao.get(examVo.getSubject().getId());
-        if (paperVo == null)
+        examVo.setSubject(subjectVo);
+
+        PaperVo paperVo;
+        if (StringUtil.isEmpty(paperId)
+                || ((paperVo = paperMongoDao.get(paperId)) == null))
         {
-            throw new OperationException("所选择的试卷不存在,请不要进行非法操作！");
+            throw new OperationException("试卷不能为空");
         }
-        if (temp == null)
+        examVo.setPaperVo(paperVo);
+
+        Set<TeacherVo> teacherSet = getMarkTeachers(markTeacherIds);
+        examVo.setMarkTeachers(teacherSet);
+
+        if (StringUtil.isEmpty(examVo.getName()))
         {
-            throw new OperationException("所选择的科目不存在,请不要进行非法操作！");
+            throw new OperationException("考试名称不能为空");
         }
+        if (examVo.getRemark() == null)
+        {
+            examVo.setRemark("");
+        }
+        if (examVo.getOpenTime()==null||examVo.getOpenTime()==0)
+        {
+            throw new OperationException("开始时间不能为空");
+        }
+        if (examVo.getCloseTime()==null||examVo.getCloseTime()==0)
+        {
+            throw new OperationException("结束时间不能为空");
+        }
+        if (examVo.getDuration() == null)
+        {
+            examVo.setDuration(0);
+        }
+        if (examVo.getOpenDuration() == null)
+        {
+            examVo.setOpenDuration(0);
+        }
+        if (examVo.getCloseTime() < examVo.getOpenTime() + examVo.getDuration() * 60 * 1000)
+        {
+            throw new OperationException("答题时间不足");
+        }
+
+
+    }
+
+    private void createStudentExamByExam(ExamVo examVo, String[] classroomIds) throws OperationException
+    {
         //删除该场考试的所有学生
         studentExamDao.deleteAllByExam(examVo);
-        Set<TeacherVo> teacherSet = markTeacherValid(markTeachers);
-        List<String> classrooms = new ArrayList<>();
+
         int i = 0;
         for (String classroomId : classroomIds)
         {
@@ -625,19 +653,14 @@ public class ExamManageEbo implements ExamManageEbi
                     studentExamVo.setStudentVo(studentVo);
                     studentExamDao.save(studentExamVo);
                 }
-                classrooms.add(classroomVo.getId());
+            } else
+            {
+                throw new OperationException("所选班级id为" + classroomId + "的班级不存在");
             }
         }
-        if (classrooms.size() == 0)
-        {
-            throw new OperationException("所选择的班级均不存在,请不要进行非法操作！");
-        }
-        ;
-        examVo.setPaperVo(paperVo);
-        examVo.setSubject(temp);
-        examVo.setMarkTeachers(teacherSet);
-        examVo.setClassroomIdArray(classroomIds.clone());
     }
+
+
 
     /**
      * 校验教师ID
@@ -646,20 +669,23 @@ public class ExamManageEbo implements ExamManageEbi
      *
      * @return
      */
-    private Set<TeacherVo> markTeacherValid(String[] markTeachers)
+    private Set<TeacherVo> getMarkTeachers(String[] markTeachers)
     {
         Set<TeacherVo> teacherSet = new HashSet<>();
-        if (markTeachers != null && markTeachers.length > 0)
+        if (markTeachers == null || markTeachers.length > 0)
         {
-            for (String markTeacher : markTeachers)
+            return teacherSet;
+        }
+
+        for (String markTeacher : markTeachers)
+        {
+            TeacherVo teacherVo = teacherDao.get(markTeacher);
+            if (teacherVo != null)
             {
-                TeacherVo teacherVo = teacherDao.get(markTeacher);
-                if (teacherVo != null)
-                {
-                    teacherSet.add(teacherVo);
-                }
+                teacherSet.add(teacherVo);
             }
         }
+
         return teacherSet;
     }
 

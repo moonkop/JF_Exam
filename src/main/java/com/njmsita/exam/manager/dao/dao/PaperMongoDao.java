@@ -44,4 +44,6 @@ public interface PaperMongoDao
     public void deletePaperFromMongoExamPaper(ExamVo examVo);
 
     public void updatePaperFromMongoExamPaper(ExamVo examVo);
+    public PaperVo get(String id);
+
 }

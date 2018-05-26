@@ -8,7 +8,7 @@
             考试管理
         </h3>
         <div class="table-btns">
-            <a class="btn btn-primary" href="#"> 添加考试</a>
+            <a class="btn btn-primary" href="/exam/manage/edit"> 添加考试</a>
         </div>
         <script src="/vendor/bootstrap-table/bootstrap-table.js"></script>
         <script>

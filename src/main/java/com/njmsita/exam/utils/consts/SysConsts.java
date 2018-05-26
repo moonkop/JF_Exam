@@ -119,7 +119,7 @@ public class SysConsts
 	public static final String EXAM_OPERATION_CANCEL = "cancel";
 	public static final String EXAM_OPERATION_ADD_MARK_TEACHER = "addMarkTeacher";
 	public static final String EXAM_OPERATION_VIEW_SCORE = "viewScore";
-	public static final String EXAM_OPERATION_JUDGE = "noCheck";
+	public static final String EXAM_OPERATION_JUDGE = "reject";
 	public static final String EXAM_OPERATION_DELETE = "delete";
 	public static final String EXAM_OPERATION_MARK = "mark";
 	public static final String EXAM_OPERATION_SUBMIT_MARK = "submitMark";
