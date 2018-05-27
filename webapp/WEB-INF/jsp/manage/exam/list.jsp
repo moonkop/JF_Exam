@@ -128,11 +128,11 @@
                                             '待审核': 'label-warning',
                                             '未开始': 'label-success',
                                             '待修改': 'label-warning',
-                                            '开启考试': 'label-info',
-                                            '进行中': 'label-danger',
+                                            '进行中': 'label-info',
+                                            '答题中': 'label-danger',
                                             '阅卷中': 'label-danger',
-                                            '取消': 'label-warning',
-                                            '结束': 'label-success',
+                                            '已取消': 'label-warning',
+                                            '已结束': 'label-success',
                                         }
                                         var html = "<span class='label " + dic[temp] + "'>" + temp + "</span>";
                                         return html;

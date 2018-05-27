@@ -42,7 +42,7 @@
                 </li>
                 <li class="divider"></li>
                 <li>
-                    <a class="text-center" href="#">
+                    <a class="text-center" href="/student/logout">
                         <strong>退出登录</strong>
                     </a>
                 </li>

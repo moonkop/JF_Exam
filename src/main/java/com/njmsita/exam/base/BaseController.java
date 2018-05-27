@@ -12,9 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Controller
 @RequestMapping("base")
@@ -65,20 +63,23 @@ public class BaseController{
 		TroleVo troleVo=roleEbi.get(login.getUserRole());
 		List<TresourceVo> loginMenu=resourceEbi.getMenuByRole(troleVo.getId());
 
-		for (TresourceVo menu : loginMenu)
-		{
-			Set<TresourceVo> childs=new HashSet<>();
-			Set<TresourceVo> oldChilds=menu.getChilds();
-			if(oldChilds.size()>0){
-				for (TresourceVo child : oldChilds)
-				{
-					if(child.getResourcetype().getId().equals(SysConsts.RESOURCE_TYPE_MENU_ID)){
-						childs.add(child);
-					}
-				}
-				menu.setChilds(childs);
-			}
-		}
+
+
 		request.getSession().setAttribute("loginMenu",loginMenu);
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
