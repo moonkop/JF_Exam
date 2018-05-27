@@ -19,6 +19,8 @@ public interface ResourceEbi extends BaseEbi<TresourceVo>
      */
     public List<TresourceVo> getAllByLogin(String id);
 
+
+    public List<TresourceVo> getAllByLogin_stu(String id);
     /**
      * 根据角色获取菜单
      * @param id

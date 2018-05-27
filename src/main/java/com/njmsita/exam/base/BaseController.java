@@ -67,7 +67,6 @@ public class BaseController{
 
 		for (TresourceVo menu : loginMenu)
 		{
-			menu.setParent(null);
 			Set<TresourceVo> childs=new HashSet<>();
 			Set<TresourceVo> oldChilds=menu.getChilds();
 			if(oldChilds.size()>0){

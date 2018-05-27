@@ -100,6 +100,7 @@ public class TeacherController extends BaseController
         //验证用户名密码
         TeacherVo loginTea = teaEbi.login(teaVo.getTeacherId(), teaVo.getPassword(), loginIp);
 
+
         //用户信息验证成功
         if (loginTea != null)
         {
@@ -107,7 +108,7 @@ public class TeacherController extends BaseController
             //用户名密码验证成功获取当前登录人的所有权限
             List<TresourceVo> teacherResources = resourceEbi.getAllByLogin(loginTea.getId());
             StringBuilder sbd = new StringBuilder();
-            //拼接用户资源信息存入登陆用户
+
             for (TresourceVo resource : teacherResources)
             {
                 sbd.append(resource.getUrl());

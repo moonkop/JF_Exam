@@ -1,5 +1,6 @@
 package com.njmsita.exam.authentic.dao.dao;
 
+import com.njmsita.exam.authentic.model.StudentVo;
 import com.njmsita.exam.authentic.model.TresourceVo;
 import com.njmsita.exam.base.BaseDao;
 
@@ -17,6 +18,12 @@ public interface ResourceDao extends BaseDao<TresourceVo>
      */
     public List<TresourceVo> getAllByLoginId(String id);
 
+    /**
+     * 跟据登陆用户Id获取其所拥有的资源
+     * @param id    用户id
+     * @return
+     */
+    public List<TresourceVo> getAllByLoginId_stu(String id);
     /**
      * 根据名称或url进行查找
      * @param name      名称

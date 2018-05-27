@@ -92,6 +92,10 @@ public class ResourceEbo implements ResourceEbi
         return resourceDao.getAllByLoginId(id);
     }
 
+    public List<TresourceVo> getAllByLogin_stu(String id){
+        return resourceDao.getAllByLoginId_stu(id);
+    }
+
     public List<TresourceVo> getMenuByRole(String id)
     {
         return resourceDao.getMenuByRole(id);

@@ -13,7 +13,55 @@
         <script src="/vendor/bootstrap-table/bootstrap-table.js"></script>
         <script>
 
+            window.operateEvents = {
+                'click .js-view': function (e, value, row, index) {
+                    window.location.href = "/exam/manage/view?id=" + row.id;
+                },
+                'click .js-edit': function (e, value, row, index) {
+                    window.location.href = "/exam/manage/edit?id=" + row.id;
+                },
+                'click .js-cel': function (e, value, row, index) {
+                    if (confirm("确定要取消本场考试吗？") == true)
+                    {
+                        $.ajax(
+                            {
+                                url: '/exam/operation/cancel?id=' + row.id,
+                                type: "post",
+                                success: function (res) {
+                                    OnResult(res);
+                                    $("#table").bootstrapTable('refresh');
+                                }
+                            }
+                        );
 
+                    }
+                },
+                'click .js-addTea': function (e, value, row, index) {
+                    window.location.href = "#" + row.id;
+                },
+                'click .js-viewScore': function (e, value, row, index) {
+                    window.location.href = "#" + row.id;
+                },
+                'click .judge': function (e, value, row, index) {
+                    window.location.href = "#" + row.id;
+                },
+                'click .js-delete': function (e, value, row, index) {
+                    window.location.href = "#" + row.id;
+                },
+                'click .js-mark': function (e, value, row, index) {
+                    window.location.href = "#" + row.id;
+                },
+                'click .js-submitMark': function (e, value, row, index) {
+                    window.location.href = "#" + row.id;
+                },
+                'click .js-attend': function (e, value, row, index) {
+                    window.location.href = "#" + row.id;
+                },
+                'click .js-viewBrief': function (e, value, row, index) {
+                    window.location.href = "#" + row.id;
+                },
+
+            }
 
             $(document).ready(
                 function () {
@@ -93,53 +141,26 @@
                                 {
                                     field: 'operation',
                                     title: '操作',
-                                    events: {
-                                        'click .js-edit': function (e, value, row, index) {
-                                            window.location.href = "/exam/manage/edit?id=" + row.id;
-                                        },
-                                        'click .js-view': function (e, value, row, index) {
-                                            window.location.href = "/exam/manage/detail?id=" + row.id;
-                                        },
-                                        'click .js-cel': function (e, value, row, index) {
-                                            if (confirm("确定要取消本场考试吗？") == true)
-                                            {
-                                                $.ajax(
-                                                    {
-                                                        url: '/exam/operation/cancel?id=' + row.id,
-                                                        type: "post",
-                                                        success: function (res) {
-                                                            OnResult(res);
-                                                            $("#table").bootstrapTable('refresh');
-                                                        }
-                                                    }
-                                                );
-
-                                            }
-                                        }
-                                    },
+                                    events: operateEvents,
                                     formatter: function (value, row, index) {
-                                        var act = value; var html = '';
+                                        var act = value;
+                                        var dic = {
+                                            'view': '<i class="fa fa-search js-view cursor" title="预览"></i>',
+                                            'edit': '<i class="fa fa-pencil js-edit cursor " title="修改"></i>',
+                                            'cancel': '<i class="fa fa-times js-cel  cursor" title="取消"></i>',
+                                            'addMarkTeacher': '<i class="fa fa-user-plus  js-addTea      cursor" title="添加批卷教师"></i>',
+                                            'viewScore': '<i class="fa fa-eye   js-viewScore   cursor" title="查看分数"></i>',
+                                            'judge': '<i class="fa fa-eye   js-judge   cursor" title="审核"></i>',
+                                            'delete': '<i class="fa fa-trash  js-delete   cursor" title="删除"></i>',
+                                            'mark': '<i class="fa fa-edit   js-mark   cursor" title="批阅"></i>',
+                                            'submitMark': '<i class="fa fa-check  js-submitMark  cursor" title="批阅提交"></i>',
+                                            'attend': '<i class="fa fa-play   js-attend  cursor" title="参加考试"></i>',
+                                            'viewBrief': '<i class="fa fa-eye  js-viewBrief  cursor" title="查看概要"></i>'
+                                        };
+                                        var html = '';
                                         for (var i = 0; i < act.length; i++)
                                         {
-                                            if (act[i] == "view")
-                                            {
-                                                html += '<i class="fa fa-search del js-view cursor" title="预览"></i>';
-
-                                            }
-                                            if (act[i] == "edit")
-                                            {
-                                                html += '<i class="fa fa-pencil edit js-edit cursor " title="修改"></i>';
-
-                                            }
-                                            if (act[i]=="cancel")
-                                            {
-                                                html += '<i class="fa fa-times cancel js-cel cursor" title="取消"></i>';
-
-                                            }
-                                            if (act[i]=="addMarkTeacher")
-                                            {
-                                                html += '<i class="fa fa-plus js-add cursor" title="添加批卷教师"></i>';
-                                            }
+                                            html += dic[act[i]];
                                         }
                                         return html;
                                     }

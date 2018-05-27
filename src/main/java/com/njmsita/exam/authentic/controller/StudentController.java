@@ -24,6 +24,7 @@ import com.njmsita.exam.utils.validate.validategroup.EditGroup;
 import com.njmsita.exam.utils.validate.validategroup.StudentAddGroup;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
@@ -104,8 +105,10 @@ public class StudentController extends BaseController
         if (loginStudent != null)
         {
 
+
+
             //用户名密码验证成功获取当前登录人的所有权限
-            List<TresourceVo> studentResources = resourceEbi.getAllByLogin(loginStudent.getId());
+            List<TresourceVo> studentResources = resourceEbi.getAllByLogin_stu(loginStudent.getId());
             StringBuilder sbd = new StringBuilder();
             //拼接用户资源信息存入登陆用户
             for (TresourceVo resource : studentResources)
@@ -113,8 +116,9 @@ public class StudentController extends BaseController
                 sbd.append(resource.getUrl());
                 sbd.append(",");
             }
-            loginStudent.setResources(sbd.toString());
+            session.setAttribute(SysConsts.USER_RESOURCE_NAME, sbd.toString());
             session.setAttribute(SysConsts.USER_LOGIN_OBJECT_NAME, loginStudent);
+            Hibernate.initialize(loginStudent.getRole());
 
             //获取登陆用户的菜单
             getLoginMenu(request);
