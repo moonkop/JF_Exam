@@ -15,7 +15,7 @@
 
             window.operateEvents = {
                 'click .js-view': function (e, value, row, index) {
-                    window.location.href = "/exam/manage/view?id=" + row.id;
+                    window.location.href = "/exam/manage/detail?id=" + row.id;
                 },
                 'click .js-edit': function (e, value, row, index) {
                     window.location.href = "/exam/manage/edit?id=" + row.id;
@@ -42,7 +42,7 @@
                 'click .js-viewScore': function (e, value, row, index) {
                     window.location.href = "#" + row.id;
                 },
-                'click .judge': function (e, value, row, index) {
+                'click .js-judge': function (e, value, row, index) {
                     window.location.href = "#" + row.id;
                 },
                 'click .js-delete': function (e, value, row, index) {
@@ -126,8 +126,8 @@
                                         var temp = value;
                                         var dic = {
                                             '待审核': 'label-warning',
-                                            '未开始': 'label-success',
-                                            '待修改': 'label-warning',
+                                            '未开始': 'label-info',
+                                            '待修改': 'label-danger',
                                             '开启考试': 'label-info',
                                             '进行中': 'label-danger',
                                             '阅卷中': 'label-danger',
@@ -145,17 +145,17 @@
                                     formatter: function (value, row, index) {
                                         var act = value;
                                         var dic = {
-                                            'view': '<i class="fa fa-search js-view cursor" title="预览"></i>',
-                                            'edit': '<i class="fa fa-pencil js-edit cursor " title="修改"></i>',
-                                            'cancel': '<i class="fa fa-times js-cel  cursor" title="取消"></i>',
-                                            'addMarkTeacher': '<i class="fa fa-user-plus  js-addTea      cursor" title="添加批卷教师"></i>',
-                                            'viewScore': '<i class="fa fa-eye   js-viewScore   cursor" title="查看分数"></i>',
-                                            'judge': '<i class="fa fa-eye   js-judge   cursor" title="审核"></i>',
-                                            'delete': '<i class="fa fa-trash  js-delete   cursor" title="删除"></i>',
-                                            'mark': '<i class="fa fa-edit   js-mark   cursor" title="批阅"></i>',
-                                            'submitMark': '<i class="fa fa-check  js-submitMark  cursor" title="批阅提交"></i>',
-                                            'attend': '<i class="fa fa-play   js-attend  cursor" title="参加考试"></i>',
-                                            'viewBrief': '<i class="fa fa-eye  js-viewBrief  cursor" title="查看概要"></i>'
+                                            'judge': '<span class="label label-danger text-danger js-judge">审核</span>',
+                                            'view': '<i class="fa fa-search js-view" title="预览"></i>',
+                                            'edit': '<i class="fa fa-pencil js-edit" title="修改"></i>',
+                                            'cancel': '<i class="fa fa-times js-cel" title="取消"></i>',
+                                            'addMarkTeacher': '<i class="fa fa-user-plus js-addTea" title="添加批卷教师"></i>',
+                                            'viewScore': '<i class="fa fa-eye  js-viewScore" title="查看分数"></i>',
+                                            'delete': '<i class="fa fa-trash js-delete" title="删除"></i>',
+                                            'mark': '<i class="fa fa-edit  js-mark" title="批阅"></i>',
+                                            'submitMark': '<i class="fa fa-check js-submitMark" title="批阅提交"></i>',
+                                            'attend': '<i class="fa fa-play  js-attend" title="参加考试"></i>',
+                                            'viewBrief': '<i class="fa fa-eye js-viewBrief" title="查看概要"></i>'
                                         };
                                         var html = '';
                                         for (var i = 0; i < act.length; i++)

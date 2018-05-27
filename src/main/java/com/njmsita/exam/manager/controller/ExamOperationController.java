@@ -66,8 +66,8 @@ public class ExamOperationController
      * @return
      * @throws OperationException
      */
-    @RequestMapping("toCheck")
-    public String toCheck(ExamVo examVo, HttpServletRequest request) throws OperationException
+    @RequestMapping("review")
+    public String review(ExamVo examVo, HttpServletRequest request) throws OperationException
     {
         if(StringUtil.isEmpty(examVo.getId())){
             throw new OperationException("所选的该场考试的id不能为空");
@@ -87,7 +87,7 @@ public class ExamOperationController
      * @return
      * @throws Exception
      */
-    @RequestMapping("pass")
+    @RequestMapping("pass.do")
     @SystemLogAnnotation(module = "考试管理", methods = "审核通过")
     public String pass(ExamVo examVo,HttpServletRequest request) throws Exception
     {
@@ -106,9 +106,9 @@ public class ExamOperationController
      * @return
      * @throws Exception
      */
-    @RequestMapping("reject")
+    @RequestMapping("reject.do")
     @SystemLogAnnotation(module = "考试管理", methods = "驳回考试请求")
-    public String reject(ExamVo examVo,HttpServletRequest request) throws Exception
+    public String reject(ExamVo examVo,String comment,HttpServletRequest request) throws Exception
     {
         if(!StringUtil.isEmpty(examVo.getId())){
             examManageEbi.setNoPass(examVo,(TeacherVo)request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME));

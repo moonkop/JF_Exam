@@ -43,7 +43,7 @@
     </div>
 
 
-    <div class="paper-edit">f
+    <div class="paper-edit">
         <div style="margin: 10px" class="text-right">
 
 

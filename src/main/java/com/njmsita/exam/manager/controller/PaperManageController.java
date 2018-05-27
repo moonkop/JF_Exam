@@ -97,7 +97,7 @@ public class PaperManageController
         request.setAttribute("questionList", CustomJsonSerializer.toJsonString_static
                 (
                         new JsonListResponse<QuestionVo>(paperVo.getQuestionList(),"id,outline,options,value,code,index,type,answer")
-                                .getJsonList()
+                                .list()
                 )
         );
         return "/manage/paper/detail";

@@ -5,6 +5,7 @@ import com.njmsita.exam.manager.dao.dao.PaperMongoDao;
 import com.njmsita.exam.manager.model.PaperVo;
 import com.njmsita.exam.manager.model.querymodel.PaperQueryModel;
 import com.njmsita.exam.utils.consts.SysConsts;
+import com.njmsita.exam.utils.idutil.IdUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -99,6 +100,7 @@ public class PaperMongoDaoImpl implements PaperMongoDao {
     public void savaPaperToMongoExamPaper(PaperVo paperVo, String ExamId)
     {
         paperVo.setExamId(ExamId);
+        paperVo.setId(IdUtil.getUUID());
         this.insert(paperVo, SysConsts.EXAM_PAPER_SAVA_MONGO_OF_COLLECTION);
     }
 

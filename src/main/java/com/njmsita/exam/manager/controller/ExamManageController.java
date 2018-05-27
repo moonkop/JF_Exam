@@ -10,7 +10,6 @@ import com.njmsita.exam.manager.service.ebi.PaperEbi;
 import com.njmsita.exam.manager.service.ebi.SubjectEbi;
 import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.exception.OperationException;
-import com.njmsita.exam.utils.exception.UnAuthorizedException;
 import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.idutil.IdUtil;
 import com.njmsita.exam.utils.json.CustomJsonSerializer;
@@ -111,7 +110,7 @@ public class ExamManageController
             request.setAttribute("questionList", CustomJsonSerializer.toJsonString_static
                     (
                             new JsonListResponse<QuestionVo>(examVo.getPaperVo().getQuestionList(), "id,outline,options,value,code,index,type,answer")
-                                    .getJsonList()
+                                    .list()
                     )
             );
         }

@@ -64,21 +64,6 @@ public class BaseController{
 		UserModel login= (UserModel) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
 		TroleVo troleVo=roleEbi.get(login.getUserRole());
 		List<TresourceVo> loginMenu=resourceEbi.getMenuByRole(troleVo.getId());
-
-		for (TresourceVo menu : loginMenu)
-		{
-			Set<TresourceVo> childs=new HashSet<>();
-			Set<TresourceVo> oldChilds=menu.getChilds();
-			if(oldChilds.size()>0){
-				for (TresourceVo child : oldChilds)
-				{
-					if(child.getResourcetype().getId().equals(SysConsts.RESOURCE_TYPE_MENU_ID)){
-						childs.add(child);
-					}
-				}
-				menu.setChilds(childs);
-			}
-		}
 		request.getSession().setAttribute("loginMenu",loginMenu);
 	}
 }

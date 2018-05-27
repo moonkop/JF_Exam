@@ -8,10 +8,10 @@
         exam: {
             openTime: emptyToUndefined(${exam.openTime}),
             closeTime: emptyToUndefined(${exam.closeTime}),
-            classroomIds:[
-            <c:forEach items="${exam.classrooms}" var="classroom">
-            '${classroom.id}',
-            </c:forEach>
+            classroomIds: [
+                <c:forEach items="${exam.classrooms}" var="classroom">
+                '${classroom.id}',
+                </c:forEach>
             ]
         }
     }
@@ -92,11 +92,8 @@
         $("#input-start_time").val(TimeStampTDateTimeString(app.exam.openTime));
         $("#input-finish_time").val(TimeStampTDateTimeString(app.exam.closeTime));
         var classroomIdStr = emptyToUndefined("");
-        if (classroomIdStr != undefined)
-        {
-            strs = classroomIdStr.split(",");
-            $(".js-select2").val(strs);
-        }
+
+        $(".js-select2").val(app.exam.classroomIds);
 
         $(".js-select2").select2();
     })
@@ -142,13 +139,6 @@
                                 <div class="col-sm-8">
                                     <input type="text" class="form-control" id="input-name" name="name"
                                            value="${exam.name}" placeholder="请输入考试名称">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-2 control-label" for="input-name">考试备注</label>
-                                <div class="col-sm-8">
-                                    <input type="text" class="form-control" id="input-remark" name="remark"
-                                           value="${exam.remark}" placeholder="请输入考试名称">
                                 </div>
                             </div>
                             <div class="form-group">

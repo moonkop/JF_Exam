@@ -18,7 +18,11 @@ public class JsonListResponse<T> extends JsonObjectResponse<T>
 
     }
 
-
+    @JsonIgnore
+    public List<Map<String, Object>> list()
+    {
+        return rows;
+    }
     public JsonListResponse(String fields)
     {
         this.setFields(fields);
@@ -51,10 +55,7 @@ public class JsonListResponse<T> extends JsonObjectResponse<T>
         return this;
     }
 
-    public List<Map<String, Object>> getJsonList()
-    {
-        return rows;
-    }
+
     @Override
     public JsonListResponse<T> addCustomJsonElementFormater(String key, CustomJsonElementFormater<T> formater)
     {

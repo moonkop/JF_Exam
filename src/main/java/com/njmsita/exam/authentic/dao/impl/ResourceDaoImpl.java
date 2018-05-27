@@ -28,7 +28,7 @@ public class ResourceDaoImpl extends BaseImpl<TresourceVo> implements ResourceDa
         //查询逻辑：teacher--->role---->resource
         String hql = "select res from TeacherVo tv join tv.role rv join rv.reses res where tv.id=? ";
 
-        return (List<TresourceVo>) this.getHibernateTemplate().find(hql, id);
+        return (List<TresourceVo>) getEvictObjects(this.getHibernateTemplate().find(hql, id));
     }
 
     public List<TresourceVo> getAllByLoginId_stu(String id)
@@ -36,25 +36,38 @@ public class ResourceDaoImpl extends BaseImpl<TresourceVo> implements ResourceDa
         //查询逻辑：student--->role---->resource
         //学生
         String hql = "select res from StudentVo tv join tv.role rv join rv.reses res where tv.id=? ";
-        return (List<TresourceVo>) this.getHibernateTemplate().find(hql,id);
+        return (List<TresourceVo>) getEvictObjects(this.getHibernateTemplate().find(hql,id));
     }
 
     public List<TresourceVo> getByNameOrUrl(String name, String url)
     {
         String hql = "from TresourceVo where name=? or url=?";
-        List<TresourceVo> list = (List<TresourceVo>) this.getHibernateTemplate().find(hql, name, url);
+        List<TresourceVo> list = getEvictObjects((List<TresourceVo>) this.getHibernateTemplate().find(hql, name, url));
         return list;
     }
 
     public List<TresourceVo> getAllOrderBySeq()
     {
         String hql = "from TresourceVo order by seq";
-        return (List<TresourceVo>) this.getHibernateTemplate().find(hql);
+         List<TresourceVo> list= getEvictObjects((List<TresourceVo>) this.getHibernateTemplate().find(hql));
+
+         return list;
     }
 
     public List<TresourceVo> getMenuByRole(String roleId)
     {
         String hql = "from TresourceVo rv left outer join fetch rv.roles rov where rv.parent.id=? and rov.id=? order by rv.seq";
-        return (List<TresourceVo>) this.getHibernateTemplate().find(hql, SysConsts.SYSTEM_MENU_ID, roleId);
+        List<TresourceVo> list =  getEvictObjects((List<TresourceVo>)this.getHibernateTemplate().find(hql, SysConsts.SYSTEM_MENU_ID, roleId)) ;
+
+        return list;
+    }
+
+    public <T> List<T> getEvictObjects(List<T> list)
+    {
+        for (T object : list)
+        {
+            this.getHibernateTemplate().evict(object);
+        }
+        return  list;
     }
 }

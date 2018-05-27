@@ -592,6 +592,7 @@ public class ExamManageEbo implements ExamManageEbi
                 throw new OperationException("您添加的班级不存在");
             }
         }
+        examVo.setClassrooms(classroomVoSet);
 
         SubjectVo subjectVo;
         if (examVo.getSubject() == null
