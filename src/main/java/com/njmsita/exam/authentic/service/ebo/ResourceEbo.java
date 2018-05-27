@@ -29,7 +29,7 @@ public class ResourceEbo implements ResourceEbi
     public void save(TresourceVo tresourceVo) throws OperationException
     {
         infoValidate(tresourceVo);
-        if(resourceDao.getByNameOrUrl(tresourceVo.getName(),tresourceVo.getUrl()).size()>0){
+        if(resourceDao.getByUrl(tresourceVo.getUrl()).size()>0){
             throw new OperationException("资源名称或URL已存在，请核对后重试");
         }
         resourceDao.save(tresourceVo);
@@ -61,7 +61,7 @@ public class ResourceEbo implements ResourceEbi
     public void update(TresourceVo tresourceVo) throws OperationException
     {
         infoValidate(tresourceVo);
-        if(resourceDao.getByNameOrUrl(tresourceVo.getName(),tresourceVo.getUrl()).size()>1){
+        if(resourceDao.getByUrl(tresourceVo.getUrl()).size()>1){
             throw new OperationException("资源名称或URL已存在，请核对后重试");
         }
         TresourceVo temp= resourceDao.get(tresourceVo.getId());

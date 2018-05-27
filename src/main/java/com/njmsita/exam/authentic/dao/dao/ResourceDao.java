@@ -26,12 +26,10 @@ public interface ResourceDao extends BaseDao<TresourceVo>
     public List<TresourceVo> getAllByLoginId_stu(String id);
     /**
      * 根据名称或url进行查找
-     * @param name      名称
      * @param url       路径
      * @return
      */
-    public List<TresourceVo> getByNameOrUrl(String name, String url);
-
+    public List<TresourceVo> getByUrl(String url);
     /**
      * 获得排序后的所有资源
      * @return

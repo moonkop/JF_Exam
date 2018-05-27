@@ -39,10 +39,10 @@ public class ResourceDaoImpl extends BaseImpl<TresourceVo> implements ResourceDa
         return (List<TresourceVo>) getEvictObjects(this.getHibernateTemplate().find(hql,id));
     }
 
-    public List<TresourceVo> getByNameOrUrl(String name, String url)
+    public List<TresourceVo> getByUrl(String url)
     {
-        String hql = "from TresourceVo where name=? or url=?";
-        List<TresourceVo> list = getEvictObjects((List<TresourceVo>) this.getHibernateTemplate().find(hql, name, url));
+        String hql = "from TresourceVo where url=?";
+        List<TresourceVo> list = getEvictObjects((List<TresourceVo>) this.getHibernateTemplate().find(hql, url));
         return list;
     }
 
