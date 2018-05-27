@@ -99,7 +99,9 @@ public class ResourceEbo implements ResourceEbi
 
     public List<TresourceVo> getMenuByRole(String id)
     {
-        return resourceDao.getMenuByRole(id);
+        List<TresourceVo> tresourceVoList = resourceDao.getMenuByRole(id);
+
+        return tresourceVoList;
     }
 
     @Override

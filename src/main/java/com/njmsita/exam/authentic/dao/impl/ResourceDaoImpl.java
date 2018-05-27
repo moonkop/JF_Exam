@@ -36,7 +36,7 @@ public class ResourceDaoImpl extends BaseImpl<TresourceVo> implements ResourceDa
         //查询逻辑：student--->role---->resource
         //学生
         String hql = "select res from StudentVo tv join tv.role rv join rv.reses res where tv.id=? ";
-        return (List<TresourceVo>) getEvictObjects(this.getHibernateTemplate().find(hql,id));
+        return (List<TresourceVo>) getEvictObjects(this.getHibernateTemplate().find(hql, id));
     }
 
     public List<TresourceVo> getByUrl(String url)
@@ -49,16 +49,16 @@ public class ResourceDaoImpl extends BaseImpl<TresourceVo> implements ResourceDa
     public List<TresourceVo> getAllOrderBySeq()
     {
         String hql = "from TresourceVo order by seq";
-         List<TresourceVo> list= getEvictObjects((List<TresourceVo>) this.getHibernateTemplate().find(hql));
+        List<TresourceVo> list = getEvictObjects((List<TresourceVo>) this.getHibernateTemplate().find(hql));
 
-         return list;
+        return list;
     }
 
     public List<TresourceVo> getMenuByRole(String roleId)
     {
-        String hql = "from TresourceVo rv left outer join fetch rv.roles rov where rv.parent.id=? and rov.id=? order by rv.seq";
-        List<TresourceVo> list =  getEvictObjects((List<TresourceVo>)this.getHibernateTemplate().find(hql, SysConsts.SYSTEM_MENU_ID, roleId)) ;
-
+        String hql = "from TresourceVo rv left outer join fetch rv.roles rov  where rv.parent.id=? and rov.id=? order by rv.seq";
+        List<TresourceVo> list =(List<TresourceVo>) this.getHibernateTemplate().find(hql, SysConsts.SYSTEM_MENU_ID, roleId);
+        list = getEvictObjects(list);
         return list;
     }
 
@@ -68,6 +68,6 @@ public class ResourceDaoImpl extends BaseImpl<TresourceVo> implements ResourceDa
         {
             this.getHibernateTemplate().evict(object);
         }
-        return  list;
+        return list;
     }
 }
