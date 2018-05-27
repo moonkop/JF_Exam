@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.awt.image.RescaleOp;
 import java.io.Serializable;
 import java.util.List;
 
@@ -99,6 +100,19 @@ public class ResourceEbo implements ResourceEbi
     public List<TresourceVo> getMenuByRole(String id)
     {
         return resourceDao.getMenuByRole(id);
+    }
+
+    @Override
+    public void move(String id, String parent) throws OperationException
+    {
+        TresourceVo tresourceVo= resourceDao.get(id);
+        TresourceVo parentPo = resourceDao.get(parent);
+        if (tresourceVo == null || parentPo == null)
+        {
+            throw new OperationException("父资源或该资源不存在");
+        }
+        tresourceVo.setParent(parentPo);
+
     }
 
     /**

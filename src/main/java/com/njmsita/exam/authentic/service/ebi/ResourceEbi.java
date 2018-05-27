@@ -3,6 +3,7 @@ package com.njmsita.exam.authentic.service.ebi;
 import com.njmsita.exam.authentic.model.TresourceVo;
 import com.njmsita.exam.authentic.model.TroleVo;
 import com.njmsita.exam.base.BaseEbi;
+import com.njmsita.exam.utils.exception.OperationException;
 
 import java.util.List;
 
@@ -27,4 +28,6 @@ public interface ResourceEbi extends BaseEbi<TresourceVo>
      * @return
      */
     public List<TresourceVo> getMenuByRole(String id);
+
+    void move(String id, String parent) throws OperationException;
 }

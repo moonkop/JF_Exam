@@ -49,7 +49,7 @@
                                             data: {'id': data.node.id, 'parent': data.parent},
                                             success: function (res) {
                                                 OnResult(res);
-                                                getResourceTree();
+                                                getTopicTree();
                                                 // data.instance.refresh();
                                             }
                                         }
@@ -62,7 +62,7 @@
                                             data: {'id': data.node.id, 'text': data.text},
                                             success: function (res) {
                                                 OnResult(res);
-                                                getResourceTree();
+                                                getTopicTree();
 //                                                data.instance.set_id(data.node, d.id);
                                                 //data.instance.refresh();
                                             }
@@ -102,7 +102,7 @@
                                                                                 data: getFormData("form-add-topic"),
                                                                                 success: function (res) {
                                                                                     OnResult(res);
-                                                                                    getResourceTree();
+                                                                                    getTopicTree();
                                                                                 }
                                                                             }
                                                                         )
@@ -127,7 +127,7 @@
                                                                     success: function (res) {
                                                                         OnResult(res, function () {
                                                                             alert(res.message);
-                                                                            getResourceTree();
+                                                                            getTopicTree();
                                                                         });
                                                                     }
                                                                 }
@@ -151,7 +151,7 @@
                         }
 
 
-                        function getResourceTree()
+                        function getTopicTree()
                         {
                             $.ajax({
                                 url: '/manage/bank/topic/treeBySubject.do?subjectID=' + $("#select-subject").val(),
@@ -166,9 +166,9 @@
                         }
 
                         initTree();
-                        getResourceTree();
+                        getTopicTree();
                         $("#select-subject").on("change", function () {
-                            getResourceTree();
+                            getTopicTree();
 
                         })
                     })

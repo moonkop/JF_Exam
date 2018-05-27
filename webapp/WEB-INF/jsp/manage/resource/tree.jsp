@@ -34,12 +34,27 @@
                                 .on("refresh.jstree", function (event, data) {
                                     getJstree().open_all();
                                 })
+                                .on('move_node.jstree', function (e, data) {
+                                    $.ajax(
+                                        {
+                                            url: '/manage/resource/move.do',
+                                            data: {'id': data.node.id, 'parent': data.parent},
+                                            success: function (res) {
+                                                OnResult(res);
+                                                getResourceTree();
+                                            }
+                                        }
+                                    )
+                                })
+
                                 .jstree({
                                     'core': {
-                                        'worker': false
+                                        'worker': false,
+                                        "check_callback": true
                                     },
                                     "plugins": [
-                                        "contextmenu"
+                                        "contextmenu",
+                                        "dnd"
                                     ],
                                     'contextmenu': {
                                         'items': function (node) {
@@ -48,7 +63,7 @@
                                                     label: "添加资源",
                                                     action: function (data) {
                                                         var id = getJstree().get_node(data.reference).id;
-                                                        window.location.href = "/manage/resource/edit?parent.id=" + id;
+                                                        window.location.href = "/manage/resource/edit?parent=" + id;
                                                     }
                                                 },
                                                 delete: {

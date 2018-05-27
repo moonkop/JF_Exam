@@ -37,6 +37,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -681,6 +682,16 @@ public class SystemManagerController extends BaseController
         //如果待编辑资源为空 则会传进来parent.id
 
         return "/manage/resource/edit";
+    }
+
+
+    @ResponseBody
+    @RequestMapping("resource/move.do")
+    public JsonResponse moveResource(String id, String parent) throws OperationException
+    {
+        resourceEbi.move(id,parent);
+
+        return new JsonResponse();
     }
 
     /**
