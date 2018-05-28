@@ -50,4 +50,5 @@ public class UserModel
     {
         this.resources = resources;
     }
+
 }

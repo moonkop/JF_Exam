@@ -51,12 +51,6 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-sm-2 control-label">备注</label>
-                                    <div class="col-sm-8">
-                                        <p class="form-control-static">${exam.remark}</p>
-                                    </div>
-                                </div>
-                                <div class="form-group">
                                     <label class="col-sm-2 control-label">开始时间</label>
                                     <div class="col-sm-8">
                                         <p class="form-control-static" id="openTime">${exam.openTime}</p>
@@ -123,10 +117,6 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
-
-
-                    </div>
                 </div>
             </div>
             <div class="panel panel-default">
@@ -167,6 +157,9 @@
     <script>
         var app = {
             name: 'paper-edit',
+            exam:{
+                id:'${exam.id}'
+            },
             paper: {
                 id: '${paper.id}',
                 title: '${paper.title}',

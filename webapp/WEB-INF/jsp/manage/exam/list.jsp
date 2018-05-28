@@ -33,17 +33,16 @@
                                 }
                             }
                         );
-
                     }
                 },
-                'click .js-addTea': function (e, value, row, index) {
+                'click .js-add-teacher': function (e, value, row, index) {
                     window.location.href = "#" + row.id;
                 },
                 'click .js-viewScore': function (e, value, row, index) {
                     window.location.href = "#" + row.id;
                 },
                 'click .js-judge': function (e, value, row, index) {
-                    window.location.href = "#" + row.id;
+                    window.location.href = "/exam/operation/review?id=" + row.id;
                 },
                 'click .js-delete': function (e, value, row, index) {
                     window.location.href = "#" + row.id;
@@ -145,11 +144,11 @@
                                     formatter: function (value, row, index) {
                                         var act = value;
                                         var dic = {
-                                            'judge': '<span class="label label-danger text-danger js-judge">审核</span>',
+                                            'judge': '<span class="label label-action label-danger text-danger js-judge">审核</span>',
                                             'view': '<i class="fa fa-search js-view" title="预览"></i>',
                                             'edit': '<i class="fa fa-pencil js-edit" title="修改"></i>',
                                             'cancel': '<i class="fa fa-times js-cel" title="取消"></i>',
-                                            'addMarkTeacher': '<i class="fa fa-user-plus js-addTea" title="添加批卷教师"></i>',
+                                            'addMarkTeacher': '<i class="fa fa-user-plus js-add-teacher" title="添加批卷教师"></i>',
                                             'viewScore': '<i class="fa fa-eye  js-viewScore" title="查看分数"></i>',
                                             'delete': '<i class="fa fa-trash js-delete" title="删除"></i>',
                                             'mark': '<i class="fa fa-edit  js-mark" title="批阅"></i>',

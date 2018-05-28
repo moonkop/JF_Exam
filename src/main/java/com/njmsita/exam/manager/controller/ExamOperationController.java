@@ -4,6 +4,7 @@ import com.njmsita.exam.authentic.model.TeacherVo;
 import com.njmsita.exam.authentic.model.UserModel;
 import com.njmsita.exam.authentic.service.ebi.TeacherEbi;
 import com.njmsita.exam.manager.model.ExamVo;
+import com.njmsita.exam.manager.model.QuestionVo;
 import com.njmsita.exam.manager.model.StudentExamQuestionVo;
 import com.njmsita.exam.manager.model.StudentExamVo;
 import com.njmsita.exam.manager.service.ebi.ExamManageEbi;
@@ -12,6 +13,8 @@ import com.njmsita.exam.manager.service.ebi.SubjectEbi;
 import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.format.StringUtil;
+import com.njmsita.exam.utils.json.CustomJsonSerializer;
+import com.njmsita.exam.utils.json.JsonListResponse;
 import com.njmsita.exam.utils.json.JsonResponse;
 import com.njmsita.exam.utils.logutils.SystemLogAnnotation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +59,7 @@ public class ExamOperationController
         List<ExamVo> markList= examManageEbi.getByMarkTeacher(login.getUuid());
         request.setAttribute("createList",createList);
         request.setAttribute("markList",markList);
-        return "manage/me/teacherExam";
+        return "/manage/me/teacherExam";
     }
 
     /**
@@ -67,17 +70,27 @@ public class ExamOperationController
      * @throws OperationException
      */
     @RequestMapping("review")
-    public String review(ExamVo examVo, HttpServletRequest request) throws OperationException
+    public String review(String id, HttpServletRequest request) throws Exception
     {
-        if(StringUtil.isEmpty(examVo.getId())){
-            throw new OperationException("所选的该场考试的id不能为空");
+        ExamVo examVo;
+        if (StringUtil.isEmpty(id) || (examVo = examManageEbi.getWithPaper(id)) == null)
+        {
+            throw new OperationException("该考试不存在");
         }
-        ExamVo temp= examManageEbi.get(examVo.getId());
-        if(temp==null){
-            throw new OperationException("所选的该场考试不能为空");
+        examManageEbi.checkPermission(SysConsts.EXAM_OPERATION_VIEW, (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME), examVo);
+
+        request.setAttribute("exam", examVo);
+        if (examVo.getPaperVo() != null)
+        {
+            request.setAttribute("paper", examVo.getPaperVo());
+            request.setAttribute("questionList", CustomJsonSerializer.toJsonString_static
+                    (
+                            new JsonListResponse<QuestionVo>(examVo.getPaperVo().getQuestionList(), "id,outline,options,value,code,index,type,answer")
+                                    .list()
+                    )
+            );
         }
-        request.setAttribute("examVo",temp);
-        return "manage/exam/check";
+        return "/manage/exam/review";
     }
 
     /**
@@ -87,16 +100,17 @@ public class ExamOperationController
      * @return
      * @throws Exception
      */
+    @ResponseBody
     @RequestMapping("pass.do")
     @SystemLogAnnotation(module = "考试管理", methods = "审核通过")
-    public String pass(ExamVo examVo,HttpServletRequest request) throws Exception
+    public JsonResponse pass(ExamVo examVo,HttpServletRequest request) throws Exception
     {
         if(!StringUtil.isEmpty(examVo.getId())){
             examManageEbi.setPass(examVo,(TeacherVo)request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME));
         }else {
             throw new OperationException("所选择的考试不存在");
         }
-        return "manage/exam/toList";
+        return new JsonResponse();
     }
 
     /**
@@ -106,38 +120,20 @@ public class ExamOperationController
      * @return
      * @throws Exception
      */
+    @ResponseBody
     @RequestMapping("reject.do")
     @SystemLogAnnotation(module = "考试管理", methods = "驳回考试请求")
-    public String reject(ExamVo examVo,String comment,HttpServletRequest request) throws Exception
+    public JsonResponse reject(ExamVo examVo,String comment,HttpServletRequest request) throws Exception
     {
         if(!StringUtil.isEmpty(examVo.getId())){
             examManageEbi.setNoPass(examVo,(TeacherVo)request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME));
         }else {
             throw new OperationException("所选择的考试不存在");
         }
-        return "manage/exam/toList";
+        return new JsonResponse();
     }
 
-    /**
-     * 查看
-     * @param examVo
-     * @param request
-     * @return
-     * @throws OperationException
-     */
-    @RequestMapping("view")
-    public String view(ExamVo examVo,HttpServletRequest request) throws OperationException
-    {
-        if(StringUtil.isEmpty(examVo.getId())){
-            throw new OperationException("所选的该场考试的id不能为空");
-        }
-        ExamVo temp= examManageEbi.get(examVo.getId());
-        if(temp==null){
-            throw new OperationException("所选的该场考试不能为空");
-        }
-        request.setAttribute("examVo",temp);
-        return "manage/exam/view";
-    }
+
 
     /**
      * 取消

@@ -126,7 +126,7 @@ public class ScheduleVo
     }
 
     @Basic
-    @Column(name = "describe")
+    @Column(name = "describes")
     public String getDescribe()
     {
         return describe;

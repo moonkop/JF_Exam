@@ -3,13 +3,16 @@ package com.njmsita.exam.manager.dao.impl;
 import com.njmsita.exam.base.BaseImpl;
 import com.njmsita.exam.base.BaseQueryVO;
 import com.njmsita.exam.manager.dao.dao.ExamDao;
+import com.njmsita.exam.manager.dao.dao.PaperMongoDao;
 import com.njmsita.exam.manager.model.ExamVo;
 import com.njmsita.exam.manager.model.querymodel.ExamQueryModel;
 import com.njmsita.exam.utils.format.StringUtil;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -18,6 +21,20 @@ import java.util.List;
 @Repository
 public class ExamDaoImpl extends BaseImpl<ExamVo> implements ExamDao
 {
+    @Autowired
+    PaperMongoDao paperMongoDao;
+
+    public ExamVo getExamWithPaper(Serializable uuid)
+    {
+        ExamVo examPo= super.get(uuid);
+        examPo.setPaperVo(paperMongoDao.getPaperVoByExamId(examPo.getId()));
+        return examPo;
+    }
+
+    public void SetPaper(ExamVo examVo)
+    {
+        examVo.setPaperVo(paperMongoDao.getPaperVoByExamId(examVo.getId()));
+    }
 
     public void doQbc(DetachedCriteria dc, BaseQueryVO qm)
     {

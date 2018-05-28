@@ -193,6 +193,15 @@
         </put-list-attribute>
     </definition>
 
+    <definition name="/manage/exam/review" extends="teacher_base">
+        <put-attribute name="body" value="/WEB-INF/jsp/manage/exam/review.jsp"/>
+        <put-attribute name="title" value="考试详情"/>
+        <put-list-attribute name="additional-headers">
+            <add-attribute value="/WEB-INF/layout/additional-headers/highlight-header.jsp"/>
+        </put-list-attribute>
+    </definition>
+
+
     <definition name="/manage/exam/edit" extends="teacher_base">
         <put-attribute name="body" value="/WEB-INF/jsp/manage/exam/edit.jsp"/>
         <put-attribute name="title" value="编辑考试"/>

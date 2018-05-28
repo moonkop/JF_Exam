@@ -195,9 +195,7 @@ public class StudentController extends BaseController
     @SystemLogAnnotation(module = "学生个人", methods = "退出登录")
     public String loginOut(HttpSession session)
     {
-        //将session中的已登陆用户至空
-        //TODO 有疑问？？？？？？？？
-        session.setAttribute(SysConsts.USER_LOGIN_OBJECT_NAME, null);
+        session.invalidate();
         return "redirect:/student/login";
     }
 
@@ -274,10 +272,6 @@ public class StudentController extends BaseController
 
         request.setAttribute("schoolList", schoolList);
         request.setAttribute("classroomList", classroomList);
-
-        //调用BaseController的方法设置数据总量及最大页码数
-        pageCount = pageSize;
-        setDataTotal(studentEbi.getCount(studentQueryModel));
 
         List<StudentVo> sutdentList = studentEbi.getAll(studentQueryModel, pageNum, pageSize);
         request.setAttribute("sutdentList", sutdentList);

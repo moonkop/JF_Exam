@@ -18,9 +18,7 @@
 	<!-- 激活基于注解的配置 @RequestMapping, @ExceptionHandler,数据绑定 ,@NumberFormat ,
 		@DateTimeFormat ,@Controller ,@Valid ,@RequestBody ,@ResponseBody等 -->
 	<mvc:annotation-driven validator="validator" conversion-service="cconversion-service">
-		<mvc:return-value-handlers>
-			<bean class="com.njmsita.exam.utils.jsonfilter.JsonReturnHandler"/>
-		</mvc:return-value-handlers>
+
 	</mvc:annotation-driven>
 
 	<!-- =============================-校验器=========================================== -->

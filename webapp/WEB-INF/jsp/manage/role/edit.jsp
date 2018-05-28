@@ -115,7 +115,14 @@
                                                 type: "post",
                                                 data: data,
                                                 success: function (res) {
-                                                    alert("success");
+                                                    OnResult(res,
+                                                    function(res){
+                                                        setTimeout(function () {
+                                                            window.location.href = "/manage/role";
+                                                        },500)
+                                                    }
+                                                    );
+
                                                 }
                                             });
                                             return false;
