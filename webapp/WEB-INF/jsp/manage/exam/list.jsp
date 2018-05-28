@@ -105,6 +105,7 @@
                                 {
                                     field: 'duration',
                                     title: '考试时间'
+
                                 },
                                 {
                                     field: 'teacher',
