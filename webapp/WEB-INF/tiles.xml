@@ -209,6 +209,12 @@
     </definition>
 
 
+    <definition name="examing/attend" extends="student_base">
+        <!--//学生考试界面？？-->
+        <put-attribute name="body" value="/WEB-INF/jsp/index_student.jsp"/>
+        <put-attribute name="title" value="我的考试"/>
+    </definition>
+
 
     <definition name="/index_teacher" extends="teacher_base">
         <put-attribute name="body" value="/WEB-INF/jsp/index_teacher.jsp"/>

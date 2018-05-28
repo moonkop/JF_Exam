@@ -3,17 +3,29 @@
 <div class="navbar-default sidebar app-side" role="navigation">
     <div class="sidebar-nav navbar-collapse">
         <ul class="nav" id="side-menu">
-            <c:forEach items="${sessionScope.loginMenu}" var="menu">
+            <c:forEach items="${loginMenu}" var="menu">
                 <li>
-                    <a href="${menu.url}">${menu.name}</a>
+                    <c:if test="${not empty menu.url}">
+                        <a href="${menu.url}">${menu.name}</a>
+                    </c:if>
+                    <c:if test="${empty menu.url}">
+                        <a href="#">${menu.name}</a>
+
+                    </c:if>
+                    <c:if test="${not empty menu.childs}">
+                        <ul class="nav nav-second-level">
+
+                            <c:forEach items="${menu.childs}" var="child">
+
+                                <li>
+                                    <a href="${child.url}"> ${child.name}</a>
+                                </li>
+
+                            </c:forEach>
+                        </ul>
+
+                    </c:if>
                 </li>
-                <c:forEach items="${menu.childs}" var="child">
-                    <ul class="nav nav-second-level">
-                        <li>
-                            <<a href="${child.url}">${child.name}</a>
-                        </li>
-                    </ul>
-                </c:forEach>
             </c:forEach>
         </ul>
     </div>

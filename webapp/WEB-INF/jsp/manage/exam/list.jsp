@@ -99,12 +99,9 @@
                                     title: '开始时间',
                                     formatter: function (value, row, index) {
                                         var date = new Date(value);
-                                        var temp;
-                                        temp = date.getFullYear() + "-" + date.getMonth() + "-" + date.getDay() + " "
-                                            + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
-                                        return temp;
+                                        return date.toLocaleString();
+                                        ;
                                     }
-
                                 },
                                 {
                                     field: 'duration',
