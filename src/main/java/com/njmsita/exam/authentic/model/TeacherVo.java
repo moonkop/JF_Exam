@@ -1,5 +1,6 @@
 package com.njmsita.exam.authentic.model;
 
+import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.validate.annotation.IDCardNoValifatorAnnocation;
 import com.njmsita.exam.utils.validate.annotation.TelephoneValidatorAnnotation;
 import com.njmsita.exam.utils.validate.validategroup.AddGroup;
@@ -251,6 +252,13 @@ public class TeacherVo extends UserModel
 
         return true;
     }
+    public boolean equalsById(TeacherVo teacherVo)
+    {
+
+        if (getId() != null ? !getId().equals(teacherVo.getId()) : teacherVo.getId() != null) return false;
+
+        return true;
+    }
 
     public String toString()
     {
@@ -270,4 +278,15 @@ public class TeacherVo extends UserModel
                 ", troleVo=" + role +
                 '}';
     }
+
+    @Transient
+    public boolean IsAdmin()
+    {
+        if (this.getRole() != null && this.getRole().getId().equals(SysConsts.ADMIN_ROLE_ID))
+        {
+            return true;
+        }
+        return false;
+    }
+
 }

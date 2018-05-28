@@ -13,6 +13,7 @@ import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.exception.UnAuthorizedException;
 import com.njmsita.exam.utils.exception.UnLoginException;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -43,6 +44,8 @@ public interface ExamManageEbi extends BaseEbi<ExamVo>
      */
     public void update(ExamVo examVo, String[] markTeachers, String paperId, String[] classroomIds,TeacherVo teacherVo) throws Exception;
 
+
+    public ExamVo getWithPaper(Serializable uuid);
     /**
      * 查询当前就是所发起的考试
      *

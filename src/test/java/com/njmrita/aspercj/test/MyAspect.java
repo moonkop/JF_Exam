@@ -5,7 +5,6 @@ import com.njmsita.exam.authentic.dao.dao.StudentDao;
 import com.njmsita.exam.authentic.model.TeacherVo;
 import com.njmsita.exam.manager.dao.dao.QuestionDao;
 import com.njmsita.exam.manager.model.QuestionVo;
-import com.njmsita.exam.utils.timertask.QuartzJobFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.quartz.*;
@@ -14,8 +13,6 @@ import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import sun.plugin2.util.PojoUtil;
-
-import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:applicationContext.xml")
@@ -43,7 +40,7 @@ public class MyAspect
             CronTrigger trigger = (CronTrigger) scheduler.getTrigger(triggerKey);
             //不存在，创建一个
             if (null == trigger) {
-                JobDetail jobDetail = JobBuilder.newJob(QuartzJobFactory.class)
+                JobDetail jobDetail = JobBuilder.newJob(ExamStatusModifyJob.class)
                         .withIdentity(job.getJobName(), job.getJobGroup()).build();
                 jobDetail.getJobDataMap().put("scheduleJob", job);
                 //表达式调度构建器

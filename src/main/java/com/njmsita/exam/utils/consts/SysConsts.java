@@ -33,13 +33,13 @@ public class SysConsts
 	 * 教师角色
 	 */
 	public static final String TEACHER_ROLE_NAME = "教师";
-	public static final String TEACHER_ROLE_ID = "c2ae048229ae408ea1f3b0bda03d6cc6";
+	public static final String TEACHER_ROLE_ID = "1";
 
 	/**
 	 * 学生角色
 	 */
 	public static final String STUDENT_ROLE_NAME = "学生";
-	public static final String STUDENT_ROLE_ID = "c2ae048229ae408ea1f3b0bda03d6cc5";
+	public static final String STUDENT_ROLE_ID = "2";
 
 	/**
 	 * 批量导入文件类型
@@ -195,7 +195,6 @@ public class SysConsts
 	/**
 	 * 考试开放时间
 	 */
-	public static final int EXAM_OPEN_TO_CLOSE_DURING_TIME = 30;
 
 	/**
 	 * 学生考试过程操作

@@ -5,6 +5,7 @@ import com.njmsita.exam.manager.model.ExamVo;
 import com.njmsita.exam.manager.model.LogVo;
 import com.njmsita.exam.manager.model.querymodel.LogQueryModel;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -25,4 +26,9 @@ public interface ExamDao extends BaseDao<ExamVo>
      * @return
      */
     public List<ExamVo> getByMarkTeacher(String teacherId);
+
+    public ExamVo getExamWithPaper(Serializable uuid);
+    public void SetPaper(ExamVo examVo);
+
+
 }

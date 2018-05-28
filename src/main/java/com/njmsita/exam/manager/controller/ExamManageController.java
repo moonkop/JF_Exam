@@ -2,6 +2,7 @@ package com.njmsita.exam.manager.controller;
 
 import com.njmsita.exam.authentic.model.TeacherVo;
 import com.njmsita.exam.authentic.service.ebi.TeacherEbi;
+import com.njmsita.exam.base.BaseController;
 import com.njmsita.exam.manager.model.*;
 import com.njmsita.exam.manager.model.querymodel.ExamQueryModel;
 import com.njmsita.exam.manager.service.ebi.ClassroomEbi;
@@ -21,7 +22,6 @@ import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -35,10 +35,10 @@ import java.util.List;
  */
 @Controller
 @RequestMapping("/exam/manage")
-public class ExamManageController
+public class ExamManageController extends BaseController
 {
     @Autowired
-    private ExamManageEbi examEbi;
+    private ExamManageEbi examManageEbi;
     @Autowired
     private SubjectEbi subjectEbi;
     @Autowired
@@ -68,8 +68,8 @@ public class ExamManageController
         request.setAttribute("classroomList", classroomEbi.getAll());
         if (!StringUtil.isEmpty(id))
         {
-            ExamVo examVo = examEbi.get(id);
-            examEbi.checkPermission(SysConsts.EXAM_OPERATION_EDIT, (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME), examVo);
+            ExamVo examVo = examManageEbi.getWithPaper(id);
+            examManageEbi.checkPermission(SysConsts.EXAM_OPERATION_EDIT, (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME), examVo);
             if (examVo == null)
             {
                 throw new OperationException("所选的该场考试不能为空，请不要进行非法操作！");
@@ -91,18 +91,13 @@ public class ExamManageController
     @RequestMapping("detail")
     public String examDetail(String id, HttpServletRequest request) throws Exception
     {
-        if (StringUtil.isEmpty(id))
+        ExamVo examVo;
+        if (StringUtil.isEmpty(id) || (examVo = examManageEbi.getWithPaper(id)) == null)
         {
             throw new OperationException("该考试不存在");
         }
+        examManageEbi.checkPermission(SysConsts.EXAM_OPERATION_VIEW, (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME), examVo);
 
-        ExamVo examVo = examEbi.get(id);
-        examEbi.checkPermission(SysConsts.EXAM_OPERATION_VIEW, (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME), examVo);
-        Hibernate.initialize(examVo.getCreateTeacher());
-        if (examVo == null)
-        {
-            throw new OperationException("该考试不存在");
-        }
         request.setAttribute("exam", examVo);
         if (examVo.getPaperVo() != null)
         {
@@ -114,7 +109,6 @@ public class ExamManageController
                     )
             );
         }
-
         return "/manage/exam/detail";
     }
 
@@ -141,25 +135,16 @@ public class ExamManageController
                                   HttpServletRequest request) throws Exception
     {
         JsonResponse response = new JsonResponse();
-        if (bindingResult.hasErrors())
-        {
-            List<FieldError> list = bindingResult.getFieldErrors();
-            for (FieldError fieldError : list)
-            {
-                //校验信息，key=属性名+Error
-                response.put(fieldError.getField() + "Error", fieldError.getDefaultMessage());
-            }
-            return response.setCode(417);
-        }
+        if (GetJsonErrorFields(bindingResult, response)) return response.setCode(417);
         TeacherVo login = (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
         if (StringUtil.isEmpty(examVo.getId()))
         {
             examVo.setCreateTeacher(login);
             examVo.setId(IdUtil.getUUID());
-            examEbi.save(examVo, markTeachers, paperId, classroomIds);
+            examManageEbi.save(examVo, markTeachers, paperId, classroomIds);
         } else
         {
-            examEbi.update(examVo, markTeachers, paperId, classroomIds,(TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME));
+            examManageEbi.update(examVo, markTeachers, paperId, classroomIds, (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME));
         }
         return response;
     }
@@ -183,7 +168,7 @@ public class ExamManageController
         {
             throw new OperationException("所选的该场考试的id不能为空，请不要进行非法操作！");
         }
-        examEbi.deleteCanceled(examVo, (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME));
+        examManageEbi.deleteCanceled(examVo, (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME));
         return new JsonResponse("删除成功");
     }
 
@@ -218,9 +203,9 @@ public class ExamManageController
                              HttpServletRequest request) throws Exception
     {
         TeacherVo login = (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
-        List<ExamVo> list = examEbi.getAllByAdmin(login.getId(), examQueryModel, pageNum, pageSize);
+        List<ExamVo> list = examManageEbi.getAllByAdmin(login.getId(), examQueryModel, pageNum, pageSize);
         return new JsonListResponse<ExamVo>(list,
-                "id,name,openTime,duration,remark,operation,[teacher]getCreateTeacher().getName(),[subject]subject.name,examStatusView", examEbi.getCount(examQueryModel));
+                "id,name,openTime,duration,remark,operation,[teacher]getCreateTeacher().getName(),[subject]subject.name,examStatusView", examManageEbi.getCount(examQueryModel));
     }
 
 }

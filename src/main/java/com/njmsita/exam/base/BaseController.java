@@ -6,8 +6,11 @@ import com.njmsita.exam.authentic.model.UserModel;
 import com.njmsita.exam.authentic.service.ebi.ResourceEbi;
 import com.njmsita.exam.authentic.service.ebi.RoleEbi;
 import com.njmsita.exam.utils.consts.SysConsts;
+import com.njmsita.exam.utils.json.JsonResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -20,23 +23,25 @@ import java.util.Set;
 @RequestMapping("base")
 public class BaseController
 {
-
-    //默认页面容量为 10
-    public Integer pageCount;
-    //最大页码数
-    public Integer maxPageNum;
-    //数据总量
-    public Integer dataTotal;
     @Autowired
     private RoleEbi roleEbi;
     @Autowired
     private ResourceEbi resourceEbi;
-
-    protected void setDataTotal(int dataTotal)
+    public static boolean GetJsonErrorFields(BindingResult bindingResult, JsonResponse response)
     {
-        this.dataTotal = dataTotal;
-        maxPageNum = (dataTotal + pageCount - 1) / pageCount;
+        if (bindingResult.hasErrors())
+        {
+            List<FieldError> list = bindingResult.getFieldErrors();
+            for (FieldError fieldError : list)
+            {
+                //校验信息，key=属性名+Error
+                response.put(fieldError.getField() + "Error", fieldError.getDefaultMessage());
+            }
+            return true;
+        }
+        return false;
     }
+
 
     /**
      * 用户跳转JSP页面

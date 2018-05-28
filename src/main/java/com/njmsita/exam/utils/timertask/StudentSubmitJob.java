@@ -11,7 +11,7 @@ import org.quartz.*;
 import java.util.Set;
 
 @DisallowConcurrentExecution
-public class QuartzJobOfExamSubmitByStudent implements Job
+public class StudentSubmitJob implements Job
 {
     public void execute(JobExecutionContext context) throws JobExecutionException
     {

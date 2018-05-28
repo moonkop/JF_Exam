@@ -20,7 +20,6 @@ import com.njmsita.exam.manager.service.ebi.SchoolEbi;
 import com.njmsita.exam.base.BaseController;
 import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.exception.OperationException;
-import com.njmsita.exam.utils.json.CustomJsonElementFormater;
 import com.njmsita.exam.utils.json.CustomJsonSerializer;
 import com.njmsita.exam.utils.json.JsonListResponse;
 import com.njmsita.exam.utils.json.JsonResponse;
@@ -37,7 +36,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -76,34 +74,6 @@ public class SystemManagerController extends BaseController
     //-------------------------------------------SchoolManager----------------------------------------------
     //-------------------------------------------SchoolManager----------------------------------------------
 
-    /**
-     * 跳转学校页面(分页)
-     *
-     * @param schoolQueryModel 该模型存放了学校属性
-     * @param pageNum          页码
-     * @param pageSize         页面大小
-     * @param model
-     *
-     * @return JSON{ rows: 内容（list） total: 查询结果总数 }
-     */
-
-    //todo 以后将请求方法 doEdit doAdd 之类的写成 edit.do 包括list 现有的已经改好了
-    //TODO 请求转发问题，没有pageNum   pageSize参数
-    @Deprecated
-    @RequestMapping("school/list1.do")
-    public String toSchoolList(SchoolQueryModel schoolQueryModel, Integer pageNum, Integer pageSize, Model model)
-    {
-
-        //调用BaseController的方法设置数据总量及最大页码数
-        pageCount = pageSize;
-        setDataTotal(schoolEbi.getCount(schoolQueryModel));
-
-        //根据查询条件及指定页码查询
-        List<SchoolVo> schoolVoList = schoolEbi.getAll(schoolQueryModel, pageNum, pageSize);
-        model.addAttribute("schoolVoList", schoolVoList);
-
-        return "/manage/school/list";
-    }
 
     //测试方法
     @ResponseBody
@@ -135,7 +105,6 @@ public class SystemManagerController extends BaseController
         request.setAttribute("school", schoolVo);
         return "/manage/school/detail";
     }
-
 
     /**
      * 跳转学校添加/修改页面
@@ -195,7 +164,21 @@ public class SystemManagerController extends BaseController
         }
         return "redirect:/manage/school";
     }
+    //--------------------------------SchoolManager----------END--------------------------------------------
+    //--------------------------------SchoolManager----------END--------------------------------------------
+    //--------------------------------SchoolManager----------END--------------------------------------------
+    //--------------------------------SchoolManager----------END--------------------------------------------
+    //--------------------------------SchoolManager----------END--------------------------------------------
+    //--------------------------------SchoolManager----------END--------------------------------------------
 
+//======================================================================================================================
+
+    //-----------------------------------------------RoleManager--------------------------------------------
+    //-----------------------------------------------RoleManager--------------------------------------------
+    //-----------------------------------------------RoleManager--------------------------------------------
+    //-----------------------------------------------RoleManager--------------------------------------------
+    //-----------------------------------------------RoleManager--------------------------------------------
+    //-----------------------------------------------RoleManager--------------------------------------------
 
     /**
      * 删除学校
@@ -215,22 +198,6 @@ public class SystemManagerController extends BaseController
         }
         return new JsonResponse("删除成功");
     }
-    //--------------------------------SchoolManager----------END--------------------------------------------
-    //--------------------------------SchoolManager----------END--------------------------------------------
-    //--------------------------------SchoolManager----------END--------------------------------------------
-    //--------------------------------SchoolManager----------END--------------------------------------------
-    //--------------------------------SchoolManager----------END--------------------------------------------
-    //--------------------------------SchoolManager----------END--------------------------------------------
-
-//======================================================================================================================
-
-    //-----------------------------------------------RoleManager--------------------------------------------
-    //-----------------------------------------------RoleManager--------------------------------------------
-    //-----------------------------------------------RoleManager--------------------------------------------
-    //-----------------------------------------------RoleManager--------------------------------------------
-    //-----------------------------------------------RoleManager--------------------------------------------
-    //-----------------------------------------------RoleManager--------------------------------------------
-
 
     @ResponseBody
     @RequestMapping("role/list.do")
@@ -286,7 +253,6 @@ public class SystemManagerController extends BaseController
 
     }
 
-
     @RequestMapping("role")
     public String toRoleList()
     {
@@ -313,11 +279,6 @@ public class SystemManagerController extends BaseController
     @RequestMapping("role/list")
     public String toRoleList(TroleQueryModel roleQueryModel, Model model, Integer pageNum, Integer pageSize)
     {
-
-        //调用BaseController的方法设置数据总量及最大页码数
-        pageCount = pageSize;
-        setDataTotal(roleEbi.getCount(roleQueryModel));
-
         //根据查询条件及指定页码查询
         List<TroleVo> roleList = roleEbi.getAll(roleQueryModel, pageNum, pageSize);
         model.addAttribute("roleList", roleList);
@@ -362,20 +323,13 @@ public class SystemManagerController extends BaseController
     @ResponseBody
     @RequestMapping("role/edit.do")
     @SystemLogAnnotation(module = "角色管理", methods = "角色添加/修改")
-    public String roleDoAdd(@Validated(value = {AddGroup.class}) TroleVo roleVo, BindingResult bindingResult,
-                            @RequestParam(value = "resourceIds[]") String[] resourceIds,
-                            HttpServletRequest request) throws OperationException
+    public JsonResponse roleDoAdd(@Validated(value = {AddGroup.class}) TroleVo roleVo, BindingResult bindingResult,
+                                  @RequestParam(value = "resourceIds[]") String[] resourceIds) throws OperationException
     {
-        if (bindingResult.hasErrors())
+        JsonResponse response = new JsonResponse();
+        if (GetJsonErrorFields(bindingResult, response))
         {
-            List<FieldError> list = bindingResult.getFieldErrors();
-            for (FieldError fieldError : list)
-            {
-                //校验信息，key=属性名+Error
-                request.setAttribute(fieldError.getField() + "Error", fieldError.getDefaultMessage());
-            }
-            request.setAttribute("resourceIds", resourceIds);
-            return "/back";
+            return response.setCode(417);
         }
         if (null == roleVo.getId() || "".equals(roleVo.getId().trim()))
         {
@@ -385,9 +339,8 @@ public class SystemManagerController extends BaseController
         {
             roleEbi.update(roleVo, resourceIds);
         }
-        return "redirect:/manage/role";
+        return response;
     }
-
 
     /**
      * 删除角色
@@ -457,11 +410,6 @@ public class SystemManagerController extends BaseController
     @RequestMapping("classroom/list")
     public String toClassroomList(ClassroomQueryModel classroomQueryModel, Model model, Integer pageNum, Integer pageSize)
     {
-
-        //调用BaseController的方法设置数据总量及最大页码数
-        pageCount = pageSize;
-        setDataTotal(classroomEbi.getCount(classroomQueryModel));
-
         //根据查询条件和指定的页码查询
         List<ClassroomVo> classroomList = classroomEbi.getAll(classroomQueryModel, pageNum, pageSize);
         model.addAttribute("classroomList", classroomList);
@@ -636,11 +584,6 @@ public class SystemManagerController extends BaseController
 
     public String toresourceList(ResourceQueryModel resourceQueryModel, Model model, Integer pageNum, Integer pageSize)
     {
-
-        //调用BaseController的方法设置数据总量及最大页码数
-        pageCount = pageSize;
-        setDataTotal(resourceEbi.getCount(resourceQueryModel));
-
         //根据查询条件和指定的页码查询
         List<TresourceVo> resourceList = resourceEbi.getAll(resourceQueryModel, pageNum, pageSize);
         model.addAttribute("resourceList", resourceList);
@@ -653,9 +596,8 @@ public class SystemManagerController extends BaseController
      * <p>
      * （此处将添加和修改页面合并，如果前台传递ID则进行修改否则进入添加页面）
      *
-     * @param parent 接受前台传递的资源id
-     *
-     * @param request     HttpServletRequest
+     * @param parent  接受前台传递的资源id
+     * @param request HttpServletRequest
      *
      * @return 跳转edit
      */
@@ -689,7 +631,7 @@ public class SystemManagerController extends BaseController
     @RequestMapping("resource/move.do")
     public JsonResponse moveResource(String id, String parent) throws OperationException
     {
-        resourceEbi.move(id,parent);
+        resourceEbi.move(id, parent);
 
         return new JsonResponse();
     }

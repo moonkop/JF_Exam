@@ -1,16 +1,8 @@
 package com.njmsita.exam.utils.timertask;
 
 import com.njmsita.exam.manager.model.ScheduleVo;
-import org.apache.tiles.request.ApplicationContext;
 import org.quartz.*;
-import org.quartz.impl.JobDetailImpl;
 import org.quartz.impl.StdSchedulerFactory;
-import org.quartz.impl.triggers.CronTriggerImpl;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.scheduling.quartz.SchedulerFactoryBean;
-
-import java.util.List;
 
 public class SchedulerJobUtil
 {
@@ -23,7 +15,7 @@ public class SchedulerJobUtil
         //不存在，创建一个
         if (null == trigger)
         {
-            JobDetail jobDetail = JobBuilder.newJob(QuartzJobFactory.class)
+            JobDetail jobDetail = JobBuilder.newJob(ExamStatusModifyJob.class)
                     .withIdentity(job.getJobName(), job.getJobGroup()).build();
             jobDetail.getJobDataMap().put("scheduleVo", job);
             //表达式调度构建器
@@ -67,7 +59,7 @@ public class SchedulerJobUtil
     public static void addJob(ScheduleVo scheduleVo) throws SchedulerException
     {
         Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
-        JobDetail jobDetail = JobBuilder.newJob(QuartzJobOfExamSubmitByStudent.class)
+        JobDetail jobDetail = JobBuilder.newJob(StudentSubmitJob.class)
                 .withIdentity(scheduleVo.getJobName(), scheduleVo.getJobGroup()).build();
         jobDetail.getJobDataMap().put("scheduleVo", scheduleVo);
         CronTrigger trigger = (CronTrigger) CronScheduleBuilder.cronSchedule(scheduleVo

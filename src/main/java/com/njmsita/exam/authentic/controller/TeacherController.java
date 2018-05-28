@@ -274,15 +274,9 @@ public class TeacherController extends BaseController
      *
      * @return
      */
-    //TODO fixed  异步请求分页 在下面
     @RequestMapping("manage/list")
     public String toTeacherList(TeacherQueryModel teacherQueryVo, Integer pageNum, Integer pageSize, HttpServletRequest request)
     {
-
-        //调用BaseController的方法设置数据总量及最大页码数
-        pageCount = pageSize;
-        setDataTotal(teaEbi.getCount(teacherQueryVo));
-
         List<TeacherVo> teacherList = teaEbi.getAll(teacherQueryVo, pageNum, pageSize);
         request.setAttribute("teacherList", teacherList);
 
