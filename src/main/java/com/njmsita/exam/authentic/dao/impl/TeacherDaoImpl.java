@@ -14,12 +14,14 @@ import java.util.List;
  * 教师持久层实现类
  */
 @Repository
-public class TeaDaoImpl extends BaseImpl<TeacherVo> implements TeacherDao
+public class TeacherDaoImpl extends BaseImpl<TeacherVo> implements TeacherDao
 {
 
-    public void doQbc(DetachedCriteria dc, BaseQueryVO qm)
+    public DetachedCriteria doQbc(DetachedCriteria dc, BaseQueryVO qm)
     {
         TeacherQueryModel sqm= (TeacherQueryModel) qm;
+        return dc;
+
     }
 
     public TeacherVo getTeaByTeaIdAndPwd(String teacherId, String password)

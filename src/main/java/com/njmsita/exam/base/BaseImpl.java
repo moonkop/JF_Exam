@@ -5,7 +5,6 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 
-import org.hibernate.FlushMode;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
@@ -53,6 +52,12 @@ public abstract class BaseImpl<T>  extends HibernateDaoSupport implements BaseDa
 		doQbc(dc, qm);
 		return (List<T>) this.getHibernateTemplate().findByCriteria(dc,(pageNum-1)*pageSize,pageSize);
 	}
+	public List<T> getAll(BaseListQueryVo baseListQueryVo) {
+		DetachedCriteria dc=DetachedCriteria.forClass(entityClass);
+		doQbc(dc, baseListQueryVo);
+		return (List<T>) this.getHibernateTemplate().findByCriteria(dc, baseListQueryVo.getOffset(), baseListQueryVo.getPageSize());
+	}
+
 	public Integer getCount(BaseQueryVO qm) {
 
 		DetachedCriteria dc=DetachedCriteria.forClass(entityClass);
@@ -62,5 +67,5 @@ public abstract class BaseImpl<T>  extends HibernateDaoSupport implements BaseDa
 		return lists.get(0).intValue();
 	}
 
-	public abstract void doQbc(DetachedCriteria dc,BaseQueryVO qm);
+	public abstract DetachedCriteria doQbc(DetachedCriteria dc, BaseQueryVO qm);
 }

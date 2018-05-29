@@ -36,7 +36,7 @@ public class ExamDaoImpl extends BaseImpl<ExamVo> implements ExamDao
         examVo.setPaperVo(paperMongoDao.getPaperVoByExamId(examVo.getId()));
     }
 
-    public void doQbc(DetachedCriteria dc, BaseQueryVO qm)
+    public DetachedCriteria doQbc(DetachedCriteria dc, BaseQueryVO qm)
     {
         ExamQueryModel eqm= (ExamQueryModel) qm;
         if(eqm.getSubject()!=null
@@ -58,6 +58,7 @@ public class ExamDaoImpl extends BaseImpl<ExamVo> implements ExamDao
         if(eqm.getEndTime()!=null && eqm.getEndTime()!=0){
             dc.add(Restrictions.le("openTime",eqm.getEndTime()+86400000-1));
         }
+        return  dc;
     }
 
     public List<ExamVo> getByCreateTeacher(String teacherId)

@@ -18,11 +18,12 @@ import java.util.List;
 public class LogDaoImpl extends BaseImpl<LogVo> implements LogDao
 {
 
-    public void doQbc(DetachedCriteria dc, BaseQueryVO qm)
+    public DetachedCriteria doQbc(DetachedCriteria dc, BaseQueryVO qm)
     {
         LogQueryModel lqm= (LogQueryModel) qm;
         dc.add(Restrictions.ge("time",lqm.getStartTime()));
         dc.add(Restrictions.le("time",lqm.getEndTime()+86400000-1));
+        return  dc;
     }
 
 

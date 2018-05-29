@@ -18,9 +18,10 @@ import java.util.List;
 public class StudentDaoImpl extends BaseImpl<StudentVo> implements StudentDao
 {
 
-    public void doQbc(DetachedCriteria dc, BaseQueryVO qm)
+    public DetachedCriteria doQbc(DetachedCriteria dc, BaseQueryVO qm)
     {
         StudentQueryModel sqm= (StudentQueryModel) qm;
+        return dc;
     }
 
     public List<StudentVo> getAllBySchoolId(String id)

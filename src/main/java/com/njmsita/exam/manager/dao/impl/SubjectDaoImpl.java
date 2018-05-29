@@ -16,8 +16,9 @@ import java.util.List;
 public class SubjectDaoImpl extends BaseImpl<SubjectVo> implements SubjectDao
 {
 
-    public void doQbc(DetachedCriteria dc, BaseQueryVO qm)
+    public DetachedCriteria doQbc(DetachedCriteria dc, BaseQueryVO qm)
     {
+        return dc;
     }
 
     public SubjectVo getByName(String name)

@@ -84,7 +84,7 @@
 
                             <div class="form-group">
                                 <input class="form-control" id="studentid" placeholder="学号" name="studentId"
-                                       type="studentId" value="123" autofocus>
+                                       type="studentId" value="4537" autofocus>
                             </div>
                             <div class="form-group">
                                 <input class="form-control" id="password" placeholder="密码" name="password"

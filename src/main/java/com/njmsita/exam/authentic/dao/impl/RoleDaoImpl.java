@@ -16,9 +16,9 @@ import java.util.List;
 public class RoleDaoImpl extends BaseImpl<TroleVo> implements RoleDao
 {
 
-    public void doQbc(DetachedCriteria dc, BaseQueryVO qm)
+    public DetachedCriteria doQbc(DetachedCriteria dc, BaseQueryVO qm)
     {
-
+return  dc;
     }
 
     public TroleVo getByName(String name)

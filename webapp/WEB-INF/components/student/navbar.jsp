@@ -1,4 +1,3 @@
-<%@ page import="com.njmsita.exam.authentic.model.TeacherVo" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8"%>
 
 <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
@@ -31,6 +30,11 @@
                         name:'${loginUser.name}',
                         role:'${loginUser.role.id}'
                     }
+                    if(User.id=="")
+                    {
+                        window.location.href='/student/login'
+                    }
+
                 </script>
                 <li class="divider"></li>
                 <li>

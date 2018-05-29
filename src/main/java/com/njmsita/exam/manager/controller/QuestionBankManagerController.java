@@ -524,7 +524,7 @@ public class QuestionBankManagerController extends BaseController
         TeacherVo currentTeacher = (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
         if (currentTeacher == null)
         {
-            throw new UnLoginException("登录信息失效，请重新登录");
+            throw new UnLoginException();
         }
         if (questionQueryModel.getQuestionType().getId() == 0)
         {
@@ -716,7 +716,7 @@ public class QuestionBankManagerController extends BaseController
         TeacherVo currentTeacher = (TeacherVo) session.getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
         if (currentTeacher == null)
         {
-            throw new UnLoginException("登录失效");
+            throw new UnLoginException();
         }
         if (StringUtil.isEmpty(questionVo.getId()))
         {

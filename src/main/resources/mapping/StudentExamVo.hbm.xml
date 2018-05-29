@@ -10,10 +10,10 @@
         <property name="submitTime" column="submit_time"/>
         <property name="score" column="totalScore"/>
         <property name="answerContent" column="answer_content"/>
-        <property name="operation" column="operation"/>
+        <property name="status" column="state"/>
 
-        <many-to-one name="examVo" column="exam_id" class="com.njmsita.exam.manager.model.ExamVo"/>
-        <many-to-one name="studentVo" column="student_id" class="com.njmsita.exam.authentic.model.StudentVo"/>
+        <many-to-one name="exam" column="exam_id" class="com.njmsita.exam.manager.model.ExamVo"/>
+        <many-to-one name="student" column="student_id" class="com.njmsita.exam.authentic.model.StudentVo"/>
 
         <set name="studentExamQuestionVos" lazy="false">
             <key column="studentexam_id"></key>

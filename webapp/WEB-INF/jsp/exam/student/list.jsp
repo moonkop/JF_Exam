@@ -5,7 +5,7 @@
 <div class="row">
     <div class="col-lg-12">
         <h3>
-            考试管理
+            我的考试
         </h3>
         <div class="table-btns">
             <a class="btn btn-primary" href="/exam/manage/edit"> 添加考试</a>
@@ -20,7 +20,7 @@
                 'click .js-edit': function (e, value, row, index) {
                     window.location.href = "/exam/manage/edit?id=" + row.id;
                 },
-                'click .js-cancel': function (e, value, row, index) {
+                'click .js-cel': function (e, value, row, index) {
                     if (confirm("确定要取消本场考试吗？") == true)
                     {
                         $.ajax(
@@ -41,7 +41,7 @@
                 'click .js-viewScore': function (e, value, row, index) {
                     window.location.href = "#" + row.id;
                 },
-                'click .js-review': function (e, value, row, index) {
+                'click .js-judge': function (e, value, row, index) {
                     window.location.href = "/exam/operation/review?id=" + row.id;
                 },
                 'click .js-delete': function (e, value, row, index) {
@@ -57,7 +57,7 @@
                     window.location.href = "#" + row.id;
                 },
                 'click .js-preview': function (e, value, row, index) {
-                    window.location.href = "#" + row.id;
+                    window.location.href = "/exam/student/preview?id=" + row.id;
                 },
 
             }
@@ -73,7 +73,7 @@
                             responseHandler: tableResponseHandler,
                             locale: 'zh-CN',
                             queryParams: queryParams,
-                            url: '/exam/manage/list.do',
+                            url: '/exam/student/list.do',
                             method: 'get',
                             cache: false,
                             pagination: true,
@@ -97,18 +97,17 @@
                                     field: 'openTime',
                                     title: '开始时间',
                                     formatter: function (value, row, index) {
-                                        return TimeStampTDateTimeString(value);
-                                        ;
+                                        var date = new Date(value);
+                                        var temp;
+                                        temp = date.getFullYear() + "-" + date.getMonth() + "-" + date.getDay() + " "
+                                            + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+                                        return temp;
                                     }
+
                                 },
                                 {
                                     field: 'duration',
                                     title: '考试时间'
-
-                                },
-                                {
-                                    field: 'teacher',
-                                    title: '出卷人'
                                 },
                                 {
                                     field: 'subject',
@@ -141,10 +140,10 @@
                                     formatter: function (value, row, index) {
                                         var act = value;
                                         var dic = {
-                                            'review': '<span class="label label-action label-danger text-danger js-review">审核</span>',
+                                            'judge': '<span class="label label-action label-danger text-danger js-judge">审核</span>',
                                             'view': '<i class="fa fa-search js-view" title="预览"></i>',
                                             'edit': '<i class="fa fa-pencil js-edit" title="修改"></i>',
-                                            'cancel': '<i class="fa fa-times js-cancel" title="取消"></i>',
+                                            'cancel': '<i class="fa fa-times js-cel" title="取消"></i>',
                                             'addMarkTeacher': '<i class="fa fa-user-plus js-add-teacher" title="添加批卷教师"></i>',
                                             'viewScore': '<i class="fa fa-eye  js-viewScore" title="查看分数"></i>',
                                             'delete': '<i class="fa fa-trash js-delete" title="删除"></i>',

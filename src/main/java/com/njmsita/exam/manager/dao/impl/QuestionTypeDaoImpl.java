@@ -3,9 +3,7 @@ package com.njmsita.exam.manager.dao.impl;
 import com.njmsita.exam.base.BaseImpl;
 import com.njmsita.exam.base.BaseQueryVO;
 import com.njmsita.exam.manager.dao.dao.QuestionTypeDao;
-import com.njmsita.exam.manager.dao.dao.SubjectDao;
 import com.njmsita.exam.manager.model.QuestionTypeVo;
-import com.njmsita.exam.manager.model.SubjectVo;
 import org.hibernate.criterion.DetachedCriteria;
 import org.springframework.stereotype.Repository;
 
@@ -18,8 +16,9 @@ import java.util.List;
 public class QuestionTypeDaoImpl extends BaseImpl<QuestionTypeVo> implements QuestionTypeDao
 {
 
-    public void doQbc(DetachedCriteria dc, BaseQueryVO qm)
+    public DetachedCriteria doQbc(DetachedCriteria dc, BaseQueryVO qm)
     {
+        return dc;
     }
 
     public QuestionTypeVo getByName(String name)

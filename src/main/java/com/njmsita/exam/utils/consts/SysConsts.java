@@ -119,12 +119,12 @@ public class SysConsts
 	public static final String EXAM_OPERATION_CANCEL = "cancel";
 	public static final String EXAM_OPERATION_ADD_MARK_TEACHER = "addMarkTeacher";
 	public static final String EXAM_OPERATION_VIEW_SCORE = "viewScore";
-	public static final String EXAM_OPERATION_JUDGE = "judge";
+	public static final String EXAM_OPERATION_REVIEW = "review";
 	public static final String EXAM_OPERATION_DELETE = "delete";
 	public static final String EXAM_OPERATION_MARK = "mark";
 	public static final String EXAM_OPERATION_SUBMIT_MARK = "submitMark";
 	public static final String EXAM_OPERATION_ATTEND = "attend";
-	public static final String EXAM_OPERATION_VIEW_BRIEF = "viewBrief";
+	public static final String EXAM_OPERATION_PREVIEW = "preview";
 	/**
 	 * 考试操作
 	 */
@@ -133,12 +133,12 @@ public class SysConsts
 	public static final String EXAM_OPERATION_CANCEL_VIEW = "取消";
 	public static final String EXAM_OPERATION_ADD_MARK_TEACHER_VIEW = "添加批阅教师";
 	public static final String EXAM_OPERATION_VIEW_SCORE_VIEW = "查看分数";
-	public static final String EXAM_OPERATION_JUDGE_VIEW = "审核";
+	public static final String EXAM_OPERATION_REVIEW_VIEW = "审核";
 	public static final String EXAM_OPERATION_DELETE_VIEW = "删除";
 	public static final String EXAM_OPERATION_MARK_VIEW = "批阅";
 	public static final String EXAM_OPERATION_SUBMIT_MARK_VIEW = "提交批阅";
 	public static final String EXAM_OPERATION_ATTEND_VIEW = "参加考试";
-	public static final String EXAM_OPERATION_VIEW_BRIEF_VIEW = "查看概要";
+	public static final String EXAM_OPERATION_PREVIEW_VIEW = "查看概要";
 
     public final static Map<String, String> ExamOperationViewMap = new HashMap<>();
 
@@ -149,12 +149,12 @@ public class SysConsts
         ExamOperationViewMap.put(SysConsts.EXAM_OPERATION_CANCEL, SysConsts.EXAM_OPERATION_CANCEL_VIEW);
         ExamOperationViewMap.put(SysConsts.EXAM_OPERATION_ADD_MARK_TEACHER, SysConsts.EXAM_OPERATION_ADD_MARK_TEACHER_VIEW);
         ExamOperationViewMap.put(SysConsts.EXAM_OPERATION_VIEW_SCORE, SysConsts.EXAM_OPERATION_VIEW_SCORE_VIEW);
-        ExamOperationViewMap.put(SysConsts.EXAM_OPERATION_JUDGE, SysConsts.EXAM_OPERATION_JUDGE_VIEW);
+        ExamOperationViewMap.put(SysConsts.EXAM_OPERATION_REVIEW, SysConsts.EXAM_OPERATION_REVIEW_VIEW);
         ExamOperationViewMap.put(SysConsts.EXAM_OPERATION_DELETE, SysConsts.EXAM_OPERATION_DELETE_VIEW);
         ExamOperationViewMap.put(SysConsts.EXAM_OPERATION_MARK, SysConsts.EXAM_OPERATION_MARK_VIEW);
         ExamOperationViewMap.put(SysConsts.EXAM_OPERATION_SUBMIT_MARK, SysConsts.EXAM_OPERATION_SUBMIT_MARK_VIEW);
         ExamOperationViewMap.put(SysConsts.EXAM_OPERATION_ATTEND, SysConsts.EXAM_OPERATION_ATTEND_VIEW);
-        ExamOperationViewMap.put(SysConsts.EXAM_OPERATION_VIEW_BRIEF, SysConsts.EXAM_OPERATION_VIEW_BRIEF_VIEW);
+        ExamOperationViewMap.put(SysConsts.EXAM_OPERATION_PREVIEW, SysConsts.EXAM_OPERATION_PREVIEW_VIEW);
     }
 
 

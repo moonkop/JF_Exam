@@ -1,23 +1,25 @@
 package com.njmsita.exam.manager.service.ebo;
 
 import com.njmsita.exam.authentic.dao.dao.StudentDao;
-import com.njmsita.exam.authentic.dao.dao.TeacherDao;
 import com.njmsita.exam.authentic.model.StudentVo;
+import com.njmsita.exam.base.BaseQueryVO;
 import com.njmsita.exam.manager.dao.dao.*;
 import com.njmsita.exam.manager.model.*;
+import com.njmsita.exam.manager.model.querymodel.StudentExamListQueryModel;
 import com.njmsita.exam.manager.service.ebi.ExamManageEbi;
 import com.njmsita.exam.manager.service.ebi.ExamStudentEbi;
 import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.exception.OperationException;
+import com.njmsita.exam.utils.exception.UnLoginException;
 import com.njmsita.exam.utils.format.FormatUtil;
 import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.idutil.IdUtil;
 import com.njmsita.exam.utils.timertask.SchedulerJobUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.Serializable;
 import java.util.*;
 
 @Service
@@ -43,6 +45,33 @@ public class ExamStudentEbo implements ExamStudentEbi
 
 
 
+
+
+    public List<StudentExamVo> getAll()
+    {
+        return studentExamDao.getAll();
+    }
+
+    public StudentExamVo get(Serializable uuid)
+    {
+        return studentExamDao.get(uuid);
+    }
+
+    public List<StudentExamVo> getAll(BaseQueryVO qm, Integer pageNum, Integer pageCount)
+    {
+        return studentExamDao.getAll(qm, pageNum, pageCount);
+    }
+
+    public Integer getCount(BaseQueryVO qm)
+    {
+        return studentExamDao.getCount(qm);
+    }
+
+
+
+
+
+
     public void archive(StudentVo login, String studentExamId, List<StudentExamQuestionVo> studentExamQuestionList) throws Exception
     {
         if (StringUtil.isEmpty(studentExamId))
@@ -54,11 +83,11 @@ public class ExamStudentEbo implements ExamStudentEbi
         {
             throw new OperationException("你的这场考试不存在，请不要进行非法操作！");
         }
-        if (!studentExamVo.getStudentVo().getId().equals(login.getId()))
+        if (!studentExamVo.getStudent().getId().equals(login.getId()))
         {
             throw new OperationException("无法保存他人的试卷，请不要进行非法操作！");
         }
-        ExamVo examVo = studentExamVo.getExamVo();
+        ExamVo examVo = studentExamVo.getExam();
         if (examVo.getExamStatus() >= SysConsts.EXAM_STATUS_IN_MARK)
         {
             throw new OperationException("当前考试的状态不允许保存，请不要进行非法操作！");
@@ -92,7 +121,7 @@ public class ExamStudentEbo implements ExamStudentEbi
         {
             throw new OperationException("请确认要提交的试卷不为空,不要进行非法操作！");
         }
-        if (!studentExamVo.getStudentVo().getId().equals(login.getId()))
+        if (!studentExamVo.getStudent().getId().equals(login.getId()))
         {
             throw new OperationException("不能提交他人试卷,请不要进行非法操作！");
         }
@@ -142,22 +171,22 @@ public class ExamStudentEbo implements ExamStudentEbi
         {
             throw new OperationException("你没有该场考试，请不要进行非法操作！");
         }
-        examVo = studentExamVo.getExamVo();
+        examVo = studentExamVo.getExam();
         if (examVo.getExamStatus() != SysConsts.EXAM_STATUS_OPEN)
         {
             throw new OperationException("尚未开始考试，请不要进行非法操作！");
         }
-        if (studentExamVo.getOperation() == SysConsts.STUDENT_EXAM_OPERATION_SUBMIT)
+        if (studentExamVo.getStatus() == SysConsts.STUDENT_EXAM_OPERATION_SUBMIT)
         {
             throw new OperationException("你已经提交该场考试，请不要进行非法操作！");
         }
         List<StudentExamQuestionVo> list = new ArrayList<>();
-        if (studentExamVo.getOperation() == SysConsts.STUDENT_EXAM_OPERATION_ARCHIVE)
+        if (studentExamVo.getStatus() == SysConsts.STUDENT_EXAM_OPERATION_ARCHIVE)
         {
             list = studentExamQuestionDao.getAllByStudentExam(studentExamVo);
         } else
         {
-            studentExamVo.setOperation(SysConsts.STUDENT_EXAM_OPERATION_ARCHIVE);
+            studentExamVo.setStatus(SysConsts.STUDENT_EXAM_OPERATION_ARCHIVE);
             Long systemTime = System.currentTimeMillis();
             studentExamVo.setStartTime(systemTime);
             examVo = examManageEbi.get(examVo.getId());
@@ -193,5 +222,29 @@ public class ExamStudentEbo implements ExamStudentEbi
         map.put("studentExamVo", studentExamVo);
         return map;
     }
+
+    //------------学生方法---------------------//
+    //------------学生方法---------------------//
+    //------------学生方法---------------------//
+    //------------学生方法---------------------//
+    public List<StudentExamVo> getStudentExamList(StudentExamListQueryModel queryModel) throws UnLoginException
+    {
+        StudentVo loginStudent = studentDao.get(queryModel.getStudent().getId());
+        List<StudentExamVo> studentExamVos = studentExamDao.getAll(queryModel);
+
+        for (StudentExamVo studentExamVo : studentExamVos)
+        {
+            ExamVo examVo = studentExamVo.getExam();
+            examVo.setOperation(examManageEbi.getValidOperations(examVo, loginStudent));
+        }
+        return studentExamVos;
+    }
+
+    @Override
+    public int getStudentExamCount(StudentExamListQueryModel queryModel)
+    {
+        return studentExamDao.getCount(queryModel);
+    }
+
 
 }

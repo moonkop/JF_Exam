@@ -21,7 +21,7 @@ import java.util.List;
 public class QuestionDaoImpl extends BaseImpl<QuestionVo> implements QuestionDao
 {
 
-    public void doQbc(DetachedCriteria dc, BaseQueryVO qm)
+    public DetachedCriteria doQbc(DetachedCriteria dc, BaseQueryVO qm)
     {
         QuestionQueryModel qqm= (QuestionQueryModel) qm;
         if(null!=qqm.getSubject()&&qqm.getSubject().getId()!=0){
@@ -43,6 +43,8 @@ public class QuestionDaoImpl extends BaseImpl<QuestionVo> implements QuestionDao
         if(null!=qqm.getIsPrivate()&&(qqm.getIsPrivate()==0||qqm.getIsPrivate()==1)){
             dc.add(Restrictions.eq("isPrivate", qqm.getIsPrivate()));
         }
+        return dc;
+
     }
 
     public DetachedCriteria doQbc1(DetachedCriteria dc, BaseQueryVO qm)

@@ -212,10 +212,20 @@
     </definition>
 
 
-    <definition name="manage/exam/list" extends="teacher_base">
+    <definition name="/manage/exam/list" extends="teacher_base">
         <put-attribute name="body" value="/WEB-INF/jsp/manage/exam/list.jsp"/>
         <put-attribute name="title" value="我的考试"/>
     </definition>
+
+    <definition name="/exam/student/list" extends="student_base">
+        <put-attribute name="body" value="/WEB-INF/jsp/exam/student/list.jsp"/>
+        <put-attribute name="title" value="我的考试"/>
+    </definition>
+   <definition name="/exam/student/preview" extends="student_base">
+        <put-attribute name="body" value="/WEB-INF/jsp/exam/student/preview.jsp"/>
+        <put-attribute name="title" value="考试概要"/>
+    </definition>
+
 
 
     <definition name="examing/attend" extends="student_base">

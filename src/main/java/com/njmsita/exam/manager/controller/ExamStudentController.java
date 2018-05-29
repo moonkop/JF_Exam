@@ -1,10 +1,10 @@
 package com.njmsita.exam.manager.controller;
 
 import com.njmsita.exam.authentic.model.StudentVo;
-import com.njmsita.exam.authentic.model.UserModel;
 import com.njmsita.exam.manager.model.ExamVo;
 import com.njmsita.exam.manager.model.StudentExamQuestionVo;
 import com.njmsita.exam.manager.model.StudentExamVo;
+import com.njmsita.exam.manager.model.querymodel.StudentExamListQueryModel;
 import com.njmsita.exam.manager.service.ebi.ExamManageEbi;
 import com.njmsita.exam.manager.service.ebi.ExamStudentEbi;
 import com.njmsita.exam.manager.service.ebi.SubjectEbi;
@@ -18,11 +18,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 考试流程控制器
@@ -49,13 +49,45 @@ public class ExamStudentController
     @RequestMapping("")
     public String toStudentExam(HttpServletRequest request) throws UnLoginException
     {
-        UserModel loginStudent = (UserModel) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
         request.setAttribute("subjectList", subjectEbi.getAll());
-        List<ExamVo> myExamList = examManageEbi.getStudentExamList(loginStudent.getUuid());
-        request.setAttribute("myExamList", myExamList);
         return "/exam/student/list";
     }
 
+    @ResponseBody
+    @RequestMapping("list.do")
+    public JsonResponse StudentExamList(StudentExamListQueryModel queryModel, HttpSession session) throws UnLoginException
+    {
+        StudentVo loginStudent = (StudentVo) session.getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
+        if (loginStudent == null)
+        {
+            throw new UnLoginException();
+        }
+        queryModel.setStudent((StudentVo) session.getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME));
+        List<StudentExamVo> myExamList = examStudentEbi.getStudentExamList(queryModel);
+        return new JsonListResponse<>(myExamList, "id,score," +
+                "[examId]exam.getId()," +
+                "[name]exam.getName()," +
+                "[examStatusView]exam.getExamStatusView()," +
+                "[operation]exam.getOperation()," +
+                "[openTime]exam.getOpenTime()," +
+                "[duration]exam.getDuration()," +
+                "[subject]exam.getSubject().getName()", examStudentEbi.getStudentExamCount(queryModel));
+    }
+
+
+    /**
+     * 到参加考试页面
+     *
+     * @return
+     */
+    @RequestMapping("preview")
+    public String preview(String id, HttpServletRequest request)
+    {
+        StudentExamVo studentExamVo = examStudentEbi.get(id);
+        request.setAttribute("exam", studentExamVo.getExam());
+        request.setAttribute("studentExam", studentExamVo);
+        return "/exam/student/preview";
+    }
 
     /**
      * 到参加考试页面

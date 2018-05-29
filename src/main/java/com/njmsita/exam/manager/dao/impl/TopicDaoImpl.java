@@ -17,8 +17,9 @@ import java.util.List;
 public class TopicDaoImpl extends BaseImpl<TopicVo> implements TopicDao
 {
 
-    public void doQbc(DetachedCriteria dc, BaseQueryVO qm)
+    public DetachedCriteria doQbc(DetachedCriteria dc, BaseQueryVO qm)
     {
+        return dc;
     }
 
     public TopicVo getByName(String name, Integer subjectId)

@@ -39,7 +39,7 @@ public class ExamVo
     //阅卷教师  n  TO  m
     private Integer examStatus;
     //考试状态视图值
-    @Transient
+    @Deprecated
     private String examStatusView;
     //MongoDB中的ExamPaper
     @Transient
@@ -89,7 +89,7 @@ public class ExamVo
 
     public String getExamStatusView()
     {
-        return examStatusView;
+        return SysConsts.ExamStatusViewMap.get(this.getExamStatus());
     }
 
 

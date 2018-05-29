@@ -39,7 +39,7 @@ public class LoginInterceptor implements HandlerInterceptor
             String requestHeader = request.getHeader("x-requested-with");
             if (requestHeader != null && requestHeader.equals("XMLHttpRequest"))
             {
-                throw new UnLoginException("登录信息失效，请重新登录");
+                throw new UnLoginException();
             }
             response.sendRedirect("/teacher/login");
         }

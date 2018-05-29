@@ -1,7 +1,6 @@
 package com.njmsita.exam.authentic.dao.impl;
 
 import com.njmsita.exam.authentic.dao.dao.ResourceDao;
-import com.njmsita.exam.authentic.model.StudentVo;
 import com.njmsita.exam.authentic.model.TresourceVo;
 import com.njmsita.exam.base.BaseImpl;
 import com.njmsita.exam.base.BaseQueryVO;
@@ -18,9 +17,9 @@ import java.util.List;
 public class ResourceDaoImpl extends BaseImpl<TresourceVo> implements ResourceDao
 {
 
-    public void doQbc(DetachedCriteria dc, BaseQueryVO qm)
+    public DetachedCriteria doQbc(DetachedCriteria dc, BaseQueryVO qm)
     {
-
+return dc;
     }
 
     public List<TresourceVo> getAllByLoginId(String id)

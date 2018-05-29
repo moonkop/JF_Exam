@@ -1,6 +1,7 @@
 package com.njmsita.exam.manager.controller;
 
 import com.njmsita.exam.authentic.model.TeacherVo;
+import com.njmsita.exam.authentic.model.UserModel;
 import com.njmsita.exam.authentic.service.ebi.TeacherEbi;
 import com.njmsita.exam.base.BaseController;
 import com.njmsita.exam.manager.model.*;
@@ -185,7 +186,7 @@ public class ExamManageController extends BaseController
 
         request.setAttribute("subjectList", subjectEbi.getAll());
         request.setAttribute("teacherList", teacherEbi.getAll());
-        return "manage/exam/list";
+        return "/manage/exam/list";
     }
 
     /**

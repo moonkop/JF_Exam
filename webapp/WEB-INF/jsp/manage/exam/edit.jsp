@@ -15,6 +15,7 @@
             ]
         }
     }
+
     $(document).ready(function () {
 
         function getPapers()
@@ -48,10 +49,15 @@
 
 
         $("form").on("submit", function () {
+            var data = exam_edit_form_collect_data();
+            if(data==undefined)
+            {
+                return false;
+            }
             $.ajax(
                 {
                     url: "/exam/manage/edit.do",
-                    data: exam_edit_form_collect_data(),
+                    data:data ,
                     type: "post",
                     success: function (res) {
                         OnResult(res, function (res) {
@@ -72,10 +78,66 @@
         $("#select-subject").on("change", function () {
             getPapers();
         })
+        $("#is-limit-duration").on("change", function () {
+            if ($("#is-limit-duration").prop("checked"))
+            {
+                $(".js-form-group-duration").show();
+            } else
+            {
+                if($("#is-limit-open-duration").prop("checked"))
+                {
+                    $("#is-limit-duration").prop("checked", true);
+
+                    layer.msg("限制入场时间必须限制答题时间");
+
+                }else{
+                    $(".js-form-group-duration").hide();
+
+                }
+            }
+        })
+        $("#is-limit-open-duration").on("change", function () {
+            if ($("#is-limit-open-duration").prop("checked"))
+            {
+                $("#is-limit-open-duration").prop("checked") && $(".js-form-group-open-duration").show();
+                $("#is-limit-duration").prop("checked", true);
+                $("#is-limit-duration").trigger("change");
+            } else
+            {
+                $("#is-limit-open-duration").prop("checked") || $(".js-form-group-open-duration").hide();
+            }
+        })
+
+        $("#is-limit-duration,#is-limit-open-duration").on("change",function()
+        {
+            if($("#is-limit-open-duration").prop("checked")&&$("#is-limit-duration").prop("checked"))
+            {
+
+                $("#input-finish_time").prop("disabled",true);
+                autoSetEndTime();
+                $("#input-start_time,#input-duration,#input-enter_time").on("change",autoSetEndTime);
+            }else{
+                $("#input-finish_time").prop("disabled",false);
+                $("#input-start_time,#input-duration,#input-enter_time").off("change", autoSetEndTime);
+            }
+        })
+
+
+            function autoSetEndTime()
+            {
+                var time=DateTimeStringToTimeStamp($("#input-start_time").val())+$("#input-duration").val()*60*1000+$("#input-enter_time").val()*60*1000 ;
+                $("#input-finish_time").val(TimeStampTDateTimeString(time));
+            }
+
+
         getPapers();
         laydate.render({
             elem: '#input-start_time'
-            , type: 'datetime'
+            , type: 'datetime',
+            done: function(value,date){
+                $("#input-start_time").val(value);
+                $("#input-start_time").trigger("change");
+            }
         });
         laydate.render({
             elem: '#input-finish_time'
@@ -91,13 +153,10 @@
         }
         $("#input-start_time").val(TimeStampTDateTimeString(app.exam.openTime));
         $("#input-finish_time").val(TimeStampTDateTimeString(app.exam.closeTime));
-        var classroomIdStr = emptyToUndefined("");
-
         $(".js-select2").val(app.exam.classroomIds);
 
         $(".js-select2").select2();
     })
-
 
     function exam_edit_form_collect_data()
     {
@@ -113,10 +172,32 @@
             'closeTime': DateTimeStringToTimeStamp($("form [name='closeTime']").val()),
             '_classroomIds': $("form [name='classroom']").val(),
         };
-        return data
+
+
+        if($("#is-limit-open-duration").prop("checked")&&$("#input-enter_time").val()==0)
+        {
+            layer.alert("限制入场时间时，入场时间不能为空");
+            return;
+        }
+        if($("#is-limit-duration").prop("checked")&&$("#input-duration").val()==0)
+        {
+            layer.alert("限制答题时间时，答题时间不能为空")
+            return;
+        }
+
+        $("#is-limit-open-duration").prop("checked") || (data.openDuration = 0);
+        $("#is-limit-duration").prop("checked") || (data.duration = 0);
+
+        debugger;
+
+        return data;
     }
 
+
+
+
 </script>
+
 
 <!-- start content -->
 <div class="row">
@@ -154,48 +235,6 @@
                                 </div>
                             </div>
 
-                            <div class="form-group">
-                                <label class="col-sm-2 control-label" for="input-name">开始时间</label>
-                                <div class="col-sm-8">
-                                    <input type="text" class="form-control js-lay-datetime" id="input-start_time"
-                                           name="openTime" placeholder="请输入开始时间">
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="col-sm-2 control-label" for="input-name">结束时间</label>
-                                <div class="col-sm-8">
-                                    <input type="text" class="form-control js-lay-datetime" id="input-finish_time"
-                                           name="closeTime"
-                                           placeholder="请输入结束时间">
-                                </div>
-                            </div>
-
-
-                            <div class="form-group">
-                                <label class="col-sm-2 control-label" for="input-name">入场时间</label>
-                                <div class="col-sm-8">
-                                    <div class="input-group">
-                                        <input type=text" class="form-control" id="input-enter_time" name="openDuration"
-                                               value="${exam.openDuration}" placeholder="请输入场时间">
-                                        <span class="input-group-addon">分钟</span>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            <div class="form-group">
-                                <label class="col-sm-2 control-label" for="input-name">答题时间</label>
-                                <div class="col-sm-8">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" id="input-duration" name="duration"
-                                               value="${exam.duration}" placeholder="请输入答题时间">
-                                        <span class="input-group-addon">分钟</span>
-                                    </div>
-
-                                </div>
-                            </div>
-
 
                             <div class="form-group">
                                 <label for="select-subject" class="col-sm-2 control-label">科目</label>
@@ -221,6 +260,71 @@
                             </div>
 
 
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="input-start_time">开始时间</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control js-lay-datetime" id="input-start_time"
+                                           name="openTime" placeholder="请输入开始时间">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" for="input-finish_time">结束时间</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control js-lay-datetime" id="input-finish_time"
+                                           name="closeTime"
+                                           placeholder="请输入结束时间">
+                                </div>
+                            </div>
+
+
+                            <div class="form-group">
+                                <div class="col-sm-2">
+
+                                </div>
+                                <div class="col-sm-8">
+
+                                    <label class="checkbox" for="is-limit-duration">
+                                        <input type="checkbox" id="is-limit-duration">
+                                        限制答题时间
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-2">
+
+                                </div>
+                                <div class="col-sm-8">
+
+                                    <label class="checkbox" for="is-limit-open-duration">
+                                        <input type="checkbox" id="is-limit-open-duration">
+                                        限制入场时间
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-group js-form-group-duration" hidden>
+                                <label class="col-sm-2 control-label" for="input-name">答题时间</label>
+                                <div class="col-sm-8">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="input-duration" name="duration"
+                                               value="${exam.duration}" placeholder="请输入答题时间">
+                                        <span class="input-group-addon">分钟</span>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="form-group js-form-group-open-duration" hidden>
+                                <label class="col-sm-2 control-label" for="input-name">入场时间</label>
+                                <div class="col-sm-8">
+                                    <div class="input-group">
+                                        <input type=text" class="form-control" id="input-enter_time" name="openDuration"
+                                               value="${exam.openDuration}" placeholder="请输入场时间">
+                                        <span class="input-group-addon">分钟</span>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="col-sm-offset-2">
                                 <button type="submit" class="btn btn-primary">提交</button>
                                 <button class="btn btn-default js-cancel">取消</button>

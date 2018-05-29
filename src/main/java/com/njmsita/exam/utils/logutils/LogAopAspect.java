@@ -104,7 +104,7 @@ public class LogAopAspect
                 UserModel user = (UserModel) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
                 if (user == null)
                 {
-                    throw new UnLoginException("登录信息失效，请重新登录");
+                    throw new UnLoginException();
                 }
                 log.setUserId(user.getUuid());
                 log.setRealName(user.getRealName());

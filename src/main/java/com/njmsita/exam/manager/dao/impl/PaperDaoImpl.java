@@ -17,7 +17,7 @@ import org.springframework.stereotype.Repository;
 public class PaperDaoImpl extends BaseImpl<PaperVo> implements PaperDao
 {
 
-    public void doQbc(DetachedCriteria dc, BaseQueryVO qm)
+    public DetachedCriteria doQbc(DetachedCriteria dc, BaseQueryVO qm)
     {
         PaperQueryModel pqm= (PaperQueryModel) qm;
         if(null!=pqm.getSubject()&&null!=pqm.getSubject().getId()&&pqm.getSubject().getId()!=0){
@@ -31,6 +31,8 @@ public class PaperDaoImpl extends BaseImpl<PaperVo> implements PaperDao
         if(StringUtil.isEmpty(pqm.getTitle())){
             dc.add(Restrictions.like("title","%"+pqm.getTitle()+"%"));
         }
+        return dc;
+
     }
 
 }

@@ -17,9 +17,10 @@ import java.util.List;
 public class ClassroomDaoImpl extends BaseImpl<ClassroomVo> implements ClassroomDao
 {
 
-    public void doQbc(DetachedCriteria dc, BaseQueryVO qm)
+    public DetachedCriteria doQbc(DetachedCriteria dc, BaseQueryVO qm)
     {
         ClassroomQueryModel classroomQueryVo= (ClassroomQueryModel) qm;
+        return dc;
     }
 
     public void delete(ClassroomVo classroom)

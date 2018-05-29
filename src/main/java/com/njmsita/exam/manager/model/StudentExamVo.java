@@ -15,13 +15,13 @@ public class StudentExamVo
     private Long submitTime;
     private Double score;
     private String answerContent;
-    private Integer operation;
+    private Integer status;
 
     //对应考试 n TO 1
-    private ExamVo examVo;
+    private ExamVo exam;
 
     //对应学生 n TO 1
-    private StudentVo studentVo;
+    private StudentVo student;
 
     private Set<StudentExamQuestionVo> studentExamQuestionVos;
 
@@ -37,26 +37,26 @@ public class StudentExamVo
 
     @Basic
     @Column(name = "exam_id")
-    public ExamVo getExamVo()
+    public ExamVo getExam()
     {
-        return examVo;
+        return exam;
     }
 
-    public void setExamVo(ExamVo examVo)
+    public void setExam(ExamVo examVo)
     {
-        this.examVo = examVo;
+        this.exam = examVo;
     }
 
     @Basic
     @Column(name = "student_id")
-    public StudentVo getStudentVo()
+    public StudentVo getStudent()
     {
-        return studentVo;
+        return student;
     }
 
-    public void setStudentVo(StudentVo studentVo)
+    public void setStudent(StudentVo studentVo)
     {
-        this.studentVo = studentVo;
+        this.student = studentVo;
     }
 
     @Id
@@ -120,22 +120,22 @@ public class StudentExamVo
     }
 
     @Basic
-    @Column(name = "operation")
-    public Integer getOperation()
+    @Column(name = "state")
+    public Integer getStatus()
     {
-        return operation;
+        return status;
     }
 
-    public void setOperation(Integer operation)
+    public void setStatus(Integer operation)
     {
-        this.operation = operation;
+        this.status = operation;
     }
 
     @Override
     public int hashCode()
     {
 
-        return Objects.hash(id, startTime, submitTime, score, answerContent, operation);
+        return Objects.hash(id, startTime, submitTime, score, answerContent, status);
     }
 
     @Override
@@ -149,6 +149,6 @@ public class StudentExamVo
                 Objects.equals(submitTime, that.submitTime) &&
                 Objects.equals(score, that.score) &&
                 Objects.equals(answerContent, that.answerContent) &&
-                Objects.equals(operation, that.operation);
+                Objects.equals(status, that.status);
     }
 }

@@ -140,7 +140,7 @@ public class ExamManageEbo implements ExamManageEbi
         examPo.setDuration(examVo.getDuration());
         examPo.setSubject(examVo.getSubject());
         examPo.setName(examVo.getName());
-        examPo.setOpenDuration(examPo.getOpenDuration());
+        examPo.setOpenDuration(examVo.getOpenDuration());
         examPo.setRemark(examVo.getRemark());
         if (examPo.getExamStatus() == SysConsts.EXAM_STATUS_NO_PASS || examPo.getExamStatus() == SysConsts.EXAM_STATUS_IN_CANCEL)
         {
@@ -169,7 +169,7 @@ public class ExamManageEbo implements ExamManageEbi
     public void setPass(ExamVo examVo, TeacherVo loginTeacher) throws Exception
     {
         ExamVo examPo = getExamNotNull(examVo);
-        checkPermission(SysConsts.EXAM_OPERATION_JUDGE, loginTeacher, examPo);
+        checkPermission(SysConsts.EXAM_OPERATION_REVIEW, loginTeacher, examPo);
         examPo.setExamStatus(SysConsts.EXAM_STATUS_PASS);
         createSchedulerJob(examPo, SysConsts.SCHEDULEVO_JOB_TYPE_OPEN);
 
@@ -183,7 +183,7 @@ public class ExamManageEbo implements ExamManageEbi
     public void setNoPass(ExamVo examVo, TeacherVo loginTeacher) throws Exception
     {
         ExamVo examPo = getExamNotNull(examVo);
-        checkPermission(SysConsts.EXAM_OPERATION_JUDGE, loginTeacher, examPo);
+        checkPermission(SysConsts.EXAM_OPERATION_REVIEW, loginTeacher, examPo);
         if (StringUtil.isEmpty(examVo.getRemark()))
         {
             throw new OperationException("驳回考试请求时“备注”不能为空");
@@ -233,24 +233,7 @@ public class ExamManageEbo implements ExamManageEbi
     }
 
 
-    //------------学生方法---------------------//
-    //------------学生方法---------------------//
-    //------------学生方法---------------------//
-    //------------学生方法---------------------//
-    public List<ExamVo> getStudentExamList(String studentId) throws UnLoginException
-    {
 
-        List<StudentExamVo> studentExamVos = studentExamDao.getByStudent(studentId);
-        StudentVo loginStudent = studentDao.get(studentId);
-        List<ExamVo> list = new ArrayList<>();
-        for (StudentExamVo studentExamVo : studentExamVos)
-        {
-            ExamVo examVo = studentExamVo.getExamVo();
-            examVo.setOperation(getValidOperations(examVo, loginStudent));
-            list.add(examVo);
-        }
-        return list;
-    }
 
     public Set<String> getValidOperations(ExamVo exam, UserModel loginUser) throws UnLoginException
     {
@@ -259,7 +242,7 @@ public class ExamManageEbo implements ExamManageEbi
 
         if (loginUser == null)
         {
-            throw new UnLoginException("登录信息失效请重新登录");
+            throw new UnLoginException();
         }
         if (loginUser instanceof TeacherVo)
         {
@@ -286,7 +269,7 @@ public class ExamManageEbo implements ExamManageEbi
                 case SysConsts.EXAM_STATUS_NO_CHECK:
                     if (loginTeacher.IsAdmin())
                     {
-                        operationSet.add(SysConsts.EXAM_OPERATION_JUDGE);
+                        operationSet.add(SysConsts.EXAM_OPERATION_REVIEW);
                     }
                     if (exam.getCreateTeacher().equalsById(loginTeacher))
                     {
@@ -348,19 +331,19 @@ public class ExamManageEbo implements ExamManageEbi
                 case SysConsts.EXAM_STATUS_NO_CHECK:
                     break;
                 case SysConsts.EXAM_STATUS_PASS:
-                    operationSet.add(SysConsts.EXAM_OPERATION_VIEW_BRIEF);
+                    operationSet.add(SysConsts.EXAM_OPERATION_PREVIEW);
                     break;
                 case SysConsts.EXAM_STATUS_NO_PASS:
                     break;
                 case SysConsts.EXAM_STATUS_OPEN:
-                    operationSet.add(SysConsts.EXAM_OPERATION_VIEW_BRIEF);
+                    operationSet.add(SysConsts.EXAM_OPERATION_PREVIEW);
                     operationSet.add(SysConsts.EXAM_OPERATION_ATTEND);
                     break;
                 case SysConsts.EXAM_STATUS_CLOSE:
-                    operationSet.add(SysConsts.EXAM_OPERATION_VIEW_BRIEF);
+                    operationSet.add(SysConsts.EXAM_OPERATION_PREVIEW);
                     break;
                 case SysConsts.EXAM_STATUS_IN_MARK:
-                    operationSet.add(SysConsts.EXAM_OPERATION_VIEW_BRIEF);
+                    operationSet.add(SysConsts.EXAM_OPERATION_PREVIEW);
                     break;
                 case SysConsts.EXAM_STATUS_IN_CANCEL:
                     break;
@@ -726,8 +709,8 @@ public class ExamManageEbo implements ExamManageEbi
                 {
                     StudentExamVo studentExamVo = new StudentExamVo();
                     studentExamVo.setId(IdUtil.getUUID());
-                    studentExamVo.setExamVo(examVo);
-                    studentExamVo.setStudentVo(studentVo);
+                    studentExamVo.setExam(examVo);
+                    studentExamVo.setStudent(studentVo);
                     studentExamDao.save(studentExamVo);
                 }
             } else

@@ -5,7 +5,8 @@ tableResponseHandler = function (res) {
 queryParams = function (params) {
     var temp = {
         pageNum: params.pageNumber,
-        pageSize: params.limit
+        pageSize: params.limit,
+        offset:params.offset
     };
     return temp;
 }
@@ -66,6 +67,11 @@ set_data_in_field= function($element, data)
     }
 }
 
+$.prototype.MyAjax=function(config)
+{
+    //todo
+
+}
 
 
 function OnResult(result, onsuccess, onfailure)

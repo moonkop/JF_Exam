@@ -104,14 +104,6 @@ public interface ExamManageEbi extends BaseEbi<ExamVo>
      */
     public void updateMarkTeacher(ExamVo examVo, String[] markTeachers) throws Exception;
 
-    /**
-     * 获取所有学生的参加的考试
-     *
-     * @param studentId
-     *
-     * @return
-     */
-    public List<ExamVo> getStudentExamList(String studentId) throws UnLoginException;
 
 
     /**
@@ -196,4 +188,5 @@ public interface ExamManageEbi extends BaseEbi<ExamVo>
     public ExamVo getExamNotNull(ExamVo examVo) throws OperationException;
 
     public void saveLog(ScheduleVo scheduleVo, String method);
+
 }

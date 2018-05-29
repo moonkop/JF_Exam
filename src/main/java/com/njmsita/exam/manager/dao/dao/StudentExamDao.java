@@ -3,7 +3,6 @@ package com.njmsita.exam.manager.dao.dao;
 import com.njmsita.exam.authentic.model.StudentVo;
 import com.njmsita.exam.base.BaseDao;
 import com.njmsita.exam.manager.model.ExamVo;
-import com.njmsita.exam.manager.model.ScheduleVo;
 import com.njmsita.exam.manager.model.StudentExamVo;
 
 import java.util.List;
@@ -20,13 +19,13 @@ public interface StudentExamDao extends BaseDao<StudentExamVo>
      */
     public void deleteAllByExam(ExamVo examVo);
 
-    /**
-     * 获取该学生获取的所有考试
-     *
-     * @param studentId
-     * @return
-     */
-    public List<StudentExamVo> getByStudent(String studentId);
+//    /**
+//     * 获取该学生获取的所有考试
+//     *
+//     * @param studentId
+//     * @return
+//     */
+//    public List<StudentExamVo> getByStudent(StudentExamListQueryModel queryModel);
 
     /**
      * 获取对应学生对应考试的考试信息
