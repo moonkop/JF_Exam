@@ -137,7 +137,7 @@ public class TeacherController extends BaseController
     public String detail()
     {
         //前台数据从session中获取
-        return "/manage/me/detail";
+        return "/manage/me/teacher/detail";
     }
 
     /**
@@ -147,7 +147,7 @@ public class TeacherController extends BaseController
     public String edit()
     {
         //回显数据在session中获取
-        return "/manage/me/edit";
+        return "/manage/me/teacher/edit";
     }
 
     /**
@@ -212,7 +212,7 @@ public class TeacherController extends BaseController
     {
         //TODO 需要提供修改密码页面
 
-        return "/manage/me/setpassword";
+        return "/manage/me/teacher/setpassword";
     }
 
     /**

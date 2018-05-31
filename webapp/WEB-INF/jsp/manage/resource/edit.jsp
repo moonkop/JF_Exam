@@ -2,6 +2,14 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 
 
+<script>
+    $(document).ready(function () {
+        $("#cancel").on("click",function () {
+            window.history.go(-1);
+        })
+
+    })
+</script>
         <!-- start content -->
         <div class="row">
             <div class="col-lg-12">
@@ -54,6 +62,23 @@
                                         </div>
                                     </div>
 
+
+
+
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label" for="input-icon">资源图标</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" id="input-icon" name="icon"
+                                                   value="${resource.icon}"
+                                                   placeholder="请输入资源图标">
+                                        </div>
+                                    </div>
+
+
+
+
+
+
                                     <div class="form-group">
                                         <label class="col-sm-2 control-label" for="input-url">资源路径</label>
                                         <div class="col-sm-8">
@@ -83,7 +108,7 @@
                                     </div>
                                     <div class="col-sm-offset-2">
                                         <button type="submit" class="btn btn-primary">提交</button>
-                                        <button class="btn btn-default js-cancel">取消</button>
+                                        <button class="btn btn-default js-cancel" id="cancel">取消</button>
                                     </div>
                                 </form>
                             </div>

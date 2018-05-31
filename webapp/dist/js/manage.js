@@ -20,8 +20,7 @@ getFormData = function (formid) {
 
 }
 
- get_data_in_field=function($element)
-{
+get_data_in_field = function ($element) {
     if ($element == undefined || $element[0] == undefined)
     {
         return;
@@ -44,8 +43,7 @@ getFormData = function (formid) {
     }
 }
 
-set_data_in_field= function($element, data)
-{
+set_data_in_field = function ($element, data) {
 
     if ($element == undefined || $element[0] == undefined)
     {
@@ -67,10 +65,25 @@ set_data_in_field= function($element, data)
     }
 }
 
-$.prototype.MyAjax=function(config)
+function myajax(config)
 {
-    //todo
+    if (config.success != undefined && config.success != null)
+    {
+        var success = config.success;
+        config.success = function (res) {
+            //success 请求成功，并且服务器返回200，error 请求成功，服务器返回错误码code=404
+            OnResult(res, success, config.error);
+        }
+    }
+    if (config.error == undefined)
 
+    //如果直接请求失败，则为网络错误，重写error方法
+    {
+        config.error = function () {
+            layer.msg("网络错误");
+        }
+    }
+    $.ajax(config);
 }
 
 
@@ -128,8 +141,8 @@ function defaultOnFailure(res)
             });
             break;
         default:
-            var message="操作失败" + res.code + ":" + res.message;
-            for(key in res.payload)
+            var message = "操作失败" + res.code + ":" + res.message;
+            for (key in res.payload)
             {
                 message += "<br>" + key + "  " + res.payload[key];
             }
@@ -165,6 +178,7 @@ function TimeStampTDateTimeString(timestamp)
         return null;
     }
 }
+
 function emptyToUndefined(obj)
 {
     return obj;
@@ -172,10 +186,8 @@ function emptyToUndefined(obj)
 
 
 layer.config({skin: 'layui-layer-exam'});
-$(document).ready(function()
-{
-    $(".js-back").on("click",function()
-    {
+$(document).ready(function () {
+    $(".js-back").on("click", function () {
         window.history.go(-1);
     })
 })
@@ -190,8 +202,16 @@ Date.prototype.Format = function (fmt) { //author: meizz
         "q+": Math.floor((this.getMonth() + 3) / 3), //季度
         "S": this.getMilliseconds() //毫秒
     };
-    if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+    if (/(y+)/.test(fmt))
+    {
+        fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+    }
     for (var k in o)
-        if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+    {
+        if (new RegExp("(" + k + ")").test(fmt))
+        {
+            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+        }
+    }
     return fmt;
 }

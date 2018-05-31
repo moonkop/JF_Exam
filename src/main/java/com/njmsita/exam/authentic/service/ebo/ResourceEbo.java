@@ -68,6 +68,7 @@ public class ResourceEbo implements ResourceEbi
         TresourceVo temp= resourceDao.get(tresourceVo.getId());
         temp.setResourcetype(tresourceVo.getResourcetype());
         temp.setChilds(tresourceVo.getChilds());
+        temp.setIcon(tresourceVo.getIcon());
         temp.setName(tresourceVo.getName());
         temp.setParent(tresourceVo.getParent());
         temp.setRemark(tresourceVo.getRemark());

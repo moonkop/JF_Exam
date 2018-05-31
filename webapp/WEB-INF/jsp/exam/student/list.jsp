@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <!-- start content -->
 
@@ -107,7 +108,14 @@
                                 },
                                 {
                                     field: 'duration',
-                                    title: '考试时间'
+                                    title: '考试时间',
+                                    formatter:function (value, row, index) {
+                                        if(value=="0"){
+                                            return '不限';
+                                        }else {
+                                            return value;
+                                        }
+                                    }
                                 },
                                 {
                                     field: 'subject',
@@ -149,7 +157,7 @@
                                             'delete': '<i class="fa fa-trash js-delete" title="删除"></i>',
                                             'mark': '<i class="fa fa-edit  js-mark" title="批阅"></i>',
                                             'submitMark': '<i class="fa fa-check js-submitMark" title="批阅提交"></i>',
-                                            'attend': '<i class="fa fa-play  js-attend" title="参加考试"></i>',
+                                            'attend': '<span class="label label-action label-danger text-danger js-attend">参加考试</span>',
                                             'preview': '<i class="fa fa-eye js-preview" title="查看概要"></i>'
                                         };
                                         var html = '';

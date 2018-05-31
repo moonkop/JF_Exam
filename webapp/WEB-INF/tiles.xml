@@ -247,17 +247,38 @@
         <put-attribute name="body" value="/WEB-INF/jsp/index_student.jsp"/>
     </definition>
 
+    <definition name="/manage/me/teacher/detail" extends="teacher_base">
+        <put-attribute name="body" value="/WEB-INF/jsp/manage/me/teacher/detail.jsp"/>
+
+    </definition>
+    <definition name="/manage/me/teacher/edit" extends="teacher_base">
+        <put-attribute name="body" value="/WEB-INF/jsp/manage/me/teacher/edit.jsp"/>
+
+    </definition>
+
+    <definition name="/manage/me/teacher/setpassword" extends="teacher_base">
+        <put-attribute name="body" value="/WEB-INF/jsp/manage/me/teacher/setpassword.jsp"/>
+
+    </definition>
+
+
+
+
+
+
     <definition name="/manage/me/detail" extends="teacher_base">
-        <put-attribute name="body" value="/WEB-INF/jsp/manage/me/detail.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/manage/me/student/detail.jsp"/>
 
     </definition>
     <definition name="/manage/me/edit" extends="teacher_base">
-        <put-attribute name="body" value="/WEB-INF/jsp/manage/me/edit.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/manage/me/student/edit.jsp"/>
     </definition>
 
     <definition name="/manage/me/setpassword" extends="teacher_base">
-        <put-attribute name="body" value="/WEB-INF/jsp/manage/me/setpassword.jsp"/>
-
+        <put-attribute name="body" value="/WEB-INF/jsp/manage/me/student/setpassword.jsp"/>
     </definition>
+
+
+
 
 </tiles-definitions>

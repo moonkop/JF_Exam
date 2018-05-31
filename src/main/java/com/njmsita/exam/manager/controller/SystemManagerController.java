@@ -112,7 +112,6 @@ public class SystemManagerController extends BaseController
      *
      * @param school  接受前台传递的学校id
      * @param request HttpServletRequest
-     *
      * @return 跳转edit
      */
     @RequestMapping("school/edit")
@@ -134,7 +133,6 @@ public class SystemManagerController extends BaseController
      * 添加学校
      *
      * @param school 需要添加的信息
-     *
      * @return 跳转学校列表页面
      */
     @RequestMapping("school/edit.do")
@@ -270,7 +268,6 @@ public class SystemManagerController extends BaseController
      * 跳转角色添加/修改页面
      * @param roleVo  接受前台传递的角色id
      * @param request HttpServletRequest
-     *
      * @return 跳转edit
      */
     @RequestMapping("role/edit")
@@ -294,7 +291,6 @@ public class SystemManagerController extends BaseController
      * 添加角色
      *
      * @param roleVo 需要添加的信息
-     *
      * @return 跳转角色列表页面
      */
     @ResponseBody
@@ -323,7 +319,6 @@ public class SystemManagerController extends BaseController
      * 删除角色
      *
      * @param roleVo 需要删除的角色
-     *
      * @return 跳转角色列表页面
      */
     @RequestMapping("role/delete.do")
@@ -390,7 +385,6 @@ public class SystemManagerController extends BaseController
      *
      * @param classroomVo 接受前台传递的班级id
      * @param request     HttpServletRequest
-     *
      * @return 跳转edit
      */
     @RequestMapping("classroom/edit")
@@ -411,7 +405,6 @@ public class SystemManagerController extends BaseController
      * 添加班级
      *
      * @param classroomVo 需要添加的信息(必须包含学校id)
-     *
      * @return 跳转班级列表页面
      */
     @RequestMapping("classroom/edit.do")
@@ -445,7 +438,6 @@ public class SystemManagerController extends BaseController
      * 删除班级
      *
      * @param classroomVo 需要删除的班级
-     *
      * @return 跳转班级列表页面
      */
     @RequestMapping("classroom/delete")
@@ -512,7 +504,6 @@ public class SystemManagerController extends BaseController
      *
      * @param parent  接受前台传递的资源id
      * @param request HttpServletRequest
-     *
      * @return 跳转edit
      */
     @RequestMapping("resource/edit")
@@ -545,7 +536,6 @@ public class SystemManagerController extends BaseController
      * 添加资源
      *
      * @param tresourceVo 需要添加的信息(必须包含学校id)
-     *
      * @return 跳转资源列表页面
      */
     @RequestMapping("resource/edit.do")
@@ -583,7 +573,6 @@ public class SystemManagerController extends BaseController
      * 删除资源
      *
      * @param tresourceVo 需要删除的资源
-     *
      * @return 跳转资源列表页面
      */
     @ResponseBody
@@ -627,7 +616,6 @@ public class SystemManagerController extends BaseController
      * 导出指定时间内的日志信息
      *
      * @param logQueryModel 该模型存放了资源属性
-     *
      * @return
      */
     @RequestMapping("log/export.do")

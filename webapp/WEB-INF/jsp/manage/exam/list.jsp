@@ -103,7 +103,16 @@
                                 },
                                 {
                                     field: 'duration',
-                                    title: '考试时间'
+                                    title: '考试时间',
+                                    formatter: function (value, row, index) {
+                                        if (value == "0")
+                                        {
+                                            return '不限';
+                                        } else
+                                        {
+                                            return value;
+                                        }
+                                    }
 
                                 },
                                 {

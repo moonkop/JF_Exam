@@ -8,9 +8,6 @@
                 <h3>
                     资源管理
                 </h3>
-                <div class="table-btns">
-                    <a class="btn btn-primary" href="/manage/resource/edit"> 添加资源</a>
-                </div>
 
                 <script type="text/javascript">
                     // AJAX异步拉取数据

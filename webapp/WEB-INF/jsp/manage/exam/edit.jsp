@@ -21,29 +21,50 @@
         function getPapers()
         {
             var subject = $("#select-subject").val();
-            $.ajax(
-                {
-                    url: "/paper/list.do",
-                    data: {
-                        'subject.id': subject,
-                        'pageNum': 1,
-                        'pageSize': 1000
-                    },
-                    success: function (res) {
-                        OnResult(res, function (res) {
-                                $("#select-paper").empty();
-                                var papers = res.payload.rows;
-                                papers.map(function (item) {
-                                        $("#select-paper").append(
-                                            '<option value=' + item.id + '>' + item.title + '</option>'
-                                        )
-                                    }
-                                )
-                            }
-                        )
-                    }
+
+
+            myajax({
+                url: "/paper/list.do",
+                data: {
+                    'subject.id': subject,
+                    'pageNum': 1,
+                    'pageSize': 1000
+                },
+                success: function (res) {
+                    $("#select-paper").empty();
+                    var papers = res.payload.rows;
+                    papers.map(function (item) {
+                            $("#select-paper").append(
+                                '<option value=' + item.id + '>' + item.title + '</option>'
+                            )
+                        }
+                    )
                 }
-            )
+            });
+
+            // $.ajax(
+            //     {
+            //         url: "/paper/list.do",
+            //         data: {
+            //             'subject.id': subject,
+            //             'pageNum': 1,
+            //             'pageSize': 1000
+            //         },
+            //         success: function (res) {
+            //             OnResult(res, function (res) {
+            //                     $("#select-paper").empty();
+            //                     var papers = res.payload.rows;
+            //                     papers.map(function (item) {
+            //                             $("#select-paper").append(
+            //                                 '<option value=' + item.id + '>' + item.title + '</option>'
+            //                             )
+            //                         }
+            //                     )
+            //                 }
+            //             )
+            //         }
+            //     }
+            // )
 
         }
 
