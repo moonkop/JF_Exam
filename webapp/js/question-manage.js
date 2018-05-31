@@ -178,106 +178,6 @@ function question_manage_bind_actions()
 
     function question_manage_question_edit_on_click(questionID)
     {
-        //显示编辑题目页面
-        function question_manage_render_question_edit(questionDetail)
-        {
-            var $questionForm = $($("#js-template-question-edit").html());
-            app.currentLayer = $questionForm;
-
-            var config = {
-                options: function (value, key) {
-                    return "";
-                },
-                answer: function (value, key) {
-                    return "";
-                },
-                type: function (value, key) {
-                    return "";
-                },
-                createTime: function (value, key) {
-                    return new Date(value).toLocaleString();
-                }
-            }
-
-            var fieldContent;
-            for (var key in questionDetail)
-            {
-                var currentConfig = config[key];
-                if (currentConfig != undefined)
-                {
-                    if (typeof currentConfig == 'function')
-                    {
-                        fieldContent = currentConfig(questionDetail[key], key);
-                    }
-                } else
-                {
-                    fieldContent = questionDetail[key];
-                }
-                if (fieldContent !== "" && fieldContent !== null)
-                {
-                    set_data_in_field($questionForm.find("[data-field='" + key + "']"), fieldContent);
-                }
-            }
-
-            var showEdit = true;
-            var showSaveAsMine = true;
-            var showSaveAsPublic = false;
-            //如果是自己的题目，允许编辑
-            if (questionDetail.createTeacherId == User.id)
-            {
-                showEdit = true;
-                showSaveAsMine = false;
-            } else
-            {
-                showEdit = false;
-                showSaveAsMine = true;
-            }
-            //如果是管理员，则对公共题目可以编辑
-            if (questionDetail.isPrivate == 0 && User.role == '0')
-            {
-                showEdit = true;
-            }
-            //如果不是本人创建的题目，不能编辑可见性
-            if (questionDetail.createTeacherId != User.id)
-            {
-                $questionForm.find('[data-field="isPrivate"]').attr("disabled", true);
-            }
-
-
-            showEdit && $questionForm.find(".js-btn-group").append("<input type=\"button\" class=\"btn btn-primary js-edit-submit\" value=\"编辑并提交\">\n")
-            showSaveAsMine && $questionForm.find(".js-btn-group").append("<input type=\"button\" class=\"btn btn-default js-save-as-mine\" value=\"保存到我的题库\">\n")
-
-
-            question_edit_option_status = {
-                optionid: 1,
-                optionCount: 1
-            }
-            question_option_parse_json(questionDetail);
-
-            for (key in questionDetail.options)
-            {
-                var iscorrect = to_answer_array(questionDetail.answer).indexOf(key) != -1;
-
-                question_edit_on_add_option(questionDetail.options[key], iscorrect);
-            }
-
-            $(".layui-layer-content").addClass("layer-form");
-
-            //增加选项按钮点击
-            app.currentLayer.find(".btn-add-option").on("click", function () {
-                question_edit_on_add_option();
-            });
-            //提交按钮事件
-            app.currentLayer.find(".js-edit-submit").on("click", function () {
-                question_manage_edit_on_submit('/manage/bank/question/edit.do');
-            });
-            app.currentLayer.find(".js-save-as-mine").on("click", function () {
-                question_manage_edit_on_submit('/manage/bank/question/saveAsMine.do');
-            });
-//根据选项自动设置题目类型
-            question_edit_option_group_on_change();
-            return $questionForm;
-        }
 
         get_question_detail(questionID, function (questionDetail) {
             app.currentLayerIndex = layer.open(
@@ -510,6 +410,106 @@ function paper_view_render_question_list()
     }
 
     render_question_list(app.paper.questionList, $(".paper-view .question-list"), paper_view_render_question);
+}
+//显示编辑题目页面
+function question_manage_render_question_edit(questionDetail)
+{
+    var $questionForm = $($("#js-template-question-edit").html());
+    app.currentLayer = $questionForm;
+
+    var config = {
+        options: function (value, key) {
+            return "";
+        },
+        answer: function (value, key) {
+            return "";
+        },
+        type: function (value, key) {
+            return "";
+        },
+        createTime: function (value, key) {
+            return new Date(value).toLocaleString();
+        }
+    }
+
+    var fieldContent;
+    for (var key in questionDetail)
+    {
+        var currentConfig = config[key];
+        if (currentConfig != undefined)
+        {
+            if (typeof currentConfig == 'function')
+            {
+                fieldContent = currentConfig(questionDetail[key], key);
+            }
+        } else
+        {
+            fieldContent = questionDetail[key];
+        }
+        if (fieldContent !== "" && fieldContent !== null)
+        {
+            set_data_in_field($questionForm.find("[data-field='" + key + "']"), fieldContent);
+        }
+    }
+
+    var showEdit = true;
+    var showSaveAsMine = true;
+    var showSaveAsPublic = false;
+    //如果是自己的题目，允许编辑
+    if (questionDetail.createTeacherId == User.id)
+    {
+        showEdit = true;
+        showSaveAsMine = false;
+    } else
+    {
+        showEdit = false;
+        showSaveAsMine = true;
+    }
+    //如果是管理员，则对公共题目可以编辑
+    if (questionDetail.isPrivate == 0 && User.role == '0')
+    {
+        showEdit = true;
+    }
+    //如果不是本人创建的题目，不能编辑可见性
+    if (questionDetail.createTeacherId != User.id)
+    {
+        $questionForm.find('[data-field="isPrivate"]').attr("disabled", true);
+    }
+
+
+    showEdit && $questionForm.find(".js-btn-group").append("<input type=\"button\" class=\"btn btn-primary js-edit-submit\" value=\"编辑并提交\">\n")
+    showSaveAsMine && $questionForm.find(".js-btn-group").append("<input type=\"button\" class=\"btn btn-default js-save-as-mine\" value=\"保存到我的题库\">\n")
+
+
+    question_edit_option_status = {
+        optionid: 1,
+        optionCount: 1
+    }
+    question_option_parse_json(questionDetail);
+
+    for (key in questionDetail.options)
+    {
+        var iscorrect = to_answer_array(questionDetail.answer).indexOf(key) != -1;
+
+        question_edit_on_add_option(questionDetail.options[key], iscorrect);
+    }
+
+    $(".layui-layer-content").addClass("layer-form");
+
+    //增加选项按钮点击
+    app.currentLayer.find(".btn-add-option").on("click", function () {
+        question_edit_on_add_option();
+    });
+    //提交按钮事件
+    app.currentLayer.find(".js-edit-submit").on("click", function () {
+        question_manage_edit_on_submit('/manage/bank/question/edit.do');
+    });
+    app.currentLayer.find(".js-save-as-mine").on("click", function () {
+        question_manage_edit_on_submit('/manage/bank/question/saveAsMine.do');
+    });
+//根据选项自动设置题目类型
+    question_edit_option_group_on_change();
+    return $questionForm;
 }
 
 

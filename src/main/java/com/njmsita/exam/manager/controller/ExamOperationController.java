@@ -46,25 +46,7 @@ public class ExamOperationController
     private TeacherEbi teacherEbi;
 
     /**
-     * 到老师的考试页面
-     * @param request
-     * @return
-     */
-    @RequestMapping("toTeacherExam")
-    public String toTeacherExam(HttpServletRequest request) throws Exception
-    {
-        UserModel login= (UserModel) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
-        request.setAttribute("subjectList",subjectEbi.getAll());
-        List<ExamVo> createList= examManageEbi.getByCreateTeacher(login.getUuid());
-        List<ExamVo> markList= examManageEbi.getByMarkTeacher(login.getUuid());
-        request.setAttribute("createList",createList);
-        request.setAttribute("markList",markList);
-        return "/manage/me/teacherExam";
-    }
-
-    /**
      * 到审核页面
-     * @param examVo
      * @param request
      * @return
      * @throws OperationException
@@ -142,7 +124,7 @@ public class ExamOperationController
      * @return
      * @throws Exception
      */
-    @RequestMapping("cancel")
+    @RequestMapping("cancel.do")
     @ResponseBody
     @SystemLogAnnotation(module = "考试管理", methods = "取消考试")
     public JsonResponse cancel(ExamVo examVo, HttpSession session) throws Exception
@@ -162,7 +144,7 @@ public class ExamOperationController
      * @return
      * @throws Exception
      */
-    @RequestMapping("toAddMarkTeacher")
+    @RequestMapping("addMarkTeacher")
     public String toAddMarkTeacher(ExamVo examVo,HttpServletRequest request) throws Exception
     {
         if(StringUtil.isEmpty(examVo.getId())){
@@ -186,7 +168,7 @@ public class ExamOperationController
      * @return
      * @throws Exception
      */
-    @RequestMapping("addMarkTeacher")
+    @RequestMapping("addMarkTeacher.do")
     @SystemLogAnnotation(module = "考试管理", methods = "添加阅卷教师")
     public String addMarkTeacher(ExamVo examVo,@RequestParam("markTeachers") String[] markTeachers,
                                  HttpServletRequest request) throws Exception
@@ -205,24 +187,7 @@ public class ExamOperationController
         return "redirect:/exam/toMyExam";
     }
 
-    @RequestMapping("toStudentExam")
-    public String toStudentExam(ExamVo examVo,HttpServletRequest request) throws Exception
-    {
-        if(StringUtil.isEmpty(examVo.getId())){
-            throw new OperationException("所选该场考试不能为空");
-        }
-        examVo= examManageEbi.get(examVo.getId());
-        if(examVo==null){
-            throw new OperationException("所选该场考试不存在");
-        }
-        TeacherVo login= (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
-        List<StudentExamVo> studentExamList= examManageEbi.getAllStudentExamByExam(examVo,login);
-        request.setAttribute("studentExamList",studentExamList);
-        request.setAttribute("examVo",examVo);
-        return null;
-    }
-
-    @RequestMapping("toMarking")
+    @RequestMapping("mark")
     public String toMarking(StudentExamVo studentExamVo ,HttpServletRequest request) throws Exception
     {
         List<StudentExamQuestionVo> studentExamQuestionList= examManageEbi.getAllStudentexamQuestionByStudentExam(studentExamVo);
@@ -230,7 +195,7 @@ public class ExamOperationController
         return null;
     }
 
-    @RequestMapping("savaMarked")
+    @RequestMapping("saveMarked.do")
     @ResponseBody
     public JsonResponse savaMarked(@RequestBody List<StudentExamQuestionVo> studentExamQeustionList,
                                    String studentExamId) throws Exception
@@ -239,7 +204,7 @@ public class ExamOperationController
         return new JsonResponse("保存成功！");
     }
 
-    @RequestMapping("submitMarked")
+    @RequestMapping("submitMarked.do")
     @ResponseBody
     public JsonResponse submitMarked(ExamVo examVo,HttpServletRequest request) throws Exception
     {

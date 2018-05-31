@@ -15,10 +15,12 @@ import com.njmsita.exam.utils.format.FormatUtil;
 import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.idutil.IdUtil;
 import com.njmsita.exam.utils.timertask.SchedulerJobUtil;
+import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.wsdl.Operation;
 import java.io.Serializable;
 import java.util.*;
 
@@ -44,9 +46,6 @@ public class ExamStudentEbo implements ExamStudentEbi
     private PaperMongoDao paperMongoDao;
 
 
-
-
-
     public List<StudentExamVo> getAll()
     {
         return studentExamDao.getAll();
@@ -68,29 +67,25 @@ public class ExamStudentEbo implements ExamStudentEbi
     }
 
 
-
-
-
-
     public void archive(StudentVo login, String studentExamId, List<StudentExamQuestionVo> studentExamQuestionList) throws Exception
     {
         if (StringUtil.isEmpty(studentExamId))
         {
-            throw new OperationException("你的考试id不能为空，请不要进行非法操作！");
+            throw new OperationException("你的考试id不能为空");
         }
         StudentExamVo studentExamVo = studentExamDao.get(studentExamId);
         if (studentExamVo == null)
         {
-            throw new OperationException("你的这场考试不存在，请不要进行非法操作！");
+            throw new OperationException("你的这场考试不存在");
         }
         if (!studentExamVo.getStudent().getId().equals(login.getId()))
         {
-            throw new OperationException("无法保存他人的试卷，请不要进行非法操作！");
+            throw new OperationException("无法保存他人的试卷");
         }
         ExamVo examVo = studentExamVo.getExam();
         if (examVo.getExamStatus() >= SysConsts.EXAM_STATUS_IN_MARK)
         {
-            throw new OperationException("当前考试的状态不允许保存，请不要进行非法操作！");
+            throw new OperationException("考试已结束，不允许保存");
         }
         if (studentExamQuestionList != null && studentExamQuestionList.size() != 0)
         {
@@ -99,11 +94,11 @@ public class ExamStudentEbo implements ExamStudentEbi
                 StudentExamQuestionVo temp = studentExamQuestionDao.get(studentExamQuestionVo.getId());
                 if (temp == null)
                 {
-                    throw new OperationException("你所保存的题目有可能不存在，请不要进行非法操作！");
+                    throw new OperationException("你所保存的题目有可能不存在");
                 }
-                if (!temp.getStudentExamVo().getId().equals(studentExamVo.getId()))
+                if (!temp.getStudentExam().getId().equals(studentExamVo.getId()))
                 {
-                    throw new OperationException("你所保存的题目有可能不不属于这场考试，请不要进行非法操作！");
+                    throw new OperationException("你所保存的题目有可能不不属于这场考试");
                 }
                 temp.setAnswer(studentExamQuestionVo.getAnswer());
             }
@@ -151,76 +146,16 @@ public class ExamStudentEbo implements ExamStudentEbi
     {
         if (StringUtil.isEmpty(examVo.getId()))
         {
-            throw new OperationException("选择的考试不能为空，请不要进行非法操作！");
+            throw new OperationException("选择的考试不能为空");
         }
         examVo = examManageEbi.getExamNotNull(examVo);
 
         StudentExamVo studentExamVo = studentExamDao.getByStudentAndExam(examVo, login);
         if (null == studentExamVo)
         {
-            throw new OperationException("你不存在这场考试，请不要进行非法操作！");
+            throw new OperationException("你不存在这场考试");
         }
         return studentExamVo;
-    }
-
-    public Map<String, Object> attendExam(ExamVo examVo, StudentVo studentVo) throws Exception
-    {
-        examVo = examManageEbi.getExamNotNull(examVo);
-        StudentExamVo studentExamVo = studentExamDao.getByStudentAndExam(examVo, studentVo);
-        if (studentExamVo == null)
-        {
-            throw new OperationException("你没有该场考试，请不要进行非法操作！");
-        }
-        examVo = studentExamVo.getExam();
-        if (examVo.getExamStatus() != SysConsts.EXAM_STATUS_OPEN)
-        {
-            throw new OperationException("尚未开始考试，请不要进行非法操作！");
-        }
-        if (studentExamVo.getStatus() == SysConsts.STUDENT_EXAM_OPERATION_SUBMIT)
-        {
-            throw new OperationException("你已经提交该场考试，请不要进行非法操作！");
-        }
-        List<StudentExamQuestionVo> list = new ArrayList<>();
-        if (studentExamVo.getStatus() == SysConsts.STUDENT_EXAM_OPERATION_ARCHIVE)
-        {
-            list = studentExamQuestionDao.getAllByStudentExam(studentExamVo);
-        } else
-        {
-            studentExamVo.setStatus(SysConsts.STUDENT_EXAM_OPERATION_ARCHIVE);
-            Long systemTime = System.currentTimeMillis();
-            studentExamVo.setStartTime(systemTime);
-            examVo = examManageEbi.get(examVo.getId());
-            List<QuestionVo> questionVoList = examVo.getPaperVo().getQuestionList();
-
-            for (int i = 0; i < questionVoList.size(); i++)
-            {
-                StudentExamQuestionVo seq = new StudentExamQuestionVo();
-                seq.setId(IdUtil.getUUID());
-                seq.setStudentExamVo(studentExamVo);
-                seq.setIndext(i + 1);
-                seq.setRightAnswer(questionVoList.get(i).getAnswer());
-                seq.setQuestionTypeVo(questionVoList.get(i).getQuestionType());
-                studentExamQuestionDao.save(seq);
-                list.add(seq);
-            }
-            //创建自动提交定时任务
-            ScheduleVo scheduleVo = new ScheduleVo();
-            scheduleVo.setId(IdUtil.getUUID());
-            scheduleVo.setJobName("学生考试：" + studentExamVo.getId() + ":自动提交定时任务");
-            scheduleVo.setJobGroup("default");
-            scheduleVo.setJobStatus(SysConsts.SCHEDULEVO_JOB_STATUS_ONETIME);
-            scheduleVo.setCronexpression(FormatUtil.cronExpression(systemTime + examVo.getDuration() * 60 * 100));
-            scheduleVo.setDescribe(scheduleVo.getJobName());
-            scheduleVo.setDao(studentExamDao);
-            scheduleVo.setTargetVoId(studentExamVo.getId());
-            scheduleVo.setJobType(SysConsts.SCHEDULEVO_JOB_TYPE_ONETIME);
-            SchedulerJobUtil.addJob(scheduleVo);
-            examManageEbi.saveLog(scheduleVo, scheduleVo.getDescribe());
-        }
-        Map<String, Object> map = new HashMap<>();
-        map.put("studentExamQuestionList", list);
-        map.put("studentExamVo", studentExamVo);
-        return map;
     }
 
     //------------学生方法---------------------//
@@ -244,6 +179,97 @@ public class ExamStudentEbo implements ExamStudentEbi
     public int getStudentExamCount(StudentExamListQueryModel queryModel)
     {
         return studentExamDao.getCount(queryModel);
+    }
+
+    public void enterExam(String studentExamId, StudentVo loginStudent) throws Exception
+    {
+        StudentExamVo studentExamPo = studentExamDao.get(studentExamId);
+
+        if (studentExamPo == null)
+        {
+            throw new OperationException("未找到该场考试");
+        }
+        ExamVo examPo = studentExamPo.getExam();
+        examManageEbi.checkPermission(SysConsts.EXAM_OPERATION_ENTER, loginStudent, examPo);
+        switch (studentExamPo.getStatus())
+        {
+            case SysConsts.STUDENT_EXAM_STATUS_NOT_STARTED:
+                StudentExamStart(studentExamPo);
+                break;
+
+            case SysConsts.STUDENT_EXAM_STATUS_STARTED:
+                break;
+
+            case SysConsts.STUDENT_EXAM_STATUS_SUBMITTED:
+                throw new OperationException("您已经提交该场考试");
+        }
+    }
+
+    public void StudentExamStart(StudentExamVo studentExamPo) throws SchedulerException
+    {
+        ExamVo examPo = studentExamPo.getExam();
+        studentExamPo.setStatus(SysConsts.STUDENT_EXAM_STATUS_STARTED);
+        Long systemTime = System.currentTimeMillis();
+        studentExamPo.setStartTime(systemTime);
+        examPo = examManageEbi.getWithPaper(examPo.getId());
+        List<QuestionVo> questionVoList = examPo.getPaperVo().getQuestionList();
+        for (int i = 0; i < questionVoList.size(); i++)
+        {
+            StudentExamQuestionVo seq = new StudentExamQuestionVo();
+            seq.setId(IdUtil.getUUID());
+            seq.setStudentExam(studentExamPo);
+            seq.setIndex(i + 1);
+            seq.setRightAnswer(questionVoList.get(i).getAnswer());
+            seq.setQuestionTypeVo(questionVoList.get(i).getQuestionType());
+            studentExamQuestionDao.save(seq);
+        }
+        //创建自动提交定时任务
+        ScheduleVo scheduleVo = new ScheduleVo();
+        scheduleVo.setId(IdUtil.getUUID());
+        scheduleVo.setJobName("学生考试：" + studentExamPo.getId() + ":自动提交定时任务");
+        scheduleVo.setJobGroup("default");
+        scheduleVo.setJobStatus(SysConsts.SCHEDULEVO_JOB_STATUS_ONETIME);
+        //不限制考试时间则 考试终止时交卷。
+        if (examPo.getDuration() != 0)
+        {
+            scheduleVo.setCronexpression(FormatUtil.cronExpression(systemTime + examPo.getDuration() * 60 * 100));
+        }else {
+            scheduleVo.setCronexpression(FormatUtil.cronExpression(examPo.getCloseTime()));
+        }
+        scheduleVo.setDescribe(scheduleVo.getJobName());
+        scheduleVo.setDao(studentExamDao);
+        scheduleVo.setTargetVoId(studentExamPo.getId());
+        scheduleVo.setJobType(SysConsts.SCHEDULEVO_JOB_TYPE_ONETIME);
+        SchedulerJobUtil.addJob(scheduleVo);
+        examManageEbi.saveLog(scheduleVo, scheduleVo.getDescribe());
+    }
+
+    public List<StudentExamQuestionVo> getStudentAnswer(String studentExamId, StudentVo loginStudent) throws Exception
+    {
+        StudentExamVo studentExamPo = studentExamDao.get(studentExamId);
+        ExamVo examPo = studentExamPo.getExam();
+        examManageEbi.checkPermission(SysConsts.EXAM_OPERATION_ENTER, loginStudent, examPo);
+
+        List<StudentExamQuestionVo> answerList = studentExamQuestionDao.getAllByStudentExam(studentExamPo);
+        return answerList;
+    }
+
+    public List<QuestionVo> getPaperQuestion(String studentExamId, StudentVo loginStudent) throws Exception
+    {
+        StudentExamVo studentExamPo = studentExamDao.get(studentExamId);
+
+        List<QuestionVo> questionList;
+        PaperVo paperPo;
+        ExamVo examPo;
+        if ((examPo=studentExamPo.getExam()) == null
+                ||(paperPo=paperMongoDao.getPaperVoByExamId(examPo.getId()))==null
+                ||(questionList=paperPo.getQuestionList())==null)
+        {
+            throw new OperationException("未找到考试题目");
+        }
+
+        examManageEbi.checkPermission(SysConsts.EXAM_OPERATION_ENTER, loginStudent, examPo);
+        return questionList;
     }
 
 

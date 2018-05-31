@@ -25,7 +25,7 @@
                     {
                         $.ajax(
                             {
-                                url: '/exam/operation/cancel?id=' + row.id,
+                                url: '/exam/operation/cancel.do?id=' + row.id,
                                 type: "post",
                                 success: function (res) {
                                     OnResult(res);

@@ -217,7 +217,6 @@ public class QuestionBankManagerController extends BaseController
      *
      * @return JSON{ rows: 内容（list） total: 查询结果总数 }
      */
-    //TODO 请求转发问题，没有pageNum   pageSize参数
     @ResponseBody
     @RequestMapping("questionType/list.do")
     public JsonListResponse toQuestionTypeList(QuestionTypeQueryModel questionTypeQueryModel, Integer pageNum, Integer pageSize, Model model)
@@ -225,15 +224,7 @@ public class QuestionBankManagerController extends BaseController
 
         return new JsonListResponse(questionTypeEbi.getAll(questionTypeQueryModel, pageNum, pageSize),
                 "id,name,score", questionTypeEbi.getCount(questionTypeQueryModel));
-        //调用BaseController的方法设置数据总量及最大页码数
-//        pageCount = pageSize;
-//        setDataTotal(questionTypeEbi.getCount(questionTypeQueryModel));
-//
-//        //根据查询条件及指定页码查询
-//        List<QuestionTypeVo> questionTypeVoList = questionTypeEbi.getAll(questionTypeQueryModel, pageNum, pageSize);
-//        model.addAttribute("questionTypeVoList", questionTypeVoList);
-//
-//        return "manage/questionType/list";
+
     }
 
     /**
@@ -407,69 +398,7 @@ public class QuestionBankManagerController extends BaseController
         return new JsonResponse();
     }
 
-    /**
-     * 跳转知识点添加/修改页面
-     * <p>
-     * （此处将添加和修改页面合并，如果前台传递ID则进行修改否则进入添加页面）
-     *
-     * @param topicVo 接受前台传递的知识点id
-     * @param request HttpServletRequest
-     *
-     * @return 跳转edit
-     */
-    @Deprecated
-    @RequestMapping("topic/edit")
-    public String topicEdit(TopicVo topicVo, HttpServletRequest request)
-    {
-        //判断前台是否传递知识点ID
-        request.setAttribute("subject", subjectEbi.getAll());
-        if (!StringUtil.isEmpty(topicVo.getId()))
-        {
-            //根据知识点ID获取知识点完整信息从而进行数据回显
-            topicVo = topicEbi.get(topicVo.getId());
-            request.setAttribute("topic", topicVo);
-        }
-        //如果待编辑知识点为空 则会传进来parent.id
-        request.setAttribute("parent", topicEbi.get(topicVo.getParent().getId()));
 
-        return "/manage/topic/edit";
-    }
-
-    /**
-     * 添加知识点
-     *
-     * @param topicVo 需要添加的信息(必须包含学校id)
-     *
-     * @return 跳转知识点列表页面
-     */
-    @Deprecated
-    @RequestMapping("topic/edit.do")
-    @SystemLogAnnotation(module = "知识点管理", methods = "知识点添加/修改")
-    public String topicDoAdd(@Validated(value = {AddGroup.class}) TopicVo topicVo, BindingResult bindingResult,
-                             HttpServletRequest request) throws OperationException
-    {
-        if (bindingResult.hasErrors())
-        {
-            List<FieldError> list = bindingResult.getFieldErrors();
-            for (FieldError fieldError : list)
-            {
-                //校验信息，key=属性名+Error
-                request.setAttribute(fieldError.getField() + "Error", fieldError.getDefaultMessage());
-            }
-            request.setAttribute("topicVo", topicVo);
-            return "/manage/topic/edit";
-        }
-        if (null == topicVo.getId() || "".equals(topicVo.getId().trim()))
-        {
-            topicVo.setId(FirstCharUtil.firstCharAndID(topicVo.getName()));
-            topicEbi.save(topicVo);
-        } else
-        {
-
-            topicEbi.update(topicVo);
-        }
-        return "redirect:/manage/bank/topic";
-    }
 
     /**
      * 删除知识点
@@ -573,22 +502,6 @@ public class QuestionBankManagerController extends BaseController
         return new JsonListResponse<>(list, "id,code,outline,[options]option,answer,[type]questionType.id,[createTeacher]teacher.id", 0);
     }
 
-    @RequestMapping("question/test")
-    public JsonResponse questiontest()
-    {
-        QuestionVo questionVo = questionEbi.get("7872be652aaa4ab6910a289a13434f3c");
-        questionVo.getOptionList();
-        questionVo.setTeacher(null);
-        questionVo.setTopic(null);
-        questionVo.setSubject(null);
-        questionVo.setOption(null);
-        questionVo.setIsPrivate(null);
-        questionVo.setUseTime(null);
-
-        mongoTemplate.save(questionVo);
-
-        return new JsonResponse();
-    }
 
     @ResponseBody
     @RequestMapping("question/detail.do")
@@ -654,50 +567,7 @@ public class QuestionBankManagerController extends BaseController
         return new JsonResponse("修改成功");
     }
 
-    /**
-     * 题目的添加/修改
-     *
-     * @param question
-     * @param bindingResult
-     * @param session
-     *
-     * @return
-     *
-     * @throws Exception
-     */
-    @RequestMapping("")
-    @ResponseBody
-    @SystemLogAnnotation(module = "题目管理", methods = "题目添加/修改")
-    public JsonResponse doAdd(@Validated(value = {AddGroup.class}) QuestionVo question, BindingResult bindingResult,
-                              HttpSession session) throws Exception
-    {
-        JsonListResponse jsonResponse = new JsonListResponse<>();
-        if (bindingResult.hasErrors())
-        {
-            List<FieldError> list = bindingResult.getFieldErrors();
-            for (FieldError fieldError : list)
-            {
-                //校验信息，key=属性名+Error
-                jsonResponse.put(fieldError.getField() + "Error", fieldError.getDefaultMessage());
-            }
-            //操作是否成功
-            jsonResponse.setCode(500);
-        }
 
-        TeacherVo teacherVo = (TeacherVo) session.getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
-        if (null == question.getId() || "".equals(question.getId().trim()))
-        {
-            question.setTeacher(teacherVo);
-            question.setId(IdUtil.getUUID());
-            questionEbi.save(question);
-        } else
-        {
-            QuestionVo questionUpdate = questionEbi.updateOrSaveToMe(question, teacherVo);
-            List<QuestionVo> list = new ArrayList<>();
-            list.add(questionUpdate);
-        }
-        return jsonResponse;
-    }
 
     /**
      * 题目删除

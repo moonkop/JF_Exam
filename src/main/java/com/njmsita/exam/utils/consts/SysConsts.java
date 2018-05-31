@@ -123,8 +123,11 @@ public class SysConsts
 	public static final String EXAM_OPERATION_DELETE = "delete";
 	public static final String EXAM_OPERATION_MARK = "mark";
 	public static final String EXAM_OPERATION_SUBMIT_MARK = "submitMark";
-	public static final String EXAM_OPERATION_ATTEND = "attend";
+	public static final String EXAM_OPERATION_ENTER = "attend";
 	public static final String EXAM_OPERATION_PREVIEW = "preview";
+	public static final String EXAM_PREMISSION_GET_PAPER_CONTENT="";
+	public static final String EXAM_PREMISSION_GET_MY_ANSWER="";
+	public static final String EXAM_PREMISSION_GET_CORRECT_ANSWER="";
 	/**
 	 * 考试操作
 	 */
@@ -153,7 +156,7 @@ public class SysConsts
         ExamOperationViewMap.put(SysConsts.EXAM_OPERATION_DELETE, SysConsts.EXAM_OPERATION_DELETE_VIEW);
         ExamOperationViewMap.put(SysConsts.EXAM_OPERATION_MARK, SysConsts.EXAM_OPERATION_MARK_VIEW);
         ExamOperationViewMap.put(SysConsts.EXAM_OPERATION_SUBMIT_MARK, SysConsts.EXAM_OPERATION_SUBMIT_MARK_VIEW);
-        ExamOperationViewMap.put(SysConsts.EXAM_OPERATION_ATTEND, SysConsts.EXAM_OPERATION_ATTEND_VIEW);
+        ExamOperationViewMap.put(SysConsts.EXAM_OPERATION_ENTER, SysConsts.EXAM_OPERATION_ATTEND_VIEW);
         ExamOperationViewMap.put(SysConsts.EXAM_OPERATION_PREVIEW, SysConsts.EXAM_OPERATION_PREVIEW_VIEW);
     }
 
@@ -199,6 +202,7 @@ public class SysConsts
 	/**
 	 * 学生考试过程操作
 	 */
-	public static final int STUDENT_EXAM_OPERATION_ARCHIVE = 1;//存档
-	public static final int STUDENT_EXAM_OPERATION_SUBMIT = 2;//提交
+	public static final int STUDENT_EXAM_STATUS_NOT_STARTED=0;
+	public static final int STUDENT_EXAM_STATUS_STARTED = 1;//存档
+	public static final int STUDENT_EXAM_STATUS_SUBMITTED = 2;//提交
 }

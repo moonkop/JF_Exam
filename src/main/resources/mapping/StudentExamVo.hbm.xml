@@ -16,7 +16,7 @@
         <many-to-one name="student" column="student_id" class="com.njmsita.exam.authentic.model.StudentVo"/>
 
         <set name="studentExamQuestionVos" lazy="false">
-            <key column="studentexam_id"></key>
+            <key column="student_exam_id"></key>
             <one-to-many class="com.njmsita.exam.manager.model.StudentExamQuestionVo"/>
         </set>
     </class>

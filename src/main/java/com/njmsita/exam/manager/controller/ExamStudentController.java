@@ -2,6 +2,7 @@ package com.njmsita.exam.manager.controller;
 
 import com.njmsita.exam.authentic.model.StudentVo;
 import com.njmsita.exam.manager.model.ExamVo;
+import com.njmsita.exam.manager.model.QuestionVo;
 import com.njmsita.exam.manager.model.StudentExamQuestionVo;
 import com.njmsita.exam.manager.model.StudentExamVo;
 import com.njmsita.exam.manager.model.querymodel.StudentExamListQueryModel;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
@@ -95,10 +97,10 @@ public class ExamStudentController
      * @return
      */
     @RequestMapping("enter")
-    public String toAttendExam()
+    public String toAttendExam(String id, HttpServletRequest request)
     {
 
-        return "/exam/student/enter";
+        return "redirect:/exam/student/preview?id="+id;
     }
 
     /**
@@ -109,14 +111,15 @@ public class ExamStudentController
      * @return
      */
     @RequestMapping("workout")
-    public String workout(String studentExamId, HttpSession session) throws OperationException
+    public String workout(@RequestParam(name = "id") String studentExamId, HttpSession session) throws Exception
     {
         if (StringUtil.isEmpty(studentExamId))
         {
             throw new OperationException("所选的该场考试的id不能为空，请不要进行非法操作！");
         }
         StudentVo studentVo = (StudentVo) session.getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
-     //   Map<String, Object> map = examStudentEbi.attendExam(studentExamId);
+        examStudentEbi.enterExam(studentExamId, studentVo);
+
         return "/exam/student/workout";
     }
 
@@ -127,16 +130,19 @@ public class ExamStudentController
      * @return
      * @throws Exception
      */
+    @ResponseBody
     @RequestMapping("getPaper.do")
-    public JsonResponse getPaper(StudentExamVo studentExam, HttpSession session) throws Exception
+    public JsonResponse getPaper(@RequestParam(name = "id") String studentExamId, HttpSession session) throws Exception
     {
+        StudentVo studentVo = (StudentVo) session.getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
+        List<QuestionVo>  questionVolist= examStudentEbi.getPaperQuestion(studentExamId, studentVo);
+        return new JsonListResponse<QuestionVo>(questionVolist,"index,type,value,outline,options");
 //
 //        //学生作答情况
 //        List<StudentExamQuestionVo> studentExamQuestionList = (List<StudentExamQuestionVo>) map.get("studentExamQuestionList");
 //        //学生考试信息
 //        StudentExamVo studentExam = (StudentExamVo) map.get("studentExam");
 //        //TODO
-        return null;
     }
 
     /**
@@ -145,12 +151,15 @@ public class ExamStudentController
      * @param session
      * @return
      */
+    @ResponseBody
     @RequestMapping("getMyAnswer.do")
-    public JsonResponse getMyAnswer(StudentExamVo studentExamVo, HttpSession session)
+    public JsonResponse getMyAnswer(@RequestParam(name = "id") String studentExamId, HttpSession session) throws Exception
     {
 
         StudentVo studentVo = (StudentVo) session.getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
-        return new JsonListResponse<>();
+        List<StudentExamQuestionVo> answerList = examStudentEbi.getStudentAnswer(studentExamId, studentVo);
+
+        return new JsonListResponse<StudentExamQuestionVo>(answerList,"index,answer");
 
     }
 
@@ -184,6 +193,7 @@ public class ExamStudentController
      *
      * @throws Exception
      */
+    @ResponseBody
     @RequestMapping("submitAnswer")
     public String submitAnswer(StudentExamVo studentExamVo, HttpServletRequest request) throws Exception
     {

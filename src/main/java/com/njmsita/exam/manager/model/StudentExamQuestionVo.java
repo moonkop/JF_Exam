@@ -6,18 +6,18 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "student_exam_question", schema = "jf_exam", catalog = "")
+@Table(name = "student_exam_question", schema = "jf_exam")
 public class StudentExamQuestionVo
 {
     private String id;
-    private int indext;
+    private int index;
     private Double score;
     private String remark;
     private String answer;
     private String rightAnswer;
 
     //指定学生的考试 n TO 1
-    private StudentExamVo studentExamVo;
+    private StudentExamVo studentExam;
     //阅卷教师   n  TO  1
     private TeacherVo teacherVo;
     //题型    n  TO  1
@@ -48,15 +48,15 @@ public class StudentExamQuestionVo
     }
 
     @Basic
-    @Column(name = "studentexam_id")
-    public StudentExamVo getStudentExamVo()
+    @Column(name = "student_exam_id")
+    public StudentExamVo getStudentExam()
     {
-        return studentExamVo;
+        return studentExam;
     }
 
-    public void setStudentExamVo(StudentExamVo studentExamVo)
+    public void setStudentExam(StudentExamVo studentExamVo)
     {
-        this.studentExamVo = studentExamVo;
+        this.studentExam = studentExamVo;
     }
 
     @Basic
@@ -98,14 +98,14 @@ public class StudentExamQuestionVo
 
     @Basic
     @Column(name = "indext")
-    public int getIndext()
+    public int getIndex()
     {
-        return indext;
+        return index;
     }
 
-    public void setIndext(int indext)
+    public void setIndex(int indext)
     {
-        this.indext = indext;
+        this.index = indext;
     }
 
     @Basic
@@ -136,7 +136,7 @@ public class StudentExamQuestionVo
     public int hashCode()
     {
 
-        return Objects.hash(id, indext,score, remark);
+        return Objects.hash(id, index,score, remark,answer,rightAnswer);
     }
 
     @Override
@@ -145,9 +145,13 @@ public class StudentExamQuestionVo
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         StudentExamQuestionVo that = (StudentExamQuestionVo) o;
-        return indext == that.indext &&
+        return index == that.index &&
                 Objects.equals(id, that.id) &&
                 Objects.equals(score, that.score) &&
+                Objects.equals(remark, that.remark) &&
+                Objects.equals(answer, that.answer) &&
+                Objects.equals(score, that.score) &&
+                Objects.equals(answer, that.rightAnswer) &&
                 Objects.equals(remark, that.remark);
     }
 }

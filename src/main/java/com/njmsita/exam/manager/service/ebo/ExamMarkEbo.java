@@ -1,7 +1,6 @@
 package com.njmsita.exam.manager.service.ebo;
 
 import com.njmsita.exam.authentic.dao.dao.StudentDao;
-import com.njmsita.exam.authentic.dao.dao.TeacherDao;
 import com.njmsita.exam.authentic.model.TeacherVo;
 import com.njmsita.exam.manager.dao.dao.*;
 import com.njmsita.exam.manager.model.ExamVo;
@@ -14,7 +13,6 @@ import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.format.FormatUtil;
 import com.njmsita.exam.utils.format.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -62,7 +60,7 @@ public class ExamMarkEbo implements ExamMarkEbi
             {
                 throw new OperationException("个别题目不存在,请不要进行非法操作！");
             }
-            if (!studentExamVo.getId().equals(temp.getStudentExamVo().getId()))
+            if (!studentExamVo.getId().equals(temp.getStudentExam().getId()))
             {
                 throw new OperationException("个别题目属于所提交的学生试卷,请不要进行非法操作！");
             }

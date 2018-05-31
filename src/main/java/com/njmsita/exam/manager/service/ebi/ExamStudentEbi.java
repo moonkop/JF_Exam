@@ -3,10 +3,12 @@ package com.njmsita.exam.manager.service.ebi;
 import com.njmsita.exam.authentic.model.StudentVo;
 import com.njmsita.exam.base.BaseQueryVO;
 import com.njmsita.exam.manager.model.ExamVo;
+import com.njmsita.exam.manager.model.QuestionVo;
 import com.njmsita.exam.manager.model.StudentExamQuestionVo;
 import com.njmsita.exam.manager.model.StudentExamVo;
 import com.njmsita.exam.manager.model.querymodel.StudentExamListQueryModel;
 import com.njmsita.exam.utils.exception.UnLoginException;
+import org.quartz.SchedulerException;
 
 import java.io.Serializable;
 import java.util.List;
@@ -53,22 +55,40 @@ public interface ExamStudentEbi
     public StudentExamVo getStudentExam(ExamVo examVo, StudentVo login) throws Exception;
 
     /**
-     * 学生参加考试
-     *
-     * @param examVo
-     * @param studentVo
-     *
-     * @return
+     * 学生进入考试
+     * @param studentExamId
+     * @param loginStudent
+     * @throws Exception
      */
-    public Map<String, Object> attendExam(ExamVo examVo, StudentVo studentVo) throws Exception;
+    public void enterExam(String studentExamId, StudentVo loginStudent) throws Exception;
 
     /**
-     * 获取所有学生的参加的考试
-     *
-     * @param studentId
-     *
-     * @return
+     * 学生考试开始
+     * @param studentExamPo
+     * @throws SchedulerException
      */
+    public void StudentExamStart(StudentExamVo studentExamPo) throws SchedulerException;
+
+    /**
+     * 获得学生作答
+     * @param studentExamId
+     * @param loginStudent
+     * @return
+     * @throws Exception
+     */
+    public List<StudentExamQuestionVo> getStudentAnswer(String studentExamId, StudentVo loginStudent) throws Exception;
+
+    /**
+     * 获得试题
+     * @param studentExamId
+     * @param loginStudent
+     * @return
+     * @throws Exception
+     */
+    public List<QuestionVo> getPaperQuestion(String studentExamId, StudentVo loginStudent) throws Exception;
+
+
+
     public List<StudentExamVo> getStudentExamList(StudentExamListQueryModel queryModel) throws UnLoginException;
 
 

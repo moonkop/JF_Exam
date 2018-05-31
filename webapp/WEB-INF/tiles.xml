@@ -225,6 +225,10 @@
         <put-attribute name="body" value="/WEB-INF/jsp/exam/student/preview.jsp"/>
         <put-attribute name="title" value="考试概要"/>
     </definition>
+    <definition name="/exam/student/workout" extends="student_base">
+        <put-attribute name="body" value="/WEB-INF/jsp/exam/student/workout.jsp"/>
+        <put-attribute name="title" value="答题中"/>
+    </definition>
 
 
 
@@ -249,7 +253,6 @@
     </definition>
     <definition name="/manage/me/edit" extends="teacher_base">
         <put-attribute name="body" value="/WEB-INF/jsp/manage/me/edit.jsp"/>
-
     </definition>
 
     <definition name="/manage/me/setpassword" extends="teacher_base">

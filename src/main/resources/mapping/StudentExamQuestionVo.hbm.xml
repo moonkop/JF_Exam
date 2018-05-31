@@ -6,13 +6,13 @@
 
     <class name="com.njmsita.exam.manager.model.StudentExamQuestionVo" table="student_exam_question" schema="jf_exam">
         <id name="id" column="id"/>
-        <property name="indext" column="indext"/>
+        <property name="index" column="index_"/>
         <property name="score" column="score"/>
         <property name="remark" column="remark"/>
         <property name="answer" column="answer"/>
         <property name="rightAnswer" column="rightAnswer"/>
 
-        <many-to-one name="studentExamVo" column="studentexam_id" class="com.njmsita.exam.manager.model.StudentExamVo" />
+        <many-to-one name="studentExam" column="student_exam_id" class="com.njmsita.exam.manager.model.StudentExamVo" />
         <many-to-one name="teacherVo" column="teacher_id" class="com.njmsita.exam.authentic.model.TeacherVo"/>
         <many-to-one name="questionTypeVo" column="questionType" class="com.njmsita.exam.manager.model.QuestionTypeVo" lazy="false"/>
     </class>

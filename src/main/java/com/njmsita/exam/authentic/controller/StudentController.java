@@ -200,19 +200,6 @@ public class StudentController extends BaseController
     }
 
     /**
-     * 跳转修改密码页面
-     *
-     * @return
-     */
-    @RequestMapping("manage/toSetPassword")
-    public String toSetPassword()
-    {
-        //TODO 需要提供修改密码页面
-
-        return null;
-    }
-
-    /**
      * 修改密码
      *
      * @param oldPassword 原始密码
@@ -255,29 +242,6 @@ public class StudentController extends BaseController
         return "/manage/student/detail";
     }
 
-    /**
-     * 跳转学生列表页面（分页）
-     *
-     * @param studentQueryModel 该模型存放了学生属性  查询条件
-     * @param request
-     * @return
-     */
-    @RequestMapping("list")
-    public String toStudentList(StudentQueryModel studentQueryModel, Integer pageNum, Integer pageSize, HttpServletRequest request)
-    {
-        //获取学校列表
-        List<SchoolVo> schoolList = schoolEbi.getAll();
-        //获取班级列表
-        List<ClassroomVo> classroomList = classroomEbi.getAll();
-
-        request.setAttribute("schoolList", schoolList);
-        request.setAttribute("classroomList", classroomList);
-
-        List<StudentVo> sutdentList = studentEbi.getAll(studentQueryModel, pageNum, pageSize);
-        request.setAttribute("sutdentList", sutdentList);
-
-        return "manager/student/list";
-    }
 
     @ResponseBody
     @RequestMapping("manage/list.do")

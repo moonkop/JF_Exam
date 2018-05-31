@@ -26,14 +26,14 @@ public class StudentExamQuestionDaoImpl extends BaseImpl<StudentExamQuestionVo> 
 
     public List<StudentExamQuestionVo> getAllByStudentExam(StudentExamVo studentExamVo)
     {
-        String hql="from StudentExamQuestionVo where studentExamVo.id=?";
+        String hql="from StudentExamQuestionVo where studentExam.id=?";
         return (List<StudentExamQuestionVo>) this.getHibernateTemplate().find(hql,studentExamVo.getId());
     }
 
     public List<StudentExamQuestionVo> getByExam(ExamVo examVo)
     {
         //StudentExamQuestionVo  -->  studentExamVo  -->  examVo
-        String hql="select distinct seqv from StudentExamQuestionVo seqv join seqv.studentExamVo sev join sev.exam ev where ev.id=?";
+        String hql="select distinct seqv from StudentExamQuestionVo seqv join seqv.studentExam sev join sev.exam ev where ev.id=?";
         return (List<StudentExamQuestionVo>) this.getHibernateTemplate().find(hql,examVo.getId());
     }
 }

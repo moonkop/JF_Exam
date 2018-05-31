@@ -19,7 +19,7 @@ public class StudentSubmitJob implements Job
         ScheduleVo scheduleVo = (ScheduleVo) dataMap.get("scheduleVo");
         StudentExamDao studentExamDao= (StudentExamDao) scheduleVo.getDao();
         StudentExamVo studentExamVo=studentExamDao.get(scheduleVo.getTargetVoId());
-        studentExamVo.setStatus(SysConsts.STUDENT_EXAM_OPERATION_SUBMIT);
+        studentExamVo.setStatus(SysConsts.STUDENT_EXAM_STATUS_SUBMITTED);
         studentExamVo.setSubmitTime(System.currentTimeMillis());
         Set<StudentExamQuestionVo> questions=studentExamVo.getStudentExamQuestionVos();
         double sum=0;

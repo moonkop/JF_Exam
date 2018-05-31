@@ -82,12 +82,6 @@ public class ExamManageEbo implements ExamManageEbi
         ExamVo examPo = examDao.get(uuid);
         return examPo;
     }
-    public ExamVo getWithPaper(Serializable uuid)
-    {
-        ExamVo examPo = examDao.getExamWithPaper(uuid);
-        return examPo;
-    }
-
 
     public List<ExamVo> getAll(BaseQueryVO qm, Integer pageNum, Integer pageCount)
     {
@@ -115,13 +109,6 @@ public class ExamManageEbo implements ExamManageEbi
         paperMongoDao.deletePaperFromMongoExamPaper(examVo.getId());
     }
 
-
-    //-----------------------------------以上为基本操作-------------------------------------
-    //-----------------------------------以上为基本操作-------------------------------------
-    //-----------------------------------以上为基本操作-------------------------------------
-    //-----------------------------------以上为基本操作-------------------------------------
-    //-----------------------------------以上为基本操作-------------------------------------
-
     public void save(ExamVo examVo, String[] markTeachers, String paperId, String[] classroomIds) throws OperationException
     {
         setFieldsAndValidate(examVo, markTeachers, paperId, classroomIds);
@@ -130,6 +117,13 @@ public class ExamManageEbo implements ExamManageEbi
         createStudentExamByExam(examVo, classroomIds);
         paperMongoDao.savaPaperToMongoExamPaper(examVo.getPaperVo(), examVo.getId());
     }
+
+
+    //-----------------------------------以上为基本操作-------------------------------------
+    //-----------------------------------以上为基本操作-------------------------------------
+    //-----------------------------------以上为基本操作-------------------------------------
+    //-----------------------------------以上为基本操作-------------------------------------
+    //-----------------------------------以上为基本操作-------------------------------------
 
     public void update(ExamVo examVo, String[] markTeachers, String paperId, String[] classroomIds, TeacherVo teacherVo) throws Exception
     {
@@ -150,6 +144,12 @@ public class ExamManageEbo implements ExamManageEbi
         createStudentExamByExam(examPo, classroomIds);
         paperMongoDao.updatePaperFromMongoExamPaper(examPo.getPaperVo(), examPo.getId());
 
+    }
+
+    public ExamVo getWithPaper(Serializable uuid)
+    {
+        ExamVo examPo = examDao.getExamWithPaper(uuid);
+        return examPo;
     }
 
     public List<ExamVo> getByCreateTeacher(String teacherId) throws Exception
@@ -173,7 +173,7 @@ public class ExamManageEbo implements ExamManageEbi
         examPo.setExamStatus(SysConsts.EXAM_STATUS_PASS);
         createSchedulerJob(examPo, SysConsts.SCHEDULEVO_JOB_TYPE_OPEN);
 
-        if (examVo.getOpenDuration() !=0)
+        if (examPo.getOpenDuration() != 0)
         {
             createSchedulerJob(examPo, SysConsts.SCHEDULEVO_JOB_TYPE_CLOSE);
         }
@@ -233,8 +233,6 @@ public class ExamManageEbo implements ExamManageEbi
     }
 
 
-
-
     public Set<String> getValidOperations(ExamVo exam, UserModel loginUser) throws UnLoginException
     {
 
@@ -276,7 +274,7 @@ public class ExamManageEbo implements ExamManageEbi
                         operationSet.add(SysConsts.EXAM_OPERATION_EDIT);
                         operationSet.add(SysConsts.EXAM_OPERATION_CANCEL);
                     }
-                    if (exam.getCreateTeacher().equalsById(loginTeacher)||loginTeacher.IsAdmin())
+                    if (exam.getCreateTeacher().equalsById(loginTeacher) || loginTeacher.IsAdmin())
                     {
                         operationSet.add(SysConsts.EXAM_OPERATION_ADD_MARK_TEACHER);
                     }
@@ -337,10 +335,21 @@ public class ExamManageEbo implements ExamManageEbi
                     break;
                 case SysConsts.EXAM_STATUS_OPEN:
                     operationSet.add(SysConsts.EXAM_OPERATION_PREVIEW);
-                    operationSet.add(SysConsts.EXAM_OPERATION_ATTEND);
+                    operationSet.add(SysConsts.EXAM_OPERATION_ENTER);
                     break;
                 case SysConsts.EXAM_STATUS_CLOSE:
                     operationSet.add(SysConsts.EXAM_OPERATION_PREVIEW);
+                    try
+                    {
+                        StudentExamVo studentExamPo = studentExamDao.getByStudentAndExam(exam, loginStudent);
+                        if (studentExamPo.getStatus() == SysConsts.STUDENT_EXAM_STATUS_STARTED) ;
+                        {
+                            operationSet.add(SysConsts.EXAM_OPERATION_ENTER);
+                        }
+                    } catch (Exception e)
+                    {
+                        e.printStackTrace();
+                    }
                     break;
                 case SysConsts.EXAM_STATUS_IN_MARK:
                     operationSet.add(SysConsts.EXAM_OPERATION_PREVIEW);
@@ -464,6 +473,23 @@ public class ExamManageEbo implements ExamManageEbi
         }
         return temp;
     }
+
+    /**
+     * 记录日志
+     *
+     * @param scheduleVo
+     */
+    public void saveLog(ScheduleVo scheduleVo, String method)
+    {
+
+        LogVo logVo = new LogVo();
+        logVo.setModule("考试管理");
+        logVo.setMethod(method);
+        logVo.setTime(System.currentTimeMillis());
+        logVo.setArgument(scheduleVo.getClass().getName() + "-->" + scheduleVo.toString());
+        logDao.save(logVo);
+    }
+
     /**
      * 判空
      *
@@ -485,21 +511,6 @@ public class ExamManageEbo implements ExamManageEbi
             throw new OperationException("本场考试的试卷不存在");
         }
         return temp;
-    }
-    /**
-     * 记录日志
-     *
-     * @param scheduleVo
-     */
-    public void saveLog(ScheduleVo scheduleVo, String method)
-    {
-
-        LogVo logVo = new LogVo();
-        logVo.setModule("考试管理");
-        logVo.setMethod(method);
-        logVo.setTime(System.currentTimeMillis());
-        logVo.setArgument(scheduleVo.getClass().getName() + "-->" + scheduleVo.toString());
-        logDao.save(logVo);
     }
 
     /**
@@ -566,7 +577,7 @@ public class ExamManageEbo implements ExamManageEbi
 
         scheduleVo.setDao(examDao);
         scheduleDao.save(scheduleVo);
-        new SchedulerJobUtil().createJob(scheduleVo, schedulerFactoryBean.getScheduler());
+        SchedulerJobUtil.createJob(scheduleVo, schedulerFactoryBean.getScheduler());
         saveLog(scheduleVo, scheduleVo.getDescribe());
     }
 
@@ -711,6 +722,7 @@ public class ExamManageEbo implements ExamManageEbi
                     studentExamVo.setId(IdUtil.getUUID());
                     studentExamVo.setExam(examVo);
                     studentExamVo.setStudent(studentVo);
+                    studentExamVo.setStatus(SysConsts.STUDENT_EXAM_STATUS_NOT_STARTED);
                     studentExamDao.save(studentExamVo);
                 }
             } else

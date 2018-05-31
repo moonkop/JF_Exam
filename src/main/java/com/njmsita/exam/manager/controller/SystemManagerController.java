@@ -75,18 +75,6 @@ public class SystemManagerController extends BaseController
     //-------------------------------------------SchoolManager----------------------------------------------
 
 
-    //测试方法
-    @ResponseBody
-    @RequestMapping("school/list.do")
-    public JsonResponse schoolList(SchoolQueryModel schoolQueryModel, Integer pageNum, Integer pageSize)
-    {
-
-        return new JsonListResponse<>(schoolEbi.getAll(schoolQueryModel, pageNum, pageSize),
-                "id,name",
-                schoolEbi.getCount(schoolQueryModel));
-
-    }
-
     /**
      * 跳转到学校管理页面
      *
@@ -96,6 +84,17 @@ public class SystemManagerController extends BaseController
     public String toSchoolList()
     {
         return "/manage/school/list";
+    }
+
+    @ResponseBody
+    @RequestMapping("school/list.do")
+    public JsonResponse schoolList(SchoolQueryModel schoolQueryModel, Integer pageNum, Integer pageSize)
+    {
+
+        return new JsonListResponse<>(schoolEbi.getAll(schoolQueryModel, pageNum, pageSize),
+                "id,name",
+                schoolEbi.getCount(schoolQueryModel));
+
     }
 
     @RequestMapping("school/detail")
@@ -164,22 +163,6 @@ public class SystemManagerController extends BaseController
         }
         return "redirect:/manage/school";
     }
-    //--------------------------------SchoolManager----------END--------------------------------------------
-    //--------------------------------SchoolManager----------END--------------------------------------------
-    //--------------------------------SchoolManager----------END--------------------------------------------
-    //--------------------------------SchoolManager----------END--------------------------------------------
-    //--------------------------------SchoolManager----------END--------------------------------------------
-    //--------------------------------SchoolManager----------END--------------------------------------------
-
-//======================================================================================================================
-
-    //-----------------------------------------------RoleManager--------------------------------------------
-    //-----------------------------------------------RoleManager--------------------------------------------
-    //-----------------------------------------------RoleManager--------------------------------------------
-    //-----------------------------------------------RoleManager--------------------------------------------
-    //-----------------------------------------------RoleManager--------------------------------------------
-    //-----------------------------------------------RoleManager--------------------------------------------
-
     /**
      * 删除学校
      *
@@ -198,6 +181,28 @@ public class SystemManagerController extends BaseController
         }
         return new JsonResponse("删除成功");
     }
+    //--------------------------------SchoolManager----------END--------------------------------------------
+    //--------------------------------SchoolManager----------END--------------------------------------------
+    //--------------------------------SchoolManager----------END--------------------------------------------
+    //--------------------------------SchoolManager----------END--------------------------------------------
+    //--------------------------------SchoolManager----------END--------------------------------------------
+
+    //--------------------------------SchoolManager----------END--------------------------------------------
+
+//======================================================================================================================
+    //-----------------------------------------------RoleManager--------------------------------------------
+    //-----------------------------------------------RoleManager--------------------------------------------
+    //-----------------------------------------------RoleManager--------------------------------------------
+    //-----------------------------------------------RoleManager--------------------------------------------
+    //-----------------------------------------------RoleManager--------------------------------------------
+
+    //-----------------------------------------------RoleManager--------------------------------------------
+
+    @RequestMapping("role")
+    public String toRoleList()
+    {
+        return "/manage/role/list";
+    }
 
     @ResponseBody
     @RequestMapping("role/list.do")
@@ -208,6 +213,13 @@ public class SystemManagerController extends BaseController
                 roleEbi.getAll(troleQueryModel, pageNum, pageSize),
                 "id,name",
                 roleEbi.getCount(troleQueryModel));
+    }
+
+    @RequestMapping("role/detail")
+    public String toRoleDetail(TroleVo troleVo, HttpServletRequest request)
+    {
+        request.setAttribute("role", roleEbi.get(troleVo.getId()));
+        return "/manage/role/detail";
     }
 
     @ResponseBody
@@ -253,44 +265,9 @@ public class SystemManagerController extends BaseController
 
     }
 
-    @RequestMapping("role")
-    public String toRoleList()
-    {
-        return "/manage/role/list";
-    }
-
-    @RequestMapping("role/detail")
-    public String toRoleDetail(TroleVo troleVo, HttpServletRequest request)
-    {
-        request.setAttribute("role", roleEbi.get(troleVo.getId()));
-        return "/manage/role/detail";
-    }
-
-    /**
-     * 跳转角色页面(分页)
-     *
-     * @param roleQueryModel 该模型存放了角色属性
-     * @param model
-     * @param pageNum        页码
-     * @param pageSize       页面大小
-     *
-     * @return
-     */
-    @RequestMapping("role/list")
-    public String toRoleList(TroleQueryModel roleQueryModel, Model model, Integer pageNum, Integer pageSize)
-    {
-        //根据查询条件及指定页码查询
-        List<TroleVo> roleList = roleEbi.getAll(roleQueryModel, pageNum, pageSize);
-        model.addAttribute("roleList", roleList);
-
-        return "/manage/role/list";
-    }
 
     /**
      * 跳转角色添加/修改页面
-     * <p>
-     * （此处将添加和修改页面合并，如果前台传递ID则进行修改否则进入添加页面）
-     *
      * @param roleVo  接受前台传递的角色id
      * @param request HttpServletRequest
      *
@@ -349,7 +326,7 @@ public class SystemManagerController extends BaseController
      *
      * @return 跳转角色列表页面
      */
-    @RequestMapping("role/delete")
+    @RequestMapping("role/delete.do")
     @SystemLogAnnotation(module = "角色管理", methods = "角色删除")
     public String roleDelete(TroleVo roleVo) throws OperationException
     {
@@ -396,26 +373,6 @@ public class SystemManagerController extends BaseController
 
     }
 
-    /**
-     * 跳转班级页面(分页)
-     *
-     * @param classroomQueryModel 该模型存放了班级属性
-     * @param model
-     * @param pageNum             页码
-     * @param pageSize            页面大小
-     *
-     * @return
-     */
-    @Deprecated
-    @RequestMapping("classroom/list")
-    public String toClassroomList(ClassroomQueryModel classroomQueryModel, Model model, Integer pageNum, Integer pageSize)
-    {
-        //根据查询条件和指定的页码查询
-        List<ClassroomVo> classroomList = classroomEbi.getAll(classroomQueryModel, pageNum, pageSize);
-        model.addAttribute("classroomList", classroomList);
-
-        return "/manage/classroom/list";
-    }
 
     @RequestMapping("classroom/detail")
     public String toClassroomDetail(String id, HttpServletRequest request)
@@ -484,8 +441,6 @@ public class SystemManagerController extends BaseController
         }
         return "redirect:/manage/classroom";
     }
-
-
     /**
      * 删除班级
      *
@@ -513,7 +468,6 @@ public class SystemManagerController extends BaseController
     {
         CustomJsonSerializer serializer = new CustomJsonSerializer(ClassroomVo.class, "id,name", null);
         return serializer.toJson_JsonNode(classroomEbi.getAllBySchoolId(id));
-
     }
 
     //-----------------------------------ClassroomManager-----------END------------------------------------------
@@ -539,23 +493,6 @@ public class SystemManagerController extends BaseController
         return "/manage/resource/tree";
     }
 
-    @RequestMapping("resource/list1")
-    public String toresourceList()
-    {
-        return "/manage/resource/list";
-    }
-
-
-    @ResponseBody
-    @RequestMapping("resource/list.do")
-    public JsonResponse resourceList(ResourceQueryModel resourceQueryModel, Integer pageNum, Integer pageSize)
-    {
-        return new JsonListResponse<>(
-                resourceEbi.getAll(resourceQueryModel, pageNum, pageSize),
-                "id,name,[school]schoolVo.name",
-                resourceEbi.getCount(resourceQueryModel));
-    }
-
     @ResponseBody
     @RequestMapping("resource/tree.do")
     public JsonResponse resourceTree()
@@ -571,30 +508,7 @@ public class SystemManagerController extends BaseController
     }
 
     /**
-     * 跳转资源页面(分页)
-     *
-     * @param resourceQueryModel 该模型存放了资源属性
-     * @param model
-     * @param pageNum            页码
-     * @param pageSize           页面大小
-     *
-     * @return
-     */
-    @RequestMapping("resource/list")
-
-    public String toresourceList(ResourceQueryModel resourceQueryModel, Model model, Integer pageNum, Integer pageSize)
-    {
-        //根据查询条件和指定的页码查询
-        List<TresourceVo> resourceList = resourceEbi.getAll(resourceQueryModel, pageNum, pageSize);
-        model.addAttribute("resourceList", resourceList);
-
-        return "/manage/resource/list";
-    }
-
-    /**
      * 跳转资源添加/修改页面
-     * <p>
-     * （此处将添加和修改页面合并，如果前台传递ID则进行修改否则进入添加页面）
      *
      * @param parent  接受前台传递的资源id
      * @param request HttpServletRequest
@@ -626,15 +540,6 @@ public class SystemManagerController extends BaseController
         return "/manage/resource/edit";
     }
 
-
-    @ResponseBody
-    @RequestMapping("resource/move.do")
-    public JsonResponse moveResource(String id, String parent) throws OperationException
-    {
-        resourceEbi.move(id, parent);
-
-        return new JsonResponse();
-    }
 
     /**
      * 添加资源
@@ -693,6 +598,15 @@ public class SystemManagerController extends BaseController
         return new JsonResponse("删除成功");
     }
 
+    @ResponseBody
+    @RequestMapping("resource/move.do")
+    public JsonResponse moveResource(String id, String parent) throws OperationException
+    {
+        resourceEbi.move(id, parent);
+
+        return new JsonResponse();
+    }
+
     //-----------------------------------resourceManager-----------END------------------------------------------
     //-----------------------------------resourceManager-----------END------------------------------------------
     //-----------------------------------resourceManager-----------END------------------------------------------
@@ -716,7 +630,7 @@ public class SystemManagerController extends BaseController
      *
      * @return
      */
-    @RequestMapping("log/export")
+    @RequestMapping("log/export.do")
     @SystemLogAnnotation(module = "日志管理", methods = "日志导出")
     public ResponseEntity<byte[]> exportLog(LogQueryModel logQueryModel, HttpServletRequest request) throws Exception
     {
