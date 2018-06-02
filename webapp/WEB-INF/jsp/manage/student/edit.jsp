@@ -54,22 +54,43 @@
                                         })
                                     </script>
 
+
+
+
                                     <div class="form-group">
-                                        <label for="selectClassroom" class="col-sm-2 control-label">班级</label>
-
+                                        <label class="col-sm-2 control-label">班级</label>
                                         <div class="col-sm-8">
-                                            <select name="classroomID" id="selectClassroom" class="form-control" >
-
-                                                <c:forEach items="${requestScope.classroom}" var="subject" >
-                                                    <option value="${subject.id}"
-                                                            <c:if test="${student.classroom==subject}">selected</c:if>   >
-                                                            ${subject.name}
-                                                    </option>
-                                                </c:forEach>
-
-                                            </select>
+                                            <input type="text" class="form-control" name="classroomID"
+                                                   value="${student.classroom.name}">
                                         </div>
                                     </div>
+
+
+
+
+
+
+
+
+
+
+
+                                    <%--<div class="form-group">--%>
+                                        <%--<label for="selectClassroom" class="col-sm-2 control-label">班级</label>--%>
+
+                                        <%--<div class="col-sm-8">--%>
+                                            <%--<select name="classroomID" id="selectClassroom" class="form-control" >--%>
+
+                                                <%--<c:forEach items="${requestScope.classroom}" var="subject" >--%>
+                                                    <%--<option value="${subject.id}"--%>
+                                                            <%--<c:if test="${student.classroom==subject}">selected</c:if>   >--%>
+                                                            <%--${subject.name}--%>
+                                                    <%--</option>--%>
+                                                <%--</c:forEach>--%>
+
+                                            <%--</select>--%>
+                                        <%--</div>--%>
+                                    <%--</div>--%>
 
 
                                     <div class="form-group">

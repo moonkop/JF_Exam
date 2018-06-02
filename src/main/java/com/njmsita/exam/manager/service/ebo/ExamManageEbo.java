@@ -743,7 +743,7 @@ public class ExamManageEbo implements ExamManageEbi
     private Set<TeacherVo> getMarkTeachers(String[] markTeachers)
     {
         Set<TeacherVo> teacherSet = new HashSet<>();
-        if (markTeachers == null || markTeachers.length > 0)
+        if (markTeachers == null || markTeachers.length == 0)
         {
             return teacherSet;
         }

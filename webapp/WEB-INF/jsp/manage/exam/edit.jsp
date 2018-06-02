@@ -42,30 +42,6 @@
                 }
             });
 
-            // $.ajax(
-            //     {
-            //         url: "/paper/list.do",
-            //         data: {
-            //             'subject.id': subject,
-            //             'pageNum': 1,
-            //             'pageSize': 1000
-            //         },
-            //         success: function (res) {
-            //             OnResult(res, function (res) {
-            //                     $("#select-paper").empty();
-            //                     var papers = res.payload.rows;
-            //                     papers.map(function (item) {
-            //                             $("#select-paper").append(
-            //                                 '<option value=' + item.id + '>' + item.title + '</option>'
-            //                             )
-            //                         }
-            //                     )
-            //                 }
-            //             )
-            //         }
-            //     }
-            // )
-
         }
 
 
@@ -243,6 +219,9 @@
                                            value="${exam.name}" placeholder="请输入考试名称">
                                 </div>
                             </div>
+
+
+
                             <div class="form-group">
                                 <label class="col-sm-2 control-label" for="input-name">考试班级</label>
                                 <div class="col-sm-8">
