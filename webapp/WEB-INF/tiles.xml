@@ -225,9 +225,15 @@
         <put-attribute name="body" value="/WEB-INF/jsp/exam/student/preview.jsp"/>
         <put-attribute name="title" value="考试概要"/>
     </definition>
-    <definition name="/exam/student/workout" extends="student_base">
-        <put-attribute name="body" value="/WEB-INF/jsp/exam/student/workout.jsp"/>
+
+
+    <definition name="/exam/student/workout" template="/WEB-INF/jsp/exam/student/workout.jsp">
+        <put-attribute name="header" value="/WEB-INF/components/header.jsp"/>
+        <put-attribute name="footer" value="/WEB-INF/components/footer.jsp"/>
         <put-attribute name="title" value="答题中"/>
+        <put-list-attribute name="additional-headers">
+            <add-attribute value="/WEB-INF/layout/additional-headers/highlight-header.jsp"/>
+        </put-list-attribute>
     </definition>
 
 

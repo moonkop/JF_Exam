@@ -178,106 +178,6 @@ function question_manage_bind_actions()
 
     function question_manage_question_edit_on_click(questionID)
     {
-        //显示编辑题目页面
-        function question_manage_render_question_edit(questionDetail)
-        {
-            var $questionForm = $($("#js-template-question-edit").html());
-            app.currentLayer = $questionForm;
-
-            var config = {
-                options: function (value, key) {
-                    return "";
-                },
-                answer: function (value, key) {
-                    return "";
-                },
-                type: function (value, key) {
-                    return "";
-                },
-                createTime: function (value, key) {
-                    return new Date(value).toLocaleString();
-                }
-            }
-
-            var fieldContent;
-            for (var key in questionDetail)
-            {
-                var currentConfig = config[key];
-                if (currentConfig != undefined)
-                {
-                    if (typeof currentConfig == 'function')
-                    {
-                        fieldContent = currentConfig(questionDetail[key], key);
-                    }
-                } else
-                {
-                    fieldContent = questionDetail[key];
-                }
-                if (fieldContent !== "" && fieldContent !== null)
-                {
-                    set_data_in_field($questionForm.find("[data-field='" + key + "']"), fieldContent);
-                }
-            }
-
-            var showEdit = true;
-            var showSaveAsMine = true;
-            var showSaveAsPublic = false;
-            //如果是自己的题目，允许编辑
-            if (questionDetail.createTeacherId == User.id)
-            {
-                showEdit = true;
-                showSaveAsMine = false;
-            } else
-            {
-                showEdit = false;
-                showSaveAsMine = true;
-            }
-            //如果是管理员，则对公共题目可以编辑
-            if (questionDetail.isPrivate == 0 && User.role == '0')
-            {
-                showEdit = true;
-            }
-            //如果不是本人创建的题目，不能编辑可见性
-            if (questionDetail.createTeacherId != User.id)
-            {
-                $questionForm.find('[data-field="isPrivate"]').attr("disabled", true);
-            }
-
-
-            showEdit && $questionForm.find(".js-btn-group").append("<input type=\"button\" class=\"btn btn-primary js-edit-submit\" value=\"编辑并提交\">\n")
-            showSaveAsMine && $questionForm.find(".js-btn-group").append("<input type=\"button\" class=\"btn btn-default js-save-as-mine\" value=\"保存到我的题库\">\n")
-
-
-            question_edit_option_status = {
-                optionid: 1,
-                optionCount: 1
-            }
-            question_option_parse_json(questionDetail);
-
-            for (key in questionDetail.options)
-            {
-                var iscorrect = to_answer_array(questionDetail.answer).indexOf(key) != -1;
-
-                question_edit_on_add_option(questionDetail.options[key], iscorrect);
-            }
-
-            $(".layui-layer-content").addClass("layer-form");
-
-            //增加选项按钮点击
-            app.currentLayer.find(".btn-add-option").on("click", function () {
-                question_edit_on_add_option();
-            });
-            //提交按钮事件
-            app.currentLayer.find(".js-edit-submit").on("click", function () {
-                question_manage_edit_on_submit('/manage/bank/question/edit.do');
-            });
-            app.currentLayer.find(".js-save-as-mine").on("click", function () {
-                question_manage_edit_on_submit('/manage/bank/question/saveAsMine.do');
-            });
-//根据选项自动设置题目类型
-            question_edit_option_group_on_change();
-            return $questionForm;
-        }
 
         get_question_detail(questionID, function (questionDetail) {
             app.currentLayerIndex = layer.open(
@@ -479,10 +379,9 @@ function paper_edit_render_question_list()
     render_question_list(question_list, $(" .paper-edit  .question-list"), paper_edit_render_question)
 }
 
-//试卷浏览部分题目列表渲染
-function paper_view_render_question_list()
+function paper_exam_render_question_list()
 {
-    function paper_view_render_question(question)
+    function paper_exam_render_question(question)
     {
         var $question_panel = $($("#js-template-question-panel").html());
         $question_panel.attr("id", "paper_question_" + question.index);
@@ -501,9 +400,46 @@ function paper_view_render_question_list()
             case "单选题":
             case "多选题":
                 $question_panel.find(".question-body").append(render_question_option_list(question));
+                break;
+            case "简答题":
+                var $answer = $($("#js-template-question-workout-area").html());
+                $question_panel.find(".question-workout").append($answer);
+                break;
+        }
+        return $question_panel;
+    }
+
+    render_question_list(app.paper.questionList, $(".paper-exam .question-list"), paper_exam_render_question);
+
+}
+
+//试卷浏览部分题目列表渲染
+function paper_view_render_question_list()
+{
+    function paper_view_render_question(question)
+    {
+        var $question_panel = $($("#js-template-question-panel").html());
+        $question_panel.attr("id", "paper_question_" + question.index);
+        $question_panel.attr("data-index", question.index);
+        $question_panel.attr("data-type", question.type);
+        $question_panel.find(".question-type").text(QuestionTypeMap(question.type));
+        $question_panel.find(".question-index").text(question.index + 1 + ". ");
+        $question_panel.find(".question-outline").text(question.outline);
+        if (question.code != null && question.code != "")
+        {
+            $question_panel.find(".question-code").css("display", "block");
+            var code = $question_panel.find(".question-code code");
+            code.text(question.code);
+        }
+        switch (QuestionTypeMap(question.type))
+        {
+            case "单选题":
+            case "多选题":
+                $question_panel.find(".question-body").append(render_question_option_list(question));
                 $question_panel.find(".question-answer").text("答案：" + QuestionAnswerNumsToChars(question.answer));
                 break;
             case "简答题":
+
                 break;
         }
         return $question_panel;
@@ -512,6 +448,112 @@ function paper_view_render_question_list()
     render_question_list(app.paper.questionList, $(".paper-view .question-list"), paper_view_render_question);
 }
 
+//显示编辑题目页面
+function question_manage_render_question_edit(questionDetail)
+{
+    var $questionForm = $($("#js-template-question-edit").html());
+    app.currentLayer = $questionForm;
+
+    var config = {
+        options: function (value, key) {
+            return "";
+        },
+        answer: function (value, key) {
+            return "";
+        },
+        type: function (value, key) {
+            return "";
+        },
+        createTime: function (value, key) {
+            return new Date(value).toLocaleString();
+        }
+    }
+
+    var fieldContent;
+    for (var key in questionDetail)
+    {
+        var currentConfig = config[key];
+        if (currentConfig != undefined)
+        {
+            if (typeof currentConfig == 'function')
+            {
+                fieldContent = currentConfig(questionDetail[key], key);
+            }
+        } else
+        {
+            fieldContent = questionDetail[key];
+        }
+        if (fieldContent !== "" && fieldContent !== null)
+        {
+            set_data_in_field($questionForm.find("[data-field='" + key + "']"), fieldContent);
+        }
+    }
+
+    var showEdit = true;
+    var showSaveAsMine = true;
+    var showSaveAsPublic = false;
+    //如果是自己的题目，允许编辑
+    if (questionDetail.createTeacherId == User.id)
+    {
+        showEdit = true;
+        showSaveAsMine = false;
+    } else
+    {
+        showEdit = false;
+        showSaveAsMine = true;
+    }
+    //如果是管理员，则对公共题目可以编辑
+    if (questionDetail.isPrivate == 0 && User.role == '0')
+    {
+        showEdit = true;
+    }
+    //如果不是本人创建的题目，不能编辑可见性
+    if (questionDetail.createTeacherId != User.id)
+    {
+        $questionForm.find('[data-field="isPrivate"]').attr("disabled", true);
+    }
+
+
+    showEdit && $questionForm.find(".js-btn-group").append("<input type=\"button\" class=\"btn btn-primary js-edit-submit\" value=\"编辑并提交\">\n")
+    showSaveAsMine && $questionForm.find(".js-btn-group").append("<input type=\"button\" class=\"btn btn-default js-save-as-mine\" value=\"保存到我的题库\">\n")
+
+
+    question_edit_option_status = {
+        optionid: 1,
+        optionCount: 1
+    }
+    question_option_parse_json(questionDetail);
+
+    for (key in questionDetail.options)
+    {
+        var iscorrect = to_answer_array(questionDetail.answer).indexOf(key) != -1;
+
+        question_edit_on_add_option(questionDetail.options[key], iscorrect);
+    }
+
+    $(".layui-layer-content").addClass("layer-form");
+
+    //增加选项按钮点击
+    app.currentLayer.find(".btn-add-option").on("click", function () {
+        question_edit_on_add_option();
+    });
+    //提交按钮事件
+    app.currentLayer.find(".js-edit-submit").on("click", function () {
+        question_manage_edit_on_submit('/manage/bank/question/edit.do');
+    });
+    app.currentLayer.find(".js-save-as-mine").on("click", function () {
+        question_manage_edit_on_submit('/manage/bank/question/saveAsMine.do');
+    });
+//根据选项自动设置题目类型
+    question_edit_option_group_on_change();
+    return $questionForm;
+}
+
+function render_question_answer_area(question)
+{
+
+
+}
 
 //显示题目列表
 function render_question_option_list(question)
@@ -537,10 +579,15 @@ function render_question_option_list(question)
         }
         $question_option.find("label").text(question.options[key]);
         $question_option.find("input").attr("name", "question_" + question.id);
-        if (to_answer_array(question.answer).indexOf(key) != -1)
+        $question_option.find("input").attr("data-option-index", key);
+        if (question.answer != undefined)
         {
-            $question_option.addClass("question-option-correct");
+            if (to_answer_array(question.answer).indexOf(key) != -1)
+            {
+                $question_option.addClass("question-option-correct");
+            }
         }
+
         $question_option_list.append($question_option);
     }
     return $question_option_list;

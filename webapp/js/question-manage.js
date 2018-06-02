@@ -379,10 +379,9 @@ function paper_edit_render_question_list()
     render_question_list(question_list, $(" .paper-edit  .question-list"), paper_edit_render_question)
 }
 
-//试卷浏览部分题目列表渲染
-function paper_view_render_question_list()
+function paper_exam_render_question_list()
 {
-    function paper_view_render_question(question)
+    function paper_exam_render_question(question)
     {
         var $question_panel = $($("#js-template-question-panel").html());
         $question_panel.attr("id", "paper_question_" + question.index);
@@ -401,9 +400,46 @@ function paper_view_render_question_list()
             case "单选题":
             case "多选题":
                 $question_panel.find(".question-body").append(render_question_option_list(question));
+                break;
+            case "简答题":
+                var $answer = $($("#js-template-question-workout-area").html());
+                $question_panel.find(".question-workout").append($answer);
+                break;
+        }
+        return $question_panel;
+    }
+
+    render_question_list(app.paper.questionList, $(".paper-exam .question-list"), paper_exam_render_question);
+
+}
+
+//试卷浏览部分题目列表渲染
+function paper_view_render_question_list()
+{
+    function paper_view_render_question(question)
+    {
+        var $question_panel = $($("#js-template-question-panel").html());
+        $question_panel.attr("id", "paper_question_" + question.index);
+        $question_panel.attr("data-index", question.index);
+        $question_panel.attr("data-type", question.type);
+        $question_panel.find(".question-type").text(QuestionTypeMap(question.type));
+        $question_panel.find(".question-index").text(question.index + 1 + ". ");
+        $question_panel.find(".question-outline").text(question.outline);
+        if (question.code != null && question.code != "")
+        {
+            $question_panel.find(".question-code").css("display", "block");
+            var code = $question_panel.find(".question-code code");
+            code.text(question.code);
+        }
+        switch (QuestionTypeMap(question.type))
+        {
+            case "单选题":
+            case "多选题":
+                $question_panel.find(".question-body").append(render_question_option_list(question));
                 $question_panel.find(".question-answer").text("答案：" + QuestionAnswerNumsToChars(question.answer));
                 break;
             case "简答题":
+
                 break;
         }
         return $question_panel;
@@ -411,6 +447,7 @@ function paper_view_render_question_list()
 
     render_question_list(app.paper.questionList, $(".paper-view .question-list"), paper_view_render_question);
 }
+
 //显示编辑题目页面
 function question_manage_render_question_edit(questionDetail)
 {
@@ -512,6 +549,11 @@ function question_manage_render_question_edit(questionDetail)
     return $questionForm;
 }
 
+function render_question_answer_area(question)
+{
+
+
+}
 
 //显示题目列表
 function render_question_option_list(question)
@@ -537,10 +579,15 @@ function render_question_option_list(question)
         }
         $question_option.find("label").text(question.options[key]);
         $question_option.find("input").attr("name", "question_" + question.id);
-        if (to_answer_array(question.answer).indexOf(key) != -1)
+        $question_option.find("input").attr("data-option-index", key);
+        if (question.answer != undefined)
         {
-            $question_option.addClass("question-option-correct");
+            if (to_answer_array(question.answer).indexOf(key) != -1)
+            {
+                $question_option.addClass("question-option-correct");
+            }
         }
+
         $question_option_list.append($question_option);
     }
     return $question_option_list;
