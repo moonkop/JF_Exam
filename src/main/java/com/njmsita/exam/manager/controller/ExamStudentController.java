@@ -13,9 +13,12 @@ import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.exception.UnLoginException;
 import com.njmsita.exam.utils.format.StringUtil;
+import com.njmsita.exam.utils.json.CustomJsonSerializer;
 import com.njmsita.exam.utils.json.JsonListResponse;
 import com.njmsita.exam.utils.json.JsonResponse;
+import com.njmsita.exam.utils.logutils.SystemLogAnnotation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +27,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -85,9 +89,9 @@ public class ExamStudentController
     @RequestMapping("preview")
     public String preview(String id, HttpServletRequest request)
     {
-        StudentExamVo studentExamVo = examStudentEbi.get(id);
-        request.setAttribute("exam", studentExamVo.getExam());
-        request.setAttribute("studentExam", studentExamVo);
+        StudentExamVo studentExamPo = examStudentEbi.get(id);
+        request.setAttribute("exam", studentExamPo.getExam());
+        request.setAttribute("studentExam", studentExamPo);
         return "/exam/student/preview";
     }
 
@@ -100,7 +104,7 @@ public class ExamStudentController
     public String toAttendExam(String id, HttpServletRequest request)
     {
 
-        return "redirect:/exam/student/preview?id="+id;
+        return "redirect:/exam/student/preview?id=" + id;
     }
 
     /**
@@ -110,24 +114,42 @@ public class ExamStudentController
      *
      * @return
      */
+    @SystemLogAnnotation(module = "学生考试", methods = "进入考试")
     @RequestMapping("workout")
-    public String workout(@RequestParam(name = "id") String studentExamId, HttpSession session) throws Exception
+    public String workout(@RequestParam(name = "id") String studentExamId, HttpServletRequest request, HttpSession session) throws Exception
     {
         if (StringUtil.isEmpty(studentExamId))
         {
             throw new OperationException("所选的该场考试的id不能为空，请不要进行非法操作！");
         }
         StudentVo studentVo = (StudentVo) session.getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
-        examStudentEbi.enterExam(studentExamId, studentVo);
+        StudentExamVo studentExamPo = examStudentEbi.enterExam(studentExamId, studentVo);
+        ExamVo examPo = studentExamPo.getExam();
+        ExamVo examVoWithPaper= examManageEbi.getWithPaper(studentExamPo.getExam().getId());
+        request.setAttribute("exam", examPo);
+        request.setAttribute("studentExam", studentExamPo);
+        if (examPo.getPaperVo() != null)
+        {
+            request.setAttribute("paper", examVoWithPaper.getPaperVo());
+            request.setAttribute("questionList", CustomJsonSerializer.toJsonString_static
+                    (
+                            new JsonListResponse<QuestionVo>(examVoWithPaper.getPaperVo().getQuestionList(), "outline,options,value,code,index,type")
+                                    .list()
+                    )
+            );
+        }
 
         return "/exam/student/workout";
     }
 
     /**
      * 获得试卷（题目列表）
+     *
      * @param studentExam
      * @param session
+     *
      * @return
+     *
      * @throws Exception
      */
     @ResponseBody
@@ -135,8 +157,8 @@ public class ExamStudentController
     public JsonResponse getPaper(@RequestParam(name = "id") String studentExamId, HttpSession session) throws Exception
     {
         StudentVo studentVo = (StudentVo) session.getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
-        List<QuestionVo>  questionVolist= examStudentEbi.getPaperQuestion(studentExamId, studentVo);
-        return new JsonListResponse<QuestionVo>(questionVolist,"index,type,value,outline,options");
+        List<QuestionVo> questionVolist = examStudentEbi.getPaperQuestion(studentExamId, studentVo);
+        return new JsonListResponse<QuestionVo>(questionVolist, "index,type,value,outline,options");
 //
 //        //学生作答情况
 //        List<StudentExamQuestionVo> studentExamQuestionList = (List<StudentExamQuestionVo>) map.get("studentExamQuestionList");
@@ -147,19 +169,21 @@ public class ExamStudentController
 
     /**
      * 获得我的答案列表
+     *
      * @param studentExamVo
      * @param session
+     *
      * @return
      */
     @ResponseBody
-    @RequestMapping("getMyAnswer.do")
-    public JsonResponse getMyAnswer(@RequestParam(name = "id") String studentExamId, HttpSession session) throws Exception
+    @RequestMapping("getWorkout.do")
+    public JsonResponse getWorkout(@RequestParam(name = "id") String studentExamId, HttpSession session) throws Exception
     {
 
         StudentVo studentVo = (StudentVo) session.getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
         List<StudentExamQuestionVo> answerList = examStudentEbi.getStudentAnswer(studentExamId, studentVo);
 
-        return new JsonListResponse<StudentExamQuestionVo>(answerList,"index,answer");
+        return new JsonListResponse<StudentExamQuestionVo>(answerList, "index,workout,id");
 
     }
 
@@ -174,13 +198,17 @@ public class ExamStudentController
      *
      * @throws Exception
      */
-    @RequestMapping("archive")
-    public JsonResponse archive(@RequestBody List<StudentExamQuestionVo> studentExamQuestionList, String studentExamId,
-                                HttpServletRequest request) throws Exception
+
+    @ResponseBody
+    @RequestMapping("archive.do")
+    public JsonResponse archive(@RequestBody ArchiveWrapper wrapper,
+                                HttpServletRequest request)
+            throws Exception
     {
+
         StudentVo login = (StudentVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
-        examStudentEbi.archive(login, studentExamId, studentExamQuestionList);
-        return null;
+        examStudentEbi.archive(login, wrapper.id, wrapper.workouts);
+        return new JsonResponse();
     }
 
     /**
@@ -208,6 +236,7 @@ public class ExamStudentController
      *
      * @return
      */
+    @ResponseBody
     @RequestMapping("systemTime")
     public JsonResponse systemTime()
     {

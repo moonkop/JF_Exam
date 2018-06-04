@@ -12,7 +12,6 @@ import org.quartz.SchedulerException;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 
 public interface ExamStudentEbi
 {
@@ -60,7 +59,7 @@ public interface ExamStudentEbi
      * @param loginStudent
      * @throws Exception
      */
-    public void enterExam(String studentExamId, StudentVo loginStudent) throws Exception;
+    public StudentExamVo enterExam(String studentExamId, StudentVo loginStudent) throws Exception;
 
     /**
      * 学生考试开始

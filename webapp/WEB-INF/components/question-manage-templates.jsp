@@ -34,8 +34,16 @@
                     <pre><code></code></pre>
                 </div>
             </div>
+            <div class="question-workout" >
+
+            </div>
         </div>
     </div>
+</script>
+
+
+<script id="js-template-question-workout-area" type="text/html">
+    <textarea class="question-workout form-control" style="width: 100%" cols="5"></textarea>
 </script>
 
 <script id="js-template-question-view" type="text/html">

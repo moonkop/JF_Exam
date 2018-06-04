@@ -386,6 +386,7 @@ function paper_exam_render_question_list()
         var $question_panel = $($("#js-template-question-panel").html());
         $question_panel.attr("id", "paper_question_" + question.index);
         $question_panel.attr("data-index", question.index);
+        $question_panel.attr("data-type", question.type);
         $question_panel.find(".question-type").text(QuestionTypeMap(question.type));
         $question_panel.find(".question-index").text(question.index + 1 + ". ");
         $question_panel.find(".question-outline").text(question.outline);
@@ -562,6 +563,7 @@ function render_question_option_list(question)
     {
         return "";
     }
+
     var $question_option_list = $($("#js-template-question-option-list").html());
     for (var key in question.options)
     {
@@ -578,7 +580,7 @@ function render_question_option_list(question)
                 break;
         }
         $question_option.find("label").text(question.options[key]);
-        $question_option.find("input").attr("name", "question_" + question.id);
+        $question_option.find("input").attr("name", "question_" + question.index);
         $question_option.find("input").attr("data-option-index", key);
         if (question.answer != undefined)
         {

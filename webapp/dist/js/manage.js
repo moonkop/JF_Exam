@@ -17,7 +17,6 @@ getFormData = function (formid) {
         data[item.name] = item.value;
     })
     return data;
-
 }
 
 get_data_in_field = function ($element) {
@@ -214,4 +213,26 @@ Date.prototype.Format = function (fmt) { //author: meizz
         }
     }
     return fmt;
+}
+function convertTimeToStr(time)
+{
+
+    var floor = [3600 * 24 * 365, 3600 * 24, 3600, 60, 1];
+    var str = "";
+    var started = false;
+    floor.forEach(function (item) {
+            var     num=parseInt(time/item) ;
+            if(started)
+            {
+                str+=":";
+            }
+            time%=item;
+            if(num!=0||started){
+                str+=num;
+                started=true;
+
+            }
+        }
+    )
+    return str;
 }

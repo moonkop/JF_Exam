@@ -33,6 +33,54 @@ body {
     min-height: 50px;
 }
 
+.exam-toolbar {
+    top: 0;
+    width: 100%;
+    position: fixed;
+    height: 50px;
+    background-color: @background-color-menu;
+    line-height: 50px;
+    .time-area {
+        color: #FFF;
+        font-size: 20px;
+        margin-right:20px;
+      
+        #left-time {
+
+        }
+    }
+    .pull-right {
+
+        &.btn{
+            margin-top: 8px;
+            margin-right: 10px;
+
+        }
+
+    }
+    .btn{
+        vertical-align: baseline;
+    }
+    .btn-default {
+        background-color: #0cb181;
+        border-color: #0cb181;
+        color: #FFF;
+        margin-left: 10px;
+    }
+    .btn-default:active {
+        background-color: #098261;
+        border-color: #098261;
+        color: #FFF;
+    }
+
+}
+.paper-wrapper{
+    margin: 10px;
+}
+.paper-exam {
+
+}
+
 .panel-question:hover .question-header .question-actions {
     display: inline-block !important;
 }
@@ -48,14 +96,16 @@ body {
     overflow-y: auto;
     width: 45%;
 }
-.title-area{
+
+.title-area {
     .title {
         font-size: 24px;
     }
-    .comment{
+    .comment {
 
     }
 }
+
 .question-manage {
     display: flex;
     align-items: flex-start;
@@ -87,14 +137,15 @@ body {
 
 .paper-edit {
     margin: 5px;
-    .panel-question{
-        .question-header{
+    .panel-question {
+        .question-header {
             .question-index {
                 display: inline !important;
             }
         }
     }
 }
+
 .paper-view {
     width: 100%;
     .title-area {
@@ -105,11 +156,13 @@ body {
     }
 
 }
-.question-manage{
+
+.question-manage {
     .question-index {
         display: none;
     }
 }
+
 .panel-question {
     border: 1px solid #E7E7E8;
     flex-shrink: 0;
@@ -122,7 +175,6 @@ body {
         span {
             margin-right: 20px;
         }
-
 
         .question-actions {
             float: right;
@@ -167,14 +219,27 @@ body {
     width: 100%;
 }
 
-.layui-layer-exam .layui-layer-title{background: #496080;color:#fff;border: none;}
-.layui-layer-exam .layui-layer-btn a{background: #496080; border-color: #496080;}
-.layui-layer-exam .layui-layer-btn .layui-layer-btn1{background:#496080; color: #ffffff}
+.layui-layer-exam .layui-layer-title {
+    background: #496080;
+    color: #fff;
+    border: none;
+}
+
+.layui-layer-exam .layui-layer-btn a {
+    background: #496080;
+    border-color: #496080;
+}
+
+.layui-layer-exam .layui-layer-btn .layui-layer-btn1 {
+    background: #496080;
+    color: #ffffff
+}
 
 .layui-layer-content .form-horizontal {
     margin: 10px;
     border: 0px;
 }
+
 .js-valid {
     min-width: 40px;
 }
@@ -504,13 +569,13 @@ body {
 
 // DataTables Overrides
 
-.bootstrap-table tr td  {
-    .fa{
+.bootstrap-table tr td {
+    .fa {
         margin-left: 8px;
         margin-right: 8px;
         cursor: pointer;
     }
-     .label-action{
+    .label-action {
         margin-left: 6px;
         margin-right: 6px;
         cursor: pointer;

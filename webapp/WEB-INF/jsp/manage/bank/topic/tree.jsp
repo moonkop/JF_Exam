@@ -184,7 +184,9 @@
 
         </div>
 
-<script id="js-add-form-template" type="text/template">
+
+
+<script id="js-add-form-template" type="text/html">
     <div class="layer-popup">
         <form role="form" class="form-horizontal" id="form-add-topic">
             <input type="hidden" name="parent">

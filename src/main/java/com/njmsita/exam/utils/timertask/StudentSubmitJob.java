@@ -26,9 +26,9 @@ public class StudentSubmitJob implements Job
         for (StudentExamQuestionVo question : questions)
         {
             double score=0;
-            if(question.getRightAnswer().equals(question.getAnswer())){
+            if(question.getAnswer().equals(question.getWorkout())){
                 score=question.getQuestionTypeVo().getScore();
-            }else if(question.getRightAnswer().contains(question.getAnswer())){
+            }else if(question.getAnswer().contains(question.getWorkout())){
                 score=question.getQuestionTypeVo().getScore()/2;
             }
             question.setScore(FormatUtil.formatScore(score));

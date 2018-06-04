@@ -13,8 +13,11 @@ public class StudentExamQuestionVo
     private int index;
     private Double score;
     private String remark;
+
+    //学生作答
+    private String workout;
+    //正确答案
     private String answer;
-    private String rightAnswer;
 
     //指定学生的考试 n TO 1
     private StudentExamVo studentExam;
@@ -24,27 +27,27 @@ public class StudentExamQuestionVo
     private QuestionTypeVo questionTypeVo;
 
     @Basic
-    @Column(name = "rightAnswer")
-    public String getRightAnswer()
-    {
-        return rightAnswer;
-    }
-
-    public void setRightAnswer(String rightAnswer)
-    {
-        this.rightAnswer = rightAnswer;
-    }
-
-    @Basic
     @Column(name = "answer")
     public String getAnswer()
     {
         return answer;
     }
 
-    public void setAnswer(String answer)
+    public void setAnswer(String rightAnswer)
     {
-        this.answer = answer;
+        this.answer = rightAnswer;
+    }
+
+    @Basic
+    @Column(name = "workout")
+    public String getWorkout()
+    {
+        return workout;
+    }
+
+    public void setWorkout(String answer)
+    {
+        this.workout = answer;
     }
 
     @Basic
@@ -136,7 +139,7 @@ public class StudentExamQuestionVo
     public int hashCode()
     {
 
-        return Objects.hash(id, index,score, remark,answer,rightAnswer);
+        return Objects.hash(id, index,score, remark, workout, answer);
     }
 
     @Override
@@ -149,9 +152,9 @@ public class StudentExamQuestionVo
                 Objects.equals(id, that.id) &&
                 Objects.equals(score, that.score) &&
                 Objects.equals(remark, that.remark) &&
-                Objects.equals(answer, that.answer) &&
+                Objects.equals(workout, that.workout) &&
                 Objects.equals(score, that.score) &&
-                Objects.equals(answer, that.rightAnswer) &&
+                Objects.equals(workout, that.answer) &&
                 Objects.equals(remark, that.remark);
     }
 }

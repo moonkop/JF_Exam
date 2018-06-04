@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.wsdl.Operation;
 import java.io.Serializable;
 import java.util.*;
 
@@ -100,7 +99,7 @@ public class ExamStudentEbo implements ExamStudentEbi
                 {
                     throw new OperationException("你所保存的题目有可能不不属于这场考试");
                 }
-                temp.setAnswer(studentExamQuestionVo.getAnswer());
+                temp.setWorkout(studentExamQuestionVo.getWorkout());
             }
         }
     }
@@ -125,10 +124,10 @@ public class ExamStudentEbo implements ExamStudentEbi
         for (StudentExamQuestionVo question : questions)
         {
             double score = 0;
-            if (question.getRightAnswer().equals(question.getAnswer()))
+            if (question.getAnswer().equals(question.getWorkout()))
             {
                 score = question.getQuestionTypeVo().getScore();
-            } else if (question.getRightAnswer().contains(question.getAnswer()))
+            } else if (question.getAnswer().contains(question.getWorkout()))
             {
                 score = question.getQuestionTypeVo().getScore() / 2;
             }
@@ -181,7 +180,7 @@ public class ExamStudentEbo implements ExamStudentEbi
         return studentExamDao.getCount(queryModel);
     }
 
-    public void enterExam(String studentExamId, StudentVo loginStudent) throws Exception
+    public StudentExamVo enterExam(String studentExamId, StudentVo loginStudent) throws Exception
     {
         StudentExamVo studentExamPo = studentExamDao.get(studentExamId);
 
@@ -203,6 +202,7 @@ public class ExamStudentEbo implements ExamStudentEbi
             case SysConsts.STUDENT_EXAM_STATUS_SUBMITTED:
                 throw new OperationException("您已经提交该场考试");
         }
+        return studentExamPo;
     }
 
     public void StudentExamStart(StudentExamVo studentExamPo) throws SchedulerException
@@ -219,7 +219,7 @@ public class ExamStudentEbo implements ExamStudentEbi
             seq.setId(IdUtil.getUUID());
             seq.setStudentExam(studentExamPo);
             seq.setIndex(i + 1);
-            seq.setRightAnswer(questionVoList.get(i).getAnswer());
+            seq.setAnswer(questionVoList.get(i).getAnswer());
             seq.setQuestionTypeVo(questionVoList.get(i).getQuestionType());
             studentExamQuestionDao.save(seq);
         }
