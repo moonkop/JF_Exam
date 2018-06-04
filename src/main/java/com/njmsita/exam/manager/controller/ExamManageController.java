@@ -65,7 +65,6 @@ public class ExamManageController extends BaseController
     {
         request.setAttribute("papers", paperEbi.getAll());
         request.setAttribute("subjects", subjectEbi.getAll());
-        request.setAttribute("teachers", teacherEbi.getAll());
         request.setAttribute("classroomList", classroomEbi.getAll());
         if (!StringUtil.isEmpty(id))
         {

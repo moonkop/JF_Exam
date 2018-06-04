@@ -36,7 +36,7 @@
                     }
                 },
                 'click .js-add-teacher': function (e, value, row, index) {
-                    window.location.href = "#" + row.id;
+                    window.location.href = "/exam/operation/addMarkTeacher?id=" + row.id;
                 },
                 'click .js-viewScore': function (e, value, row, index) {
                     window.location.href = "#" + row.id;

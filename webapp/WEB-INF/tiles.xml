@@ -211,6 +211,13 @@
         </put-list-attribute>
     </definition>
 
+    <definition name="manage/exam/addMarkTeacher" extends="teacher_base">
+        <put-attribute name="body" value="/WEB-INF/jsp/manage/exam/addTeacher.jsp"/>
+        <put-list-attribute name="additional-headers">
+            <add-attribute value="/WEB-INF/layout/additional-headers/select2-header.jsp"/>
+        </put-list-attribute>
+    </definition>
+
 
     <definition name="/manage/exam/list" extends="teacher_base">
         <put-attribute name="body" value="/WEB-INF/jsp/manage/exam/list.jsp"/>
@@ -255,8 +262,8 @@
 
     <definition name="/manage/me/teacher/detail" extends="teacher_base">
         <put-attribute name="body" value="/WEB-INF/jsp/manage/me/teacher/detail.jsp"/>
-
     </definition>
+
     <definition name="/manage/me/teacher/edit" extends="teacher_base">
         <put-attribute name="body" value="/WEB-INF/jsp/manage/me/teacher/edit.jsp"/>
 

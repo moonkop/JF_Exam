@@ -47,6 +47,7 @@ public class ExamOperationController
 
     /**
      * 到审核页面
+     *
      * @param request
      * @return
      * @throws OperationException
@@ -77,6 +78,7 @@ public class ExamOperationController
 
     /**
      * 审核通过
+     *
      * @param examVo
      * @param request
      * @return
@@ -85,11 +87,13 @@ public class ExamOperationController
     @ResponseBody
     @RequestMapping("pass.do")
     @SystemLogAnnotation(module = "考试管理", methods = "审核通过")
-    public JsonResponse pass(ExamVo examVo,HttpServletRequest request) throws Exception
+    public JsonResponse pass(ExamVo examVo, HttpServletRequest request) throws Exception
     {
-        if(!StringUtil.isEmpty(examVo.getId())){
-            examManageEbi.setPass(examVo,(TeacherVo)request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME));
-        }else {
+        if (!StringUtil.isEmpty(examVo.getId()))
+        {
+            examManageEbi.setPass(examVo, (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME));
+        } else
+        {
             throw new OperationException("所选择的考试不存在");
         }
         return new JsonResponse();
@@ -97,6 +101,7 @@ public class ExamOperationController
 
     /**
      * 驳回
+     *
      * @param examVo（驳回必须填写备注remark属性）
      * @param request
      * @return
@@ -105,20 +110,22 @@ public class ExamOperationController
     @ResponseBody
     @RequestMapping("reject.do")
     @SystemLogAnnotation(module = "考试管理", methods = "驳回考试请求")
-    public JsonResponse reject(ExamVo examVo,String comment,HttpServletRequest request) throws Exception
+    public JsonResponse reject(ExamVo examVo, String comment, HttpServletRequest request) throws Exception
     {
-        if(!StringUtil.isEmpty(examVo.getId())){
-            examManageEbi.setNoPass(examVo,(TeacherVo)request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME));
-        }else {
+        if (!StringUtil.isEmpty(examVo.getId()))
+        {
+            examManageEbi.setNoPass(examVo, (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME));
+        } else
+        {
             throw new OperationException("所选择的考试不存在");
         }
         return new JsonResponse();
     }
 
 
-
     /**
      * 取消
+     *
      * @param examVo
      * @param session
      * @return
@@ -129,39 +136,47 @@ public class ExamOperationController
     @SystemLogAnnotation(module = "考试管理", methods = "取消考试")
     public JsonResponse cancel(ExamVo examVo, HttpSession session) throws Exception
     {
-        if(StringUtil.isEmpty(examVo.getId())){
+        if (StringUtil.isEmpty(examVo.getId()))
+        {
             throw new OperationException("所选的该场考试的id不能为空");
         }
-        TeacherVo teacherVo= (TeacherVo) session.getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
-        examManageEbi.cancel(examVo,teacherVo);
+        TeacherVo teacherVo = (TeacherVo) session.getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
+        examManageEbi.cancel(examVo, teacherVo);
         return new JsonResponse("取消成功");
     }
 
     /**
      * 到添加阅卷教师
+     *
      * @param examVo
      * @param request
      * @return
      * @throws Exception
      */
     @RequestMapping("addMarkTeacher")
-    public String toAddMarkTeacher(ExamVo examVo,HttpServletRequest request) throws Exception
+    public String toAddMarkTeacher(ExamVo examVo, HttpServletRequest request) throws Exception
     {
-        if(StringUtil.isEmpty(examVo.getId())){
+        if (StringUtil.isEmpty(examVo.getId()))
+        {
             throw new OperationException("所选的该场考试的id不能为空");
         }
-        ExamVo temp= examManageEbi.get(examVo.getId());
-        if(temp==null){
+        ExamVo examPo = examManageEbi.get(examVo.getId());
+        if (examPo == null)
+        {
             throw new OperationException("所选的该场考试不能为空");
         }
-        List<TeacherVo> markTeacherList=new ArrayList<>();
-        request.setAttribute("markTeacherList",markTeacherList.addAll(temp.getMarkTeachers()));
-        request.setAttribute("teacherList",teacherEbi.getAll());
+        List<TeacherVo> markTeacherList = new ArrayList<>();
+        markTeacherList.addAll(examPo.getMarkTeachers());
+        List<TeacherVo> teacherVoList = teacherEbi.getAll();
+        request.setAttribute("markTeacherList", markTeacherList);
+        request.setAttribute("teacherList", teacherVoList);
+        request.setAttribute("exam", examPo);
         return "manage/exam/addMarkTeacher";
     }
 
     /**
      * 添加阅卷教师
+     *
      * @param examVo
      * @param markTeachers
      * @param request
@@ -170,28 +185,26 @@ public class ExamOperationController
      */
     @RequestMapping("addMarkTeacher.do")
     @SystemLogAnnotation(module = "考试管理", methods = "添加阅卷教师")
-    public String addMarkTeacher(ExamVo examVo,@RequestParam("markTeachers") String[] markTeachers,
-                                 HttpServletRequest request) throws Exception
+    @ResponseBody
+    public JsonResponse addMarkTeacher(ExamVo examVo, @RequestParam("_markTeachers[]") String[] markTeachers,
+                                       HttpServletRequest request) throws Exception
     {
 
-        if(StringUtil.isEmpty(examVo.getId())){
+        if (StringUtil.isEmpty(examVo.getId()))
+        {
             throw new OperationException("所选的该场考试的id不能为空");
         }
 
-        examManageEbi.updateMarkTeacher(examVo,markTeachers);
+        examManageEbi.updateMarkTeacher(examVo, markTeachers);
 
-        TeacherVo login= (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
-        if(login.getRole().getId().equals(SysConsts.ADMIN_ROLE_ID)){
-            return "redirect:/exam/list.do";
-        }
-        return "redirect:/exam/toMyExam";
+        return new JsonResponse("保存成功！");
     }
 
     @RequestMapping("mark")
-    public String toMarking(StudentExamVo studentExamVo ,HttpServletRequest request) throws Exception
+    public String toMarking(StudentExamVo studentExamVo, HttpServletRequest request) throws Exception
     {
-        List<StudentExamQuestionVo> studentExamQuestionList= examManageEbi.getAllStudentexamQuestionByStudentExam(studentExamVo);
-        request.setAttribute("studentExamQuestionList",studentExamQuestionList);
+        List<StudentExamQuestionVo> studentExamQuestionList = examManageEbi.getAllStudentexamQuestionByStudentExam(studentExamVo);
+        request.setAttribute("studentExamQuestionList", studentExamQuestionList);
         return null;
     }
 
@@ -200,16 +213,16 @@ public class ExamOperationController
     public JsonResponse savaMarked(@RequestBody List<StudentExamQuestionVo> studentExamQeustionList,
                                    String studentExamId) throws Exception
     {
-        examMarkEbi.saveMarked(studentExamQeustionList,studentExamId);
+        examMarkEbi.saveMarked(studentExamQeustionList, studentExamId);
         return new JsonResponse("保存成功！");
     }
 
     @RequestMapping("submitMarked.do")
     @ResponseBody
-    public JsonResponse submitMarked(ExamVo examVo,HttpServletRequest request) throws Exception
+    public JsonResponse submitMarked(ExamVo examVo, HttpServletRequest request) throws Exception
     {
-        TeacherVo login= (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
-        examMarkEbi.submitMarked(examVo,login);
+        TeacherVo login = (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
+        examMarkEbi.submitMarked(examVo, login);
         return null;
     }
 
