@@ -93,11 +93,13 @@ public class SysConsts
 	/**
 	 * 考试状态码int
 	 */
+	//todo 补充每一位状态的意意义
 	public final static int EXAM_STATUS_NO_CHECK = 101;
 	public final static int EXAM_STATUS_PASS = 111;
 	public final static int EXAM_STATUS_NO_PASS = 112;
 	public final static int EXAM_STATUS_OPEN = 121;
 	public final static int EXAM_STATUS_CLOSE = 122;
+	public final static int EXAM_STATUS_SUBMITTED = 123;
 	public final static int EXAM_STATUS_IN_MARK = 131;
 	public final static int EXAM_STATUS_IN_CANCEL = 141;
 	public final static int EXAM_STATUS_OUTMODED = 151;
@@ -110,6 +112,7 @@ public class SysConsts
     public static final String EXAM_STATUS_NO_PASS_VIEW = "待修改";
     public static final String EXAM_STATUS_OPEN_VIEW = "进行中";
     public static final String EXAM_STATUS_CLOSE_VIEW = "答题中";
+    public static final String EXAM_STATUS_SUBMITTED_VIEW = "已交卷";
     public static final String EXAM_STATUS_IN_MARK_VIEW = "阅卷中";
     public static final String EXAM_STATUS_IN_CANCEL_VIEW = "已取消";
     public static final String EXAM_STATUS_OUTMODED_VIEW = "已过时";
@@ -122,6 +125,7 @@ public class SysConsts
         ExamStatusViewMap.put(SysConsts.EXAM_STATUS_NO_PASS,SysConsts.EXAM_STATUS_NO_PASS_VIEW );
         ExamStatusViewMap.put(SysConsts.EXAM_STATUS_OPEN,SysConsts.EXAM_STATUS_OPEN_VIEW );
         ExamStatusViewMap.put(SysConsts.EXAM_STATUS_CLOSE,SysConsts.EXAM_STATUS_CLOSE_VIEW );
+        ExamStatusViewMap.put(SysConsts.EXAM_STATUS_SUBMITTED,SysConsts.EXAM_STATUS_SUBMITTED_VIEW );
         ExamStatusViewMap.put(SysConsts.EXAM_STATUS_IN_MARK,SysConsts.EXAM_STATUS_IN_MARK_VIEW );
         ExamStatusViewMap.put(SysConsts.EXAM_STATUS_IN_CANCEL,SysConsts.EXAM_STATUS_IN_CANCEL_VIEW );
         ExamStatusViewMap.put(SysConsts.EXAM_STATUS_ENDING,SysConsts.EXAM_STATUS_ENDING_VIEW );

@@ -40,26 +40,26 @@ public class AllResourcesLoadListener implements ServletContextListener
         sc.setAttribute(SysConsts.ALL_RESOUCERS_AUTHENTIC_URL_NAME, sbf.toString());
 
         //恢复定时任务
-        ScheduleDao scheduleDao= (ScheduleDao) ctx.getBean("scheduleDaoImpl");
-        SchedulerFactoryBean schedulerFactoryBean= (SchedulerFactoryBean) ctx.getBean("schedulerFactoryBean");
-
-        List<ScheduleVo> list=scheduleDao.getAllByExecutable();
-        for (ScheduleVo scheduleVo : list)
-        {
-            Long time= FormatUtil.getTimeByCron(scheduleVo.getCronexpression());
-            if(time<System.currentTimeMillis()){
-                scheduleVo.setJobStatus(SysConsts.SCHEDULEVO_JOB_STATUS_OUTMODED);
-                scheduleDao.update(scheduleVo);
-            }else{
-                try
-                {
-                    SchedulerJobUtil.createJob(scheduleVo,schedulerFactoryBean.getScheduler());
-                } catch (SchedulerException e)
-                {
-                    e.printStackTrace();
-                }
-            }
-        }
+//        ScheduleDao scheduleDao= (ScheduleDao) ctx.getBean("scheduleDaoImpl");
+//        SchedulerFactoryBean schedulerFactoryBean= (SchedulerFactoryBean) ctx.getBean("schedulerFactoryBean");
+//
+//        List<ScheduleVo> list=scheduleDao.getAllByExecutable();
+//        for (ScheduleVo scheduleVo : list)
+//        {
+//            Long time= FormatUtil.getTimeByCron(scheduleVo.getCronexpression());
+//            if(time<System.currentTimeMillis()){
+//                scheduleVo.setJobStatus(SysConsts.SCHEDULEVO_JOB_STATUS_OUTMODED);
+//                scheduleDao.update(scheduleVo);
+//            }else{
+//                try
+//                {
+//                    SchedulerJobUtil.createJob(scheduleVo,schedulerFactoryBean.getScheduler());
+//                } catch (SchedulerException e)
+//                {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
     }
 
     public void contextDestroyed(ServletContextEvent servletContextEvent)

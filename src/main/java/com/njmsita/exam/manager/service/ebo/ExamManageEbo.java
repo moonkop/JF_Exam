@@ -4,11 +4,10 @@ import com.njmsita.exam.authentic.dao.dao.StudentDao;
 import com.njmsita.exam.authentic.dao.dao.TeacherDao;
 import com.njmsita.exam.authentic.model.StudentVo;
 import com.njmsita.exam.authentic.model.TeacherVo;
-import com.njmsita.exam.authentic.model.UserModel;
 import com.njmsita.exam.base.BaseQueryVO;
 import com.njmsita.exam.manager.dao.dao.*;
 import com.njmsita.exam.manager.model.*;
-import com.njmsita.exam.manager.model.querymodel.ExamQueryModel;
+import com.njmsita.exam.manager.model.querymodel.ExamListQueryModel;
 import com.njmsita.exam.manager.service.ebi.ExamManageEbi;
 import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.exception.OperationException;
@@ -138,7 +137,7 @@ public class ExamManageEbo implements ExamManageEbi
         examPo.setRemark(examVo.getRemark());
         if (examPo.getExamStatus() == SysConsts.EXAM_STATUS_NO_PASS ||
                 examPo.getExamStatus() == SysConsts.EXAM_STATUS_IN_CANCEL ||
-                examPo.getExamStatus()==SysConsts.EXAM_STATUS_OUTMODED)
+                examPo.getExamStatus() == SysConsts.EXAM_STATUS_OUTMODED)
         {
             examPo.setExamStatus(SysConsts.EXAM_STATUS_NO_CHECK);
         }
@@ -156,14 +155,14 @@ public class ExamManageEbo implements ExamManageEbi
 
     public List<ExamVo> getByCreateTeacher(String teacherId) throws Exception
     {
-        List<ExamVo> list = examDao.getByCreateTeacher(teacherId);
+        List<ExamVo> list = examDao.getEvictObjects(examDao.getByCreateTeacher(teacherId));
         operationValid(list, teacherId);
         return list;
     }
 
     public List<ExamVo> getByMarkTeacher(String teacherId) throws Exception
     {
-        List<ExamVo> list = examDao.getByMarkTeacher(teacherId);
+        List<ExamVo> list = examDao.getEvictObjects(examDao.getByMarkTeacher(teacherId));
         operationValid(list, teacherId);
         return list;
     }
@@ -171,7 +170,8 @@ public class ExamManageEbo implements ExamManageEbi
     public void setPass(ExamVo examVo, TeacherVo loginTeacher) throws Exception
     {
         ExamVo examPo = getExamNotNull(examVo);
-        if((examPo.getOpenTime()-System.currentTimeMillis())<0){
+        if ((examPo.getOpenTime() - System.currentTimeMillis()) < 0)
+        {
             examPo.setExamStatus(SysConsts.EXAM_STATUS_OUTMODED);
             throw new OperationException("该场考试已经过时，请勿执行该操作！");
         }
@@ -239,18 +239,17 @@ public class ExamManageEbo implements ExamManageEbi
     }
 
 
-    public Set<String> getValidOperations(ExamVo exam, UserModel loginUser) throws UnLoginException
+    public Set<String> getValidOperations(ExamVo exam, TeacherVo loginTeacher) throws Exception
     {
 
         Set<String> operationSet = new HashSet<>();
 
-        if (loginUser == null)
+        if (loginTeacher == null)
         {
             throw new UnLoginException();
         }
-        if (loginUser instanceof TeacherVo)
+        if (loginTeacher instanceof TeacherVo)
         {
-            TeacherVo loginTeacher = (TeacherVo) loginUser;
             Hibernate.initialize(loginTeacher);
             //所有状态下
             // 是该老师发起的考试
@@ -339,52 +338,61 @@ public class ExamManageEbo implements ExamManageEbi
                     operationSet.add(SysConsts.EXAM_OPERATION_VIEW_SCORE);
                     break;
             }
-        } else if (loginUser instanceof StudentVo)
-        {
-            StudentVo loginStudent = (StudentVo) loginUser;
-            switch (exam.getExamStatus())
-            {
-                case SysConsts.EXAM_STATUS_NO_CHECK:
-                    break;
-                case SysConsts.EXAM_STATUS_PASS:
-                    operationSet.add(SysConsts.EXAM_OPERATION_PREVIEW);
-                    break;
-                case SysConsts.EXAM_STATUS_NO_PASS:
-                    break;
-                case SysConsts.EXAM_STATUS_OPEN:
-                    operationSet.add(SysConsts.EXAM_OPERATION_PREVIEW);
-                    operationSet.add(SysConsts.EXAM_OPERATION_ENTER);
-                    break;
-                case SysConsts.EXAM_STATUS_CLOSE:
-                    operationSet.add(SysConsts.EXAM_OPERATION_PREVIEW);
-                    try
-                    {
-                        StudentExamVo studentExamPo = studentExamDao.getByStudentAndExam(exam, loginStudent);
-                        if (studentExamPo.getStatus() == SysConsts.STUDENT_EXAM_STATUS_STARTED) ;
-                        {
-                            operationSet.add(SysConsts.EXAM_OPERATION_ENTER);
-                        }
-                    } catch (Exception e)
-                    {
-                        e.printStackTrace();
-                    }
-                    break;
-                case SysConsts.EXAM_STATUS_IN_MARK:
-                    operationSet.add(SysConsts.EXAM_OPERATION_PREVIEW);
-                    break;
-                case SysConsts.EXAM_STATUS_IN_CANCEL:
-                    break;
-                case SysConsts.EXAM_STATUS_ENDING:
-                    operationSet.add(SysConsts.EXAM_OPERATION_VIEW_SCORE);
-                    break;
-            }
         }
 
         return operationSet;
 
     }
 
-    public boolean checkPermission(String permission, UserModel loginTeacher, ExamVo exam) throws Exception
+    @Override
+    public Set<String> getValidOperations(StudentExamVo studentExamVo, StudentVo loginStudent) throws UnLoginException
+    {
+        ExamVo exam=studentExamVo.getExam();
+        Set<String> operationSet = new HashSet<>();
+        switch (exam.getExamStatus())
+        {
+            case SysConsts.EXAM_STATUS_NO_CHECK:
+                break;
+            case SysConsts.EXAM_STATUS_PASS:
+                operationSet.add(SysConsts.EXAM_OPERATION_PREVIEW);
+                break;
+            case SysConsts.EXAM_STATUS_NO_PASS:
+                break;
+            case SysConsts.EXAM_STATUS_OPEN:
+                operationSet.add(SysConsts.EXAM_OPERATION_PREVIEW);
+                operationSet.add(SysConsts.EXAM_OPERATION_ENTER);
+                break;
+            case SysConsts.EXAM_STATUS_CLOSE:
+                operationSet.add(SysConsts.EXAM_OPERATION_PREVIEW);
+                try
+                {
+                    StudentExamVo studentExamPo = studentExamDao.getByStudentAndExam(exam, loginStudent);
+                    if (studentExamPo.getStatus() == SysConsts.STUDENT_EXAM_STATUS_STARTED) ;
+                    {
+                        operationSet.add(SysConsts.EXAM_OPERATION_ENTER);
+                    }
+                } catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+                break;
+            case SysConsts.EXAM_STATUS_SUBMITTED:
+                operationSet.add(SysConsts.EXAM_OPERATION_PREVIEW);
+                break;
+            case SysConsts.EXAM_STATUS_IN_MARK:
+                operationSet.add(SysConsts.EXAM_OPERATION_PREVIEW);
+                break;
+            case SysConsts.EXAM_STATUS_IN_CANCEL:
+                break;
+            case SysConsts.EXAM_STATUS_ENDING:
+                operationSet.add(SysConsts.EXAM_OPERATION_VIEW_SCORE);
+                break;
+        }
+
+        return operationSet;
+    }
+
+    public boolean checkPermission(String permission, TeacherVo loginTeacher, ExamVo exam) throws Exception
     {
         if (!getValidOperations(exam, loginTeacher).contains(permission))
         {
@@ -393,29 +401,18 @@ public class ExamManageEbo implements ExamManageEbi
         return true;
     }
 
-    public Set<String> getValidOperations(ExamVo exam, String id)
+    public boolean checkPermission(String permission, StudentVo loginStudent, StudentExamVo studentExam) throws UnAuthorizedException, UnLoginException, Exception
     {
-        UserModel user = studentDao.get(id);
-        if (user == null)
+        if (!getValidOperations(studentExam, loginStudent).contains(permission))
         {
-            user = teacherDao.get(id);
-        }
-        return getValidOperations(exam, id);
-    }
-
-    public boolean checkPermission(String permission, String LoginUserId, ExamVo exam) throws UnAuthorizedException
-    {
-        if (!getValidOperations(exam, LoginUserId).contains(permission))
-        {
-            throw new UnAuthorizedException("您没有当前" + SysConsts.ExamStatusViewMap.get(permission) + "操作的权限");
+            throw new UnAuthorizedException("您没有当前" + SysConsts.ExamOperationViewMap.get(permission) + "操作的权限");
         }
         return true;
     }
 
-    public List<ExamVo> getAllByAdmin(String teacherId, ExamQueryModel examQueryModel,
-                                      Integer pageNum, Integer pageSize) throws Exception
+    public List<ExamVo> getAllByAdmin(String teacherId, ExamListQueryModel examListQueryModel) throws Exception
     {
-        List<ExamVo> list = examDao.getAll(examQueryModel, pageNum, pageSize);
+        List<ExamVo> list = examDao.getEvictObjects(examDao.getAll(examListQueryModel));
         operationValid(list, teacherId);
         return list;
     }
@@ -595,9 +592,11 @@ public class ExamManageEbo implements ExamManageEbi
                 {
                     scheduleVo.setAffterStatu(SysConsts.EXAM_STATUS_IN_MARK);
                 }
-                if(exam.getDuration()==0){
+                if (exam.getDuration() == 0)
+                {
                     scheduleVo.setCronexpression(FormatUtil.cronExpression(exam.getCloseTime()));
-                } else {
+                } else
+                {
                     scheduleVo.setCronexpression(FormatUtil.cronExpression(exam.getOpenTime() + (exam.getDuration() + exam.getOpenDuration() * 60 * 100)));
                 }
                 break;

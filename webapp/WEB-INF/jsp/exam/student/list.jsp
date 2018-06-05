@@ -132,6 +132,7 @@
                                             '未开始': 'label-info',
                                             '待修改': 'label-danger',
                                             '进行中': 'label-success',
+                                            '已交卷': 'label-success',
                                             '答题中': 'label-danger',
                                             '阅卷中': 'label-danger',
                                             '已取消': 'label-warning',
@@ -148,7 +149,7 @@
                                     formatter: function (value, row, index) {
                                         var act = value;
                                         var dic = {
-                                            'judge': '<span class="label label-action label-danger text-danger js-judge">审核</span>',
+                                            'judge': '<span class="label label-action label-danger text-danger js-gradeQuestion">审核</span>',
                                             'view': '<i class="fa fa-search js-view" title="预览"></i>',
                                             'edit': '<i class="fa fa-pencil js-edit" title="修改"></i>',
                                             'cancel': '<i class="fa fa-times js-cel" title="取消"></i>',

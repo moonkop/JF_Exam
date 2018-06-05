@@ -200,7 +200,7 @@
                                             id:app.exam.studentExam.id
                                         },
                                         success:function(res) {
-                                            layer.message("交卷成功");
+                                            layer.msg("交卷成功");
                                             setTimeout(function () {
                                                 window.location.href = "/exam/student";
                                             },1000)

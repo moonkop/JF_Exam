@@ -4,7 +4,7 @@ import com.njmsita.exam.base.BaseListQueryVo;
 import com.njmsita.exam.base.BaseQueryVO;
 import com.njmsita.exam.manager.model.StudentExamVo;
 
-public class StudentExamListQueryModel extends StudentExamVo implements BaseListQueryVo
+public class StudentExamListQueryModel extends StudentExamQueryModel implements BaseListQueryVo
 {
     public Integer offset;
     public Integer pageSize;
