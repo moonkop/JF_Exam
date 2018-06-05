@@ -128,6 +128,7 @@ public class ExamStudentController
         ExamVo examVoWithPaper= examManageEbi.getWithPaper(studentExamPo.getExam().getId());
         request.setAttribute("exam", examPo);
         request.setAttribute("studentExam", studentExamPo);
+        request.setAttribute("currentTime", System.currentTimeMillis());
         if (examPo.getPaperVo() != null)
         {
             request.setAttribute("paper", examVoWithPaper.getPaperVo());
@@ -222,7 +223,7 @@ public class ExamStudentController
      * @throws Exception
      */
     @ResponseBody
-    @RequestMapping("submitAnswer")
+    @RequestMapping("submit.do")
     public String submitAnswer(StudentExamVo studentExamVo, HttpServletRequest request) throws Exception
     {
         StudentVo login = (StudentVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);

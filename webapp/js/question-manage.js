@@ -579,9 +579,15 @@ function render_question_option_list(question)
             case "简答题":
                 break;
         }
-        $question_option.find("label").text(question.options[key]);
-        $question_option.find("input").attr("name", "question_" + question.index);
-        $question_option.find("input").attr("data-option-index", key);
+        var $question_option_label=$question_option.find("label");
+        var $question_option_input=$question_option.find("input");
+
+        var option_id="question_"+question.index+"_"+key;
+        $question_option_label.text(question.options[key]);
+        $question_option_label.attr("for",option_id);
+        $question_option_input.attr("name", "question_" + question.index);
+        $question_option_input.attr("data-option-index", key);
+        $question_option_input.attr("id",option_id);
         if (question.answer != undefined)
         {
             if (to_answer_array(question.answer).indexOf(key) != -1)
