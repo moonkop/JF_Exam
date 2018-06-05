@@ -2,7 +2,13 @@ package com.njmsita.exam.utils.listener;
 
 import com.njmsita.exam.authentic.model.TresourceVo;
 import com.njmsita.exam.authentic.service.ebi.ResourceEbi;
+import com.njmsita.exam.manager.dao.dao.ScheduleDao;
+import com.njmsita.exam.manager.model.ScheduleVo;
 import com.njmsita.exam.utils.consts.SysConsts;
+import com.njmsita.exam.utils.format.FormatUtil;
+import com.njmsita.exam.utils.timertask.SchedulerJobUtil;
+import org.quartz.SchedulerException;
+import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -32,6 +38,28 @@ public class AllResourcesLoadListener implements ServletContextListener
         }
         //放入sc中
         sc.setAttribute(SysConsts.ALL_RESOUCERS_AUTHENTIC_URL_NAME, sbf.toString());
+
+        //恢复定时任务
+        ScheduleDao scheduleDao= (ScheduleDao) ctx.getBean("scheduleDaoImpl");
+        SchedulerFactoryBean schedulerFactoryBean= (SchedulerFactoryBean) ctx.getBean("schedulerFactoryBean");
+
+        List<ScheduleVo> list=scheduleDao.getAllByExecutable();
+        for (ScheduleVo scheduleVo : list)
+        {
+            Long time= FormatUtil.getTimeByCron(scheduleVo.getCronexpression());
+            if(time<System.currentTimeMillis()){
+                scheduleVo.setJobStatus(SysConsts.SCHEDULEVO_JOB_STATUS_OUTMODED);
+                scheduleDao.update(scheduleVo);
+            }else{
+                try
+                {
+                    SchedulerJobUtil.createJob(scheduleVo,schedulerFactoryBean.getScheduler());
+                } catch (SchedulerException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     public void contextDestroyed(ServletContextEvent servletContextEvent)

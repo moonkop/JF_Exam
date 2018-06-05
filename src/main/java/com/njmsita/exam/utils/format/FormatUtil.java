@@ -2,6 +2,7 @@ package com.njmsita.exam.utils.format;
 
 import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -38,5 +39,29 @@ public class FormatUtil {
 		}
 		cron.append("? "+year[0]);
 		return cron.toString();
+	}
+
+	public static final Long getTimeByCron(String cron)
+	{
+
+		//58 8 11 5 6 ? 2018
+		String[] crons=cron.split(" ");
+		StringBuilder sb=new StringBuilder();
+		sb.append(crons[6]+"-");
+		sb.append(crons[4]+"-");
+		sb.append(crons[3]+" ");
+		sb.append(crons[2]+":");
+		sb.append(crons[1]+":");
+		sb.append(crons[0]);
+		Date date=null;
+		SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		try
+		{
+			date=formatter.parse(sb.toString());
+		} catch (ParseException e)
+		{
+			e.printStackTrace();
+		}
+		return date.getTime();
 	}
 }

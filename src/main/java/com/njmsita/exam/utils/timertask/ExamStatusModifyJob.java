@@ -2,6 +2,7 @@ package com.njmsita.exam.utils.timertask;
 
 import com.njmsita.exam.manager.dao.dao.ExamDao;
 import com.njmsita.exam.manager.dao.impl.ExamDaoImpl;
+import com.njmsita.exam.manager.dao.impl.ScheduleDaoImpl;
 import com.njmsita.exam.manager.model.ExamVo;
 import com.njmsita.exam.manager.model.ScheduleVo;
 import com.njmsita.exam.manager.service.ebi.ExamManageEbi;
@@ -43,5 +44,6 @@ public class ExamStatusModifyJob implements Job
                 e.printStackTrace();
             }
         }
+        examManageEbo.outmodedSchedul(scheduleVo);
     }
 }

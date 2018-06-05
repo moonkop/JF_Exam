@@ -30,6 +30,7 @@ public class PaperMongoDaoImpl implements PaperMongoDao {
             query.addCriteria(Criteria.where("teacher.id").is(paperQueryModel.getSubject().getId()));
         }
     }
+
     public void insert(PaperVo paperVo) {
         this.mongoTemplate.insert(paperVo);
     }
