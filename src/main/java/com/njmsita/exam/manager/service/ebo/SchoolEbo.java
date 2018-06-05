@@ -9,7 +9,6 @@ import com.njmsita.exam.manager.model.SchoolVo;
 import com.njmsita.exam.authentic.model.StudentVo;
 import com.njmsita.exam.manager.service.ebi.SchoolEbi;
 import com.njmsita.exam.utils.exception.OperationException;
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -136,7 +136,9 @@ public class ExamManageEbo implements ExamManageEbi
         examPo.setName(examVo.getName());
         examPo.setOpenDuration(examVo.getOpenDuration());
         examPo.setRemark(examVo.getRemark());
-        if (examPo.getExamStatus() == SysConsts.EXAM_STATUS_NO_PASS || examPo.getExamStatus() == SysConsts.EXAM_STATUS_IN_CANCEL)
+        if (examPo.getExamStatus() == SysConsts.EXAM_STATUS_NO_PASS ||
+                examPo.getExamStatus() == SysConsts.EXAM_STATUS_IN_CANCEL ||
+                examPo.getExamStatus()==SysConsts.EXAM_STATUS_OUTMODED)
         {
             examPo.setExamStatus(SysConsts.EXAM_STATUS_NO_CHECK);
         }
@@ -169,6 +171,10 @@ public class ExamManageEbo implements ExamManageEbi
     public void setPass(ExamVo examVo, TeacherVo loginTeacher) throws Exception
     {
         ExamVo examPo = getExamNotNull(examVo);
+        if((examPo.getOpenTime()-System.currentTimeMillis())<0){
+            examPo.setExamStatus(SysConsts.EXAM_STATUS_OUTMODED);
+            throw new OperationException("该场考试已经过时，请勿执行该操作！");
+        }
         checkPermission(SysConsts.EXAM_OPERATION_REVIEW, loginTeacher, examPo);
         examPo.setExamStatus(SysConsts.EXAM_STATUS_PASS);
         createSchedulerJob(examPo, SysConsts.SCHEDULEVO_JOB_TYPE_OPEN);
@@ -314,6 +320,18 @@ public class ExamManageEbo implements ExamManageEbi
                     }
                     if (loginTeacher.IsAdmin())
                     {
+                        operationSet.add(SysConsts.EXAM_OPERATION_DELETE);
+                    }
+                    break;
+                case SysConsts.EXAM_STATUS_OUTMODED:
+                    if (exam.getCreateTeacher().equalsById(loginTeacher))
+                    {
+                        operationSet.add(SysConsts.EXAM_OPERATION_CANCEL);
+                        operationSet.add(SysConsts.EXAM_OPERATION_EDIT);
+                    }
+                    if (loginTeacher.IsAdmin())
+                    {
+                        operationSet.add(SysConsts.EXAM_OPERATION_CANCEL);
                         operationSet.add(SysConsts.EXAM_OPERATION_DELETE);
                     }
                     break;
@@ -490,6 +508,12 @@ public class ExamManageEbo implements ExamManageEbi
         logDao.save(logVo);
     }
 
+    public void outmodedSchedul(ScheduleVo scheduleVo)
+    {
+        scheduleVo.setJobStatus(SysConsts.SCHEDULEVO_JOB_STATUS_OUTMODED);
+        scheduleDao.update(scheduleVo);
+    }
+
     /**
      * 判空
      *
@@ -571,11 +595,16 @@ public class ExamManageEbo implements ExamManageEbi
                 {
                     scheduleVo.setAffterStatu(SysConsts.EXAM_STATUS_IN_MARK);
                 }
-                scheduleVo.setCronexpression(FormatUtil.cronExpression(exam.getOpenTime() + (exam.getDuration() + exam.getOpenDuration() * 60 * 100)));
+                if(exam.getDuration()==0){
+                    scheduleVo.setCronexpression(FormatUtil.cronExpression(exam.getCloseTime()));
+                } else {
+                    scheduleVo.setCronexpression(FormatUtil.cronExpression(exam.getOpenTime() + (exam.getDuration() + exam.getOpenDuration() * 60 * 100)));
+                }
                 break;
         }
 
         scheduleVo.setDao(examDao);
+        scheduleVo.setJobStatus(SysConsts.SCHEDULEVO_JOB_STATUS_START);
         scheduleDao.save(scheduleVo);
         SchedulerJobUtil.createJob(scheduleVo, schedulerFactoryBean.getScheduler());
         saveLog(scheduleVo, scheduleVo.getDescribe());

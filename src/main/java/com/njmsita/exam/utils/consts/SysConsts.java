@@ -85,6 +85,7 @@ public class SysConsts
 	public final static int EXAM_STATUS_CLOSE = 122;
 	public final static int EXAM_STATUS_IN_MARK = 131;
 	public final static int EXAM_STATUS_IN_CANCEL = 141;
+	public final static int EXAM_STATUS_OUTMODED = 151;
 	public final static int EXAM_STATUS_ENDING = 199;
 	/**
      * 考试状态视图
@@ -96,6 +97,7 @@ public class SysConsts
     public static final String EXAM_STATUS_CLOSE_VIEW = "答题中";
     public static final String EXAM_STATUS_IN_MARK_VIEW = "阅卷中";
     public static final String EXAM_STATUS_IN_CANCEL_VIEW = "已取消";
+    public static final String EXAM_STATUS_OUTMODED_VIEW = "已过时";
     public static final String EXAM_STATUS_ENDING_VIEW = "已结束";
 
     public final static Map<Integer, String> ExamStatusViewMap = new HashMap<>();
@@ -108,6 +110,7 @@ public class SysConsts
         ExamStatusViewMap.put(SysConsts.EXAM_STATUS_IN_MARK,SysConsts.EXAM_STATUS_IN_MARK_VIEW );
         ExamStatusViewMap.put(SysConsts.EXAM_STATUS_IN_CANCEL,SysConsts.EXAM_STATUS_IN_CANCEL_VIEW );
         ExamStatusViewMap.put(SysConsts.EXAM_STATUS_ENDING,SysConsts.EXAM_STATUS_ENDING_VIEW );
+        ExamStatusViewMap.put(SysConsts.EXAM_STATUS_OUTMODED,SysConsts.EXAM_STATUS_OUTMODED_VIEW );
     }
 
 
@@ -175,12 +178,14 @@ public class SysConsts
 	public static final String SCHEDULEVO_JOB_TYPE_CLOSE_VIEW = "开启考试入口";
 	public static final String SCHEDULEVO_JOB_TYPE_OPEN_VIEW = "关闭考试入口";
 	public static final String SCHEDULEVO_JOB_TYPE_FINISH_VIEW = "考试结束";
+
 	/**
 	 * 定时任务状态
 	 */
 	public static final int SCHEDULEVO_JOB_STATUS_FORBIDDEN = 0;
 	public static final int SCHEDULEVO_JOB_STATUS_START = 1;
 	public static final int SCHEDULEVO_JOB_STATUS_DELETE = 2;
+	public static final int SCHEDULEVO_JOB_STATUS_OUTMODED = 3;
 	public static final int SCHEDULEVO_JOB_STATUS_ONETIME = -1;
 
 	/**

@@ -1,6 +1,5 @@
 package com.njmsita.exam.base;
 
-import com.njmsita.exam.authentic.model.TeacherVo;
 import com.njmsita.exam.utils.exception.OperationException;
 
 import java.io.Serializable;
@@ -11,8 +10,8 @@ public interface BaseEbi<T> {
 
 	/**
 	 * 保存
-	 * @param t    模型数据
-	 */
+     * @param t    模型数据
+     */
 	public void save(T t) throws OperationException;
 
 

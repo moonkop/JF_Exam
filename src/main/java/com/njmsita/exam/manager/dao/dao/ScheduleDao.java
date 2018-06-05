@@ -20,4 +20,9 @@ public interface ScheduleDao extends BaseDao<ScheduleVo>
     public List<ScheduleVo> getByTarget(String examId);
 
 
+    /**
+     * 获取可执行的定时任务
+     * @return
+     */
+    public List<ScheduleVo> getAllByExecutable();
 }

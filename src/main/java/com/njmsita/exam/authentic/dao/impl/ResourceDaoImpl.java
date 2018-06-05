@@ -1,6 +1,7 @@
 package com.njmsita.exam.authentic.dao.impl;
 
 import com.njmsita.exam.authentic.dao.dao.ResourceDao;
+import com.njmsita.exam.authentic.model.StudentVo;
 import com.njmsita.exam.authentic.model.TresourceVo;
 import com.njmsita.exam.base.BaseImpl;
 import com.njmsita.exam.base.BaseQueryVO;

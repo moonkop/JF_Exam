@@ -1,15 +1,18 @@
 package com.njmsita.exam.utils.timertask;
 
 import com.njmsita.exam.manager.dao.dao.ExamDao;
+import com.njmsita.exam.manager.dao.dao.ScheduleDao;
+import com.njmsita.exam.manager.dao.impl.ScheduleDaoImpl;
 import com.njmsita.exam.manager.model.ExamVo;
 import com.njmsita.exam.manager.model.ScheduleVo;
+import com.njmsita.exam.utils.consts.SysConsts;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 @DisallowConcurrentExecution
-public class QuartzJobFactory implements Job
+public class QuartzJobFactory extends ScheduleDaoImpl implements Job
 {
 
     public void execute(JobExecutionContext context) throws JobExecutionException
@@ -22,6 +25,12 @@ public class QuartzJobFactory implements Job
             exam.setExamStatus(scheduleVo.getAffterStatu());
             examDao.update(exam);
         }
+        scheduleVo=super.get(scheduleVo.getId());
+        System.out.println(scheduleVo.getJobStatus());
+        scheduleVo.setJobStatus(SysConsts.SCHEDULEVO_JOB_STATUS_OUTMODED);
+        System.out.println("----------------");
+        super.update(scheduleVo);
+        System.out.println(scheduleVo.getJobStatus());
         System.out.println("任务名称 = [" + scheduleVo.getJobName() + "]");
     }
 }

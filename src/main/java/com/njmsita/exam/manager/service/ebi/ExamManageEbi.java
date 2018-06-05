@@ -189,4 +189,5 @@ public interface ExamManageEbi extends BaseEbi<ExamVo>
 
     public void saveLog(ScheduleVo scheduleVo, String method);
 
+    public void outmodedSchedul(ScheduleVo scheduleVo);
 }

@@ -138,6 +138,7 @@
                                             '阅卷中': 'label-danger',
                                             '已取消': 'label-warning',
                                             '已结束': 'label-info',
+                                            '已过时': 'label-warning',
                                         }
                                         var html = "<span class='label " + dic[temp] + "'>" + temp + "</span>";
                                         return html;
