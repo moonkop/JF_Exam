@@ -1,11 +1,10 @@
 package com.njmsita.exam.manager.controller;
 
 import com.njmsita.exam.authentic.model.TeacherVo;
-import com.njmsita.exam.authentic.model.UserModel;
 import com.njmsita.exam.authentic.service.ebi.TeacherEbi;
 import com.njmsita.exam.base.BaseController;
 import com.njmsita.exam.manager.model.*;
-import com.njmsita.exam.manager.model.querymodel.ExamQueryModel;
+import com.njmsita.exam.manager.model.querymodel.ExamListQueryModel;
 import com.njmsita.exam.manager.service.ebi.ClassroomEbi;
 import com.njmsita.exam.manager.service.ebi.ExamManageEbi;
 import com.njmsita.exam.manager.service.ebi.PaperEbi;
@@ -19,7 +18,6 @@ import com.njmsita.exam.utils.json.JsonListResponse;
 import com.njmsita.exam.utils.json.JsonResponse;
 import com.njmsita.exam.utils.logutils.SystemLogAnnotation;
 import com.njmsita.exam.utils.validate.validategroup.AddGroup;
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -191,7 +189,7 @@ public class ExamManageController extends BaseController
     /**
      * 列表
      *
-     * @param examQueryModel 查询条件（考试开始区间  发起教师  科目  考试状态）--->考试开始区间分为：startTime endTime
+     * @param examListQueryModel 查询条件（考试开始区间  发起教师  科目  考试状态）--->考试开始区间分为：startTime endTime
      * @param pageNum
      * @param pageSize
      *
@@ -199,13 +197,12 @@ public class ExamManageController extends BaseController
      */
     @ResponseBody
     @RequestMapping("list.do")
-    public JsonResponse list(ExamQueryModel examQueryModel, Integer pageNum, Integer pageSize,
-                             HttpServletRequest request) throws Exception
+    public JsonResponse list(ExamListQueryModel examListQueryModel, HttpServletRequest request) throws Exception
     {
         TeacherVo login = (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
-        List<ExamVo> list = examManageEbi.getAllByAdmin(login.getId(), examQueryModel, pageNum, pageSize);
+        List<ExamVo> list = examManageEbi.getAllByAdmin(login.getId(), examListQueryModel);
         return new JsonListResponse<ExamVo>(list,
-                "id,name,openTime,duration,remark,operation,[teacher]getCreateTeacher().getName(),[subject]subject.name,examStatusView", examManageEbi.getCount(examQueryModel));
+                "id,name,openTime,duration,remark,operation,[teacher]getCreateTeacher().getName(),[subject]subject.name,examStatusView", examManageEbi.getCount(examListQueryModel));
     }
 
 }

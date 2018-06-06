@@ -62,12 +62,5 @@ return dc;
         return list;
     }
 
-    public <T> List<T> getEvictObjects(List<T> list)
-    {
-        for (T object : list)
-        {
-            this.getHibernateTemplate().evict(object);
-        }
-        return list;
-    }
+
 }

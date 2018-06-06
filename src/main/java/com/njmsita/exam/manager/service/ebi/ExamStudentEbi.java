@@ -41,7 +41,7 @@ public interface ExamStudentEbi
      * @param studentExamVo
      * @param login
      */
-    public void submitAnswer(StudentExamVo studentExamVo, StudentVo login) throws Exception;
+    public void submit(StudentExamVo studentExamVo, StudentVo login) throws Exception;
 
     /**
      * 查看学生个人考试情况
@@ -66,7 +66,7 @@ public interface ExamStudentEbi
      * @param studentExamPo
      * @throws SchedulerException
      */
-    public void StudentExamStart(StudentExamVo studentExamPo) throws SchedulerException;
+    public void studentExamStart(StudentExamVo studentExamPo) throws SchedulerException;
 
     /**
      * 获得学生作答

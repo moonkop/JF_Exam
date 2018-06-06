@@ -57,4 +57,14 @@ public interface BaseDao<T> {
 	 */
 	public void delete(T t);
 
+	/**
+	 * 与数据库解除关系
+	 * @param list
+	 * @param <T>
+	 * @return
+	 */
+	public <T> List<T> getEvictObjects(List<T> list);
+
+
+
 }

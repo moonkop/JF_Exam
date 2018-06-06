@@ -1,6 +1,7 @@
 package com.njmsita.exam.manager.controller;
 
 import com.njmsita.exam.authentic.model.StudentVo;
+import com.njmsita.exam.authentic.model.UserModel;
 import com.njmsita.exam.manager.model.ExamVo;
 import com.njmsita.exam.manager.model.QuestionVo;
 import com.njmsita.exam.manager.model.StudentExamQuestionVo;
@@ -18,7 +19,6 @@ import com.njmsita.exam.utils.json.JsonListResponse;
 import com.njmsita.exam.utils.json.JsonResponse;
 import com.njmsita.exam.utils.logutils.SystemLogAnnotation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -87,9 +86,13 @@ public class ExamStudentController
      * @return
      */
     @RequestMapping("preview")
-    public String preview(String id, HttpServletRequest request)
+    public String preview(String id, HttpServletRequest request, HttpSession session) throws Exception
     {
+
         StudentExamVo studentExamPo = examStudentEbi.get(id);
+        examManageEbi.checkPermission(SysConsts.EXAM_OPERATION_PREVIEW,
+                (StudentVo) session.getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME),
+                studentExamPo);//todo 转换错误
         request.setAttribute("exam", studentExamPo.getExam());
         request.setAttribute("studentExam", studentExamPo);
         return "/exam/student/preview";
@@ -128,6 +131,7 @@ public class ExamStudentController
         ExamVo examVoWithPaper= examManageEbi.getWithPaper(studentExamPo.getExam().getId());
         request.setAttribute("exam", examPo);
         request.setAttribute("studentExam", studentExamPo);
+        request.setAttribute("currentTime", System.currentTimeMillis());
         if (examPo.getPaperVo() != null)
         {
             request.setAttribute("paper", examVoWithPaper.getPaperVo());
@@ -145,7 +149,7 @@ public class ExamStudentController
     /**
      * 获得试卷（题目列表）
      *
-     * @param studentExam
+     * @param studentExamId
      * @param session
      *
      * @return
@@ -170,7 +174,7 @@ public class ExamStudentController
     /**
      * 获得我的答案列表
      *
-     * @param studentExamVo
+     * @param studentExamId
      * @param session
      *
      * @return
@@ -190,8 +194,7 @@ public class ExamStudentController
     /**
      * 作答存档
      *
-     * @param studentExamQuestionList
-     * @param studentExamId
+     * @param wrapper
      * @param request
      *
      * @return
@@ -222,13 +225,13 @@ public class ExamStudentController
      * @throws Exception
      */
     @ResponseBody
-    @RequestMapping("submitAnswer")
-    public String submitAnswer(StudentExamVo studentExamVo, HttpServletRequest request) throws Exception
+    @RequestMapping("submit.do")
+    public JsonResponse submitAnswer(StudentExamVo studentExamVo, HttpServletRequest request) throws Exception
     {
         StudentVo login = (StudentVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
-        examStudentEbi.submitAnswer(studentExamVo, login);
+        examStudentEbi.submit(studentExamVo, login);
         //TODO 提交作答后返回的页面
-        return "";
+        return new JsonResponse("交卷成功");
     }
 
     /**

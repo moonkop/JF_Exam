@@ -45,8 +45,10 @@
             exam: {
                 id: '${exam.id}',
                 studentExam: {
-                    id: "${studentExam.id}"
-                }
+                    id: "${studentExam.id}",
+                    startTime: "${studentExam.startTime}"
+                },
+                duration: "${exam.duration}"
             },
             paper: {
                 id: '${paper.id}',
@@ -54,57 +56,63 @@
                 comment: '${paper.comment}',
                 questionList:${questionList},
             },
-            answers: {}
+            currentTime: "${currentTime}"
         }
 
         $(document).ready(function () {
-            $(".side-visible-line").click();
-
-
-
+            //用index为数组下标重组questionlist
+            var questionlist = [];
             app.paper.questionList.map(function (item) {
-                questionlist[item.index] = item;
-                item.needUpdate = false;
-            })
-
+                    questionlist[item.index] = item;
+                    item.needUpdate = false;
+                }
+            )
+            app.paper.questionList = questionlist;
+            //渲染试卷标题
+            render_paper_title();
+            //渲染试卷题目列表
+            paper_exam_render_question_list();
+            //从服务器获得作答
             get_workout_from_server(function (res) {
+                //将作答存入questionList
                 res.payload.rows.map(function (item) {
-                    var question = questionlist[item.index - 1];
+                    var question = app.paper.questionList[item.index - 1];
                     question.id = item.id;
                     question.workout = item.workout;
+                    set_workout(question);
                 })
+                //自动保存定时器
                 autoSaveTimer = setInterval(auto_upload_workout, 5000);
             })
 
-            render_paper_title();
-            paper_exam_render_question_list();
-
-            var timeleft = 36000;
+            var timeLeft = get_remain_time();
 
 
             var timer = setInterval(function () {
-                set_left_time(timeleft--);
+                set_left_time(timeLeft--);
             }, 1000);
 
             $("#submit-paper").on("click", function () {
-                upload_all_workout();
+                layer.confirm("确定要交卷吗？交卷后不能再进入考场哦！", function () {
+                    upload_all_workout_submit_paper();
+                });
             })
         });
 
+        //计算出剩余时间
+        function get_remain_time()
+        {
+            return
+        }
 
+        //设置倒计时时间
         function set_left_time(time)
         {
             $("#left-time").text(convertTimeToStr(time));
         }
 
-        var questionlist = [];
 
-        function init()
-        {
-
-
-        }
-
+        //收集修改过的作答
         function collect_workout()
         {
             app.paper.questionList.map(function (item) {
@@ -118,6 +126,8 @@
             });
         }
 
+
+        //自动上传作答（只上传更改过的）
         function auto_upload_workout()
         {
             collect_workout();
@@ -137,10 +147,24 @@
                 return;
             }
 
-            upload_workout(data);
+            upload_workout(data, function (res) {
+                    var dataWithId = {};
+                    data.map(function (item) {
+                        dataWithId[item.id] = item;
+                    })
+                    app.paper.questionList.map(function (item) {
+                        if (dataWithId[item.id] != undefined)
+                        {
+                            item.needUpdate = false;
+                        }
+                    })
+                    layer.msg("保存成功");
+                }
+            );
         }
 
-        function upload_all_workout()
+        //上传所有作答
+        function upload_all_workout_submit_paper()
         {
 
             var data = [];
@@ -152,11 +176,54 @@
                 });
             })
 
-            upload_workout(data)
+            upload_workout(data, function () {
+                    get_workout_from_server(function (res) {
+                            var success = true;
+                            res.payload.rows.map(function (item) {
+
+                                if (app.paper.questionList[item.index - 1].workout != item.workout)
+                                {
+                                    console.log(item.index + "check error");
+                                    success = false;
+                                } else
+                                {
+                                    console.log(item.index + "check passed");
+
+                                }
+                            })
+                            if (success == true)
+                            {
+                                myajax(
+                                    {
+                                        url:"/exam/student/submit.do",
+                                        data:{
+                                            id:app.exam.studentExam.id
+                                        },
+                                        success:function(res) {
+                                            layer.msg("交卷成功");
+                                            setTimeout(function () {
+                                                window.location.href = "/exam/student";
+                                            },1000)
+
+                                        }
+                                    }
+                                );
+
+                            }
+                            else
+                            {
+                                layer.alert("交卷失败");
+                            }
+
+                        }
+                    )
+                }
+            )
         }
 
 
-        function upload_workout(data)
+        //向服务器上传作答
+        function upload_workout(data, success, error)
         {
 
             myajax(
@@ -170,18 +237,8 @@
                             workouts: data
                         }
                     ),
-                    success: function (res) {
-                        var dataWithId = {};
-                        data.map(function (item) {
-                            dataWithId[item.id] = item;
-                        })
-                        app.paper.questionList.map(function (item) {
-                            if (dataWithId[item.id] != undefined)
-                            {
-                                item.needUpdate = false;
-                            }
-                        })
-                    }
+                    success: success,
+                    error: error
                 }
             )
         }
@@ -235,26 +292,34 @@
         function set_workout(question)
         {
             var $panel = $(".panel-question[data-index='" + question.index + "']");
-            var workout=question.workout;
+            if(question.workout==null)
+            {
+                return;
+            }
+            var workout = question.workout.split(',').filter(function (item) {
+                    return item != "";
+                }
+            );
 
             switch (QuestionTypeMap($panel.attr("data-type")))
             {
                 case '单选题':
-
-
-
+                    if (workout.length != 0)
+                    {
+                        var $option = $panel.find("[data-option-index='" + workout[0] + "']");
+                        $option.attr("checked", true);
+                    }
                     break;
                 case '多选题':
-
-
-
-
+                    workout.map(function (item) {
+                        var $option = $panel.find("[data-option-index='" + item + "']");
+                        $option.attr("checked", true);
+                    });
                     break;
                 case '简答题':
                     answer = $panel.find("textarea").val(workout);
                     break;
             }
-
         }
 
     </script>

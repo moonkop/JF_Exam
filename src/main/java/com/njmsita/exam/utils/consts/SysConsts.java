@@ -1,7 +1,9 @@
 package com.njmsita.exam.utils.consts;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 系统常量
@@ -41,6 +43,19 @@ public class SysConsts
 	public static final String STUDENT_ROLE_NAME = "学生";
 	public static final String STUDENT_ROLE_ID = "2";
 
+	//单选题
+	public static final int QUESTION_TYPE_SINGLE_SELECTION=2;
+	//多选题
+	public static final int QUESTION_TYPE_MUTI_SELECTION=3;
+	//简答题
+	public static final int QUESTION_TYPE_SHORT_ANSWER=4;
+
+	public static final Set<String> STRING_EMPTY_SET = new HashSet<>();
+
+	static{
+		STRING_EMPTY_SET.add("");
+	}
+
 	/**
 	 * 批量导入文件类型
 	 */
@@ -78,11 +93,13 @@ public class SysConsts
 	/**
 	 * 考试状态码int
 	 */
+	//todo 补充每一位状态的意意义
 	public final static int EXAM_STATUS_NO_CHECK = 101;
 	public final static int EXAM_STATUS_PASS = 111;
 	public final static int EXAM_STATUS_NO_PASS = 112;
 	public final static int EXAM_STATUS_OPEN = 121;
 	public final static int EXAM_STATUS_CLOSE = 122;
+	public final static int EXAM_STATUS_SUBMITTED = 123;
 	public final static int EXAM_STATUS_IN_MARK = 131;
 	public final static int EXAM_STATUS_IN_CANCEL = 141;
 	public final static int EXAM_STATUS_OUTMODED = 151;
@@ -95,6 +112,7 @@ public class SysConsts
     public static final String EXAM_STATUS_NO_PASS_VIEW = "待修改";
     public static final String EXAM_STATUS_OPEN_VIEW = "进行中";
     public static final String EXAM_STATUS_CLOSE_VIEW = "答题中";
+    public static final String EXAM_STATUS_SUBMITTED_VIEW = "已交卷";
     public static final String EXAM_STATUS_IN_MARK_VIEW = "阅卷中";
     public static final String EXAM_STATUS_IN_CANCEL_VIEW = "已取消";
     public static final String EXAM_STATUS_OUTMODED_VIEW = "已过时";
@@ -107,6 +125,7 @@ public class SysConsts
         ExamStatusViewMap.put(SysConsts.EXAM_STATUS_NO_PASS,SysConsts.EXAM_STATUS_NO_PASS_VIEW );
         ExamStatusViewMap.put(SysConsts.EXAM_STATUS_OPEN,SysConsts.EXAM_STATUS_OPEN_VIEW );
         ExamStatusViewMap.put(SysConsts.EXAM_STATUS_CLOSE,SysConsts.EXAM_STATUS_CLOSE_VIEW );
+        ExamStatusViewMap.put(SysConsts.EXAM_STATUS_SUBMITTED,SysConsts.EXAM_STATUS_SUBMITTED_VIEW );
         ExamStatusViewMap.put(SysConsts.EXAM_STATUS_IN_MARK,SysConsts.EXAM_STATUS_IN_MARK_VIEW );
         ExamStatusViewMap.put(SysConsts.EXAM_STATUS_IN_CANCEL,SysConsts.EXAM_STATUS_IN_CANCEL_VIEW );
         ExamStatusViewMap.put(SysConsts.EXAM_STATUS_ENDING,SysConsts.EXAM_STATUS_ENDING_VIEW );
@@ -207,7 +226,7 @@ public class SysConsts
 	/**
 	 * 学生考试过程操作
 	 */
-	public static final int STUDENT_EXAM_STATUS_NOT_STARTED=0;
-	public static final int STUDENT_EXAM_STATUS_STARTED = 1;//存档
-	public static final int STUDENT_EXAM_STATUS_SUBMITTED = 2;//提交
+	public static final int STUDENT_EXAM_STATUS_NOT_STARTED=0;//未开始
+	public static final int STUDENT_EXAM_STATUS_STARTED = 1;//已开始
+	public static final int STUDENT_EXAM_STATUS_SUBMITTED = 2;//已提交
 }

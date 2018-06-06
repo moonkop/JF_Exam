@@ -68,4 +68,14 @@ public abstract class BaseImpl<T>  extends HibernateDaoSupport implements BaseDa
 	}
 
 	public abstract DetachedCriteria doQbc(DetachedCriteria dc, BaseQueryVO qm);
+
+	public <T> List<T> getEvictObjects(List<T> list)
+	{
+		for (T object : list)
+		{
+			this.getHibernateTemplate().evict(object);
+		}
+		return list;
+	}
+
 }
