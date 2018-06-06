@@ -189,5 +189,21 @@ public interface ExamManageEbi extends BaseEbi<ExamVo>
 
     public void saveLog(ScheduleVo scheduleVo, String method);
 
+    /**
+     * 任务过时
+     * @param scheduleVo
+     */
     public void outmodedSchedul(ScheduleVo scheduleVo);
+
+    /**
+     * 获取考试的可执行任务
+     * @return
+     */
+    public List<ScheduleVo> getAllByExecutable();
+
+    /**
+     * 更新任务状态
+     * @param scheduleVo
+     */
+    public void updateSchedule(ScheduleVo scheduleVo);
 }

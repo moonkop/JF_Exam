@@ -3,19 +3,25 @@ package com.njmsita.exam.utils.listener;
 import com.njmsita.exam.authentic.model.TresourceVo;
 import com.njmsita.exam.authentic.service.ebi.ResourceEbi;
 import com.njmsita.exam.manager.dao.dao.ScheduleDao;
+import com.njmsita.exam.manager.model.ExamVo;
 import com.njmsita.exam.manager.model.ScheduleVo;
+import com.njmsita.exam.manager.service.ebi.ExamManageEbi;
 import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.format.FormatUtil;
 import com.njmsita.exam.utils.timertask.SchedulerJobUtil;
 import org.quartz.SchedulerException;
+import org.quartz.impl.StdScheduler;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
+import org.springframework.web.context.ContextLoader;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 全资源加载监听器
@@ -40,26 +46,43 @@ public class AllResourcesLoadListener implements ServletContextListener
         sc.setAttribute(SysConsts.ALL_RESOUCERS_AUTHENTIC_URL_NAME, sbf.toString());
 
         //恢复定时任务
-        ScheduleDao scheduleDao= (ScheduleDao) ctx.getBean("scheduleDaoImpl");
-        SchedulerFactoryBean schedulerFactoryBean= (SchedulerFactoryBean) ctx.getBean("schedulerFactoryBean");
+        ExamManageEbi examManageEbo = ContextLoader.getCurrentWebApplicationContext().getBean(ExamManageEbi.class);
+        Object o=ctx.getBean("schedulerFactoryBean");
+        StdScheduler stdScheduler= (StdScheduler) o;
 
-        List<ScheduleVo> list=scheduleDao.getAllByExecutable();
-        for (ScheduleVo scheduleVo : list)
+        List<ScheduleVo> list=examManageEbo.getAllByExecutable();
+        Set<String> outmodedGroup=new HashSet<>();
+        try
         {
-            Long time= FormatUtil.getTimeByCron(scheduleVo.getCronexpression());
-            if(time<System.currentTimeMillis()){
-                scheduleVo.setJobStatus(SysConsts.SCHEDULEVO_JOB_STATUS_OUTMODED);
-                scheduleDao.update(scheduleVo);
-            }else{
-                try
+            for (ScheduleVo scheduleVo : list)
+            {
+                if(outmodedGroup.contains(scheduleVo.getJobGroup()))
                 {
-                    SchedulerJobUtil.createJob(scheduleVo,schedulerFactoryBean.getScheduler());
-                } catch (SchedulerException e)
+                    setOutmoded(examManageEbo,scheduleVo);
+                    continue;
+                }
+                Long time= FormatUtil.getTimeByCron(scheduleVo.getCronexpression());
+                if(time<System.currentTimeMillis())
                 {
-                    e.printStackTrace();
+                    setOutmoded(examManageEbo,scheduleVo);
+                    ExamVo examVo=examManageEbo.get(scheduleVo.getTargetVoId());
+                    examVo.setExamStatus(SysConsts.EXAM_STATUS_OUTMODED);
+                    examManageEbo.update(examVo);
+                    outmodedGroup.add(scheduleVo.getJobGroup());
+                }else {
+                    SchedulerJobUtil.createJob(scheduleVo,stdScheduler);
                 }
             }
+        } catch (Exception e)
+        {
+            e.printStackTrace();
         }
+    }
+
+    private void setOutmoded(ExamManageEbi examManageEbo,ScheduleVo scheduleVo)
+    {
+        scheduleVo.setJobStatus(SysConsts.SCHEDULEVO_JOB_STATUS_OUTMODED);
+        examManageEbo.updateSchedule(scheduleVo);
     }
 
     public void contextDestroyed(ServletContextEvent servletContextEvent)
