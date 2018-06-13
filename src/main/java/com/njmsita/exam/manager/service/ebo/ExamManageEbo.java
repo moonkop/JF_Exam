@@ -32,7 +32,6 @@ import java.util.*;
  * 考试业务层实现类
  */
 @Service
-@Transactional
 public class ExamManageEbo implements ExamManageEbi
 {
     @Autowired
@@ -66,6 +65,7 @@ public class ExamManageEbo implements ExamManageEbi
      *
      * @param examVo
      */
+    @Transactional
     public void save(ExamVo examVo)
     {
         examDao.save(examVo);
@@ -92,22 +92,23 @@ public class ExamManageEbo implements ExamManageEbi
         return examDao.getCount(qm);
     }
 
-    /**
-     * 作废
-     *
-     * @param examVo
-     */
+
+
+
+    @Deprecated
     public void update(ExamVo examVo)
     {
         examDao.update(examVo);
     }
 
+    @Transactional
     public void delete(ExamVo examVo)
     {
         examDao.delete(examVo);
         paperMongoDao.deletePaperFromMongoExamPaper(examVo.getId());
     }
 
+    @Transactional
     public void save(ExamVo examVo, String[] markTeachers, String paperId, String[] classroomIds) throws OperationException
     {
         setFieldsAndValidate(examVo, markTeachers, paperId, classroomIds);
@@ -116,14 +117,17 @@ public class ExamManageEbo implements ExamManageEbi
         createStudentExamByExam(examVo, classroomIds);
         paperMongoDao.savaPaperToMongoExamPaper(examVo.getPaperVo(), examVo.getId());
     }
-
-
+    @Transactional
+    public void invoke(ExamInvoker examInvoker)
+    {
+        examInvoker.invoke(this);
+    }
     //-----------------------------------以上为基本操作-------------------------------------
     //-----------------------------------以上为基本操作-------------------------------------
     //-----------------------------------以上为基本操作-------------------------------------
     //-----------------------------------以上为基本操作-------------------------------------
     //-----------------------------------以上为基本操作-------------------------------------
-
+    @Transactional
     public void update(ExamVo examVo, String[] markTeachers, String paperId, String[] classroomIds, TeacherVo teacherVo) throws Exception
     {
         ExamVo examPo = getExamNotNull(examVo);
@@ -167,6 +171,7 @@ public class ExamManageEbo implements ExamManageEbi
         return list;
     }
 
+    @Transactional
     public void setPass(ExamVo examVo, TeacherVo loginTeacher) throws Exception
     {
         ExamVo examPo = getExamNotNull(examVo);
@@ -186,6 +191,7 @@ public class ExamManageEbo implements ExamManageEbi
         createSchedulerJob(examPo, SysConsts.SCHEDULEVO_JOB_TYPE_FINISH);
     }
 
+    @Transactional
     public void setNoPass(ExamVo examVo, TeacherVo loginTeacher) throws Exception
     {
         ExamVo examPo = getExamNotNull(examVo);
@@ -198,6 +204,7 @@ public class ExamManageEbo implements ExamManageEbi
         examPo.setExamStatus(SysConsts.EXAM_STATUS_NO_PASS);
     }
 
+    @Transactional
     public void cancel(ExamVo examVo, TeacherVo loginTeacher) throws Exception
     {
         ExamVo examPo = getExamNotNull(examVo);
@@ -214,6 +221,7 @@ public class ExamManageEbo implements ExamManageEbi
         }
     }
 
+    @Transactional
     public void deleteCanceled(ExamVo examVo, TeacherVo loginTeacher) throws Exception
     {
         ExamVo examPo = getExamNotNull(examVo);
@@ -230,6 +238,7 @@ public class ExamManageEbo implements ExamManageEbi
         paperMongoDao.deletePaperFromMongoExamPaper(examPo.getId());
     }
 
+    @Transactional
     public void updateMarkTeacher(ExamVo examVo, String[] markTeachers) throws Exception
     {
         ExamVo temp = getExamNotNull(examVo);
@@ -237,7 +246,6 @@ public class ExamManageEbo implements ExamManageEbi
         //TODO 测试：是否可以逻辑更新
         temp.setMarkTeachers(getMarkTeachers(markTeachers));
     }
-
 
     public Set<String> getValidOperations(ExamVo exam, TeacherVo loginTeacher) throws Exception
     {
@@ -344,42 +352,39 @@ public class ExamManageEbo implements ExamManageEbi
 
     }
 
-    @Override
     public Set<String> getValidOperations(StudentExamVo studentExamVo, StudentVo loginStudent) throws UnLoginException
     {
-        ExamVo exam=studentExamVo.getExam();
+        ExamVo exam = studentExamVo.getExam();
         Set<String> operationSet = new HashSet<>();
         switch (exam.getExamStatus())
         {
             case SysConsts.EXAM_STATUS_NO_CHECK:
                 break;
             case SysConsts.EXAM_STATUS_PASS:
+                operationSet.add(SysConsts.EXAM_OPERATION_PREVIEW_VISIBLE);
                 operationSet.add(SysConsts.EXAM_OPERATION_PREVIEW);
                 break;
             case SysConsts.EXAM_STATUS_NO_PASS:
                 break;
             case SysConsts.EXAM_STATUS_OPEN:
-                operationSet.add(SysConsts.EXAM_OPERATION_PREVIEW);
                 operationSet.add(SysConsts.EXAM_OPERATION_ENTER);
+                operationSet.add(SysConsts.EXAM_OPERATION_PREVIEW);
                 break;
             case SysConsts.EXAM_STATUS_CLOSE:
                 operationSet.add(SysConsts.EXAM_OPERATION_PREVIEW);
-                try
+                if (studentExamVo.getStatus() == SysConsts.STUDENT_EXAM_STATUS_STARTED)
                 {
-                    StudentExamVo studentExamPo = studentExamDao.getByStudentAndExam(exam, loginStudent);
-                    if (studentExamPo.getStatus() == SysConsts.STUDENT_EXAM_STATUS_STARTED) ;
-                    {
-                        operationSet.add(SysConsts.EXAM_OPERATION_ENTER);
-                    }
-                } catch (Exception e)
-                {
-                    e.printStackTrace();
+                    operationSet.add(SysConsts.EXAM_OPERATION_ENTER);
+                }else {
+                    operationSet.add(SysConsts.EXAM_OPERATION_PREVIEW_VISIBLE);
                 }
                 break;
             case SysConsts.EXAM_STATUS_SUBMITTED:
+                operationSet.add(SysConsts.EXAM_OPERATION_PREVIEW_VISIBLE);
                 operationSet.add(SysConsts.EXAM_OPERATION_PREVIEW);
                 break;
             case SysConsts.EXAM_STATUS_IN_MARK:
+                operationSet.add(SysConsts.EXAM_OPERATION_PREVIEW_VISIBLE);
                 operationSet.add(SysConsts.EXAM_OPERATION_PREVIEW);
                 break;
             case SysConsts.EXAM_STATUS_IN_CANCEL:
@@ -505,7 +510,7 @@ public class ExamManageEbo implements ExamManageEbi
         logDao.save(logVo);
     }
 
-    public void outmodedSchedul(ScheduleVo scheduleVo)
+    public void outmodedSchedule(ScheduleVo scheduleVo)
     {
         scheduleVo.setJobStatus(SysConsts.SCHEDULEVO_JOB_STATUS_OUTMODED);
         scheduleDao.update(scheduleVo);

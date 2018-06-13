@@ -91,6 +91,10 @@ public class SysConsts
 	public static final String EXAM_PAPER_SAVA_MONGO_OF_COLLECTION = "examPaper";
 
 	/**
+	 * 考试将允许提交时间放宽3分钟
+	 */
+	public static final int EXAM_SUBMIT_ADDITIONAL_TIME = 3 * 1000 * 60;
+	/**
 	 * 考试状态码int
 	 */
 	//todo 补充每一位状态的意意义
@@ -145,8 +149,11 @@ public class SysConsts
 	public static final String EXAM_OPERATION_DELETE = "delete";
 	public static final String EXAM_OPERATION_MARK = "mark";
 	public static final String EXAM_OPERATION_SUBMIT_MARK = "submitMark";
-	public static final String EXAM_OPERATION_ENTER = "attend";
-	public static final String EXAM_OPERATION_PREVIEW = "preview";
+	public static final String EXAM_OPERATION_ENTER = "enter";
+	public static final String EXAM_OPERATION_PREVIEW_VISIBLE = "preview"; //显示在list上
+	public static final String EXAM_OPERATION_PREVIEW = "preview_permission";//真正的预览权限
+
+
 	public static final String EXAM_PREMISSION_GET_PAPER_CONTENT="";
 	public static final String EXAM_PREMISSION_GET_MY_ANSWER="";
 	public static final String EXAM_PREMISSION_GET_CORRECT_ANSWER="";
@@ -179,7 +186,7 @@ public class SysConsts
         ExamOperationViewMap.put(SysConsts.EXAM_OPERATION_MARK, SysConsts.EXAM_OPERATION_MARK_VIEW);
         ExamOperationViewMap.put(SysConsts.EXAM_OPERATION_SUBMIT_MARK, SysConsts.EXAM_OPERATION_SUBMIT_MARK_VIEW);
         ExamOperationViewMap.put(SysConsts.EXAM_OPERATION_ENTER, SysConsts.EXAM_OPERATION_ATTEND_VIEW);
-        ExamOperationViewMap.put(SysConsts.EXAM_OPERATION_PREVIEW, SysConsts.EXAM_OPERATION_PREVIEW_VIEW);
+        ExamOperationViewMap.put(SysConsts.EXAM_OPERATION_PREVIEW_VISIBLE, SysConsts.EXAM_OPERATION_PREVIEW_VIEW);
     }
 
 

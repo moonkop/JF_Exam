@@ -88,7 +88,6 @@ public class ExamStudentController
     @RequestMapping("preview")
     public String preview(String id, HttpServletRequest request, HttpSession session) throws Exception
     {
-
         StudentExamVo studentExamPo = examStudentEbi.get(id);
         examManageEbi.checkPermission(SysConsts.EXAM_OPERATION_PREVIEW,
                 (StudentVo) session.getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME),
@@ -106,7 +105,6 @@ public class ExamStudentController
     @RequestMapping("enter")
     public String toAttendExam(String id, HttpServletRequest request)
     {
-
         return "redirect:/exam/student/preview?id=" + id;
     }
 
@@ -128,7 +126,7 @@ public class ExamStudentController
         StudentVo studentVo = (StudentVo) session.getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
         StudentExamVo studentExamPo = examStudentEbi.enterExam(studentExamId, studentVo);
         ExamVo examPo = studentExamPo.getExam();
-        ExamVo examVoWithPaper= examManageEbi.getWithPaper(studentExamPo.getExam().getId());
+        ExamVo examVoWithPaper = examManageEbi.getWithPaper(studentExamPo.getExam().getId());
         request.setAttribute("exam", examPo);
         request.setAttribute("studentExam", studentExamPo);
         request.setAttribute("currentTime", System.currentTimeMillis());

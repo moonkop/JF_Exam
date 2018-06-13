@@ -93,10 +93,11 @@
 	<!--</bean>-->
     <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
         <property name="driverClass" value="com.mysql.jdbc.Driver" />
-        <property name="jdbcUrl" value="jdbc:mysql://192.168.1.166:3306/jf_exam" />
-        <property name="user" value="root" />
-        <property name="password" value="root" />
-
+		<property name="jdbcUrl" value="jdbc:mysql://192.168.1.166:3306/jf_exam" />
+		<property name="user" value="root" />
+		<property name="password" value="root" />
+		<!--<property name="jdbcUrl" value="jdbc:mysql://moonkop.com:3306/jf_exam" />-->
+		<!--<property name="password" value="451979253a" />-->
     </bean>
 
 	<mongo:mongo-client id="mongo" host="${mongo.host}" port="${mongo.port}" credentials="${mongo.userName}:${mongo.password}@${mongo.dbname}">

@@ -15,12 +15,12 @@
 </head>
 <body>
 
-<div id="wrapper">
-
+<div id="wrapper" style="max-width: 800px;margin: 0 auto">
     <div class="exam-toolbar">
-        <button class="btn btn-default" id="switch-view"> 切换视图</button>
-        <button class="btn btn-danger pull-right" id="submit-paper"> 提交试卷</button>
-        <span class="time-area pull-right">剩余时间：<span id="left-time">10:10</span></span>
+        <span class="exam-title">${exam.name}</span>
+        <%--<button class="btn btn-default" id="switch-view"> 切换视图</button>--%>
+        <button class="btn btn-default pull-right" id="submit-paper"> 提交试卷</button>
+        <%--<span class="time-area pull-right">剩余时间：<span id="left-time">10:10</span></span>--%>
 
 
     </div>
@@ -32,6 +32,29 @@
                 <div class="comment"></div>
             </div>
             <div class="question-list">
+
+            </div>
+
+            <div class="answer-card">
+                <div class="count-down-area" style="display: none;">
+                    <div class="answer-card-title">
+                        剩余时间（分秒）
+                    </div>
+                    <div class="answer-card-content" id="count-down">
+                        25:31
+                    </div>
+                </div>
+                <div class="answer-card-title">
+                    完成率
+                </div>
+                <div class="answer-card-content" id="complete-rate">
+                    50%
+                </div>
+                <div class="answer-card-title">
+                    第一部分
+                </div>
+                <div class="answer-card-list">
+                </div>
 
             </div>
         </div>
@@ -48,7 +71,8 @@
                     id: "${studentExam.id}",
                     startTime: "${studentExam.startTime}"
                 },
-                duration: "${exam.duration}"
+                duration: "${exam.duration}" * 60 * 1000,
+                closeTime: "${exam.closeTime}"
             },
             paper: {
                 id: '${paper.id}',
@@ -81,35 +105,122 @@
                     question.workout = item.workout;
                     set_workout(question);
                 })
+                refresh_answer_card();
                 //自动保存定时器
                 autoSaveTimer = setInterval(auto_upload_workout, 5000);
             })
-
-            var timeLeft = get_remain_time();
-
-
-            var timer = setInterval(function () {
-                set_left_time(timeLeft--);
-            }, 1000);
+            set_up_count_down();
+            render_answer_card();
 
             $("#submit-paper").on("click", function () {
                 layer.confirm("确定要交卷吗？交卷后不能再进入考场哦！", function () {
                     upload_all_workout_submit_paper();
                 });
             })
+            $(".question-list").on("change", "input,textarea", function () {
+                collect_workout();
+            })
+            $(".answer-card-list").on("click", "span", function () {
+                navigate_to_question($(this).attr("data-index"));
+            })
         });
+
+
+        function set_up_count_down()
+        {
+            if (app.exam.closeTime - app.currentTime < 0)
+            {
+                layer.alert("考试已经结束！");
+                return;
+            }
+            if (app.exam.duration == 0)
+            {
+                if (app.exam.closeTime - app.currentTime < 1000 * 3600 * 3)
+                {
+                    layer.alert("考试将于" + TimeStampTDateTimeString(app.exam.closeTime) + "结束，请尽快作答，超过时间将无法交卷！");
+                }
+                return;
+            }
+            $(".count-down-area").show();
+
+            var timeLeft = get_remain_time();
+            timer = setInterval(function () {
+                set_left_time(timeLeft -= 1000);
+                if (timeLeft < 0)
+                {
+                    $(".time-area").hide();
+                    clearInterval(timer);
+                    layer.msg("作答时间到，10秒后将自动交卷")
+                    setTimeout(function () {
+                        upload_all_workout_submit_paper();
+                    }, 10000);
+                }
+            }, 1000);
+        }
 
         //计算出剩余时间
         function get_remain_time()
         {
-            return
+            var left_workout_time = app.exam.duration - (app.currentTime - app.exam.studentExam.startTime)
+            var left_close_time = app.exam.closeTime - app.currentTime;
+            return left_workout_time < left_close_time ? left_workout_time : left_close_time;
         }
 
         //设置倒计时时间
         function set_left_time(time)
         {
-            $("#left-time").text(convertTimeToStr(time));
+            $("#count-down").text(TimeStampTDateTimeString(time));
         }
+
+        var $answer_list;
+
+        function render_answer_card()
+        {
+            $answer_list = $(".answer-card-list");
+            $answer_list.empty();
+            app.paper.questionList.map(function (item) {
+                    html = "<span id='answer_item_" + item.index + "'data-index='" + item.index + "' >" + (parseInt(item.index) + 1) + "</span>"
+                    $answer_list.append(html);
+                }
+            )
+        }
+
+        function navigate_to_question(index)
+        {
+            var $panel = $(".panel-question[data-index='" + index + "']");
+            $(".question-list .focus").removeClass("focus");
+            $panel[0].scrollIntoView(true);
+            var hread = $(window).scrollTop() - 150;
+            $(window).scrollTop(hread);
+
+            $panel.addClass("focus");
+            setTimeout(function () {
+                $panel.removeClass("focus");
+            }, 2500);
+        }
+
+        function refresh_answer_card()
+        {
+            var question_completed=0;
+            app.paper.questionList.map(function (item) {
+                    var $answer_card_item = $answer_list.find("#answer_item_" + item.index);
+                    $answer_card_item.removeClass();
+                    if (item.workout != null && item.workout != "")
+                    {
+                        $answer_card_item.addClass("completed");
+                        question_completed++;
+                        if (item.needUpdate == false)
+                        {
+                            $answer_card_item.addClass("up-to-date");
+                        }
+                    }
+                }
+            )
+
+            $("#complete-rate").text(question_completed/app.paper.questionList.length*100+"%")
+
+        }
+
 
 
         //收集修改过的作答
@@ -124,14 +235,12 @@
                     console.log(item.index + "need update");
                 }
             });
+            refresh_answer_card();
         }
-
 
         //自动上传作答（只上传更改过的）
         function auto_upload_workout()
         {
-            collect_workout();
-
             var data = [];
             app.paper.questionList.map(function (item) {
                 if (item.needUpdate == true)
@@ -157,8 +266,11 @@
                         {
                             item.needUpdate = false;
                         }
-                    })
-                    layer.msg("保存成功");
+                    });
+                    refresh_answer_card();
+                    layer.msg("保存成功",{
+                        offset: 't',
+                    });
                 }
             );
         }
@@ -195,15 +307,15 @@
                             {
                                 myajax(
                                     {
-                                        url:"/exam/student/submit.do",
-                                        data:{
-                                            id:app.exam.studentExam.id
+                                        url: "/exam/student/submit.do",
+                                        data: {
+                                            id: app.exam.studentExam.id
                                         },
-                                        success:function(res) {
+                                        success: function (res) {
                                             layer.msg("交卷成功");
                                             setTimeout(function () {
                                                 window.location.href = "/exam/student";
-                                            },1000)
+                                            }, 1000)
 
                                         }
                                     }
@@ -292,7 +404,7 @@
         function set_workout(question)
         {
             var $panel = $(".panel-question[data-index='" + question.index + "']");
-            if(question.workout==null)
+            if (question.workout == null)
             {
                 return;
             }
@@ -321,6 +433,7 @@
                     break;
             }
         }
+
 
     </script>
 

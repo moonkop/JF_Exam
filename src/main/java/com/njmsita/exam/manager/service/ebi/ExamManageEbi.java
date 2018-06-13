@@ -8,6 +8,7 @@ import com.njmsita.exam.manager.model.ScheduleVo;
 import com.njmsita.exam.manager.model.StudentExamQuestionVo;
 import com.njmsita.exam.manager.model.StudentExamVo;
 import com.njmsita.exam.manager.model.querymodel.ExamListQueryModel;
+import com.njmsita.exam.manager.service.ebo.ExamInvoker;
 import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.exception.UnAuthorizedException;
 import com.njmsita.exam.utils.exception.UnLoginException;
@@ -127,7 +128,7 @@ public interface ExamManageEbi extends BaseEbi<ExamVo>
      */
     public boolean checkPermission(String permission, TeacherVo loginUser, ExamVo exam) throws UnAuthorizedException, UnLoginException, Exception;
     public boolean checkPermission(String permission, StudentVo loginUser, StudentExamVo exam) throws UnAuthorizedException, UnLoginException, Exception;
-
+    public void invoke(ExamInvoker examInvoker);
 
     /**
      * 管理员考试列表
@@ -162,5 +163,5 @@ public interface ExamManageEbi extends BaseEbi<ExamVo>
 
     public void saveLog(ScheduleVo scheduleVo, String method);
 
-    public void outmodedSchedul(ScheduleVo scheduleVo);
+    public void outmodedSchedule(ScheduleVo scheduleVo);
 }

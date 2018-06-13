@@ -33,32 +33,90 @@ body {
     min-height: 50px;
 }
 
+.answer-card {
+ //   height: 400px;
+    width: 131px;
+    background: #393b3c;
+    position: fixed;
+    right: 25px;
+    top: 50%;
+    margin-top: -200px;
+    .answer-card-list {
+        text-align: center;
+        overflow-x: hidden;
+        overflow-y: auto;
+        margin: 3px;
+        span {
+            height: 22px;
+            width: 25px;
+            line-height: 22px;
+            background: #f2f2f2;
+            margin: 0;
+            float: left;
+            text-align: center;
+            display: inline-block;
+            border: solid #525354;
+            border-width: 0 1px 1px 0;
+            cursor: pointer;
+            &.completed {
+                background-color: #0cc892;
+                color: #ffffff;
+            }
+            &.up-to-date{
+                background-color: #0c926b !important;
+            }
+            &:hover {
+                background: #333333;
+                color: #ffffff;
+            }
+        }
+
+    }
+    .answer-card-title {
+        height: 25px;
+        line-height: 25px;
+        text-align: center;
+        background: #393b3c;
+        color: #ffffff;
+    }
+    .answer-card-content {
+        height: 50px;
+        line-height: 50px;
+        color: #ffffff;
+        text-align: center;
+        font-size: 22px;
+        background: #525354;
+    }
+    #count-down {
+
+    }
+}
+
 .exam-toolbar {
+
     top: 0;
     width: 100%;
+    max-width: inherit;
     position: fixed;
     height: 50px;
     background-color: @background-color-menu;
     line-height: 50px;
-    .time-area {
-        color: #FFF;
-        font-size: 20px;
-        margin-right:20px;
-      
-        #left-time {
 
-        }
+    .exam-title {
+        font-size: 25px;
+        line-height: 50px;
+        color: #fffffF;
     }
     .pull-right {
 
-        &.btn{
+        &.btn {
             margin-top: 8px;
             margin-right: 10px;
 
         }
 
     }
-    .btn{
+    .btn {
         vertical-align: baseline;
     }
     .btn-default {
@@ -74,9 +132,11 @@ body {
     }
 
 }
-.paper-wrapper{
+
+.paper-wrapper {
     margin: 10px;
 }
+
 .paper-exam {
 
 }
@@ -164,6 +224,11 @@ body {
 }
 
 .panel-question {
+    &.focus {
+        outline-color: #0cb181;
+        outline-style: auto;
+        outline-width: 7px;
+    }
     border: 1px solid #E7E7E8;
     flex-shrink: 0;
     overflow: hidden;
@@ -897,3 +962,4 @@ table.dataTable thead .sorting:after {
         border-left-width: 0;
     }
 }
+

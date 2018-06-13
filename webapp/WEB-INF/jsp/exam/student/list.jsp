@@ -21,7 +21,7 @@
                 'click .js-edit': function (e, value, row, index) {
                     window.location.href = "/exam/manage/edit?id=" + row.id;
                 },
-                'click .js-cel': function (e, value, row, index) {
+                'click .js-cancel': function (e, value, row, index) {
                     if (confirm("确定要取消本场考试吗？") == true)
                     {
                         $.ajax(
@@ -37,12 +37,12 @@
                     }
                 },
                 'click .js-add-teacher': function (e, value, row, index) {
-                    window.location.href = "#" + row.id;
+                    window.location.href = "/exam/operation/addMarkTeacher?id=" + row.id;
                 },
                 'click .js-viewScore': function (e, value, row, index) {
                     window.location.href = "#" + row.id;
                 },
-                'click .js-judge': function (e, value, row, index) {
+                'click .js-review': function (e, value, row, index) {
                     window.location.href = "/exam/operation/review?id=" + row.id;
                 },
                 'click .js-delete': function (e, value, row, index) {
@@ -54,8 +54,8 @@
                 'click .js-submitMark': function (e, value, row, index) {
                     window.location.href = "#" + row.id;
                 },
-                'click .js-attend': function (e, value, row, index) {
-                    window.location.href = "#" + row.id;
+                'click .js-enter': function (e, value, row, index) {
+                    window.location.href = "/exam/student/enter?id=" + row.id;
                 },
                 'click .js-preview': function (e, value, row, index) {
                     window.location.href = "/exam/student/preview?id=" + row.id;
@@ -91,18 +91,15 @@
                                 },
                                 {
                                     field: 'name',
-                                    title: '试卷'
+                                    title: '考试名称'
                                 },
                                 {
 
                                     field: 'openTime',
                                     title: '开始时间',
                                     formatter: function (value, row, index) {
-                                        var date = new Date(value);
-                                        var temp;
-                                        temp = date.getFullYear() + "-" + date.getMonth() + "-" + date.getDay() + " "
-                                            + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
-                                        return temp;
+                                        return TimeStampTDateTimeString(value);
+                                        ;
                                     }
 
                                 },
@@ -137,6 +134,7 @@
                                             '阅卷中': 'label-danger',
                                             '已取消': 'label-warning',
                                             '已结束': 'label-info',
+                                            '已过时': 'label-warning',
                                         }
                                         var html = "<span class='label " + dic[temp] + "'>" + temp + "</span>";
                                         return html;
@@ -149,21 +147,25 @@
                                     formatter: function (value, row, index) {
                                         var act = value;
                                         var dic = {
-                                            'judge': '<span class="label label-action label-danger text-danger js-gradeQuestion">审核</span>',
+                                            'review': '<span class="label label-action label-danger text-danger js-review">审核</span>',
                                             'view': '<i class="fa fa-search js-view" title="预览"></i>',
                                             'edit': '<i class="fa fa-pencil js-edit" title="修改"></i>',
-                                            'cancel': '<i class="fa fa-times js-cel" title="取消"></i>',
+                                            'cancel': '<i class="fa fa-times js-cancel" title="取消"></i>',
                                             'addMarkTeacher': '<i class="fa fa-user-plus js-add-teacher" title="添加批卷教师"></i>',
                                             'viewScore': '<i class="fa fa-eye  js-viewScore" title="查看分数"></i>',
                                             'delete': '<i class="fa fa-trash js-delete" title="删除"></i>',
                                             'mark': '<i class="fa fa-edit  js-mark" title="批阅"></i>',
                                             'submitMark': '<i class="fa fa-check js-submitMark" title="批阅提交"></i>',
-                                            'attend': '<span class="label label-action label-danger text-danger js-attend">参加考试</span>',
+                                            'enter': '<span class="label label-action label-danger text-danger js-enter">参加考试</span>',
                                             'preview': '<i class="fa fa-eye js-preview" title="查看概要"></i>'
                                         };
                                         var html = '';
                                         for (var i = 0; i < act.length; i++)
                                         {
+                                            if(dic[act[i]]==undefined)
+                                            {
+                                                continue;
+                                            }
                                             html += dic[act[i]];
                                         }
                                         return html;

@@ -254,9 +254,7 @@ public class TeacherVo extends UserModel
     }
     public boolean equalsById(TeacherVo teacherVo)
     {
-
         if (getId() != null ? !getId().equals(teacherVo.getId()) : teacherVo.getId() != null) return false;
-
         return true;
     }
 

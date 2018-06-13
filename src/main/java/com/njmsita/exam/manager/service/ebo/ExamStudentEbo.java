@@ -24,7 +24,7 @@ import java.io.Serializable;
 import java.util.*;
 
 @Service
-@Transactional
+
 public class ExamStudentEbo implements ExamStudentEbi
 {
     @Autowired
@@ -65,7 +65,7 @@ public class ExamStudentEbo implements ExamStudentEbi
         return studentExamDao.getCount(qm);
     }
 
-
+    @Transactional
     public void archive(StudentVo login, String studentExamId, List<StudentExamQuestionVo> studentExamQuestionList) throws Exception
     {
         if (StringUtil.isEmpty(studentExamId))
@@ -103,7 +103,7 @@ public class ExamStudentEbo implements ExamStudentEbi
             }
         }
     }
-
+    @Transactional
     public void submit(StudentExamVo studentExamVo, StudentVo loginStudent) throws Exception
     {
 
@@ -142,7 +142,7 @@ public class ExamStudentEbo implements ExamStudentEbi
         }
         return studentExamVo;
     }
-
+    @Transactional
     public StudentExamVo enterExam(String studentExamId, StudentVo loginStudent) throws Exception
     {
         StudentExamVo studentExamPo = studentExamDao.get(studentExamId);
@@ -167,7 +167,7 @@ public class ExamStudentEbo implements ExamStudentEbi
         }
         return studentExamPo;
     }
-
+    @Transactional
     public void studentExamStart(StudentExamVo studentExamPo) throws SchedulerException
     {
         ExamVo examPo = studentExamPo.getExam();
@@ -262,7 +262,7 @@ public class ExamStudentEbo implements ExamStudentEbi
     {
         return studentExamDao.getCount(queryModel);
     }
-
+    @Transactional
     public void gradeStudentExam(StudentExamVo studentExamVo) throws Exception
     {
         PaperVo paperPo = paperMongoDao.getPaperVoByExamId(studentExamVo.getExam().getId());
@@ -279,7 +279,7 @@ public class ExamStudentEbo implements ExamStudentEbi
             gradeQuestion(studentExamQuestionPo, paperQuestionMap.get(studentExamQuestionPo.getIndex()));
         }
     }
-
+    @Transactional
     public void gradeQuestion(StudentExamQuestionVo studentExamQuestionVo, QuestionVo questionVo) throws Exception
     {
         if (questionVo == null || studentExamQuestionVo == null)
@@ -289,6 +289,10 @@ public class ExamStudentEbo implements ExamStudentEbi
         switch (questionVo.getType())
         {
             case SysConsts.QUESTION_TYPE_SINGLE_SELECTION:
+                if (studentExamQuestionVo.getWorkout()==null){
+                    studentExamQuestionVo.setScore(0.0);
+                    break;
+                }
                 if (studentExamQuestionVo.getWorkout().replace(",", "").replace(" ", "").equals(questionVo.getAnswer()))
                 {
                     studentExamQuestionVo.setScore((double) questionVo.getValue());
@@ -297,6 +301,11 @@ public class ExamStudentEbo implements ExamStudentEbi
             case SysConsts.QUESTION_TYPE_MUTI_SELECTION:
                 double score = 0;
                 //按逗号分割
+                if (studentExamQuestionVo.getWorkout() == null)
+                {
+                    studentExamQuestionVo.setScore(0.0);
+                    break;
+                }
                 List<String> workoutList = Arrays.asList(studentExamQuestionVo.getWorkout().split(","));
                 //去除所有空值
                 workoutList.removeAll(SysConsts.STRING_EMPTY_SET);
