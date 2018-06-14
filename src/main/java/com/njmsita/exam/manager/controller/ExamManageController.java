@@ -4,6 +4,7 @@ import com.njmsita.exam.authentic.model.TeacherVo;
 import com.njmsita.exam.authentic.service.ebi.TeacherEbi;
 import com.njmsita.exam.base.BaseController;
 import com.njmsita.exam.manager.model.*;
+import com.njmsita.exam.manager.model.querymodel.ExamEditWrapper;
 import com.njmsita.exam.manager.model.querymodel.ExamListQueryModel;
 import com.njmsita.exam.manager.service.ebi.ClassroomEbi;
 import com.njmsita.exam.manager.service.ebi.ExamManageEbi;
@@ -22,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -115,9 +117,6 @@ public class ExamManageController extends BaseController
      *
      * @param examVo
      * @param bindingResult
-     * @param markTeachers
-     * @param paperId
-     * @param classroomIds
      * @param request
      *
      * @return
@@ -127,22 +126,18 @@ public class ExamManageController extends BaseController
     @ResponseBody
     @RequestMapping("edit.do")
     @SystemLogAnnotation(module = "考试管理", methods = "发起/修改考试")
-    public JsonResponse examDoAdd(@Validated(value = {AddGroup.class}) ExamVo examVo, BindingResult bindingResult,
-                                  @RequestParam(name = "markTeachers[]", required = false) String[] markTeachers, String paperId,
-                                  @RequestParam(name = "_classroomIds[]", required = false) String[] classroomIds,
-                                  HttpServletRequest request) throws Exception
+    public JsonResponse examDoAdd(@RequestBody ExamEditWrapper wrapper, HttpServletRequest request, BindingResult bindingResult) throws Exception
     {
+
         JsonResponse response = new JsonResponse();
         if (GetJsonErrorFields(bindingResult, response)) return response.setCode(417);
-        TeacherVo login = (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
-        if (StringUtil.isEmpty(examVo.getId()))
+        TeacherVo loginTeacher = (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
+        if (StringUtil.isEmpty(wrapper.getExam().getId()))
         {
-            examVo.setCreateTeacher(login);
-            examVo.setId(IdUtil.getUUID());
-            examManageEbi.save(examVo, markTeachers, paperId, classroomIds);
+            examManageEbi.save(wrapper,loginTeacher);
         } else
         {
-            examManageEbi.update(examVo, markTeachers, paperId, classroomIds, (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME));
+            examManageEbi.update(wrapper, loginTeacher);
         }
         return response;
     }
@@ -164,10 +159,24 @@ public class ExamManageController extends BaseController
     {
         if (StringUtil.isEmpty(examVo.getId()))
         {
-            throw new OperationException("所选的该场考试的id不能为空，请不要进行非法操作！");
+            throw new OperationException("所选的该场考试的id不能为空");
         }
         examManageEbi.deleteCanceled(examVo, (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME));
         return new JsonResponse("删除成功");
+    }
+
+    @RequestMapping("stop.do")
+    @ResponseBody
+    @SystemLogAnnotation(module = "考试管理", methods = "终止考试")
+    public JsonResponse stop(@RequestParam(name = "id") String examId, HttpServletRequest request) throws Exception
+    {
+        if (StringUtil.isEmpty(examId))
+        {
+            throw  new OperationException("所选的该场考试的id不能为空");
+        }
+        examManageEbi.stop(examId,(TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME));
+
+        return new JsonResponse("终止成功");
     }
 
     /**
@@ -204,5 +213,6 @@ public class ExamManageController extends BaseController
         return new JsonListResponse<ExamVo>(list,
                 "id,name,openTime,duration,remark,operation,[teacher]getCreateTeacher().getName(),[subject]subject.name,examStatusView", examManageEbi.getCount(examListQueryModel));
     }
+
 
 }

@@ -152,11 +152,11 @@
                                             'edit': '<i class="fa fa-pencil js-edit" title="修改"></i>',
                                             'cancel': '<i class="fa fa-times js-cancel" title="取消"></i>',
                                             'addMarkTeacher': '<i class="fa fa-user-plus js-add-teacher" title="添加批卷教师"></i>',
-                                            'viewScore': '<i class="fa fa-eye  js-viewScore" title="查看分数"></i>',
+                                            'viewScore': '<span class="label label-action label-info  js-enter">查看成绩</span>',
                                             'delete': '<i class="fa fa-trash js-delete" title="删除"></i>',
                                             'mark': '<i class="fa fa-edit  js-mark" title="批阅"></i>',
                                             'submitMark': '<i class="fa fa-check js-submitMark" title="批阅提交"></i>',
-                                            'enter': '<span class="label label-action label-danger text-danger js-enter">参加考试</span>',
+                                            'enter': '<span class="label label-action label-success js-enter">参加考试</span>',
                                             'preview': '<i class="fa fa-eye js-preview" title="查看概要"></i>'
                                         };
                                         var html = '';

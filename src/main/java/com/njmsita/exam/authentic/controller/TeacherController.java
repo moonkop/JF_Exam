@@ -347,8 +347,6 @@ public class TeacherController extends BaseController
         String id = teacher.getId();
         if (null == teacher.getId() || "".equals(teacher.getId().trim()))
         {
-            id = IdUtil.getUUID();
-            teacher.setId(id);
             teaEbi.save(teacher);
         } else
         {

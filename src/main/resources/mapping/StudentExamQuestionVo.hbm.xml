@@ -5,7 +5,9 @@
 <hibernate-mapping>
 
     <class name="com.njmsita.exam.manager.model.StudentExamQuestionVo" table="student_exam_question" schema="jf_exam">
-        <id name="id" column="id"/>
+        <id name="id" column="id">
+            <generator class="native"/>
+        </id>
         <property name="index" column="index_"/>
         <property name="score" column="score"/>
         <property name="remark" column="remark"/>

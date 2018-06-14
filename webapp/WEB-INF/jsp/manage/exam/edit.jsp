@@ -57,8 +57,10 @@
             $.ajax(
                 {
                     url: "/exam/manage/edit.do",
-                    data: data,
-                    type: "post",
+                    data: JSON.stringify(data) ,
+                    type: 'post',
+                    dataType: 'json',
+                    contentType: "application/json",
                     success: function (res) {
                         OnResult(res, function (res) {
                                 layer.msg("提交成功");
@@ -178,17 +180,20 @@
     function exam_edit_form_collect_data()
     {
         var data = {
-            'id': $("form [name='id']").val(),
-            'name': $("form [name='name']").val(),
-            'duration': $("form [name='duration']").val(),
-            'openDuration': $("form [name='openDuration']").val(),
-            'remark': $("form [name='remark']").val(),
+            exam:{
+                'id': $("form [name='id']").val(),
+                'name': $("form [name='name']").val(),
+                'duration': $("form [name='duration']").val(),
+                'openDuration': $("form [name='openDuration']").val(),
+                subject:{
+                  'id':  $("form [name='subject']").val()
+                },
+                'openTime': DateTimeStringToTimeStamp($("form [name='openTime']").val()),
+                'closeTime': DateTimeStringToTimeStamp($("form [name='closeTime']").val()),
+            },
             'paperId': $("form [name='paper']").val(),
-            'subject.id': $("form [name='subject']").val(),
-            'openTime': DateTimeStringToTimeStamp($("form [name='openTime']").val()),
-            'closeTime': DateTimeStringToTimeStamp($("form [name='closeTime']").val()),
             '_classroomIds': $("form [name='classroom']").val(),
-            'immediately':$("#is-start-immediately").prop("checked");
+            'immediately':$("#is-start-immediately").prop("checked")
         };
 
 

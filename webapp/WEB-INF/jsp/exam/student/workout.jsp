@@ -25,8 +25,8 @@
 
     </div>
     <div class="paper-wrapper">
-        <div style="height: 50px;"></div>
-        <div class="paper-exam">
+
+        <div class="paper-exam" style="margin-top: 50px">
             <div class="title-area">
                 <div class="title"></div>
                 <div class="comment"></div>

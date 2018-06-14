@@ -188,7 +188,6 @@ public class TeacherEbo implements TeacherEbi
                     temp.setCreatetime(System.currentTimeMillis());
                     //默认密码为工号
                     temp.setPassword(MD5Utils.md5(temp.getTeacherId()));
-                    temp.setId(IdUtil.getUUID());
                     TroleVo role = roleDao.getByName(SysConsts.TEACHER_ROLE_NAME);
                     temp.setRole(role);
 

@@ -300,12 +300,13 @@ public class ExamStudentEbo implements ExamStudentEbi
                 break;
             case SysConsts.QUESTION_TYPE_MUTI_SELECTION:
                 double score = 0;
-                //按逗号分割
+
                 if (studentExamQuestionVo.getWorkout() == null)
                 {
                     studentExamQuestionVo.setScore(0.0);
                     break;
                 }
+                //按逗号分割
                 List<String> workoutList = Arrays.asList(studentExamQuestionVo.getWorkout().split(","));
                 //去除所有空值
                 workoutList.removeAll(SysConsts.STRING_EMPTY_SET);

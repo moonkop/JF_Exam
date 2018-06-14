@@ -1,11 +1,11 @@
 package com.njmsita.exam.manager.controller;
 
 import com.njmsita.exam.authentic.model.StudentVo;
-import com.njmsita.exam.authentic.model.UserModel;
 import com.njmsita.exam.manager.model.ExamVo;
 import com.njmsita.exam.manager.model.QuestionVo;
 import com.njmsita.exam.manager.model.StudentExamQuestionVo;
 import com.njmsita.exam.manager.model.StudentExamVo;
+import com.njmsita.exam.manager.model.querymodel.ArchiveWrapper;
 import com.njmsita.exam.manager.model.querymodel.StudentExamListQueryModel;
 import com.njmsita.exam.manager.service.ebi.ExamManageEbi;
 import com.njmsita.exam.manager.service.ebi.ExamStudentEbi;
@@ -161,12 +161,6 @@ public class ExamStudentController
         StudentVo studentVo = (StudentVo) session.getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
         List<QuestionVo> questionVolist = examStudentEbi.getPaperQuestion(studentExamId, studentVo);
         return new JsonListResponse<QuestionVo>(questionVolist, "index,type,value,outline,options");
-//
-//        //学生作答情况
-//        List<StudentExamQuestionVo> studentExamQuestionList = (List<StudentExamQuestionVo>) map.get("studentExamQuestionList");
-//        //学生考试信息
-//        StudentExamVo studentExam = (StudentExamVo) map.get("studentExam");
-//        //TODO
     }
 
     /**
@@ -208,7 +202,7 @@ public class ExamStudentController
     {
 
         StudentVo login = (StudentVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
-        examStudentEbi.archive(login, wrapper.id, wrapper.workouts);
+        examStudentEbi.archive(login, wrapper.getId(), wrapper.getWorkouts());
         return new JsonResponse();
     }
 

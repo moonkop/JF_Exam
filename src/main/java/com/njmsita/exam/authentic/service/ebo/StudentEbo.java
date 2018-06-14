@@ -320,7 +320,6 @@ public class StudentEbo implements StudentEbi
                     temp.setSchool(schoolVo);
                     //默认密码为工号
                     temp.setPassword(MD5Utils.md5(temp.getStudentId()));
-                    temp.setId(IdUtil.getUUID());
                     TroleVo role = roleDao.getByName(SysConsts.STUDENT_ROLE_NAME);
                     temp.setRole(role);
 

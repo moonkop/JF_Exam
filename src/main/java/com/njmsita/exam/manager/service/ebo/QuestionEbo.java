@@ -199,7 +199,6 @@ public class QuestionEbo implements QuestionEbi
     public void saveAsMine(QuestionVo questionVo, TeacherVo teacherVo) throws OperationException
     {
         infoValidate(questionVo);
-        questionVo.setId(IdUtil.getUUID());
         questionVo.setTeacher(teacherDao.get(teacherVo.getId()));
         this.save(questionVo);
     }
@@ -225,7 +224,6 @@ public class QuestionEbo implements QuestionEbi
         } else
         {
             questionVo.setTeacher(teacherVo);
-            questionVo.setId(IdUtil.getUUID());
             this.save(questionVo);
             return questionVo;
         }
@@ -419,7 +417,6 @@ public class QuestionEbo implements QuestionEbi
     {
         QuestionVo temp = new QuestionVo();
         int num = row.getRowNum() + 1;
-        String questionId = IdUtil.getUUID();
         Integer isPrivate = 0;
         String code = "";
         String outline = "";
@@ -522,7 +519,6 @@ public class QuestionEbo implements QuestionEbi
 
 
         //属性设置
-        temp.setId(questionId);
         temp.setIsPrivate(isPrivate);
         temp.setCode(code);
         temp.setOutline(outline);

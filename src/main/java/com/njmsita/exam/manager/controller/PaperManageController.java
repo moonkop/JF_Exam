@@ -125,7 +125,6 @@ public class PaperManageController
         teacherVo1.setRole(null);
         paperVo.setTeacher(teacherVo1);
         paperVo.setId(IdUtil.getUUID());
-
         SubjectVo subjectVo = new SubjectVo();
         subjectVo.setId(subject_id);
         paperVo.setSubject(subjectVo);

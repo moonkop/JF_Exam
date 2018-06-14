@@ -51,8 +51,9 @@ public class SysConsts
 	public static final int QUESTION_TYPE_SHORT_ANSWER=4;
 
 	public static final Set<String> STRING_EMPTY_SET = new HashSet<>();
+    public static final String SUPER_ADMIN_ID = "0001" ;
 
-	static{
+    static{
 		STRING_EMPTY_SET.add("");
 	}
 
@@ -152,9 +153,11 @@ public class SysConsts
 	public static final String EXAM_OPERATION_ENTER = "enter";
 	public static final String EXAM_OPERATION_PREVIEW_VISIBLE = "preview"; //显示在list上
 	public static final String EXAM_OPERATION_PREVIEW = "preview_permission";//真正的预览权限
+    public static final String EXAM_OPERATION_STOP = "stop";
 
 
-	public static final String EXAM_PREMISSION_GET_PAPER_CONTENT="";
+
+    public static final String EXAM_PREMISSION_GET_PAPER_CONTENT="";
 	public static final String EXAM_PREMISSION_GET_MY_ANSWER="";
 	public static final String EXAM_PREMISSION_GET_CORRECT_ANSWER="";
 	/**
@@ -171,6 +174,8 @@ public class SysConsts
 	public static final String EXAM_OPERATION_SUBMIT_MARK_VIEW = "提交批阅";
 	public static final String EXAM_OPERATION_ATTEND_VIEW = "参加考试";
 	public static final String EXAM_OPERATION_PREVIEW_VIEW = "查看概要";
+    public static final String EXAM_OPERATION_STOP_VIEW = "终止";
+
 
     public final static Map<String, String> ExamOperationViewMap = new HashMap<>();
 

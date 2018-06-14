@@ -153,7 +153,6 @@ public class SystemManagerController extends BaseController
         }
         if (null == school.getId() || "".equals(school.getId())) //fixed empty
         {
-            school.setId(IdUtil.getUUID());
             schoolEbi.save(school);
         } else
         {
@@ -306,7 +305,6 @@ public class SystemManagerController extends BaseController
         }
         if (null == roleVo.getId() || "".equals(roleVo.getId().trim()))
         {
-            roleVo.setId(IdUtil.getUUID());
             roleEbi.save(roleVo, resourceIds);
         } else
         {
@@ -426,7 +424,6 @@ public class SystemManagerController extends BaseController
         }
         if (null == classroomVo.getId() || "".equals(classroomVo.getId().trim()))
         {
-            classroomVo.setId(IdUtil.getUUID());
             classroomEbi.save(classroomVo);
         } else
         {

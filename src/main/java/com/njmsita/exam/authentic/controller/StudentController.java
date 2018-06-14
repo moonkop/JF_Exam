@@ -308,14 +308,9 @@ public class StudentController extends BaseController
 
         if (null == studentVo.getId() || "".equals(studentVo.getStudentId().trim()) || "".equals(studentVo.getId()))
         {
-            studentVo.setId(IdUtil.getUUID());
-
-
             SchoolVo schoolVo = new SchoolVo();
             schoolVo.setId(schoolID);
             studentVo.setSchool(schoolVo);
-
-
             ClassroomVo classroomVo = new ClassroomVo();
             if (classroomID != null && classroomID != "")
             {
