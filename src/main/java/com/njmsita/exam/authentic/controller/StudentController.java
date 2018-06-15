@@ -88,6 +88,7 @@ public class StudentController extends BaseController
      * @param student 前端获取学生用户登陆数据
      * @param request HttpServletRequest
      * @param session HttpSession
+     *
      * @return
      */
     @RequestMapping("login.do")
@@ -101,38 +102,33 @@ public class StudentController extends BaseController
         //验证用户名密码
         StudentVo loginStudent = studentEbi.login(student.getStudentId(), student.getPassword(), schoolId, loginIp);
 
-        //用户信息验证成功
-        if (loginStudent != null)
+        if (loginStudent == null)
         {
-
-
-
-            //用户名密码验证成功获取当前登录人的所有权限
-            List<TresourceVo> studentResources = resourceEbi.getAllByLogin_stu(loginStudent.getId());
-            StringBuilder sbd = new StringBuilder();
-            //拼接用户资源信息存入登陆用户
-            for (TresourceVo resource : studentResources)
-            {
-                sbd.append(resource.getUrl());
-                sbd.append(",");
-            }
-            session.setAttribute(SysConsts.USER_RESOURCE_NAME, sbd.toString());
-            session.setAttribute(SysConsts.USER_LOGIN_OBJECT_NAME, loginStudent);
-            Hibernate.initialize(loginStudent.getRole());
-
-            //获取登陆用户的菜单
-            getLoginMenu(request);
-
-            //记录登录日志
-            logEbi.login(loginStudent, loginIp);
-
-            //TODO 首次登陆强制跳转个人信息页面添加班级信息？还是直接批量导入时设置班级
-            //fixme 应该是批量导入时设置班级
-            return new JsonResponse("登录成功");
+            //用户信息验证失败
+            return new JsonResponse(501, "登录失败，账号或密码不正确！！");
         }
+        //用户信息验证成功
+        //用户名密码验证成功获取当前登录人的所有权限
+        List<TresourceVo> studentResources = resourceEbi.getAllByLogin_stu(loginStudent.getId());
+        StringBuilder sbd = new StringBuilder();
+        //拼接用户资源信息存入登陆用户
+        for (TresourceVo resource : studentResources)
+        {
+            sbd.append(resource.getUrl());
+            sbd.append(",");
+        }
+        session.setAttribute(SysConsts.USER_RESOURCE_NAME, sbd.toString());
+        session.setAttribute(SysConsts.USER_LOGIN_OBJECT_NAME, loginStudent);
+        Hibernate.initialize(loginStudent.getRole());
 
-        //用户信息验证失败
-        return new JsonResponse(501, "登录失败，账号或密码不正确！！");
+        //获取登陆用户的菜单
+        getLoginMenu(request);
+
+        //记录登录日志
+        logEbi.login(loginStudent, loginIp);
+        //TODO 首次登陆强制跳转个人信息页面添加班级信息？还是直接批量导入时设置班级
+        //fixme 应该是批量导入时设置班级
+        return new JsonResponse("登录成功");
     }
 
     /**
@@ -205,6 +201,7 @@ public class StudentController extends BaseController
      * @param oldPassword 原始密码
      * @param newPassword 新密码
      * @param session
+     *
      * @return
      */
     @RequestMapping("manage/modifyPassword")
@@ -265,12 +262,14 @@ public class StudentController extends BaseController
      *
      * @param studentVo 接受前台传递的学生id
      * @param request   HttpServletRequest
+     *
      * @return 跳转edit
      */
     @RequestMapping("manage/edit")
     public String add(StudentVo studentVo, HttpServletRequest request)
     {
         request.setAttribute("schools", schoolEbi.getAll());
+        request.setAttribute("classrooms", classroomEbi.getAll());
         request.setAttribute("roles", roleEbi.getAll());
         //判断前台是否传递学生ID
         if (!StringUtil.isEmpty(studentVo.getId()))
@@ -287,6 +286,7 @@ public class StudentController extends BaseController
      * 添加学生
      *
      * @param studentVo 需要添加的信息
+     *
      * @return 跳转学生列表页面
      */
     @RequestMapping("manage/edit.do")
@@ -308,14 +308,9 @@ public class StudentController extends BaseController
 
         if (null == studentVo.getId() || "".equals(studentVo.getStudentId().trim()) || "".equals(studentVo.getId()))
         {
-            studentVo.setId(IdUtil.getUUID());
-
-
             SchoolVo schoolVo = new SchoolVo();
             schoolVo.setId(schoolID);
             studentVo.setSchool(schoolVo);
-
-
             ClassroomVo classroomVo = new ClassroomVo();
             if (classroomID != null && classroomID != "")
             {
@@ -335,6 +330,7 @@ public class StudentController extends BaseController
      * 删除学生
      *
      * @param studentVo 需要删除的学生
+     *
      * @return 跳转学生列表页面
      */
     @ResponseBody
@@ -354,7 +350,9 @@ public class StudentController extends BaseController
      *
      * @param studentInfo
      * @param schoolId
+     *
      * @return
+     *
      * @throws FormatException
      * @throws OperationException
      * @throws IOException
@@ -382,6 +380,7 @@ public class StudentController extends BaseController
      * @param studentVo     学生信息
      * @param bindingResult
      * @param request
+     *
      * @return
      */
     @RequestMapping("manage/resetPassword.do")

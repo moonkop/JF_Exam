@@ -1,11 +1,11 @@
 package com.njmsita.exam.manager.controller;
 
 import com.njmsita.exam.authentic.model.StudentVo;
-import com.njmsita.exam.authentic.model.UserModel;
 import com.njmsita.exam.manager.model.ExamVo;
 import com.njmsita.exam.manager.model.QuestionVo;
 import com.njmsita.exam.manager.model.StudentExamQuestionVo;
 import com.njmsita.exam.manager.model.StudentExamVo;
+import com.njmsita.exam.manager.model.querymodel.ArchiveWrapper;
 import com.njmsita.exam.manager.model.querymodel.StudentExamListQueryModel;
 import com.njmsita.exam.manager.service.ebi.ExamManageEbi;
 import com.njmsita.exam.manager.service.ebi.ExamStudentEbi;
@@ -15,6 +15,7 @@ import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.exception.UnLoginException;
 import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.json.CustomJsonSerializer;
+import com.njmsita.exam.utils.json.JsonListObjectMapper;
 import com.njmsita.exam.utils.json.JsonListResponse;
 import com.njmsita.exam.utils.json.JsonResponse;
 import com.njmsita.exam.utils.logutils.SystemLogAnnotation;
@@ -88,7 +89,6 @@ public class ExamStudentController
     @RequestMapping("preview")
     public String preview(String id, HttpServletRequest request, HttpSession session) throws Exception
     {
-
         StudentExamVo studentExamPo = examStudentEbi.get(id);
         examManageEbi.checkPermission(SysConsts.EXAM_OPERATION_PREVIEW,
                 (StudentVo) session.getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME),
@@ -106,7 +106,6 @@ public class ExamStudentController
     @RequestMapping("enter")
     public String toAttendExam(String id, HttpServletRequest request)
     {
-
         return "redirect:/exam/student/preview?id=" + id;
     }
 
@@ -128,7 +127,7 @@ public class ExamStudentController
         StudentVo studentVo = (StudentVo) session.getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
         StudentExamVo studentExamPo = examStudentEbi.enterExam(studentExamId, studentVo);
         ExamVo examPo = studentExamPo.getExam();
-        ExamVo examVoWithPaper= examManageEbi.getWithPaper(studentExamPo.getExam().getId());
+        ExamVo examVoWithPaper = examManageEbi.getWithPaper(studentExamPo.getExam().getId());
         request.setAttribute("exam", examPo);
         request.setAttribute("studentExam", studentExamPo);
         request.setAttribute("currentTime", System.currentTimeMillis());
@@ -137,10 +136,10 @@ public class ExamStudentController
             request.setAttribute("paper", examVoWithPaper.getPaperVo());
             request.setAttribute("questionList", CustomJsonSerializer.toJsonString_static
                     (
-                            new JsonListResponse<QuestionVo>(examVoWithPaper.getPaperVo().getQuestionList(), "outline,options,value,code,index,type")
-                                    .list()
-                    )
-            );
+                            new JsonListObjectMapper<QuestionVo>().
+                                    setFields("id,outline,options,value,code,index,type,answer").
+                                    serializeList(examVoWithPaper.getPaperVo().getQuestionList())
+                    ));
         }
 
         return "/exam/student/workout";
@@ -163,12 +162,6 @@ public class ExamStudentController
         StudentVo studentVo = (StudentVo) session.getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
         List<QuestionVo> questionVolist = examStudentEbi.getPaperQuestion(studentExamId, studentVo);
         return new JsonListResponse<QuestionVo>(questionVolist, "index,type,value,outline,options");
-//
-//        //学生作答情况
-//        List<StudentExamQuestionVo> studentExamQuestionList = (List<StudentExamQuestionVo>) map.get("studentExamQuestionList");
-//        //学生考试信息
-//        StudentExamVo studentExam = (StudentExamVo) map.get("studentExam");
-//        //TODO
     }
 
     /**
@@ -210,7 +203,7 @@ public class ExamStudentController
     {
 
         StudentVo login = (StudentVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
-        examStudentEbi.archive(login, wrapper.id, wrapper.workouts);
+        examStudentEbi.archive(login, wrapper.getId(), wrapper.getWorkouts());
         return new JsonResponse();
     }
 

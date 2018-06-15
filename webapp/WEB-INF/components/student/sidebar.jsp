@@ -6,16 +6,16 @@
             <c:forEach items="${loginMenu}" var="menu">
                 <c:if test="${not empty menu.url}">
                     <li>
-                        <a href="${menu.url}"><i class="${menu.icon}"></i>${menu.name}</a>
+                        <a href="${menu.url}"><i class="fa ${menu.icon}"></i>${menu.name}</a>
                     </li>
                 </c:if>
                 <c:if test="${empty menu.url}">
                     <li>
-                        <a href="#"><i class="${menu.icon}"></i>${menu.name}</a>
+                        <a href="#"><i class="fa ${menu.icon}"></i>${menu.name}</a>
                         <ul class="nav nav-second-level">
                             <c:forEach items="${menu.childs}" var="child">
                                 <li>
-                                    <a href="${child.url}"><i class="${child.icon}"></i>${child.name}</a>
+                                    <a href="${child.url}"><i class="fa ${child.icon}"></i>${child.name}</a>
                                 </li>
                             </c:forEach>
                         </ul>

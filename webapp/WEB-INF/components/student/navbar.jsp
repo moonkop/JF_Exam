@@ -8,7 +8,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="index.html">机蜂 - 在线考试系统</a>
+        <a class="navbar-brand" href="/student/login">机蜂 - 在线考试系统</a>
     </div>
     <!-- /.navbar-header -->
 

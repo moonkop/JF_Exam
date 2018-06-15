@@ -24,11 +24,6 @@ public class StudentExamQuestionDaoImpl extends BaseImpl<StudentExamQuestionVo> 
 
     }
 
-    public List<StudentExamQuestionVo> getAllByStudentExam(StudentExamVo studentExamVo)
-    {
-        String hql="from StudentExamQuestionVo where studentExam.id=?";
-        return (List<StudentExamQuestionVo>) this.getHibernateTemplate().find(hql,studentExamVo.getId());
-    }
 
     public List<StudentExamQuestionVo> getByExam(ExamVo examVo)
     {

@@ -83,16 +83,16 @@ public class ExamMarkEbo implements ExamMarkEbi
 
         }
         List<StudentExamQuestionVo> questionList = studentExamQuestionDao.getByExam(examVo);
-        for (StudentExamQuestionVo studentExamQuestionVo : questionList)
-        {
-            if (studentExamQuestionVo.getQuestionTypeVo().equals(SysConsts.NO_ANSWER_QUESTION_TYPE_NAME))
-            {
-                if (null == studentExamQuestionVo.getTeacherVo())
-                {
-                    throw new OperationException("所选考试下有题目尚未批阅，不能提交阅卷！");
-                }
-            }
-        }
+//        for (StudentExamQuestionVo studentExamQuestionVo : questionList)
+//        {
+//            if (studentExamQuestionVo.getQuestionTypeVo().equals(SysConsts.NO_ANSWER_QUESTION_TYPE_NAME))
+//            {
+//                if (null == studentExamQuestionVo.getTeacherVo())
+//                {
+//                    throw new OperationException("所选考试下有题目尚未批阅，不能提交阅卷！");
+//                }
+//            }
+//        }
         examVo.setExamStatus(SysConsts.EXAM_STATUS_ENDING);
     }
 }

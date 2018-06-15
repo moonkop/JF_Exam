@@ -125,8 +125,6 @@ public class TeacherEbo implements TeacherEbi
 
     public TeacherVo login(String teacherId, String password, String loginIp)
     {
-        //密码进行MD5加密
-        password = MD5Utils.md5(password);
         TeacherVo loginTea = teaDao.getTeaByTeaIdAndPwd(teacherId, password);
         if (loginTea != null)
         {
@@ -188,7 +186,6 @@ public class TeacherEbo implements TeacherEbi
                     temp.setCreatetime(System.currentTimeMillis());
                     //默认密码为工号
                     temp.setPassword(MD5Utils.md5(temp.getTeacherId()));
-                    temp.setId(IdUtil.getUUID());
                     TroleVo role = roleDao.getByName(SysConsts.TEACHER_ROLE_NAME);
                     temp.setRole(role);
 

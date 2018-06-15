@@ -22,12 +22,12 @@ public class ExamListQueryModel extends ExamQueryModel implements BaseListQueryV
     @Override
     public Integer getOffset()
     {
-        return null;
+        return offset;
     }
 
     @Override
     public Integer getPageSize()
     {
-        return null;
+        return pageSize;
     }
 }

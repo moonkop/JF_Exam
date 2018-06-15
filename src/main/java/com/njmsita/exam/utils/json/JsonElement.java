@@ -1,7 +1,6 @@
 package com.njmsita.exam.utils.json;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -12,7 +11,7 @@ public class JsonElement<T>
     String fieldPath;
     Object nullValue = null;
     T object;
-    CustomJsonElementFormater<T> formater;
+    CustomJsonElementFormatter<T> formater;
 
 
     public JsonElement(String field)

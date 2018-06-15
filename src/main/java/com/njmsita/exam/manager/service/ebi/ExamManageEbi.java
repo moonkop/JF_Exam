@@ -7,13 +7,17 @@ import com.njmsita.exam.manager.model.ExamVo;
 import com.njmsita.exam.manager.model.ScheduleVo;
 import com.njmsita.exam.manager.model.StudentExamQuestionVo;
 import com.njmsita.exam.manager.model.StudentExamVo;
+import com.njmsita.exam.manager.model.querymodel.ExamEditWrapper;
 import com.njmsita.exam.manager.model.querymodel.ExamListQueryModel;
+import com.njmsita.exam.manager.service.ebo.ExamInvoker;
 import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.exception.UnAuthorizedException;
 import com.njmsita.exam.utils.exception.UnLoginException;
+import org.apache.commons.collections.iterators.ObjectGraphIterator;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -26,21 +30,15 @@ public interface ExamManageEbi extends BaseEbi<ExamVo>
      * 发起考试
      *
      * @param examVo       考试信息
-     * @param markTeachers 阅卷教师
-     * @param classroomIds 参加班级
-     * @param paperId      试卷id
      */
-    public void save(ExamVo examVo, String[] markTeachers, String paperId, String[] classroomIds) throws OperationException;
+    public void save(ExamEditWrapper wrapper,TeacherVo teacherVo) throws Exception;
 
     /**
      * 修改考试
      *
      * @param examVo       考试信息
-     * @param markTeachers 阅卷教师
-     * @param classroomIds 参加班级
-     * @param paperId      试卷id
      */
-    public void update(ExamVo examVo, String[] markTeachers, String paperId, String[] classroomIds,TeacherVo teacherVo) throws Exception;
+    public void update( ExamEditWrapper wrapper,TeacherVo teacherVo) throws Exception;
 
 
     public ExamVo getWithPaper(Serializable uuid);
@@ -127,7 +125,7 @@ public interface ExamManageEbi extends BaseEbi<ExamVo>
      */
     public boolean checkPermission(String permission, TeacherVo loginUser, ExamVo exam) throws UnAuthorizedException, UnLoginException, Exception;
     public boolean checkPermission(String permission, StudentVo loginUser, StudentExamVo exam) throws UnAuthorizedException, UnLoginException, Exception;
-
+    public void invoke(ExamInvoker examInvoker);
 
     /**
      * 管理员考试列表
@@ -149,19 +147,15 @@ public interface ExamManageEbi extends BaseEbi<ExamVo>
      */
     public List<StudentExamVo> getAllStudentExamByExam(ExamVo examVo, TeacherVo login) throws Exception;
 
-    /**
-     * 获取指定学生试卷的所有待批改题目作答情况
-     *
-     * @param studentExamVo
-     *
-     * @return
-     */
-    public List<StudentExamQuestionVo> getAllStudentexamQuestionByStudentExam(StudentExamVo studentExamVo) throws Exception;
+    public Map<String,Object> getStudentWorkout(String studentExamId) throws Exception;
 
     public ExamVo getExamNotNull(ExamVo examVo) throws OperationException;
 
-    public void saveLog(ScheduleVo scheduleVo, String method);
+    public void log(ScheduleVo scheduleVo, String method);
 
+    public void outmodedSchedule(ScheduleVo scheduleVo);
+
+    void stop(String examId, TeacherVo attribute) throws Exception;
     /**
      * 任务过时
      * @param scheduleVo

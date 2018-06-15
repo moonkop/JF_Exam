@@ -10,7 +10,7 @@ import java.util.Objects;
 public class StudentExamQuestionVo
 {
     private String id;
-    private int index;
+    private Integer index;
     private Double score;
     private String remark;
 
@@ -24,7 +24,19 @@ public class StudentExamQuestionVo
     //阅卷教师   n  TO  1
     private TeacherVo teacherVo;
     //题型    n  TO  1
-    private QuestionTypeVo questionTypeVo;
+    private Integer type;
+
+    @Basic
+    @Column(name = "questionType")
+    public Integer getType()
+    {
+        return type;
+    }
+
+    public void setType(Integer type)
+    {
+        this.type = type;
+    }
 
     @Basic
     @Column(name = "answer")
@@ -74,18 +86,6 @@ public class StudentExamQuestionVo
         this.teacherVo = teacherVo;
     }
 
-    @Basic
-    @Column(name = "questionType")
-    public QuestionTypeVo getQuestionTypeVo()
-    {
-        return questionTypeVo;
-    }
-
-    public void setQuestionTypeVo(QuestionTypeVo questionTypeVo)
-    {
-        this.questionTypeVo = questionTypeVo;
-    }
-
     @Id
     @Column(name = "id")
     public String getId()
@@ -100,13 +100,13 @@ public class StudentExamQuestionVo
 
 
     @Basic
-    @Column(name = "indext")
-    public int getIndex()
+    @Column(name = "index_")
+    public Integer getIndex()
     {
         return index;
     }
 
-    public void setIndex(int indext)
+    public void setIndex(Integer indext)
     {
         this.index = indext;
     }
@@ -139,7 +139,7 @@ public class StudentExamQuestionVo
     public int hashCode()
     {
 
-        return Objects.hash(id, index,score, remark, workout, answer);
+        return Objects.hash(id, index, score, remark, workout, answer);
     }
 
     @Override

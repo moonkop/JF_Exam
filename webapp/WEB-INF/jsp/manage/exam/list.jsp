@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <!-- start content -->
 
@@ -23,12 +24,10 @@
                 'click .js-cancel': function (e, value, row, index) {
                     if (confirm("确定要取消本场考试吗？") == true)
                     {
-                        $.ajax(
+                        myajax(
                             {
-                                url: '/exam/operation/cancel?id=' + row.id,
-                                type: "post",
+                                url: '/exam/operation/cancel.do?id=' + row.id,
                                 success: function (res) {
-                                    OnResult(res);
                                     $("#table").bootstrapTable('refresh');
                                 }
                             }
@@ -45,7 +44,29 @@
                     window.location.href = "/exam/operation/review?id=" + row.id;
                 },
                 'click .js-delete': function (e, value, row, index) {
-                    window.location.href = "#" + row.id;
+                    if (confirm("确定要取消本场考试吗？") == true)
+                    {
+                        myajax(
+                            {
+                                url: '/exam/manage/delete.do?id=' + row.id,
+                                success: function (res) {
+                                    $("#table").bootstrapTable('refresh');
+                                }
+                            }
+                        );
+                    }
+                },'click .js-stop': function (e, value, row, index) {
+                    if (confirm("确定要终止本场考试吗？") == true)
+                    {
+                        myajax(
+                            {
+                                url: '/exam/manage/stop.do?id=' + row.id,
+                                success: function (res) {
+                                    $("#table").bootstrapTable('refresh');
+                                }
+                            }
+                        );
+                    }
                 },
                 'click .js-mark': function (e, value, row, index) {
                     window.location.href = "#" + row.id;
@@ -53,11 +74,11 @@
                 'click .js-submitMark': function (e, value, row, index) {
                     window.location.href = "#" + row.id;
                 },
-                'click .js-attend': function (e, value, row, index) {
-                    window.location.href = "#" + row.id;
+                'click .js-enter': function (e, value, row, index) {
+                    window.location.href = "/exam/student/enter?id=" + row.id;
                 },
                 'click .js-preview': function (e, value, row, index) {
-                    window.location.href = "#" + row.id;
+                    window.location.href = "/exam/student/preview?id=" + row.id;
                 },
 
             }
@@ -90,7 +111,7 @@
                                 },
                                 {
                                     field: 'name',
-                                    title: '试卷'
+                                    title: '考试名称'
                                 },
                                 {
 
@@ -100,6 +121,7 @@
                                         return TimeStampTDateTimeString(value);
                                         ;
                                     }
+
                                 },
                                 {
                                     field: 'duration',
@@ -117,7 +139,7 @@
                                 },
                                 {
                                     field: 'teacher',
-                                    title: '出卷人'
+                                    title: '发起人'
                                 },
                                 {
                                     field: 'subject',
@@ -134,6 +156,7 @@
                                             '未开始': 'label-info',
                                             '待修改': 'label-danger',
                                             '进行中': 'label-success',
+                                            '已交卷': 'label-success',
                                             '答题中': 'label-danger',
                                             '阅卷中': 'label-danger',
                                             '已取消': 'label-warning',
@@ -160,12 +183,17 @@
                                             'delete': '<i class="fa fa-trash js-delete" title="删除"></i>',
                                             'mark': '<i class="fa fa-edit  js-mark" title="批阅"></i>',
                                             'submitMark': '<i class="fa fa-check js-submitMark" title="批阅提交"></i>',
-                                            'attend': '<i class="fa fa-play  js-attend" title="参加考试"></i>',
-                                            'preview': '<i class="fa fa-eye js-preview" title="查看概要"></i>'
+                                            'enter': '<span class="label label-action label-danger text-danger js-enter">参加考试</span>',
+                                            'preview': '<i class="fa fa-eye js-preview" title="查看概要"></i>',
+                                            'stop': '<i class="fa fa-ban js-stop" title="终止考试"></i>'
                                         };
                                         var html = '';
                                         for (var i = 0; i < act.length; i++)
                                         {
+                                            if(dic[act[i]]==undefined)
+                                            {
+                                                continue;
+                                            }
                                             html += dic[act[i]];
                                         }
                                         return html;

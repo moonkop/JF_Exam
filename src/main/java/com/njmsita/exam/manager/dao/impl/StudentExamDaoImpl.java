@@ -41,10 +41,21 @@ public class StudentExamDaoImpl extends BaseImpl<StudentExamVo> implements Stude
 
     public void deleteAllByExam(ExamVo examVo)
     {
-        List<StudentExamVo> list = this.getAllByExam(examVo);
-        if (list.size() > 0)
+        List<StudentExamVo> studentExamVoList = this.getAllByExam(examVo);
+        if (studentExamVoList == null)
         {
-            this.getHibernateTemplate().deleteAll(list);
+            return;
+        }
+        for (StudentExamVo studentExamPo : studentExamVoList)
+        {
+            if (studentExamPo != null && studentExamPo.getStudentExamQuestionVos() != null)
+            {
+                this.getHibernateTemplate().deleteAll(studentExamPo.getStudentExamQuestionVos());
+            }
+        }
+        if (studentExamVoList != null)
+        {
+            this.getHibernateTemplate().deleteAll(studentExamVoList);
         }
     }
 //

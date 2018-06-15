@@ -30,7 +30,6 @@ public class TresourceVo
     @NotNull(message = "{seq.notempty}",groups = {AddGroup.class, EditGroup.class})
     private Integer seq;
 
-    @NotEmpty(message = "{url.notempty}",groups = {AddGroup.class, EditGroup.class})
     private String url;
 
     //所属资源类型 n TO 1

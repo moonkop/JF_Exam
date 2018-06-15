@@ -49,6 +49,4 @@ public interface StudentEbi extends BaseEbi<StudentVo>
      * @param newPassword       新密码
      */
     public void modifyPassword(StudentVo loginStudent, String oldPassword, String newPassword) throws OperationException;
-
-    public void save(StudentVo studentVo, String schoolID) throws OperationException;
 }

@@ -14,9 +14,11 @@ import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.json.CustomJsonSerializer;
+import com.njmsita.exam.utils.json.JsonListObjectMapper;
 import com.njmsita.exam.utils.json.JsonListResponse;
 import com.njmsita.exam.utils.json.JsonResponse;
 import com.njmsita.exam.utils.logutils.SystemLogAnnotation;
+import com.sun.xml.internal.ws.resources.HttpserverMessages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 考试操作控制器
@@ -49,7 +52,9 @@ public class ExamOperationController
      * 到审核页面
      *
      * @param request
+     *
      * @return
+     *
      * @throws OperationException
      */
     @RequestMapping("review")
@@ -68,10 +73,10 @@ public class ExamOperationController
             request.setAttribute("paper", examVo.getPaperVo());
             request.setAttribute("questionList", CustomJsonSerializer.toJsonString_static
                     (
-                            new JsonListResponse<QuestionVo>(examVo.getPaperVo().getQuestionList(), "id,outline,options,value,code,index,type,answer")
-                                    .list()
-                    )
-            );
+                            new JsonListObjectMapper<QuestionVo>().
+                                    setFields("id,outline,options,value,code,index,type,answer").
+                                    serializeList(examVo.getPaperVo().getQuestionList())
+                    ));
         }
         return "/manage/exam/review";
     }
@@ -81,7 +86,9 @@ public class ExamOperationController
      *
      * @param examVo
      * @param request
+     *
      * @return
+     *
      * @throws Exception
      */
     @ResponseBody
@@ -104,7 +111,9 @@ public class ExamOperationController
      *
      * @param examVo（驳回必须填写备注remark属性）
      * @param request
+     *
      * @return
+     *
      * @throws Exception
      */
     @ResponseBody
@@ -128,7 +137,9 @@ public class ExamOperationController
      *
      * @param examVo
      * @param session
+     *
      * @return
+     *
      * @throws Exception
      */
     @RequestMapping("cancel.do")
@@ -150,7 +161,9 @@ public class ExamOperationController
      *
      * @param examVo
      * @param request
+     *
      * @return
+     *
      * @throws Exception
      */
     @RequestMapping("addMarkTeacher")
@@ -180,7 +193,9 @@ public class ExamOperationController
      * @param examVo
      * @param markTeachers
      * @param request
+     *
      * @return
+     *
      * @throws Exception
      */
     @RequestMapping("addMarkTeacher.do")
@@ -201,12 +216,25 @@ public class ExamOperationController
     }
 
     @RequestMapping("mark")
-    public String toMarking(StudentExamVo studentExamVo, HttpServletRequest request) throws Exception
+    public String toMarking(@RequestParam(name = "id") String ExamId, HttpServletRequest request) throws Exception
     {
-        List<StudentExamQuestionVo> studentExamQuestionList = examManageEbi.getAllStudentexamQuestionByStudentExam(studentExamVo);
-        request.setAttribute("studentExamQuestionList", studentExamQuestionList);
-        return null;
+        TeacherVo loginTeacher = (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
+        ExamVo examPo = examManageEbi.get(ExamId);
+        examManageEbi.checkPermission(SysConsts.EXAM_OPERATION_MARK, loginTeacher, examPo);
+        return "/exam/mark";
     }
+
+    @ResponseBody
+    @RequestMapping("getWorkout.do")
+    public JsonResponse getStudentWorkout(String studentExamId, HttpServletRequest request) throws Exception
+    {
+
+        JsonResponse jsonResponse = new JsonResponse();
+        jsonResponse.setPayload(examManageEbi.getStudentWorkout(studentExamId));
+        return jsonResponse;
+
+    }
+
 
     @RequestMapping("saveMarked.do")
     @ResponseBody
@@ -221,8 +249,8 @@ public class ExamOperationController
     @ResponseBody
     public JsonResponse submitMarked(ExamVo examVo, HttpServletRequest request) throws Exception
     {
-        TeacherVo login = (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
-        examMarkEbi.submitMarked(examVo, login);
+        TeacherVo loginTeacher = (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
+        examMarkEbi.submitMarked(examVo, loginTeacher);
         return null;
     }
 

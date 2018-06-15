@@ -24,7 +24,7 @@ import java.io.Serializable;
 import java.util.*;
 
 @Service
-@Transactional
+
 public class ExamStudentEbo implements ExamStudentEbi
 {
     @Autowired
@@ -65,7 +65,7 @@ public class ExamStudentEbo implements ExamStudentEbi
         return studentExamDao.getCount(qm);
     }
 
-
+    @Transactional
     public void archive(StudentVo login, String studentExamId, List<StudentExamQuestionVo> studentExamQuestionList) throws Exception
     {
         if (StringUtil.isEmpty(studentExamId))
@@ -103,7 +103,7 @@ public class ExamStudentEbo implements ExamStudentEbi
             }
         }
     }
-
+    @Transactional
     public void submit(StudentExamVo studentExamVo, StudentVo loginStudent) throws Exception
     {
 
@@ -142,7 +142,7 @@ public class ExamStudentEbo implements ExamStudentEbi
         }
         return studentExamVo;
     }
-
+    @Transactional
     public StudentExamVo enterExam(String studentExamId, StudentVo loginStudent) throws Exception
     {
         StudentExamVo studentExamPo = studentExamDao.get(studentExamId);
@@ -167,7 +167,7 @@ public class ExamStudentEbo implements ExamStudentEbi
         }
         return studentExamPo;
     }
-
+    @Transactional
     public void studentExamStart(StudentExamVo studentExamPo) throws SchedulerException
     {
         ExamVo examPo = studentExamPo.getExam();
@@ -183,7 +183,7 @@ public class ExamStudentEbo implements ExamStudentEbi
             seq.setStudentExam(studentExamPo);
             seq.setIndex(i + 1);
             seq.setAnswer(questionVoList.get(i).getAnswer());
-            seq.setQuestionTypeVo(questionVoList.get(i).getQuestionType());
+            seq.setType(questionVoList.get(i).getType());
             studentExamQuestionDao.save(seq);
         }
         //创建自动提交定时任务
@@ -205,7 +205,7 @@ public class ExamStudentEbo implements ExamStudentEbi
         scheduleVo.setTargetVoId(studentExamPo.getId());
         scheduleVo.setJobType(SysConsts.SCHEDULEVO_JOB_TYPE_ONETIME);
         SchedulerJobUtil.addJob(scheduleVo);
-        examManageEbi.saveLog(scheduleVo, scheduleVo.getDescribe());
+        examManageEbi.log(scheduleVo, scheduleVo.getDescribe());
     }
 
     public List<StudentExamQuestionVo> getStudentAnswer(String studentExamId, StudentVo loginStudent) throws Exception
@@ -214,8 +214,10 @@ public class ExamStudentEbo implements ExamStudentEbi
         ExamVo examPo = studentExamPo.getExam();
         examManageEbi.checkPermission(SysConsts.EXAM_OPERATION_ENTER, loginStudent, studentExamPo);
 
-        List<StudentExamQuestionVo> answerList = studentExamQuestionDao.getAllByStudentExam(studentExamPo);
-        return answerList;
+//        List<StudentExamQuestionVo> answerList = studentExamQuestionDao.getAllByStudentExam(studentExamPo);
+//        return answerList;
+        return null;
+
     }
 
     public List<QuestionVo> getPaperQuestion(String studentExamId, StudentVo loginStudent) throws Exception
@@ -262,7 +264,7 @@ public class ExamStudentEbo implements ExamStudentEbi
     {
         return studentExamDao.getCount(queryModel);
     }
-
+    @Transactional
     public void gradeStudentExam(StudentExamVo studentExamVo) throws Exception
     {
         PaperVo paperPo = paperMongoDao.getPaperVoByExamId(studentExamVo.getExam().getId());
@@ -279,7 +281,7 @@ public class ExamStudentEbo implements ExamStudentEbi
             gradeQuestion(studentExamQuestionPo, paperQuestionMap.get(studentExamQuestionPo.getIndex()));
         }
     }
-
+    @Transactional
     public void gradeQuestion(StudentExamQuestionVo studentExamQuestionVo, QuestionVo questionVo) throws Exception
     {
         if (questionVo == null || studentExamQuestionVo == null)
@@ -289,6 +291,10 @@ public class ExamStudentEbo implements ExamStudentEbi
         switch (questionVo.getType())
         {
             case SysConsts.QUESTION_TYPE_SINGLE_SELECTION:
+                if (studentExamQuestionVo.getWorkout()==null){
+                    studentExamQuestionVo.setScore(0.0);
+                    break;
+                }
                 if (studentExamQuestionVo.getWorkout().replace(",", "").replace(" ", "").equals(questionVo.getAnswer()))
                 {
                     studentExamQuestionVo.setScore((double) questionVo.getValue());
@@ -296,6 +302,12 @@ public class ExamStudentEbo implements ExamStudentEbi
                 break;
             case SysConsts.QUESTION_TYPE_MUTI_SELECTION:
                 double score = 0;
+
+                if (studentExamQuestionVo.getWorkout() == null)
+                {
+                    studentExamQuestionVo.setScore(0.0);
+                    break;
+                }
                 //按逗号分割
                 List<String> workoutList = Arrays.asList(studentExamQuestionVo.getWorkout().split(","));
                 //去除所有空值

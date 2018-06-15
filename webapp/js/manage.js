@@ -69,13 +69,13 @@ function myajax(config)
     if (config.success != undefined && config.success != null)
     {
         var success = config.success;
+        var error=config.error;
         config.success = function (res) {
             //success 请求成功，并且服务器返回200，error 请求成功，服务器返回错误码code=404
-            OnResult(res, success, config.error);
+            OnResult(res, success, error);
         }
     }
     if (config.error == undefined)
-
     //如果直接请求失败，则为网络错误，重写error方法
     {
         config.error = function () {
@@ -84,6 +84,7 @@ function myajax(config)
     }
     $.ajax(config);
 }
+
 
 
 function OnResult(result, onsuccess, onfailure)

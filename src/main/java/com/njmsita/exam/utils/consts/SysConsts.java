@@ -50,11 +50,17 @@ public class SysConsts
 	//简答题
 	public static final int QUESTION_TYPE_SHORT_ANSWER=4;
 
-	public static final Set<String> STRING_EMPTY_SET = new HashSet<>();
+	public static final Set<Integer> MANUAL_MARK_QUESTION_TYPE_SET = new HashSet<>();
+	static{
+		MANUAL_MARK_QUESTION_TYPE_SET.add(QUESTION_TYPE_MUTI_SELECTION);
+	}
 
+	public static final Set<String> STRING_EMPTY_SET = new HashSet<>();
 	static{
 		STRING_EMPTY_SET.add("");
 	}
+
+    public static final String SUPER_ADMIN_ID = "0" ;
 
 	/**
 	 * 批量导入文件类型
@@ -90,6 +96,10 @@ public class SysConsts
 	 */
 	public static final String EXAM_PAPER_SAVA_MONGO_OF_COLLECTION = "examPaper";
 
+	/**
+	 * 考试将允许提交时间放宽3分钟
+	 */
+	public static final int EXAM_SUBMIT_ADDITIONAL_TIME = 3 * 1000 * 60;
 	/**
 	 * 考试状态码int
 	 */
@@ -145,9 +155,14 @@ public class SysConsts
 	public static final String EXAM_OPERATION_DELETE = "delete";
 	public static final String EXAM_OPERATION_MARK = "mark";
 	public static final String EXAM_OPERATION_SUBMIT_MARK = "submitMark";
-	public static final String EXAM_OPERATION_ENTER = "attend";
-	public static final String EXAM_OPERATION_PREVIEW = "preview";
-	public static final String EXAM_PREMISSION_GET_PAPER_CONTENT="";
+	public static final String EXAM_OPERATION_ENTER = "enter";
+	public static final String EXAM_OPERATION_PREVIEW_VISIBLE = "preview"; //显示在list上
+	public static final String EXAM_OPERATION_PREVIEW = "preview_permission";//真正的预览权限
+    public static final String EXAM_OPERATION_STOP = "stop";
+
+
+
+    public static final String EXAM_PREMISSION_GET_PAPER_CONTENT="";
 	public static final String EXAM_PREMISSION_GET_MY_ANSWER="";
 	public static final String EXAM_PREMISSION_GET_CORRECT_ANSWER="";
 	/**
@@ -164,6 +179,8 @@ public class SysConsts
 	public static final String EXAM_OPERATION_SUBMIT_MARK_VIEW = "提交批阅";
 	public static final String EXAM_OPERATION_ATTEND_VIEW = "参加考试";
 	public static final String EXAM_OPERATION_PREVIEW_VIEW = "查看概要";
+    public static final String EXAM_OPERATION_STOP_VIEW = "终止";
+
 
     public final static Map<String, String> ExamOperationViewMap = new HashMap<>();
 
@@ -179,7 +196,7 @@ public class SysConsts
         ExamOperationViewMap.put(SysConsts.EXAM_OPERATION_MARK, SysConsts.EXAM_OPERATION_MARK_VIEW);
         ExamOperationViewMap.put(SysConsts.EXAM_OPERATION_SUBMIT_MARK, SysConsts.EXAM_OPERATION_SUBMIT_MARK_VIEW);
         ExamOperationViewMap.put(SysConsts.EXAM_OPERATION_ENTER, SysConsts.EXAM_OPERATION_ATTEND_VIEW);
-        ExamOperationViewMap.put(SysConsts.EXAM_OPERATION_PREVIEW, SysConsts.EXAM_OPERATION_PREVIEW_VIEW);
+        ExamOperationViewMap.put(SysConsts.EXAM_OPERATION_PREVIEW_VISIBLE, SysConsts.EXAM_OPERATION_PREVIEW_VIEW);
     }
 
 

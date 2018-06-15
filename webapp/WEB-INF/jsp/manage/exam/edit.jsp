@@ -22,7 +22,10 @@
         {
             var subject = $("#select-subject").val();
 
-
+            if (User.role == '0')
+            {
+                $("#is-start-immediately").show();
+            }
             myajax({
                 url: "/paper/list.do",
                 data: {
@@ -47,15 +50,17 @@
 
         $("form").on("submit", function () {
             var data = exam_edit_form_collect_data();
-            if(data==undefined)
+            if (data == undefined)
             {
                 return false;
             }
             $.ajax(
                 {
                     url: "/exam/manage/edit.do",
-                    data:data ,
-                    type: "post",
+                    data: JSON.stringify(data) ,
+                    type: 'post',
+                    dataType: 'json',
+                    contentType: "application/json",
                     success: function (res) {
                         OnResult(res, function (res) {
                                 layer.msg("提交成功");
@@ -81,13 +86,14 @@
                 $(".js-form-group-duration").show();
             } else
             {
-                if($("#is-limit-open-duration").prop("checked"))
+                if ($("#is-limit-open-duration").prop("checked"))
                 {
                     $("#is-limit-duration").prop("checked", true);
 
                     layer.msg("限制入场时间必须限制答题时间");
 
-                }else{
+                } else
+                {
                     $(".js-form-group-duration").hide();
 
                 }
@@ -105,33 +111,49 @@
             }
         })
 
-        $("#is-limit-duration,#is-limit-open-duration").on("change",function()
-        {
-            if($("#is-limit-open-duration").prop("checked")&&$("#is-limit-duration").prop("checked"))
+        $("#is-limit-duration,#is-limit-open-duration").on("change", function () {
+            if ($("#is-limit-open-duration").prop("checked") && $("#is-limit-duration").prop("checked"))
             {
 
-                $("#input-finish_time").prop("disabled",true);
+                $("#input-finish_time").prop("disabled", true);
                 autoSetEndTime();
-                $("#input-start_time,#input-duration,#input-enter_time").on("change",autoSetEndTime);
-            }else{
-                $("#input-finish_time").prop("disabled",false);
+                $("#input-start_time,#input-duration,#input-enter_time").on("change", autoSetEndTime);
+            } else
+            {
+                $("#input-finish_time").prop("disabled", false);
                 $("#input-start_time,#input-duration,#input-enter_time").off("change", autoSetEndTime);
             }
         })
-
-
-            function autoSetEndTime()
+        var timer="";
+        $("#is-start-immediately").on("change",function()
+        {
+            if($("#is-start-immediately").prop("checked"))
             {
-                var time=DateTimeStringToTimeStamp($("#input-start_time").val())+$("#input-duration").val()*60*1000+$("#input-enter_time").val()*60*1000 ;
-                $("#input-finish_time").val(TimeStampTDateTimeString(time));
+                $("#input-start_time").prop("disabled",true);
+                timer=setInterval(function(){
+                    $("#input-start_time").val(TimeStampTDateTimeString(new Date().getTime()));
+                    $("#input-start_time").trigger("change");
+                },1000)
+            }else{
+                $("#input-start_time").prop("disabled",false);
+                clearInterval(timer);
             }
+
+        })
+
+
+        function autoSetEndTime()
+        {
+            var time = DateTimeStringToTimeStamp($("#input-start_time").val()) + $("#input-duration").val() * 60 * 1000 + $("#input-enter_time").val() * 60 * 1000;
+            $("#input-finish_time").val(TimeStampTDateTimeString(time));
+        }
 
 
         getPapers();
         laydate.render({
             elem: '#input-start_time'
             , type: 'datetime',
-            done: function(value,date){
+            done: function (value, date) {
                 $("#input-start_time").val(value);
                 $("#input-start_time").trigger("change");
             }
@@ -158,25 +180,29 @@
     function exam_edit_form_collect_data()
     {
         var data = {
-            'id': $("form [name='id']").val(),
-            'name': $("form [name='name']").val(),
-            'duration': $("form [name='duration']").val(),
-            'openDuration': $("form [name='openDuration']").val(),
-            'remark': $("form [name='remark']").val(),
+            exam:{
+                'id': $("form [name='id']").val(),
+                'name': $("form [name='name']").val(),
+                'duration': $("form [name='duration']").val(),
+                'openDuration': $("form [name='openDuration']").val(),
+                subject:{
+                  'id':  $("form [name='subject']").val()
+                },
+                'openTime': DateTimeStringToTimeStamp($("form [name='openTime']").val()),
+                'closeTime': DateTimeStringToTimeStamp($("form [name='closeTime']").val()),
+            },
             'paperId': $("form [name='paper']").val(),
-            'subject.id': $("form [name='subject']").val(),
-            'openTime': DateTimeStringToTimeStamp($("form [name='openTime']").val()),
-            'closeTime': DateTimeStringToTimeStamp($("form [name='closeTime']").val()),
             '_classroomIds': $("form [name='classroom']").val(),
+            'immediately':$("#is-start-immediately").prop("checked")
         };
 
 
-        if($("#is-limit-open-duration").prop("checked")&&$("#input-enter_time").val()==0)
+        if ($("#is-limit-open-duration").prop("checked") && $("#input-enter_time").val() == 0)
         {
             layer.alert("限制入场时间时，入场时间不能为空");
             return;
         }
-        if($("#is-limit-duration").prop("checked")&&$("#input-duration").val()==0)
+        if ($("#is-limit-duration").prop("checked") && $("#input-duration").val() == 0)
         {
             layer.alert("限制答题时间时，答题时间不能为空")
             return;
@@ -189,8 +215,6 @@
 
         return data;
     }
-
-
 
 
 </script>
@@ -219,7 +243,6 @@
                                            value="${exam.name}" placeholder="请输入考试名称">
                                 </div>
                             </div>
-
 
 
                             <div class="form-group">
@@ -299,6 +322,17 @@
                                     <label class="checkbox" for="is-limit-open-duration">
                                         <input type="checkbox" id="is-limit-open-duration">
                                         限制入场时间
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-2">
+
+                                </div>
+                                <div class="col-sm-8">
+                                    <label class="checkbox" for="is-start-immediately">
+                                        <input type="checkbox" id="is-start-immediately" hidden>
+                                        立刻开始
                                     </label>
                                 </div>
                             </div>

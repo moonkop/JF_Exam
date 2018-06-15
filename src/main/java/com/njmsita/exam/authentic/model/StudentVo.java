@@ -304,4 +304,12 @@ public class StudentVo extends UserModel
                 ", role=" + role +
                 '}';
     }
+
+    public boolean equalsById(StudentVo teacherVo)
+    {
+        if (getId() != null ? !getId().equals(teacherVo.getId()) : teacherVo.getId() != null) return false;
+        return true;
+    }
+
+
 }

@@ -1,4 +1,4 @@
-package com.njmsita.exam.manager.controller;
+package com.njmsita.exam.manager.model.querymodel;
 
 import com.njmsita.exam.manager.model.StudentExamQuestionVo;
 import org.springframework.stereotype.Component;
@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-class ArchiveWrapper
+public class ArchiveWrapper
 {
 
     List<StudentExamQuestionVo> workouts;
