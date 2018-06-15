@@ -362,10 +362,18 @@ body {
 }
 
 .navbar-default {
+    
     background-color: #2a323d;
     color: @text-color;
     border: 0;
     width: 100%;
+}
+
+@media (max-width: 768px) {
+    .navbar-default{
+        display: none;
+    }
+    
 }
 
 .navbar-top-links {
