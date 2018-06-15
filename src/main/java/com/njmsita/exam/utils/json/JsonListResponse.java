@@ -2,27 +2,23 @@ package com.njmsita.exam.utils.json;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class JsonListResponse<T> extends JsonObjectResponse<T>
+public class JsonListResponse<T> extends JsonResponse
 {
     @JsonIgnore
     protected List<T> raw;
     @JsonIgnore
-    protected List<Map<String, Object>> rows = new ArrayList<>();
+    protected JsonListObjectMapper<T> listMapper = new JsonListObjectMapper<>();
+    @JsonIgnore
+    protected List<Map<String, Object>> rows;
 
     public JsonListResponse()
     {
 
     }
 
-    @JsonIgnore
-    public List<Map<String, Object>> list()
-    {
-        return rows;
-    }
     public JsonListResponse(String fields)
     {
         this.setFields(fields);
@@ -49,53 +45,35 @@ public class JsonListResponse<T> extends JsonObjectResponse<T>
         this(raw, fields, raw.size());
     }
 
+
     public JsonListResponse<T> setRaw(List<T> raw)
     {
         this.raw = raw;
         return this;
     }
 
-
-    @Override
-    public JsonListResponse<T> addCustomJsonElementFormater(String key, CustomJsonElementFormater<T> formater)
+    public JsonListResponse<T> addCustomJsonElementFormatter(String key, CustomJsonElementFormatter<T> formatter)
     {
-        super.addCustomJsonElementFormater(key, formater);
+        this.listMapper.addCustomJsonElementFormatter(key, formatter);
         return this;
     }
 
-    @Override
     public JsonListResponse<T> addNullValue(String key, Object value)
     {
-        super.addNullValue(key, value);
+        this.listMapper.addNullValue(key, value);
         return this;
     }
 
-    @Override
     public JsonListResponse<T> setFields(String fieldString)
     {
-        super.setFields(fieldString);
+        this.listMapper.setFields(fieldString);
         return this;
     }
 
     public JsonListResponse<T> serialize()
     {
-        if (this.raw != null)
-        {
-            try
-            {
-                for (T obj : raw)
-                {
-                    Map<String, Object> row = this.serializeObject(obj);
-                    rows.add(row);
-                }
-
-
-            } catch (Exception e)
-            {
-                e.printStackTrace();
-            }
-        }
-        this.payload.put("rows", rows);
+        this.rows = this.listMapper.serializeList(raw);
+        this.payload.put("rows", this.rows);
         return this;
     }
 

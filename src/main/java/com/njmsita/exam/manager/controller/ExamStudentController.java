@@ -15,6 +15,7 @@ import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.exception.UnLoginException;
 import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.json.CustomJsonSerializer;
+import com.njmsita.exam.utils.json.JsonListObjectMapper;
 import com.njmsita.exam.utils.json.JsonListResponse;
 import com.njmsita.exam.utils.json.JsonResponse;
 import com.njmsita.exam.utils.logutils.SystemLogAnnotation;
@@ -135,10 +136,10 @@ public class ExamStudentController
             request.setAttribute("paper", examVoWithPaper.getPaperVo());
             request.setAttribute("questionList", CustomJsonSerializer.toJsonString_static
                     (
-                            new JsonListResponse<QuestionVo>(examVoWithPaper.getPaperVo().getQuestionList(), "outline,options,value,code,index,type")
-                                    .list()
-                    )
-            );
+                            new JsonListObjectMapper<QuestionVo>().
+                                    setFields("id,outline,options,value,code,index,type,answer").
+                                    serializeList(examVoWithPaper.getPaperVo().getQuestionList())
+                    ));
         }
 
         return "/exam/student/workout";

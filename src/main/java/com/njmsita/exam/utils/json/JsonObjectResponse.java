@@ -2,14 +2,12 @@ package com.njmsita.exam.utils.json;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class JsonObjectResponse<T> extends JsonResponse
 {
 
     @JsonIgnore
-    protected Map<String, JsonElement> elementMap = new HashMap<>();
+    protected JsonObjectMapper<T> mapper = new JsonObjectMapper<T>();
+
     @JsonIgnore
     private T object;
 
@@ -31,51 +29,37 @@ public class JsonObjectResponse<T> extends JsonResponse
 
     public JsonObjectResponse(T object, String fields)
     {
-        this(object, fields,false);
+        this(object, fields, false);
     }
-
 
     public void setObject(T object)
     {
         this.object = object;
     }
 
-    public JsonObjectResponse<T> addCustomJsonElementFormater(String key, CustomJsonElementFormater<T> formater)
+    public JsonObjectResponse<T> addCustomJsonElementFormatter(String key, CustomJsonElementFormatter<T> formatter)
     {
-        elementMap.get(key).formater = formater;
+        mapper.addCustomJsonElementFormatter(key, formatter);
         return this;
     }
 
     public JsonObjectResponse<T> addNullValue(String key, Object value)
     {
-        elementMap.get(key).nullValue = value;
+        mapper.addNullValue(key, value);
         return this;
     }
 
     public JsonObjectResponse<T> setFields(String fieldString)
     {
-        String[] fields = fieldString.split(",");
-        for (String field : fields)
-        {
-            JsonElement element = new JsonElement(field);
-            elementMap.put(element.key, element);
-        }
+        mapper.setFields(fieldString);
         return this;
     }
 
     public JsonObjectResponse<T> serialize()
     {
-        this.put("object", serializeObject(object));
+        this.put("object", mapper.serializeObject(this.object));
         return this;
     }
 
-    public Map<String, Object> serializeObject(T object)
-    {
-        Map<String, Object> objectMap = new HashMap<>();
-        for (JsonElement<T> element : this.elementMap.values())
-        {
-            objectMap.put(element.key, element.serialize(object));
-        }
-        return objectMap;
-    }
+
 }

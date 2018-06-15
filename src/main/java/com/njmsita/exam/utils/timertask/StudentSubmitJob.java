@@ -15,6 +15,8 @@ public class StudentSubmitJob implements Job
 {
     public void execute(JobExecutionContext context) throws JobExecutionException
     {
+        //fixme
+
         JobDataMap dataMap= context.getJobDetail().getJobDataMap();
         ScheduleVo scheduleVo = (ScheduleVo) dataMap.get("scheduleVo");
         StudentExamDao studentExamDao= (StudentExamDao) scheduleVo.getDao();
@@ -23,16 +25,16 @@ public class StudentSubmitJob implements Job
         studentExamVo.setSubmitTime(System.currentTimeMillis());
         Set<StudentExamQuestionVo> questions=studentExamVo.getStudentExamQuestionVos();
         double sum=0;
-        for (StudentExamQuestionVo question : questions)
-        {
-            double score=0;
-            if(question.getAnswer().equals(question.getWorkout())){
-                score=question.getQuestionTypeVo().getScore();
-            }else if(question.getAnswer().contains(question.getWorkout())){
-                score=question.getQuestionTypeVo().getScore()/2;
-            }
-            question.setScore(FormatUtil.formatScore(score));
-        }
+//        for (StudentExamQuestionVo question : questions)
+//        {
+//            double score=0;
+//            if(question.getAnswer().equals(question.getWorkout())){
+//                score=question.getQuestionTypeVo().getScore();
+//            }else if(question.getAnswer().contains(question.getWorkout())){
+//                score=question.getQuestionTypeVo().getScore()/2;
+//            }
+//            question.setScore(FormatUtil.formatScore(score));
+//        }
         studentExamVo.setScore(FormatUtil.formatScore(sum));
         studentExamVo.setStudentExamQuestionVos(questions);
         studentExamDao.update(studentExamVo);

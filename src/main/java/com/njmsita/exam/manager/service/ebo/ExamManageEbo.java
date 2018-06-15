@@ -17,6 +17,8 @@ import com.njmsita.exam.utils.exception.UnLoginException;
 import com.njmsita.exam.utils.format.FormatUtil;
 import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.idutil.IdUtil;
+import com.njmsita.exam.utils.json.JsonListObjectMapper;
+import com.njmsita.exam.utils.json.JsonObjectMapper;
 import com.njmsita.exam.utils.timertask.SchedulerJobUtil;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -222,8 +224,8 @@ public class ExamManageEbo implements ExamManageEbi
             scheduleVo.setJobStatus(SysConsts.SCHEDULEVO_JOB_STATUS_FORBIDDEN);
             new SchedulerJobUtil().deleteJob(scheduleVo, schedulerFactoryBean.getScheduler());
             //new SchedulerJobUtil().pauseJob(scheduleVo, schedulerFactoryBean.getScheduler());
-            saveLog(scheduleVo, "删除任务");
-            //saveLog(scheduleVo, "禁用任务");
+            log(scheduleVo, "删除任务");
+            //log(scheduleVo, "禁用任务");
         }
     }
 
@@ -239,7 +241,7 @@ public class ExamManageEbo implements ExamManageEbi
 //        {
 //            scheduleVo.setJobStatus(SysConsts.SCHEDULEVO_JOB_STATUS_DELETE);
 //            new SchedulerJobUtil().deleteJob(scheduleVo, schedulerFactoryBean.getScheduler());
-//            saveLog(scheduleVo, "删除任务");
+//            log(scheduleVo, "删除任务");
 //        }
         examDao.delete(examPo);
         paperMongoDao.deletePaperFromMongoExamPaper(examPo.getId());
@@ -312,14 +314,14 @@ public class ExamManageEbo implements ExamManageEbi
                     break;
                 case SysConsts.EXAM_STATUS_OPEN:
                     operationSet.add(SysConsts.EXAM_OPERATION_ADD_MARK_TEACHER);
-                    if (loginTeacher.getId() == SysConsts.SUPER_ADMIN_ID)
+                    if (SysConsts.SUPER_ADMIN_ID.equals(loginTeacher.getId()))
                     {
                         operationSet.add(SysConsts.EXAM_OPERATION_STOP);
                     }
                     break;
 
                 case SysConsts.EXAM_STATUS_CLOSE:
-                    if (loginTeacher.getId() == SysConsts.SUPER_ADMIN_ID)
+                    if (SysConsts.SUPER_ADMIN_ID.equals(loginTeacher.getId()))
                     {
                         operationSet.add(SysConsts.EXAM_OPERATION_STOP);
                     }
@@ -463,40 +465,13 @@ public class ExamManageEbo implements ExamManageEbi
         List<StudentExamVo> list = studentExamDao.getbyExam(examVo);
         for (StudentExamVo studentExamVo : list)
         {
-            List<StudentExamQuestionVo> questionList = this.getAllStudentexamQuestionByStudentExam(studentExamVo);
-            if (questionList.size() == 0)
-            {
-                list.remove(studentExamVo);
-            }
+//            List<StudentExamQuestionVo> questionList = this.getAllStudentexamQuestionByStudentExam(studentExamVo);
+//            if (questionList.size() == 0)
+//            {
+//                list.remove(studentExamVo);
+//            }
         }
         return null;
-    }
-
-    public List<StudentExamQuestionVo> getAllStudentexamQuestionByStudentExam(StudentExamVo studentExamVo) throws Exception
-    {
-        if (StringUtil.isEmpty(studentExamVo.getId()))
-        {
-            throw new OperationException("所选择的学生试卷不能为空");
-        }
-        studentExamVo = studentExamDao.get(studentExamVo.getId());
-        if (studentExamVo == null)
-        {
-            throw new OperationException("所选择的学生试卷不存在");
-        }
-        List<StudentExamQuestionVo> list = studentExamQuestionDao.getAllByStudentExam(studentExamVo);
-        for (int i = list.size() - 1; i >= 0; i--)
-        {
-            StudentExamQuestionVo temp = list.get(i);
-            if (!temp.getQuestionTypeVo().getName().equals(SysConsts.NO_ANSWER_QUESTION_TYPE_NAME))
-            {
-                list.remove(temp);
-            }
-            if (null != temp.getTeacherVo())
-            {
-                list.remove(temp);
-            }
-        }
-        return list;
     }
 
     /**
@@ -523,7 +498,7 @@ public class ExamManageEbo implements ExamManageEbi
      *
      * @param scheduleVo
      */
-    public void saveLog(ScheduleVo scheduleVo, String method)
+    public void log(ScheduleVo scheduleVo, String method)
     {
 
         LogVo logVo = new LogVo();
@@ -541,10 +516,64 @@ public class ExamManageEbo implements ExamManageEbi
     }
 
     @Override
+    @Transactional
     public void stop(String examId, TeacherVo loginTeacher) throws Exception
     {
         ExamVo examPo = examDao.get(examId);
         checkPermission(SysConsts.EXAM_OPERATION_STOP, loginTeacher, examPo);
+        examPo.setExamStatus(SysConsts.EXAM_STATUS_IN_MARK);
+        List<ScheduleVo> scheduleList = scheduleDao.getByTarget(examPo.getId());
+        for (ScheduleVo scheduleVo : scheduleList)
+        {
+            scheduleVo.setJobStatus(SysConsts.SCHEDULEVO_JOB_STATUS_FORBIDDEN);
+            SchedulerJobUtil.deleteJob(scheduleVo, schedulerFactoryBean.getScheduler());
+            log(scheduleVo, "删除任务");
+        }
+
+    }
+
+    @Override
+    public Map<String, Object> getStudentWorkout(String studentExamId) throws OperationException
+    {
+        if (StringUtil.isEmpty(studentExamId))
+        {
+            throw new OperationException("所选择的学生试卷不能为空");
+        }
+        StudentExamVo studentExamPo = studentExamDao.get(studentExamId);
+        if (studentExamPo == null)
+        {
+            throw new OperationException("所选择的学生试卷不存在");
+        }
+        Set<StudentExamQuestionVo> set = studentExamPo.getStudentExamQuestionVos();
+
+
+        List<StudentExamQuestionVo> workoutNeedMarkList = new ArrayList<>();
+
+        for (StudentExamQuestionVo studentExamQuestion : set)
+        {
+            if (SysConsts.MANUAL_MARK_QUESTION_TYPE_SET.contains(studentExamQuestion.getType()))
+            {
+                workoutNeedMarkList.add(studentExamQuestion);
+            }
+        }
+
+        Map<String, Object> retMap = new HashMap<>();
+
+        retMap.put("workout",
+                new JsonListObjectMapper<StudentExamQuestionVo>()
+                        .setFields("id,index,score,remark,workout,answer,[teacher]getTeacherVo().getName(),type")
+                        .serializeList(workoutNeedMarkList));
+        retMap.put("student",
+                new JsonObjectMapper<StudentVo>()
+                        .setFields("id,name,[classroom]classroom.name,[school]school.name")
+                        .serializeObject(studentExamPo.getStudent())
+        );
+        return retMap;
+    }
+
+
+    private void finish(ExamVo examPo)
+    {
 
     }
 
@@ -643,7 +672,7 @@ public class ExamManageEbo implements ExamManageEbi
         scheduleVo.setJobStatus(SysConsts.SCHEDULEVO_JOB_STATUS_START);
         scheduleDao.save(scheduleVo);
         SchedulerJobUtil.createJob(scheduleVo, schedulerFactoryBean.getScheduler());
-        saveLog(scheduleVo, scheduleVo.getDescribe());
+        log(scheduleVo, scheduleVo.getDescribe());
     }
 
     /**

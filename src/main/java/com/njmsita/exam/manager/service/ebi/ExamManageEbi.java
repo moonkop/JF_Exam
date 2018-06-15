@@ -13,9 +13,11 @@ import com.njmsita.exam.manager.service.ebo.ExamInvoker;
 import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.exception.UnAuthorizedException;
 import com.njmsita.exam.utils.exception.UnLoginException;
+import org.apache.commons.collections.iterators.ObjectGraphIterator;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -145,18 +147,11 @@ public interface ExamManageEbi extends BaseEbi<ExamVo>
      */
     public List<StudentExamVo> getAllStudentExamByExam(ExamVo examVo, TeacherVo login) throws Exception;
 
-    /**
-     * 获取指定学生试卷的所有待批改题目作答情况
-     *
-     * @param studentExamVo
-     *
-     * @return
-     */
-    public List<StudentExamQuestionVo> getAllStudentexamQuestionByStudentExam(StudentExamVo studentExamVo) throws Exception;
+    public Map<String,Object> getStudentWorkout(String studentExamId) throws Exception;
 
     public ExamVo getExamNotNull(ExamVo examVo) throws OperationException;
 
-    public void saveLog(ScheduleVo scheduleVo, String method);
+    public void log(ScheduleVo scheduleVo, String method);
 
     public void outmodedSchedule(ScheduleVo scheduleVo);
 

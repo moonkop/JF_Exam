@@ -12,7 +12,6 @@ import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.exception.FormatException;
 import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.format.*;
-import com.njmsita.exam.utils.idutil.IdUtil;
 import com.njmsita.exam.utils.json.JsonListResponse;
 import com.njmsita.exam.utils.json.JsonResponse;
 import com.njmsita.exam.utils.logutils.SystemLogAnnotation;
@@ -68,8 +67,7 @@ public class TeacherController extends BaseController
         if (userModel instanceof StudentVo)
         {
             return "redirect:/student/welcome";
-        }
-        else if (userModel instanceof TeacherVo)
+        } else if (userModel instanceof TeacherVo)
         {
             return "redirect:/teacher/welcome";
         }
@@ -85,49 +83,49 @@ public class TeacherController extends BaseController
     /**
      * 教师（管理员）用户登陆
      *
-     * @param teaVo   前端获取教师用户登陆数据
+     * @param teacher   前端获取教师用户登陆数据
      * @param request HttpServletRequest
      * @param session HttpSession
      *
      * @return
      */
+    @ResponseBody
     @RequestMapping("login.do")
-    public String login(TeacherVo teaVo, HttpServletRequest request, HttpSession session) throws Exception
+    public JsonResponse login(String teacherId,String password, HttpServletRequest request, HttpSession session) throws Exception
     {
         //获取IP地址
         String loginIp = IPUtil.getIP(request);
 
         //验证用户名密码
-        TeacherVo loginTea = teaEbi.login(teaVo.getTeacherId(), teaVo.getPassword(), loginIp);
+        TeacherVo loginTea = teaEbi.login(teacherId, password, loginIp);
 
 
-        //用户信息验证成功
-        if (loginTea != null)
+        if (loginTea == null)
         {
-
-            //用户名密码验证成功获取当前登录人的所有权限
-            List<TresourceVo> teacherResources = resourceEbi.getAllByLogin(loginTea.getId());
-            StringBuilder sbd = new StringBuilder();
-
-            for (TresourceVo resource : teacherResources)
-            {
-                sbd.append(resource.getUrl());
-                sbd.append(",");
-            }
-            session.setAttribute(SysConsts.USER_RESOURCE_NAME, sbd.toString());
-            session.setAttribute(SysConsts.USER_LOGIN_OBJECT_NAME, loginTea);
-            Hibernate.initialize(loginTea.getRole());
-
-            //获取登陆用户的菜单
-            getLoginMenu(request);
-
-            logEbi.login(loginTea, loginIp);
-            return "redirect:/teacher/welcome";
+            //用户信息验证失败
+            return new JsonResponse(501, "登录失败，账号或密码不正确！！");
         }
+        //用户信息验证成功
+        //用户名密码验证成功获取当前登录人的所有权限
+        List<TresourceVo> teacherResources = resourceEbi.getAllByLogin(loginTea.getId());
+        StringBuilder sbd = new StringBuilder();
 
-        //用户信息验证失败
-        request.setAttribute("msg", "账号或密码不正确！！");
-        return "redirect:/teacher/login";
+        for (TresourceVo resource : teacherResources)
+        {
+            sbd.append(resource.getUrl());
+            sbd.append(",");
+        }
+        session.setAttribute(SysConsts.USER_RESOURCE_NAME, sbd.toString());
+        session.setAttribute(SysConsts.USER_LOGIN_OBJECT_NAME, loginTea);
+        Hibernate.initialize(loginTea.getRole());
+
+        //获取登陆用户的菜单
+        getLoginMenu(request);
+
+        logEbi.login(loginTea, loginIp);
+        return new JsonResponse("登录成功");
+
+
     }
 
     /**

@@ -15,6 +15,7 @@
 <link href="/vendor/morrisjs/morris.css" rel="stylesheet">
 <link href="/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 <script src="/vendor/jquery/jquery.min.js"></script>
+    <script src="/dist/js/md5.js"></script>
 
 <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -22,11 +23,32 @@
 <![endif]-->
 <!-- end header.html-->
     <script type="text/javascript">
-        $(function () {
-            $("#commit").click(function () {
-                $("form:first").submit();
+        $(document).ready(function () {
+            $("#commit").on("click",function () {
+                var teacherId = $("#teacherId").val();
+                var password = $("#password").val();
+                password = $.md5(password);
+                $.ajax({
+                    type: "post",
+                    dataType: "json",
+                    url: "/teacher/login.do",
+                    data: {
+                        teacherId: teacherId,
+                        password: password
+                    },
+                    success: function (result) {
+                        if (result.code == 100)
+                        {
+                            window.location.href = "/teacher/welcome";
+                        }
+                        else
+                        {
+                            alert(result.message);
+                        }
+                    }
+                })
             })
-        });
+        })
     </script>
 
 
@@ -48,10 +70,10 @@
                         <form role="form" action="/teacher/login.do" method="post">
                         <fieldset>
                             <div class="form-group">
-                                <input class="form-control" placeholder="账号" name="teacherId" type="email" value="0001" autofocus>
+                                <input class="form-control" placeholder="账号" id="teacherId" type="email" value="0001" autofocus>
                             </div>
                             <div class="form-group">
-                                <input class="form-control" placeholder="密码" name="password" type="password" value="123">
+                                <input class="form-control" placeholder="密码" id="password" type="password" value="123">
                             </div>
                             <div class="checkbox text-right">
                                 <label>
@@ -59,7 +81,7 @@
                                 </label>
                             </div>
                             <!-- Change this to a button or input when using this as a form -->
-                            <a href="javascript:void(0)" id="commit" class="btn btn-lg btn-success btn-block">登录</a>
+                            <a  id="commit" class="btn btn-lg btn-success btn-block">登录</a>
                         </fieldset>
                     </form>
                     </div>
@@ -67,7 +89,9 @@
             </div>
         </div>
     </div>
-
+    <div style="position: fixed;bottom:0px;right: 0px;">
+        <a href="/student/login"> 学生登录</a>
+    </div>
 <!-- start footer.html-->
 <script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
 <script src="/vendor/metisMenu/metisMenu.min.js"></script>

@@ -13,10 +13,7 @@ import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.idutil.IdUtil;
-import com.njmsita.exam.utils.json.CustomJsonSerializer;
-import com.njmsita.exam.utils.json.JsonListResponse;
-import com.njmsita.exam.utils.json.JsonObjectResponse;
-import com.njmsita.exam.utils.json.JsonResponse;
+import com.njmsita.exam.utils.json.*;
 import com.njmsita.exam.utils.logutils.SystemLogAnnotation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -96,10 +93,10 @@ public class PaperManageController
         request.setAttribute("paper", paperVo);
         request.setAttribute("questionList", CustomJsonSerializer.toJsonString_static
                 (
-                        new JsonListResponse<QuestionVo>(paperVo.getQuestionList(),"id,outline,options,value,code,index,type,answer")
-                                .list()
-                )
-        );
+                        new JsonListObjectMapper<QuestionVo>().
+                                setFields("id,outline,options,value,code,index,type,answer").
+                                serializeList(paperVo.getQuestionList())
+                ));
         return "/manage/paper/detail";
     }
 

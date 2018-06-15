@@ -183,7 +183,7 @@ public class ExamStudentEbo implements ExamStudentEbi
             seq.setStudentExam(studentExamPo);
             seq.setIndex(i + 1);
             seq.setAnswer(questionVoList.get(i).getAnswer());
-            seq.setQuestionTypeVo(questionVoList.get(i).getQuestionType());
+            seq.setType(questionVoList.get(i).getType());
             studentExamQuestionDao.save(seq);
         }
         //创建自动提交定时任务
@@ -205,7 +205,7 @@ public class ExamStudentEbo implements ExamStudentEbi
         scheduleVo.setTargetVoId(studentExamPo.getId());
         scheduleVo.setJobType(SysConsts.SCHEDULEVO_JOB_TYPE_ONETIME);
         SchedulerJobUtil.addJob(scheduleVo);
-        examManageEbi.saveLog(scheduleVo, scheduleVo.getDescribe());
+        examManageEbi.log(scheduleVo, scheduleVo.getDescribe());
     }
 
     public List<StudentExamQuestionVo> getStudentAnswer(String studentExamId, StudentVo loginStudent) throws Exception
@@ -214,8 +214,10 @@ public class ExamStudentEbo implements ExamStudentEbi
         ExamVo examPo = studentExamPo.getExam();
         examManageEbi.checkPermission(SysConsts.EXAM_OPERATION_ENTER, loginStudent, studentExamPo);
 
-        List<StudentExamQuestionVo> answerList = studentExamQuestionDao.getAllByStudentExam(studentExamPo);
-        return answerList;
+//        List<StudentExamQuestionVo> answerList = studentExamQuestionDao.getAllByStudentExam(studentExamPo);
+//        return answerList;
+        return null;
+
     }
 
     public List<QuestionVo> getPaperQuestion(String studentExamId, StudentVo loginStudent) throws Exception

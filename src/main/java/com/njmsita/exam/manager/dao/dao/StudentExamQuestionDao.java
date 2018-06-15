@@ -14,12 +14,7 @@ import java.util.List;
  */
 public interface StudentExamQuestionDao extends BaseDao<StudentExamQuestionVo>
 {
-    /**
-     * 根据学生考试获取所有题目作答情况
-     * @param studentExamVo
-     * @return
-     */
-    public List<StudentExamQuestionVo> getAllByStudentExam(StudentExamVo studentExamVo);
+
 
     /**
      * 跟据考试获取所有考生作答情况

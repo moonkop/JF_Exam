@@ -185,7 +185,7 @@
                                             'submitMark': '<i class="fa fa-check js-submitMark" title="批阅提交"></i>',
                                             'enter': '<span class="label label-action label-danger text-danger js-enter">参加考试</span>',
                                             'preview': '<i class="fa fa-eye js-preview" title="查看概要"></i>',
-                                            'stop': '<i class="fa fa-ban js-stop" title="">终止考试</i>'
+                                            'stop': '<i class="fa fa-ban js-stop" title="终止考试"></i>'
                                         };
                                         var html = '';
                                         for (var i = 0; i < act.length; i++)

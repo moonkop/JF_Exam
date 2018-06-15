@@ -1,16 +1,13 @@
 package com.njmsita.exam.manager.model;
 
 import com.njmsita.exam.authentic.model.TeacherVo;
-import com.njmsita.exam.utils.json.OptionUtil;
+import com.njmsita.exam.utils.format.OptionUtil;
 import com.njmsita.exam.utils.validate.validategroup.AddGroup;
 import com.njmsita.exam.utils.validate.validategroup.EditGroup;
-import com.sun.applet2.preloader.event.InitEvent;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 @Entity
 @Table(name = "question", schema = "jf_exam", catalog = "")

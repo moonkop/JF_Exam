@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.njmsita.exam.authentic.model.TresourceVo;
 import com.njmsita.exam.authentic.model.TroleVo;
-import com.njmsita.exam.authentic.model.querymodel.ResourceQueryModel;
 import com.njmsita.exam.authentic.model.querymodel.TroleQueryModel;
 import com.njmsita.exam.authentic.service.ebi.ResourceEbi;
 import com.njmsita.exam.authentic.service.ebi.ResourcetypeEbi;
@@ -24,7 +23,6 @@ import com.njmsita.exam.utils.json.CustomJsonSerializer;
 import com.njmsita.exam.utils.json.JsonListResponse;
 import com.njmsita.exam.utils.json.JsonResponse;
 import com.njmsita.exam.utils.format.StringUtil;
-import com.njmsita.exam.utils.idutil.IdUtil;
 import com.njmsita.exam.utils.logutils.SystemLogAnnotation;
 import com.njmsita.exam.utils.validate.validategroup.AddGroup;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +30,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
@@ -490,7 +487,7 @@ public class SystemManagerController extends BaseController
                 resourceEbi.getAll(),
                 "id,[text],[parent]parent.id",
                 0, true)
-                .addCustomJsonElementFormater("text", obj -> obj.getName() + "   -   " + obj.getUrl())
+                .addCustomJsonElementFormatter("text", obj -> obj.getName() + "   -   " + obj.getUrl())
                 .addNullValue("parent", "#")
                 .serialize();
 

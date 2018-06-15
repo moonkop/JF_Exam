@@ -1,6 +1,7 @@
-package com.njmsita.exam.utils.json;
+package com.njmsita.exam.utils.format;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.njmsita.exam.utils.json.CustomJsonSerializer;
 
 import java.io.IOException;
 import java.util.Collection;

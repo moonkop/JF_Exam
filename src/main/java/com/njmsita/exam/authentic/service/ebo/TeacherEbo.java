@@ -125,8 +125,6 @@ public class TeacherEbo implements TeacherEbi
 
     public TeacherVo login(String teacherId, String password, String loginIp)
     {
-        //密码进行MD5加密
-        password = MD5Utils.md5(password);
         TeacherVo loginTea = teaDao.getTeaByTeaIdAndPwd(teacherId, password);
         if (loginTea != null)
         {

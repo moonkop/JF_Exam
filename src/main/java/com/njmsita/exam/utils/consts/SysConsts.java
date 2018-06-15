@@ -50,12 +50,17 @@ public class SysConsts
 	//简答题
 	public static final int QUESTION_TYPE_SHORT_ANSWER=4;
 
-	public static final Set<String> STRING_EMPTY_SET = new HashSet<>();
-    public static final String SUPER_ADMIN_ID = "0001" ;
+	public static final Set<Integer> MANUAL_MARK_QUESTION_TYPE_SET = new HashSet<>();
+	static{
+		MANUAL_MARK_QUESTION_TYPE_SET.add(QUESTION_TYPE_MUTI_SELECTION);
+	}
 
-    static{
+	public static final Set<String> STRING_EMPTY_SET = new HashSet<>();
+	static{
 		STRING_EMPTY_SET.add("");
 	}
+
+    public static final String SUPER_ADMIN_ID = "0" ;
 
 	/**
 	 * 批量导入文件类型

@@ -42,17 +42,18 @@ public class StudentEbo implements StudentEbi
     @Autowired
     private ClassroomDao classroomDao;
 
-    public void save(StudentVo studentEntity, String schoolID) throws OperationException
+    public void save(StudentVo studentEntity) throws OperationException
     {
         checkGender(studentEntity);
 
-        if(StringUtil.isEmpty(schoolID)){
-            throw new OperationException("当前学校不能为空，请不要进行非法操作！");
+        if (studentEntity.getSchool() == null || StringUtil.isEmpty(studentEntity.getSchool().getId()))
+        {
+            throw new OperationException("当前学校不能为空");
         }
-        SchoolVo schoolVo = schoolDao.get(schoolID);
+        SchoolVo schoolVo = schoolDao.get(studentEntity.getSchool().getId());
         if (schoolVo == null)
         {
-            throw new OperationException("当前学校不存在，请不要进行非法操作！");
+            throw new OperationException("当前学校不存在");
         }
         StudentVo studentTemp = studentDao.getByStudentIdFromSchool(studentEntity.getStudentId(), schoolVo.getId());
         if (studentTemp != null)
@@ -123,15 +124,6 @@ public class StudentEbo implements StudentEbi
             throw new OperationException("当前学校不存在，请不要进行非法操作！");
         }
         */
-    }
-
-    /**
-     * 作废
-     * @param studentVo
-     * @throws OperationException
-     */
-    public void save(StudentVo studentVo) throws OperationException
-    {
     }
 
     public List<StudentVo> getAll()
