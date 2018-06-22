@@ -51,8 +51,19 @@ public class SysConsts
 	public static final int QUESTION_TYPE_SHORT_ANSWER=4;
 
 	public static final Set<Integer> MANUAL_MARK_QUESTION_TYPE_SET = new HashSet<>();
-	static{
-		MANUAL_MARK_QUESTION_TYPE_SET.add(QUESTION_TYPE_MUTI_SELECTION);
+
+	//批阅完成
+	public static final Integer STUDENT_EXAM_MARK_PROGRESS_DONE = 1;
+	//未开始批阅
+	public static final Integer STUDENT_EXAM_MARK_PROGRESS_NOTSTARTED = 0;
+	//未完成批阅
+	public static final Integer STUDENT_EXAM_MARK_PROGRESS_UNFINISHED = 2;
+	//未找到结果
+	public static final Integer STUDENT_EXAM_MARK_PROGRESS_NOTFOUND = 3;
+
+
+    static{
+		MANUAL_MARK_QUESTION_TYPE_SET.add(QUESTION_TYPE_SHORT_ANSWER);
 	}
 
 	public static final Set<String> STRING_EMPTY_SET = new HashSet<>();

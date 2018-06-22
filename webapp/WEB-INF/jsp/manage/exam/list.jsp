@@ -38,7 +38,7 @@
                     window.location.href = "/exam/operation/addMarkTeacher?id=" + row.id;
                 },
                 'click .js-viewScore': function (e, value, row, index) {
-                    window.location.href = "#" + row.id;
+                    window.location.href = "/exam/opreation/report.do?id=" + row.id;
                 },
                 'click .js-review': function (e, value, row, index) {
                     window.location.href = "/exam/operation/review?id=" + row.id;
@@ -69,10 +69,20 @@
                     }
                 },
                 'click .js-mark': function (e, value, row, index) {
-                    window.location.href = "#" + row.id;
+                    window.location.href = "/exam/operation/mark?id=" + row.id;
                 },
                 'click .js-submitMark': function (e, value, row, index) {
-                    window.location.href = "#" + row.id;
+                    if (confirm("确定要提交批改结果吗？提交后不可更改") == true)
+                    {
+                        myajax(
+                            {
+                                url: '/exam/opreation/submitMark.do?id=' + row.id,
+                                success: function (res) {
+                                    $("#table").bootstrapTable('refresh');
+                                }
+                            }
+                        );
+                    }
                 },
                 'click .js-enter': function (e, value, row, index) {
                     window.location.href = "/exam/student/enter?id=" + row.id;

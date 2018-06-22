@@ -214,10 +214,9 @@ public class ExamStudentEbo implements ExamStudentEbi
         ExamVo examPo = studentExamPo.getExam();
         examManageEbi.checkPermission(SysConsts.EXAM_OPERATION_ENTER, loginStudent, studentExamPo);
 
-//        List<StudentExamQuestionVo> answerList = studentExamQuestionDao.getAllByStudentExam(studentExamPo);
-//        return answerList;
-        return null;
-
+        List<StudentExamQuestionVo> answerList = new ArrayList<>();
+        answerList.addAll(studentExamPo.getStudentExamQuestionVos());
+        return answerList;
     }
 
     public List<QuestionVo> getPaperQuestion(String studentExamId, StudentVo loginStudent) throws Exception

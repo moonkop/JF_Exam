@@ -13,7 +13,7 @@ import java.util.Set;
  * 考试实体模型
  */
 @Entity
-@Table(name = "exam", schema = "jf_exam", catalog = "")
+@Table(name = "exam", schema = "jf_exam")
 public class ExamVo
 {
 
@@ -87,6 +87,7 @@ public class ExamVo
         this.operation = operation;
     }
 
+    @Transient
     public String getExamStatusView()
     {
         return SysConsts.ExamStatusViewMap.get(this.getExamStatus());

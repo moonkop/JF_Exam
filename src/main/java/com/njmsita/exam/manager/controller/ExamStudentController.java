@@ -137,7 +137,7 @@ public class ExamStudentController
             request.setAttribute("questionList", CustomJsonSerializer.toJsonString_static
                     (
                             new JsonListObjectMapper<QuestionVo>().
-                                    setFields("id,outline,options,value,code,index,type,answer").
+                                    setFields("id,outline,options,value,code,index,type").
                                     serializeList(examVoWithPaper.getPaperVo().getQuestionList())
                     ));
         }

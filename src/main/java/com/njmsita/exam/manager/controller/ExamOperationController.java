@@ -11,6 +11,7 @@ import com.njmsita.exam.manager.service.ebi.ExamManageEbi;
 import com.njmsita.exam.manager.service.ebi.ExamMarkEbi;
 import com.njmsita.exam.manager.service.ebi.SubjectEbi;
 import com.njmsita.exam.utils.consts.SysConsts;
+import com.njmsita.exam.utils.exception.ItemNotFoundException;
 import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.json.CustomJsonSerializer;
@@ -19,6 +20,7 @@ import com.njmsita.exam.utils.json.JsonListResponse;
 import com.njmsita.exam.utils.json.JsonResponse;
 import com.njmsita.exam.utils.logutils.SystemLogAnnotation;
 import com.sun.xml.internal.ws.resources.HttpserverMessages;
+import org.apache.regexp.RE;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -107,7 +109,7 @@ public class ExamOperationController
     }
 
     /**
-     * 驳回
+     * 审核考试
      *
      * @param examVo（驳回必须填写备注remark属性）
      * @param request
@@ -215,28 +217,63 @@ public class ExamOperationController
         return new JsonResponse("保存成功！");
     }
 
+
+    /**
+     * 批阅页面
+     *
+     * @param ExamId
+     * @param request
+     *
+     * @return
+     *
+     * @throws Exception
+     */
     @RequestMapping("mark")
     public String toMarking(@RequestParam(name = "id") String ExamId, HttpServletRequest request) throws Exception
     {
         TeacherVo loginTeacher = (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
-        ExamVo examPo = examManageEbi.get(ExamId);
-        examManageEbi.checkPermission(SysConsts.EXAM_OPERATION_MARK, loginTeacher, examPo);
-        return "/exam/mark";
+        ExamVo examVoWithPaper = examManageEbi.getWithPaper(ExamId);
+        examManageEbi.checkPermission(SysConsts.EXAM_OPERATION_MARK, loginTeacher, examVoWithPaper);
+
+        if (examVoWithPaper.getPaperVo() != null)
+        {
+            request.setAttribute("paper", examVoWithPaper.getPaperVo());
+            request.setAttribute("questionList", CustomJsonSerializer.toJsonString_static
+                    (
+                            new JsonListObjectMapper<QuestionVo>().
+                                    setFields("id,outline,options,value,code,index,type,answer").
+                                    serializeList(examVoWithPaper.getPaperVo().getQuestionList())
+                    ));
+        }
+        return "/exam/teacher/mark";
+    }
+
+    @RequestMapping("report")
+    public String report(String examId, HttpServletRequest request)
+    {
+
+        return "/exam/report";
     }
 
     @ResponseBody
-    @RequestMapping("getWorkout.do")
-    public JsonResponse getStudentWorkout(String studentExamId, HttpServletRequest request) throws Exception
+    @RequestMapping("getMarkProgress.do")
+    public JsonResponse getMarkProgress(@RequestParam(name = "id") String ExamId, HttpServletRequest request) throws ItemNotFoundException
     {
-
+        JsonResponse response = new JsonResponse();
+        response.setPayload(examMarkEbi.getMarkProgress(ExamId));
+        return response;
+    }
+    @ResponseBody
+    @RequestMapping("getWorkout.do")
+    public JsonResponse getStudentWorkout(@RequestParam(name = "id") String studentExamId, HttpServletRequest request) throws Exception
+    {
         JsonResponse jsonResponse = new JsonResponse();
-        jsonResponse.setPayload(examManageEbi.getStudentWorkout(studentExamId));
+        jsonResponse.setPayload(examMarkEbi.getStudentWorkout(studentExamId));
         return jsonResponse;
-
     }
 
 
-    @RequestMapping("saveMarked.do")
+    @RequestMapping("saveMark.do")
     @ResponseBody
     public JsonResponse savaMarked(@RequestBody List<StudentExamQuestionVo> studentExamQeustionList,
                                    String studentExamId) throws Exception
@@ -245,7 +282,7 @@ public class ExamOperationController
         return new JsonResponse("保存成功！");
     }
 
-    @RequestMapping("submitMarked.do")
+    @RequestMapping("submitMark.do")
     @ResponseBody
     public JsonResponse submitMarked(ExamVo examVo, HttpServletRequest request) throws Exception
     {

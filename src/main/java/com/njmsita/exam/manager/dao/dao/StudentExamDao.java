@@ -19,13 +19,6 @@ public interface StudentExamDao extends BaseDao<StudentExamVo>
      */
     public void deleteAllByExam(ExamVo examVo);
 
-//    /**
-//     * 获取该学生获取的所有考试
-//     *
-//     * @param studentId
-//     * @return
-//     */
-//    public List<StudentExamVo> getByStudent(StudentExamListQueryModel queryModel);
 
     /**
      * 获取对应学生对应考试的考试信息
@@ -38,8 +31,8 @@ public interface StudentExamDao extends BaseDao<StudentExamVo>
 
     /**
      * 根据考试获取所有学生的试卷
-     * @param examVo
+     * @param examId
      * @return
      */
-    public List<StudentExamVo> getbyExam(ExamVo examVo);
+    List<StudentExamVo> getAllStudentExambyExamId(String examId);
 }

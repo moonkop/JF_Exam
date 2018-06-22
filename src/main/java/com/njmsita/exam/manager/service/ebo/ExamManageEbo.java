@@ -17,8 +17,6 @@ import com.njmsita.exam.utils.exception.UnLoginException;
 import com.njmsita.exam.utils.format.FormatUtil;
 import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.idutil.IdUtil;
-import com.njmsita.exam.utils.json.JsonListObjectMapper;
-import com.njmsita.exam.utils.json.JsonObjectMapper;
 import com.njmsita.exam.utils.timertask.SchedulerJobUtil;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -462,7 +460,7 @@ public class ExamManageEbo implements ExamManageEbi
         {
             throw new OperationException("您不是该场考试的阅卷教师");
         }
-        List<StudentExamVo> list = studentExamDao.getbyExam(examVo);
+        List<StudentExamVo> list = studentExamDao.getAllStudentExambyExamId(examVo.getId());
         for (StudentExamVo studentExamVo : list)
         {
 //            List<StudentExamQuestionVo> questionList = this.getAllStudentexamQuestionByStudentExam(studentExamVo);
@@ -532,44 +530,7 @@ public class ExamManageEbo implements ExamManageEbi
 
     }
 
-    @Override
-    public Map<String, Object> getStudentWorkout(String studentExamId) throws OperationException
-    {
-        if (StringUtil.isEmpty(studentExamId))
-        {
-            throw new OperationException("所选择的学生试卷不能为空");
-        }
-        StudentExamVo studentExamPo = studentExamDao.get(studentExamId);
-        if (studentExamPo == null)
-        {
-            throw new OperationException("所选择的学生试卷不存在");
-        }
-        Set<StudentExamQuestionVo> set = studentExamPo.getStudentExamQuestionVos();
 
-
-        List<StudentExamQuestionVo> workoutNeedMarkList = new ArrayList<>();
-
-        for (StudentExamQuestionVo studentExamQuestion : set)
-        {
-            if (SysConsts.MANUAL_MARK_QUESTION_TYPE_SET.contains(studentExamQuestion.getType()))
-            {
-                workoutNeedMarkList.add(studentExamQuestion);
-            }
-        }
-
-        Map<String, Object> retMap = new HashMap<>();
-
-        retMap.put("workout",
-                new JsonListObjectMapper<StudentExamQuestionVo>()
-                        .setFields("id,index,score,remark,workout,answer,[teacher]getTeacherVo().getName(),type")
-                        .serializeList(workoutNeedMarkList));
-        retMap.put("student",
-                new JsonObjectMapper<StudentVo>()
-                        .setFields("id,name,[classroom]classroom.name,[school]school.name")
-                        .serializeObject(studentExamPo.getStudent())
-        );
-        return retMap;
-    }
 
 
     private void finish(ExamVo examPo)

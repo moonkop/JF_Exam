@@ -12,6 +12,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.security.spec.EncodedKeySpec;
 
 /**
  * 教师实体模型
@@ -222,34 +223,32 @@ public class TeacherVo extends UserModel
         result = 31 * result + (idCardNo != null ? idCardNo.hashCode() : 0);
         result = 31 * result + (telephone != null ? telephone.hashCode() : 0);
         result = 31 * result + (password != null ? password.hashCode() : 0);
-        result = 31 * result + (lastLoginTime != null ? lastLoginTime.hashCode() : 0);
-        result = 31 * result + (lastLoginIp != null ? lastLoginIp.hashCode() : 0);
-        result = 31 * result + (createtime != null ? createtime.hashCode() : 0);
-        result = 31 * result + (modifytime != null ? modifytime.hashCode() : 0);
         return result;
     }
 
     public boolean equals(Object o)
     {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || getClass() != o.getClass())
+        {
+            if (hashCode() == o.hashCode())
+            {
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
 
         TeacherVo teacherVo = (TeacherVo) o;
 
-        if (id != null ? !id.equals(teacherVo.id) : teacherVo.id != null) return false;
-        if (teacherId != null ? !teacherId.equals(teacherVo.teacherId) : teacherVo.teacherId != null) return false;
-        if (name != null ? !name.equals(teacherVo.name) : teacherVo.name != null) return false;
-        if (mail != null ? !mail.equals(teacherVo.mail) : teacherVo.mail != null) return false;
-        if (idCardNo != null ? !idCardNo.equals(teacherVo.idCardNo) : teacherVo.idCardNo != null) return false;
-        if (telephone != null ? !telephone.equals(teacherVo.telephone) : teacherVo.telephone != null) return false;
-        if (password != null ? !password.equals(teacherVo.password) : teacherVo.password != null) return false;
-        if (lastLoginTime != null ? !lastLoginTime.equals(teacherVo.lastLoginTime) : teacherVo.lastLoginTime != null)
-            return false;
-        if (lastLoginIp != null ? !lastLoginIp.equals(teacherVo.lastLoginIp) : teacherVo.lastLoginIp != null)
-            return false;
-        if (createtime != null ? !createtime.equals(teacherVo.createtime) : teacherVo.createtime != null) return false;
-        if (modifytime != null ? !modifytime.equals(teacherVo.modifytime) : teacherVo.modifytime != null) return false;
-
+        if (getId() != null ? !getId().equals(teacherVo.getId()) : teacherVo.getId() != null) return false;
+        if (getTeacherId() != null ? !getTeacherId().equals(teacherVo.getTeacherId()) : teacherVo.getTeacherId() != null) return false;
+        if (getName() != null ? !getName().equals(teacherVo.getName()) : teacherVo.getName() != null) return false;
+        if (getMail() != null ? !getMail().equals(teacherVo.getMail()) : teacherVo.getMail() != null) return false;
+        if (getIdCardNo() != null ? !getIdCardNo().equals(teacherVo.getIdCardNo()) : teacherVo.getIdCardNo() != null) return false;
+        if (getTelephone() != null ? !getTelephone().equals(teacherVo.getTelephone()) : teacherVo.getTelephone() != null) return false;
+        if (getPassword() != null ? !getPassword().equals(teacherVo.getPassword()) : teacherVo.getPassword() != null) return false;
         return true;
     }
     public boolean equalsById(TeacherVo teacherVo)
@@ -261,19 +260,19 @@ public class TeacherVo extends UserModel
     public String toString()
     {
         return "TeacherVo{" +
-                "id='" + id + '\'' +
-                ", teacherId='" + teacherId + '\'' +
-                ", name='" + name + '\'' +
-                ", mail='" + mail + '\'' +
-                ", idCardNo='" + idCardNo + '\'' +
-                ", telephone='" + telephone + '\'' +
-                ", password='" + password + '\'' +
-                ", lastLoginTime=" + lastLoginTime +
-                ", lastLoginIp='" + lastLoginIp + '\'' +
-                ", createtime=" + createtime +
-                ", modifytime=" + modifytime +
-                ", gender=" + gender +
-                ", troleVo=" + role +
+                "id='" + getId() + '\'' +
+                ", teacherId='" + getTeacherId() + '\'' +
+                ", name='" + getName() + '\'' +
+                ", mail='" + getMail() + '\'' +
+                ", idCardNo='" + getIdCardNo() + '\'' +
+                ", telephone='" + getTelephone() + '\'' +
+                ", password='" + getPassword() + '\'' +
+                ", lastLoginTime=" + getLastLoginTime() +
+                ", lastLoginIp='" + getLastLoginIp() + '\'' +
+                ", createtime=" + getCreatetime() +
+                ", modifytime=" + getModifytime() +
+                ", gender=" + getGender() +
+                ", troleVo=" + getRole() +
                 '}';
     }
 

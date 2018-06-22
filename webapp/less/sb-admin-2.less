@@ -33,8 +33,77 @@ body {
     min-height: 50px;
 }
 
+.navcard {
+    width: 131px;
+    background: #393b3c;
+    position: fixed;
+    right: 25px;
+    top: 50%;
+    margin-top: -200px;
+    .navcard-title {
+        height: 25px;
+        line-height: 25px;
+        text-align: center;
+        background: #393b3c;
+        color: #ffffff;
+    }
+    .navcard-paper-list, .navcard-workout-list {
+        text-align: center;
+        overflow-x: hidden;
+        overflow-y: auto;
+        margin: 3px;
+        span {
+            height: 22px;
+            width: 25px;
+            line-height: 22px;
+            background: #f2f2f2;
+            margin: 0;
+            float: left;
+            text-align: center;
+            border: solid #525354;
+            border-width: 0 1px 1px 0;
+            cursor: pointer;
+            display: inline-block;
+            &.completed {
+                background-color: #0cc892;
+                color: #ffffff;
+            }
+            &.up-to-date {
+                background-color: #0c926b !important;
+            }
+            &:hover {
+                background: #333333;
+                color: #ffffff;
+            }
+            &.navcard-active {
+                border: 2px solid red;
+                line-height: 18px;
+            }
+        }
+    }
+
+    .navcard-paper-list {
+        span {
+            &-item{
+
+            }
+        }
+        &.navcard-paper-list-open {
+            span {
+                width: 100%;
+            }
+        }
+
+    }
+
+    .navcard-workout-list {
+        span {
+        }
+    }
+}
+
 .answer-card {
- //   height: 400px;
+    //   height: 400px;
     width: 131px;
     background: #393b3c;
     position: fixed;
@@ -62,7 +131,7 @@ body {
                 background-color: #0cc892;
                 color: #ffffff;
             }
-            &.up-to-date{
+            &.up-to-date {
                 background-color: #0c926b !important;
             }
             &:hover {
@@ -110,12 +179,13 @@ body {
     }
     .pull-right {
         &.btn {
-            margin-top: 8px;
             margin-right: 10px;
         }
     }
     .btn {
         vertical-align: baseline;
+        margin-top: 8px;
+
     }
     .btn-default {
         background-color: #0cb181;
@@ -362,7 +432,7 @@ body {
 }
 
 .navbar-default {
-    
+
     background-color: #2a323d;
     color: @text-color;
     border: 0;
@@ -370,10 +440,10 @@ body {
 }
 
 @media (max-width: 768px) {
-    .navbar-default{
+    .navbar-default {
         display: none;
     }
-    
+
 }
 
 .navbar-top-links {
@@ -455,7 +525,7 @@ body {
     // border-bottom: 1px solid darken(@gray-lightest, 6.5%);
     background-color: @background-color-menu;
 
-    .fa{
+    .fa {
         margin-right: 5px;
     }
     a {

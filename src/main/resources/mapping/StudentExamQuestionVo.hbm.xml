@@ -13,7 +13,7 @@
         <property name="remark" column="remark"/>
         <property name="workout" column="workout"/>
         <property name="answer" column="answer"/>
-
+        <property name="type" column="questionType"/>
         <many-to-one name="studentExam" column="student_exam_id" class="com.njmsita.exam.manager.model.StudentExamVo" />
         <many-to-one name="teacherVo" column="teacher_id" class="com.njmsita.exam.authentic.model.TeacherVo"/>
     </class>

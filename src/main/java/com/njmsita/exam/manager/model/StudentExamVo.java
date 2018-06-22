@@ -1,8 +1,10 @@
 package com.njmsita.exam.manager.model;
 
 import com.njmsita.exam.authentic.model.StudentVo;
+import com.njmsita.exam.utils.consts.SysConsts;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -33,6 +35,21 @@ public class StudentExamVo
     public void setStudentExamQuestionVos(Set<StudentExamQuestionVo> studentExamQuestionVos)
     {
         this.studentExamQuestionVos = studentExamQuestionVos;
+    }
+
+    @Transient
+    public Set<StudentExamQuestionVo> getStudentExamQuestion_Manual_mark()
+    {
+        Set<StudentExamQuestionVo> workoutList = new HashSet<>();
+        for(StudentExamQuestionVo workout:getStudentExamQuestionVos())
+        {
+            if (SysConsts.MANUAL_MARK_QUESTION_TYPE_SET.contains(workout.getType()))
+            {
+                workoutList.add(workout);
+
+            }
+        }
+        return workoutList;
     }
 
     @Basic

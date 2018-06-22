@@ -147,8 +147,6 @@ public interface ExamManageEbi extends BaseEbi<ExamVo>
      */
     public List<StudentExamVo> getAllStudentExamByExam(ExamVo examVo, TeacherVo login) throws Exception;
 
-    public Map<String,Object> getStudentWorkout(String studentExamId) throws Exception;
-
     public ExamVo getExamNotNull(ExamVo examVo) throws OperationException;
 
     public void log(ScheduleVo scheduleVo, String method);
