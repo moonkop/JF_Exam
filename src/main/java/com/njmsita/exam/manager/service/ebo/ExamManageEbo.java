@@ -538,6 +538,16 @@ public class ExamManageEbo implements ExamManageEbi
 
     }
 
+    public List<ScheduleVo> getAllByExecutable()
+    {
+        return scheduleDao.getAllByExecutable();
+    }
+
+    public void updateSchedule(ScheduleVo scheduleVo)
+    {
+        scheduleDao.update(scheduleVo);
+    }
+
     /**
      * 判空
      *

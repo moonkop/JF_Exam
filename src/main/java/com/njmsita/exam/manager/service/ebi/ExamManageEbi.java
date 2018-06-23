@@ -29,14 +29,12 @@ public interface ExamManageEbi extends BaseEbi<ExamVo>
     /**
      * 发起考试
      *
-     * @param examVo       考试信息
      */
     public void save(ExamEditWrapper wrapper,TeacherVo teacherVo) throws Exception;
 
     /**
      * 修改考试
      *
-     * @param examVo       考试信息
      */
     public void update( ExamEditWrapper wrapper,TeacherVo teacherVo) throws Exception;
 
@@ -103,7 +101,6 @@ public interface ExamManageEbi extends BaseEbi<ExamVo>
      * 判断该考试该教师可以进行的操作
      *
      * @param exam
-     * @param loginUser
      *
      * @return
      */
@@ -154,4 +151,16 @@ public interface ExamManageEbi extends BaseEbi<ExamVo>
     public void outmodedSchedule(ScheduleVo scheduleVo);
 
     void stop(String examId, TeacherVo attribute) throws Exception;
+
+    /**
+     * 获取考试的可执行任务
+     * @return
+     */
+    public List<ScheduleVo> getAllByExecutable();
+
+    /**
+     * 更新任务状态
+     * @param scheduleVo
+     */
+    public void updateSchedule(ScheduleVo scheduleVo);
 }
