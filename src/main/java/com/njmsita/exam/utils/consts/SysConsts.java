@@ -53,13 +53,13 @@ public class SysConsts
 	public static final Set<Integer> MANUAL_MARK_QUESTION_TYPE_SET = new HashSet<>();
 
 	//批阅完成
-	public static final Integer STUDENT_EXAM_MARK_PROGRESS_DONE = 1;
+	public static final String STUDENT_EXAM_MARK_PROGRESS_COMPELETED = "completed";
 	//未开始批阅
-	public static final Integer STUDENT_EXAM_MARK_PROGRESS_NOTSTARTED = 0;
+	public static final String STUDENT_EXAM_MARK_PROGRESS_NOTSTARTED = "notStarted";
 	//未完成批阅
-	public static final Integer STUDENT_EXAM_MARK_PROGRESS_UNFINISHED = 2;
+	public static final String STUDENT_EXAM_MARK_PROGRESS_UNFINISHED = "unfinished";
 	//未找到结果
-	public static final Integer STUDENT_EXAM_MARK_PROGRESS_NOTFOUND = 3;
+	public static final String STUDENT_EXAM_MARK_PROGRESS_NOTFOUND = "notFound";
 
 
     static{

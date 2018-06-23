@@ -19,6 +19,7 @@
         <span class="exam-title">${exam.name}</span>
         <button class="btn btn-default pull-left" id="prev-paper"> 上一张</button>
         <button class="btn btn-default pull-right" id="next-paper"> 下一张</button>
+        <button class="btn btn-danger pull-right" id="save-mark"> 保存</button>
     </div>
 
     <div class="paper-wrapper">
@@ -28,13 +29,52 @@
                 <div class="title"></div>
                 <div class="comment"></div>
                 <div class="question-list">
+                    <div class="panel panel-question" id="paper_question_2" data-index="2" data-type="4">
+                        <div class="panel-body">
+                            <div class="question-header">
+                                <span class="question-index">3. </span>
 
+                                <span class="question-type">简答题</span>
 
+                                <span class="question-answer"></span>
 
+                                <span class="question-value">10分</span>
 
+                                <span class="question-actions"></span>
+                            </div>
+                            <div class="question-body">
+                                <span class="question-outline">我是第三道题</span>
+                                <div class="question-code">
+                                    <pre><code class="hljs"></code></pre>
+                                </div>
+                            </div>
+                            <div class="question-workout">
+                                <pre style="width: 100%">
+                                    123456789
+                                    123
+                                    123
+                                    123
+                                    123
+                                </pre>
+                            </div>
+                            <div class="question-mark">
+                                <div class="question-remark">
+                                    <textarea class="question-remark-area"></textarea>
+                                </div>
+                                <div class="question-mark-range">
+                                    <input type="text" class="js-question-mark-range">
+                                </div>
+                                <div class="question-mark-score">
+                                    <input type="text" class="question-mark-score-input">
+                                    <span>分</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                 </div>
             </div>
+
 
             <div class="navcard">
                 <div class="navcard-title">
@@ -44,21 +84,12 @@
                 <div class="navcard-workout-list">
 
 
-                    <span id="workout-1">1</span><span id="workout-2">2</span><span id="workout-3">3</span><span
-                        id="workout-4">4</span><span id="workout-5">5</span><span id="workout-6">6</span><span
-                        id="workout-7">7</span><span id="workout-8">8</span><span id="workout-9">9</span><span
-                        id="workout-10">10</span><span id="workout-11">11</span><span id="workout-12">12</span><span
-                        id="workout-13">13</span><span id="workout-14">14</span><span id="workout-15">15</span><span
-                        id="workout-16">16</span><span id="workout-17">17</span><span id="workout-18">18</span><span
-                        id="workout-19">19</span><span id="workout-20">20</span>
                 </div>
                 <div class="navcard-title">
                     试卷导航
                 </div>
                 <div class="navcard-paper-list">
-                    <span id="paper-1" class="navcard-active">1</span><span id="paper-2">2</span><span id="paper-3">3</span><span id="paper-4">4</span><span
-                        id="paper-5">5</span><span id="paper-6">6</span><span id="paper-7">7</span><span
-                        id="paper-8">8</span><span id="paper-9">9</span><span id="paper-10">10</span>
+
                 </div>
 
                 <div class="navcard-title">
@@ -66,10 +97,7 @@
                 </div>
 
                 <div class="navcard-paper-list navcard-paper-list-open">
-                    <span id="paper--1">1</span><span id="paper--2">2</span><span id="paper--3">3</span><span
-                        id="paper--4">4</span><span
-                        id="paper--5" class="navcard-active">5</span><span id="paper--6">6</span><span id="paper--7">7</span><span
-                        id="paper--8">8</span><span id="paper--9">9</span><span id="paper--10">10</span>
+
                 </div>
 
 
@@ -80,6 +108,251 @@
     <%@include file="/WEB-INF/components/question-manage-templates.jsp" %>
 
     <script>
+        var User={
+            id:'${loginUser.id}',
+            name:'${loginUser.name}',
+            role:'${loginUser.role.id}'
+        }
+        var app = {
+            name: "exam-workout",
+            exam: {
+                id: '${exam.id}',
+                studentExam: {
+                    id: "${studentExam.id}",
+                    startTime: "${studentExam.startTime}"
+                },
+                duration: "${exam.duration}" * 60 * 1000,
+                closeTime: "${exam.closeTime}"
+            },
+            paper: {
+                id: '${paper.id}',
+                title: '${paper.title}',
+                comment: '${paper.comment}',
+                questionList:${questionList},
+            },
+            currentTime: "${currentTime}",
+            paperList: [],
+            currentStudentExam:
+                {
+                    id: null,
+                    workout: null
+                },
+        }
+        var navcard = {
+            $this: $(".navcard"),
+            $workout_list: $(".navcard-workout-list"),
+            navigate_to_question: navigate_to_question,
+            render_paper_list: function () {
+                var $paper_list = $(".navcard-paper-list");
+                $paper_list.empty();
+                app.paperList.map(function (item) {
+                    var $span = $("<span></span>");
+                    $span.attr("id", "paper_item_" + item.index);
+                    $span.attr("data-index", item.index);
+                    $span.attr("data-id", item.id);
+                    $span.html(parseInt(item.index) + 1);
+                    var mark_status_className_map = {
+                        "completed": "navcard-item-completed",
+                        "notStarted": "navcard-item-notstarted",
+                        "unfinished": "navcard-item-unfinished",
+                        "notFound": "navcard-item-disabled",
+                    }
+                    $span.addClass(mark_status_className_map[item.mark_status]);
+                    $paper_list.append($span);
+                })
+            },
+
+            render_workout_list: function () {
+                $(".navcard-workout-list").empty();
+                app.paper.questionList.map(function (item) {
+                        var $span = $("<span></span>");
+                        $span.attr("id", "workout_item_" + item.index);
+                        $span.attr("data-index", item.index);
+                        $span.text((parseInt(item.index) + 1));
+                    $(".navcard-workout-list").append($span);
+                    }
+                )
+            },
+
+            //刷新试卷中题目批改状态
+            refresh_workout_list: function () {
+                app.currentStudentExam.workout.map(function (item) {
+                    var $workout_item = $(".navcard-workout-list").find("#workout_item_" + item.index);
+                    $workout_item.removeClass();
+                    if(item.score!=null&&item.score!=undefined)
+                    {
+                        $workout_item.addClass("navcard-item-completed");
+                    }
+                    if(item.teacherId!=null&&item.teacherId!=undefined&&item.teacherId!=User.id)
+                    {
+                        $workout_item.addClass("navcard-item-marked-by-others");
+                    }
+                });
+            },
+
+            set_paper_active: function (id) {
+                this.$this.find(".navcard-item-active").removeClass("navcard-item-active");
+                this.$this.find("[data-id='" + id + "']").addClass("navcard-item-active");
+            },
+            init: function () {
+                this.render_workout_list();
+
+                $(".navcard-workout-list").on("click", "span", function () {
+                    navcard.navigate_to_question($(this).attr("data-index"));
+                })
+
+                $(".navcard-paper-list").on("click", "span", function () {
+                    get_workout_from_server($(this).attr("data-id"));
+                })
+            }
+        };
+
+        function get_workout_from_server(studentExamId)
+        {
+            myajax(
+                {
+                    url: "/exam/operation/getWorkout.do?id=" + studentExamId,
+                    success: function (res) {
+                        navcard.set_paper_active(studentExamId);
+                        app.currentStudentExam.id = studentExamId;
+                        app.currentStudentExam.workout = res.payload.workoutList;
+                        navcard.refresh_workout_list();
+                        res.payload.workoutList.map(function (item) {
+                            var question = app.paper.questionList[item.index];
+                            question.$mark_teacher.text("批阅人：" + item.teacher);
+                            question.setScore(item.score);
+                            question.$remark.val(item.remark);
+                            question.$workout.html(item.workout);
+                            question.workoutId = item.id;
+                        });
+                    }
+                }
+            );
+        }
+
+        $(document).ready(function () {
+            app.paper.questionList = reArrangeQuestionList(app.paper.questionList);
+            render_paper_title();
+            paper_mark_render_question_list();
+            get_student_exam_list();
+
+            navcard.init();
+
+            $("#save-mark").on("click", function () {
+                save_all_mark_to_server();
+
+            })
+
+            app.paper.questionList.map(initQuestion)
+
+
+            $(".question-mark-range").append();
+            $(".js-question-mark-range").ionRangeSlider();
+        });
+
+
+        function initQuestion(item)
+        {
+            var $panel = $(".panel-question[data-index='" + item.index + "']");
+            var $score_input = $panel.find(".question-mark-score-input");
+            var $slider = $panel.find(".js-question-mark-range");
+            $slider.ionRangeSlider(
+                {
+                    grid: true,
+                    min: 0,
+                    max: item.value,
+                    step: 0.5,
+                    postfix: "分",
+                    onChange: function (data) {
+                        $score_input.val(data.from);
+                    }
+                }
+            )
+            var slider = $slider.data("ionRangeSlider");
+            $score_input.on("keyup,change", function () {
+                var val = $score_input.val();
+                //超过题目分值则为题目分值
+                if (val > item.value)
+                {
+                    val = item.value;
+                }
+                //若不为0.5的倍数 则去尾
+                if (parseInt(val * 2) != val * 2)
+                {
+                    val = parseInt(val * 2) / 2;
+                }
+                $score_input.val(val);
+                //更新拖动条
+                slider.update({
+                    from: $score_input.val()
+                })
+            })
+            item.$panel = $panel;
+            item.silder = slider;
+            item.$slider = slider;
+            item.$score_input = $score_input;
+            item.$remark = $panel.find(".question-remark-area");
+            item.$mark_teacher = $panel.find(".question-mark-teacher");
+            item.$workout = $panel.find(".question-workout-area");
+
+
+            item.setScore = function (score) {
+                slider.update({
+                    from: score
+                });
+                $score_input.val(score);
+            };
+        }
+
+
+        function get_student_exam_list()
+        {
+            myajax(
+                {
+                    url: "/exam/operation/getStudentExamList.do?id=" + app.exam.id,
+                    success: function (res) {
+                        app.paperList = res.payload.rows;
+                        navcard.render_paper_list();
+                        get_workout_from_server(app.paperList[0].id);
+                    }
+                }
+            );
+        }
+
+
+        function save_all_mark_to_server()
+        {
+            function get_mark_by_index(question)
+            {
+                var obj = {};
+                obj.id = question.workoutId;
+                obj.score = question.$score_input.val();
+                obj.remark = question.$remark.val();
+                return obj;
+            }
+
+            arr = [];
+            app.paper.questionList.map(function (item) {
+                if (item != null)
+                {
+                    arr.push(get_mark_by_index(item));
+                }
+            });
+
+            myajax(
+                {
+                    contentType: "application/json",
+                    type: "post",
+                    url: "/exam/operation/saveMark.do",
+                    data:
+                        JSON.stringify(arr)
+                    ,
+                    success: function () {
+                        layer.msg("保存成功");
+                    }
+                }
+            );
+        }
 
 
     </script>

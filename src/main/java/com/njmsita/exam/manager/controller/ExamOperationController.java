@@ -1,12 +1,10 @@
 package com.njmsita.exam.manager.controller;
 
 import com.njmsita.exam.authentic.model.TeacherVo;
-import com.njmsita.exam.authentic.model.UserModel;
 import com.njmsita.exam.authentic.service.ebi.TeacherEbi;
 import com.njmsita.exam.manager.model.ExamVo;
 import com.njmsita.exam.manager.model.QuestionVo;
 import com.njmsita.exam.manager.model.StudentExamQuestionVo;
-import com.njmsita.exam.manager.model.StudentExamVo;
 import com.njmsita.exam.manager.service.ebi.ExamManageEbi;
 import com.njmsita.exam.manager.service.ebi.ExamMarkEbi;
 import com.njmsita.exam.manager.service.ebi.SubjectEbi;
@@ -16,11 +14,8 @@ import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.json.CustomJsonSerializer;
 import com.njmsita.exam.utils.json.JsonListObjectMapper;
-import com.njmsita.exam.utils.json.JsonListResponse;
 import com.njmsita.exam.utils.json.JsonResponse;
 import com.njmsita.exam.utils.logutils.SystemLogAnnotation;
-import com.sun.xml.internal.ws.resources.HttpserverMessages;
-import org.apache.regexp.RE;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,7 +27,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 考试操作控制器
@@ -238,11 +232,21 @@ public class ExamOperationController
         if (examVoWithPaper.getPaperVo() != null)
         {
             request.setAttribute("paper", examVoWithPaper.getPaperVo());
+            List<QuestionVo> list= examVoWithPaper.getPaperVo().getQuestionList();
+            List<QuestionVo> list_manual_mark = new ArrayList<>();
+            for (QuestionVo item : list)
+            {
+                if (SysConsts.MANUAL_MARK_QUESTION_TYPE_SET.contains(item.getType()))
+                {
+                    list_manual_mark.add(item);
+                }
+            }
+            request.setAttribute("exam", examVoWithPaper);
             request.setAttribute("questionList", CustomJsonSerializer.toJsonString_static
                     (
                             new JsonListObjectMapper<QuestionVo>().
                                     setFields("id,outline,options,value,code,index,type,answer").
-                                    serializeList(examVoWithPaper.getPaperVo().getQuestionList())
+                                    serializeList(list_manual_mark)
                     ));
         }
         return "/exam/teacher/mark";
@@ -255,6 +259,7 @@ public class ExamOperationController
         return "/exam/report";
     }
 
+    @Deprecated
     @ResponseBody
     @RequestMapping("getMarkProgress.do")
     public JsonResponse getMarkProgress(@RequestParam(name = "id") String ExamId, HttpServletRequest request) throws ItemNotFoundException
@@ -263,6 +268,30 @@ public class ExamOperationController
         response.setPayload(examMarkEbi.getMarkProgress(ExamId));
         return response;
     }
+
+    /**
+     *获取所有试卷的批阅状态（已完成，未完成，未开始，未找到）
+     * @param ExamId
+     * @param request
+     * @return
+     * @throws ItemNotFoundException
+     */
+    @ResponseBody
+    @RequestMapping("getStudentExamList.do")
+    public JsonResponse getStudentExamList(@RequestParam(name = "id") String ExamId, HttpServletRequest request) throws ItemNotFoundException
+    {
+        JsonResponse response = new JsonResponse();
+        response.put("rows",examMarkEbi.getStudentExamList(ExamId));
+         return  response;
+    }
+
+    /**
+     * 获取某一张试卷的作答及批阅
+     * @param studentExamId
+     * @param request
+     * @return
+     * @throws Exception
+     */
     @ResponseBody
     @RequestMapping("getWorkout.do")
     public JsonResponse getStudentWorkout(@RequestParam(name = "id") String studentExamId, HttpServletRequest request) throws Exception
@@ -275,10 +304,9 @@ public class ExamOperationController
 
     @RequestMapping("saveMark.do")
     @ResponseBody
-    public JsonResponse savaMarked(@RequestBody List<StudentExamQuestionVo> studentExamQeustionList,
-                                   String studentExamId) throws Exception
+    public JsonResponse savaMarked(@RequestBody List<StudentExamQuestionVo> markList,HttpServletRequest request) throws Exception
     {
-        examMarkEbi.saveMarked(studentExamQeustionList, studentExamId);
+        examMarkEbi.saveMarked(markList,(TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME) );
         return new JsonResponse("保存成功！");
     }
 

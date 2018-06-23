@@ -23,7 +23,9 @@
 
                 <span class="question-value">
                     </span>
+                <span class="question-mark-teacher">
 
+                </span>
                 <span class="question-actions">
                     </span>
             </div>
@@ -41,9 +43,24 @@
     </div>
 </script>
 
+<script id="js-template-question-mark" type="text/html">
+    <div class="question-mark">
+        <div class="question-remark">
+        <textarea class="question-remark-area"></textarea>
+        </div>
+        <div class="question-mark-range">
+        <input type="text" class="js-question-mark-range">
+        </div>
+        <div class="question-mark-score">
+        <input type="text" class="question-mark-score-input">
+        <span>分</span>
+        </div>
+        </div>
+</script>
+
 
 <script id="js-template-question-workout-area" type="text/html">
-    <textarea class="question-workout form-control" style="width: 100%" cols="5"></textarea>
+    <textarea class="form-control" style="width: 100%" cols="5"></textarea>
 </script>
 
 <script id="js-template-question-view" type="text/html">

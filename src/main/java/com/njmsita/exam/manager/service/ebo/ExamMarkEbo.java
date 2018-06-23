@@ -41,38 +41,49 @@ public class ExamMarkEbo implements ExamMarkEbi
     private ExamManageEbi examManageEbi;
 
 
-    public void saveMarked(List<StudentExamQuestionVo> studentExamQeustionList, String studentExamId) throws Exception
+    public void saveMarked(List<StudentExamQuestionVo> studentExamQuestionList, TeacherVo loginTeacher) throws Exception
     {
-        if (studentExamQeustionList == null || studentExamQeustionList.size() > 0)
+        if (studentExamQuestionList == null || studentExamQuestionList.size() < 0)
         {
-            throw new OperationException("所保存的题目不能为空,请不要进行非法操作！");
+            return ;
         }
-        if (StringUtil.isEmpty(studentExamId))
+
+        StudentExamQuestionVo first = studentExamQuestionDao.get(studentExamQuestionList.get(0).getId());
+        StudentExamVo studentExamPo =  first.getStudentExam();
+        if (studentExamPo == null)
         {
-            throw new OperationException("所要保存的学生试卷,请不要进行非法操作！");
+            throw new OperationException("未找到该试卷");
         }
-        StudentExamVo studentExamVo = studentExamDao.get(studentExamId);
-        if (null == studentExamVo)
+        ExamVo examPo = studentExamPo.getExam();
+        if (examPo == null)
         {
-            throw new OperationException("索要保存的学生试卷不存在,请不要进行非法操作！");
+            throw new OperationException("未找到该考试");
         }
-        double scores = 0;
-        for (StudentExamQuestionVo studentExamQuestionVo : studentExamQeustionList)
+        examManageEbi.checkPermission(SysConsts.EXAM_OPERATION_MARK, loginTeacher, examPo);
+
+        for (StudentExamQuestionVo studentExamQuestionVo : studentExamQuestionList)
         {
-            StudentExamQuestionVo temp = studentExamQuestionDao.get(studentExamQuestionVo.getId());
-            if (temp == null)
+            StudentExamQuestionVo studentExamQuestionPo = studentExamQuestionDao.get(studentExamQuestionVo.getId());
+            if (studentExamQuestionPo == null)
             {
-                throw new OperationException("个别题目不存在,请不要进行非法操作！");
+                throw new OperationException("个别题目未找到");
             }
-            if (!studentExamVo.getId().equals(temp.getStudentExam().getId()))
+            if (!studentExamPo.getId().equals(studentExamQuestionPo.getStudentExam().getId()))
             {
-                throw new OperationException("个别题目属于所提交的学生试卷,请不要进行非法操作！");
+                if (studentExamQuestionPo.getStudentExam().getExam().getId() == examPo.getId())
+                {
+                    studentExamPo = studentExamQuestionPo.getStudentExam();
+                }else
+                {
+                    throw new OperationException("个别题目不属于该场考试");
+                }
             }
-            scores += studentExamQuestionVo.getScore();
-            temp.setScore(FormatUtil.formatScore(studentExamQuestionVo.getScore()));
-            temp.setRemark(studentExamQuestionVo.getRemark());
+            studentExamQuestionPo.setScore(FormatUtil.formatScore(studentExamQuestionVo.getScore()));
+            studentExamQuestionPo.setRemark(studentExamQuestionVo.getRemark());
+            studentExamQuestionPo.setTeacherVo(loginTeacher);
+
         }
-        studentExamVo.setScore(FormatUtil.formatScore(scores));
+
     }
 
     public void submitMarked(ExamVo examVo, TeacherVo login) throws Exception
@@ -149,9 +160,9 @@ public class ExamMarkEbo implements ExamMarkEbi
 
         Map<String, Object> retMap = new HashMap<>();
 
-        retMap.put("workout",
+        retMap.put("workoutList",
                 new JsonListObjectMapper<StudentExamQuestionVo>()
-                        .setFields("id,index,score,remark,workout,answer,[teacher]getTeacherVo().getName(),type")
+                        .setFields("id,index,score,remark,workout,answer,[teacher]getTeacherVo().getName(),[teacherId]getTeacherVo().getId(),type")
                         .serializeList(workoutNeedMarkList));
         retMap.put("student",
                 new JsonObjectMapper<StudentVo>()
@@ -161,6 +172,7 @@ public class ExamMarkEbo implements ExamMarkEbi
         return retMap;
     }
 
+    @Deprecated
     @Override
     public Map<String, Object> getMarkProgress(String ExamId) throws ItemNotFoundException
     {
@@ -174,30 +186,59 @@ public class ExamMarkEbo implements ExamMarkEbi
 
         for (StudentExamVo StudentExamPo : studentExamVos)
         {
-            int status = SysConsts.STUDENT_EXAM_MARK_PROGRESS_NOTSTARTED;
-            if (StudentExamPo.getStatus() == SysConsts.STUDENT_EXAM_STATUS_NOT_STARTED || StudentExamPo.getStudentExamQuestionVos() == null || StudentExamPo.getStudentExamQuestionVos().size() == 0)
-            {
-                status = SysConsts.STUDENT_EXAM_MARK_PROGRESS_NOTFOUND;
-            }
-            boolean finished = true;
-            Set<StudentExamQuestionVo> workouts= StudentExamPo.getStudentExamQuestion_Manual_mark();
-            for (StudentExamQuestionVo workout : workouts)
-            {
-                if (workout.getScore() != null)
-                {
-                    status = SysConsts.STUDENT_EXAM_MARK_PROGRESS_UNFINISHED;
-                }
-                else {
-                    finished=false;
-                }
-                if (finished)
-                {
-                    status = SysConsts.STUDENT_EXAM_MARK_PROGRESS_DONE;
-                }
-            }
+            String status = getMarkStatus(StudentExamPo);
             retMap.put(StudentExamPo.getId(), status);
 
         }
         return retMap;
+    }
+
+    private String getMarkStatus(StudentExamVo StudentExamPo)
+    {
+        String status = SysConsts.STUDENT_EXAM_MARK_PROGRESS_NOTSTARTED;
+        if (StudentExamPo.getStatus() == SysConsts.STUDENT_EXAM_STATUS_NOT_STARTED || StudentExamPo.getStudentExamQuestionVos() == null || StudentExamPo.getStudentExamQuestionVos().size() == 0)
+        {
+            status = SysConsts.STUDENT_EXAM_MARK_PROGRESS_NOTFOUND;
+        }
+        boolean finished = true;
+        Set<StudentExamQuestionVo> workouts= StudentExamPo.getStudentExamQuestion_Manual_mark();
+        for (StudentExamQuestionVo workout : workouts)
+        {
+            if (workout.getScore() != null)
+            {
+                status = SysConsts.STUDENT_EXAM_MARK_PROGRESS_UNFINISHED;
+            }
+            else {
+                finished=false;
+            }
+            if (finished)
+            {
+                status = SysConsts.STUDENT_EXAM_MARK_PROGRESS_COMPELETED;
+            }
+        }
+        return status;
+    }
+
+    @Override
+    public List<Map<String, Object>> getStudentExamList(String examId)
+    {
+        List<Map<String, Object>> retMap = new ArrayList<>();
+
+        List<StudentExamVo> list = studentExamDao.getAllStudentExambyExamId(examId);
+        int index=0;
+        for (StudentExamVo paper : list)
+        {
+            Map<String, Object> row = new HashMap<>();
+            row.put("index", index++);
+            row.put("id",paper.getId());
+            row.put("student_name",paper.getStudent().getName());
+            row.put("student_id",paper.getStudent().getId());
+            row.put("exam_status",paper.getStatus());
+            row.put("mark_status", getMarkStatus(paper));
+
+            retMap.add(row);
+        }
+        return retMap;
+
     }
 }

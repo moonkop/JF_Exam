@@ -181,7 +181,7 @@ public class ExamStudentEbo implements ExamStudentEbi
             StudentExamQuestionVo seq = new StudentExamQuestionVo();
             seq.setId(IdUtil.getUUID());
             seq.setStudentExam(studentExamPo);
-            seq.setIndex(i + 1);
+            seq.setIndex(i);
             seq.setAnswer(questionVoList.get(i).getAnswer());
             seq.setType(questionVoList.get(i).getType());
             studentExamQuestionDao.save(seq);
@@ -272,7 +272,7 @@ public class ExamStudentEbo implements ExamStudentEbi
         Map<Integer, QuestionVo> paperQuestionMap = new HashMap<>();
         for (QuestionVo questionPo : paperPo.getQuestionList())
         {
-            paperQuestionMap.put(questionPo.getIndex() + 1 //todo index对齐 从0开始
+            paperQuestionMap.put(questionPo.getIndex() //todo index对齐 从0开始
                     , questionPo);
         }
         for (StudentExamQuestionVo studentExamQuestionPo : studentExamQuestionPoSet)

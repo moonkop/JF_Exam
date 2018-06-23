@@ -250,8 +250,10 @@
         <put-attribute name="title" value="阅卷中"/>
         <put-list-attribute name="additional-headers">
             <add-attribute value="/WEB-INF/layout/additional-headers/highlight-header.jsp"/>
+            <add-attribute value="/WEB-INF/layout/additional-headers/rangeSlider-header.jsp"/>
         </put-list-attribute>
     </definition>
+
 
     <definition name="/index_teacher" extends="teacher_base">
         <put-attribute name="body" value="/WEB-INF/jsp/index_teacher.jsp"/>

@@ -14,9 +14,10 @@ public interface ExamMarkEbi
     /**
      * 保存阅卷存档
      * @param studentExamQeustionList
-     * @param studentExamId
+     * @param loginTeacher
+     *
      */
-    public void saveMarked(List<StudentExamQuestionVo> studentExamQeustionList, String studentExamId) throws Exception;
+    public void saveMarked(List<StudentExamQuestionVo> studentExamQeustionList, TeacherVo loginTeacher) throws Exception;
 
     /**
      * 提交阅卷
@@ -37,4 +38,6 @@ public interface ExamMarkEbi
     Map<String, Object> getStudentWorkout(String studentExamId) throws OperationException;
 
     Map<String, Object> getMarkProgress(String ExamId) throws ItemNotFoundException;
+
+    List<Map<String, Object>> getStudentExamList(String examId);
 }

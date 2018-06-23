@@ -83,15 +83,11 @@
             currentTime: "${currentTime}"
         }
 
+
         $(document).ready(function () {
-            //用index为数组下标重组questionlist
-            var questionlist = [];
-            app.paper.questionList.map(function (item) {
-                    questionlist[item.index] = item;
-                    item.needUpdate = false;
-                }
-            )
-            app.paper.questionList = questionlist;
+
+            app.paper.questionList = reArrangeQuestionList(app.paper.questionList);
+
             //渲染试卷标题
             render_paper_title();
             //渲染试卷题目列表
@@ -100,7 +96,7 @@
             get_workout_from_server(function (res) {
                 //将作答存入questionList
                 res.payload.rows.map(function (item) {
-                    var question = app.paper.questionList[item.index - 1];
+                    var question = app.paper.questionList[item.index];
                     question.id = item.id;
                     question.workout = item.workout;
                     set_workout(question);
@@ -172,38 +168,25 @@
             $("#count-down").text(TimeStampTDateTimeString(time));
         }
 
-        var $answer_list;
+        var $workout_list;
 
         function render_answer_card()
         {
-            $answer_list = $(".answer-card-list");
-            $answer_list.empty();
+            $workout_list = $(".answer-card-list");
+            $workout_list.empty();
             app.paper.questionList.map(function (item) {
-                    html = "<span id='answer_item_" + item.index + "'data-index='" + item.index + "' >" + (parseInt(item.index) + 1) + "</span>"
-                    $answer_list.append(html);
+                  var  html = "<span id='answer_item_" + item.index + "'data-index='" + item.index + "' >" + (parseInt(item.index) + 1) + "</span>"
+                    $workout_list.append(html);
                 }
             )
         }
 
-        function navigate_to_question(index)
-        {
-            var $panel = $(".panel-question[data-index='" + index + "']");
-            $(".question-list .focus").removeClass("focus");
-            $panel[0].scrollIntoView(true);
-            var hread = $(window).scrollTop() - 150;
-            $(window).scrollTop(hread);
-
-            $panel.addClass("focus");
-            setTimeout(function () {
-                $panel.removeClass("focus");
-            }, 2500);
-        }
 
         function refresh_answer_card()
         {
-            var question_completed=0;
+            var question_completed = 0;
             app.paper.questionList.map(function (item) {
-                    var $answer_card_item = $answer_list.find("#answer_item_" + item.index);
+                    var $answer_card_item = $workout_list.find("#answer_item_" + item.index);
                     $answer_card_item.removeClass();
                     if (item.workout != null && item.workout != "")
                     {
@@ -216,12 +199,8 @@
                     }
                 }
             )
-
-            $("#complete-rate").text(question_completed/app.paper.questionList.length*100+"%")
-
+            $("#complete-rate").text(question_completed / app.paper.questionList.length * 100 + "%")
         }
-
-
 
         //收集修改过的作答
         function collect_workout()
@@ -268,7 +247,7 @@
                         }
                     });
                     refresh_answer_card();
-                    layer.msg("保存成功",{
+                    layer.msg("保存成功", {
                         offset: 't',
                     });
                 }
@@ -293,7 +272,7 @@
                             var success = true;
                             res.payload.rows.map(function (item) {
 
-                                if (app.paper.questionList[item.index - 1].workout != item.workout)
+                                if (app.paper.questionList[item.index].workout != item.workout)
                                 {
                                     console.log(item.index + "check error");
                                     success = false;

@@ -75,19 +75,44 @@ body {
                 background: #333333;
                 color: #ffffff;
             }
-            &.navcard-active {
-                border: 2px solid red;
-                line-height: 18px;
-            }
+
         }
+    }
+    span {
+        &.navcard-item-disabled {
+            background: #999999;
+            color: #cfcfcf;
+            &:hover {
+                background: #999999;
+                color: #cfcfcf;
+            }
+            cursor: default;
+        }
+        &.navcard-item-completed {
+            background: #0c926b;
+            color: #ffffff;
+        }
+        &.navcard-item-unfinished {
+            background: #d48200;
+            color: #ffffff;
+        }
+        &.navcard-item-notstarted {
+            background: #ffffff;
+            color: #383838;
+        }
+
+        &.navcard-item-active {
+            border: 2px solid red;
+            line-height: 18px;
+        }
+        &.navcard-item-marked-by-others{
+            border: 2px solid #0ef0ae;
+            line-height: 18px;
+        }
+
     }
 
     .navcard-paper-list {
-        span {
-            &-item{
-
-            }
-        }
         &.navcard-paper-list-open {
             span {
                 width: 100%;
@@ -291,6 +316,46 @@ body {
     }
 }
 
+.question-mark {
+    min-height: 100px;
+    display: flex;
+    align-items: center;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    .question-remark {
+        width: 60%;
+        padding: 0 10px;
+        .question-remark-area {
+            min-height: 100px;
+            width: 100%;
+            border: 1px solid #cccccc;
+            border-radius: 4px;
+        }
+    }
+    .question-mark-range {
+        width: 30%;
+
+    }
+    .question-mark-score {
+        width: 10%;
+        line-height: 25px;
+        margin: 0 15px;
+        .question-mark-score-input {
+            width: 50px;
+            border: 1px solid #cccccc;
+            display: inline;
+            float: left;
+            margin-top: 21px;
+            border-radius: 4px;
+        }
+        span {
+            margin-top: 23px;
+            display: inline-block;
+            margin-left: 5px;
+        }
+    }
+}
+
 .panel-question {
     &.focus {
         outline-color: #0cb181;
@@ -339,6 +404,11 @@ body {
             margin-top: 15px;
             margin-left: 20px;
         }
+    }
+    .question-workout {
+        margin-top: 15px;
+        margin-right: 10px;
+        margin-left: 10px;
     }
 }
 
