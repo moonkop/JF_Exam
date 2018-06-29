@@ -78,7 +78,22 @@ public class ExamMarkEbo implements ExamMarkEbi
                     throw new OperationException("个别题目不属于该场考试");
                 }
             }
-            studentExamQuestionPo.setScore(FormatUtil.formatScore(studentExamQuestionVo.getScore()));
+
+            if (studentExamQuestionPo.getScore() == studentExamQuestionVo.getScore()
+                    && studentExamQuestionPo.getRemark() == studentExamQuestionVo.getRemark())
+            {
+                continue;
+            }
+            if (studentExamQuestionVo.getScore() == null && StringUtil.isEmpty(studentExamQuestionVo.getRemark()))
+            {
+                continue;
+            }
+
+
+
+
+           // studentExamQuestionPo.setScore(FormatUtil.formatScore(studentExamQuestionVo.getScore()));
+            studentExamQuestionPo.setScore(studentExamQuestionVo.getScore());
             studentExamQuestionPo.setRemark(studentExamQuestionVo.getRemark());
             studentExamQuestionPo.setTeacherVo(loginTeacher);
 
@@ -166,7 +181,7 @@ public class ExamMarkEbo implements ExamMarkEbi
                         .serializeList(workoutNeedMarkList));
         retMap.put("student",
                 new JsonObjectMapper<StudentVo>()
-                        .setFields("id,name,[classroom]classroom.name,[school]school.name")
+                        .setFields("[id]getId(),[name]getName(),[classroom]getClassroom().getName(),[school]getSchool().getName()")
                         .serializeObject(studentExamPo.getStudent())
         );
         return retMap;

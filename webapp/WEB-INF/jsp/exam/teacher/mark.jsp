@@ -25,30 +25,41 @@
     <div class="paper-wrapper">
 
         <div class="paper-mark" style="margin-top: 50px">
-            <div class="title-area">
-                <div class="title"></div>
-                <div class="comment"></div>
-                <div class="question-list">
-                    <div class="panel panel-question" id="paper_question_2" data-index="2" data-type="4">
-                        <div class="panel-body">
-                            <div class="question-header">
-                                <span class="question-index">3. </span>
+            <div class="student-info">
+                <span class="student-info-name">
 
-                                <span class="question-type">简答题</span>
+                </span>
+                <span class="student-info-school">
 
-                                <span class="question-answer"></span>
+                </span>
+                <span class="student-info-classroom">
 
-                                <span class="question-value">10分</span>
+                </span>
+                <span class="student-info-id">
 
-                                <span class="question-actions"></span>
+                </span>
+            </div>
+            <div class="question-list">
+                <div class="panel panel-question" id="paper_question_2" data-index="2" data-type="4">
+                    <div class="panel-body">
+                        <div class="question-header">
+                            <span class="question-index">3. </span>
+
+                            <span class="question-type">简答题</span>
+
+                            <span class="question-answer"></span>
+
+                            <span class="question-value">10分</span>
+
+                            <span class="question-actions"></span>
+                        </div>
+                        <div class="question-body">
+                            <span class="question-outline">我是第三道题</span>
+                            <div class="question-code">
+                                <pre><code class="hljs"></code></pre>
                             </div>
-                            <div class="question-body">
-                                <span class="question-outline">我是第三道题</span>
-                                <div class="question-code">
-                                    <pre><code class="hljs"></code></pre>
-                                </div>
-                            </div>
-                            <div class="question-workout">
+                        </div>
+                        <div class="question-workout">
                                 <pre style="width: 100%">
                                     123456789
                                     123
@@ -56,9 +67,19 @@
                                     123
                                     123
                                 </pre>
+                        </div>
+                        <div class="question-mark">
+                            <div class="question-mark-info">
+                                    <span class="question-mark-info-teacher">
+                                        批阅人：
+                                        <span>徐强</span>
+                                    </span>
+                                <span class="question-mark-info-time">
+                                        <span>2018年6月24日19:26:00</span>
+                                    </span>
                             </div>
-                            <div class="question-mark">
-                                <div class="question-remark">
+                            <div class="question-mark-area">
+                                <div class="question-mark-remark">
                                     <textarea class="question-remark-area"></textarea>
                                 </div>
                                 <div class="question-mark-range">
@@ -71,8 +92,8 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
+
             </div>
 
 
@@ -108,10 +129,12 @@
     <%@include file="/WEB-INF/components/question-manage-templates.jsp" %>
 
     <script>
-        var User={
-            id:'${loginUser.id}',
-            name:'${loginUser.name}',
-            role:'${loginUser.role.id}'
+
+
+        var User = {
+            id: '${loginUser.id}',
+            name: '${loginUser.name}',
+            role: '${loginUser.role.id}'
         }
         var app = {
             name: "exam-workout",
@@ -137,7 +160,10 @@
                     id: null,
                     workout: null
                 },
+            currentPaperIndex: null
         }
+
+
         var navcard = {
             $this: $(".navcard"),
             $workout_list: $(".navcard-workout-list"),
@@ -169,7 +195,7 @@
                         $span.attr("id", "workout_item_" + item.index);
                         $span.attr("data-index", item.index);
                         $span.text((parseInt(item.index) + 1));
-                    $(".navcard-workout-list").append($span);
+                        $(".navcard-workout-list").append($span);
                     }
                 )
             },
@@ -179,14 +205,16 @@
                 app.currentStudentExam.workout.map(function (item) {
                     var $workout_item = $(".navcard-workout-list").find("#workout_item_" + item.index);
                     $workout_item.removeClass();
-                    if(item.score!=null&&item.score!=undefined)
+                    if (item.score != null && item.score != undefined)
                     {
                         $workout_item.addClass("navcard-item-completed");
                     }
-                    if(item.teacherId!=null&&item.teacherId!=undefined&&item.teacherId!=User.id)
+                    if ((item.teacherId != null && item.teacherId != undefined && item.teacherId == User.id) || item._question.needUpdate == true)
                     {
-                        $workout_item.addClass("navcard-item-marked-by-others");
+                        $workout_item.addClass("navcard-item-marked-by-me");
                     }
+
+
                 });
             },
 
@@ -202,53 +230,90 @@
                 })
 
                 $(".navcard-paper-list").on("click", "span", function () {
-                    get_workout_from_server($(this).attr("data-id"));
+                    if ($(this).hasClass("navcard-item-disabled"))
+                    {
+                        return false;
+                    }
+
+                    switch_paper($(this).attr("data-index"));
+                    ;
                 })
             }
         };
 
-        function get_workout_from_server(studentExamId)
+        function switch_next_paper()
+        {
+            var index = app.currentPaperIndex;
+            while (index < app.paperList.length)
+            {
+                index++;
+                if (app.paperList[index].mark_status != "notFound")
+                {
+                    switch_paper(index);
+                    return;
+                }
+            }
+            layer.msg("未找到试卷");
+        }
+
+        function switch_prev_paper()
+        {
+            var index = app.currentPaperIndex;
+            while (index >= 0)
+            {
+                index--;
+                if (app.paperList[index].mark_status != "notFound")
+                {
+                    switch_paper(index);
+                    return;
+                }
+            }
+            layer.msg("未找到试卷");
+        }
+
+        function switch_paper(index)
+        {
+            var studentExamId = app.paperList[index].id;
+            get_workout_from_server(studentExamId, function (res) {
+                    navcard.set_paper_active(studentExamId);
+                    app.currentPaperIndex = app.paperIDtoIndex[studentExamId].index;
+                    app.currentStudentExam.id = studentExamId;
+                    app.currentStudentExam.workout = [];
+                    res.payload.workoutList.map(function (item) {
+                        app.currentStudentExam.workout[item.index] = item;
+                    });
+                    set_student_info(res.payload.student);
+                    res.payload.workoutList.map(function (item) {
+                        var question = app.paper.questionList[item.index];
+                        item._question = question;
+                        question.setMarkTeacher(item.teacher);
+                        question.setScore(item.score);
+                        question.$remark.val(item.remark);
+                        question.$workout.html(item.workout);
+                        question.workoutId = item.id;
+                    });
+                    navcard.refresh_workout_list();
+                }
+            )
+        }
+
+        function set_student_info(student)
+        {
+            $(".student-info-name").text(student.name);
+            $(".student-info-school").text(student.school);
+            $(".student-info-classroom").text(student.classroom);
+            $(".student-info-id").text(student.id);
+        }
+
+        function get_workout_from_server(studentExamId, callback)
         {
             myajax(
                 {
                     url: "/exam/operation/getWorkout.do?id=" + studentExamId,
-                    success: function (res) {
-                        navcard.set_paper_active(studentExamId);
-                        app.currentStudentExam.id = studentExamId;
-                        app.currentStudentExam.workout = res.payload.workoutList;
-                        navcard.refresh_workout_list();
-                        res.payload.workoutList.map(function (item) {
-                            var question = app.paper.questionList[item.index];
-                            question.$mark_teacher.text("批阅人：" + item.teacher);
-                            question.setScore(item.score);
-                            question.$remark.val(item.remark);
-                            question.$workout.html(item.workout);
-                            question.workoutId = item.id;
-                        });
-                    }
+                    success: callback
                 }
             );
         }
-
-        $(document).ready(function () {
-            app.paper.questionList = reArrangeQuestionList(app.paper.questionList);
-            render_paper_title();
-            paper_mark_render_question_list();
-            get_student_exam_list();
-
-            navcard.init();
-
-            $("#save-mark").on("click", function () {
-                save_all_mark_to_server();
-
-            })
-
-            app.paper.questionList.map(initQuestion)
-
-
-            $(".question-mark-range").append();
-            $(".js-question-mark-range").ionRangeSlider();
-        });
 
 
         function initQuestion(item)
@@ -265,10 +330,21 @@
                     postfix: "分",
                     onChange: function (data) {
                         $score_input.val(data.from);
+                        item.changed();
                     }
                 }
             )
             var slider = $slider.data("ionRangeSlider");
+
+            item.needUpdate = false;
+            item.$panel = $panel;
+            item.silder = slider;
+            item.$slider = slider;
+            item.$score_input = $score_input;
+            item.$remark = $panel.find(".question-remark-area");
+            item.$mark_teacher = $panel.find(".question-mark-info-teacher");
+            item.$workout = $panel.find(".question-workout-area");
+
             $score_input.on("keyup,change", function () {
                 var val = $score_input.val();
                 //超过题目分值则为题目分值
@@ -286,16 +362,26 @@
                 slider.update({
                     from: $score_input.val()
                 })
+                item.changed();
             })
-            item.$panel = $panel;
-            item.silder = slider;
-            item.$slider = slider;
-            item.$score_input = $score_input;
-            item.$remark = $panel.find(".question-remark-area");
-            item.$mark_teacher = $panel.find(".question-mark-teacher");
-            item.$workout = $panel.find(".question-workout-area");
 
+            item.changed = function () {
+                app.currentStudentExam.workout[item.index].score = $score_input.val()
+                item.needUpdate = true;
+                navcard.refresh_workout_list();
+            }
 
+            item.$remark.on("change", item.changed);
+
+            item.get_mark = function () {
+                return get_mark_by_question(this);
+            }
+            item.setMarkTeacher = function (teacher) {
+                if (teacher != null && teacher != undefined && teacher != "")
+                {
+                    item.$mark_teacher.text("批阅人：" + teacher);
+                }
+            }
             item.setScore = function (score) {
                 slider.update({
                     from: score
@@ -305,37 +391,106 @@
         }
 
 
-        function get_student_exam_list()
+        function get_student_exam_list(callback)
         {
             myajax(
                 {
                     url: "/exam/operation/getStudentExamList.do?id=" + app.exam.id,
                     success: function (res) {
-                        app.paperList = res.payload.rows;
+                        app.paperList = [];
+                        app.paperIDtoIndex = [];
+
+                        res.payload.rows.map(function (item) {
+                            app.paperList[item.index] = item;
+                            app.paperIDtoIndex[item.id] = item;
+                        })
+
                         navcard.render_paper_list();
-                        get_workout_from_server(app.paperList[0].id);
+                        if (typeof callback == "function")
+                        {
+                            callback(res)
+                        }
                     }
                 }
             );
         }
 
+        function save_mark_changed()
+        {
+            var contentArr = [];
+            var questionUpdated = [];
+            var workoutUpdated = [];
+            app.currentStudentExam.workout.map(function (item) {
+                if (item._question.needUpdate == true)
+                {
+                    contentArr.push(item._question.get_mark());
+                    questionUpdated.push(item._question);
+                    workoutUpdated.push(item);
+                }
+            })
+            if (contentArr.length != 0)
+            {
+                save_mark(contentArr, function (res) {
+                    questionUpdated.map(function (item) {
+                            item.needUpdate = false;
+                        }
+                    )
+                    workoutUpdated.map(function(item)
+                    {
+                        item.teacherId = User.id;
+
+                    })
+                    layer.msg("自动保存成功", {
+                        offset: 't',
+                    })
+                });
+            }
+        }
+
+        function save_mark(contentArr, callback)
+        {
+            myajax(
+                {
+                    contentType: "application/json",
+                    type: "post",
+                    url: "/exam/operation/saveMark.do",
+                    data:
+                        JSON.stringify(contentArr)
+                    ,
+                    success: function (res) {
+                        if (typeof callback == 'function')
+                        {
+                            callback(res);
+                        }
+                        else
+                        {
+                            layer.msg("保存成功", {
+                                offset: 't',
+                            })
+                        }
+                    }
+                }
+            );
+        }
+
+        function get_mark_by_question(question)
+        {
+            var obj = {};
+            obj.id = question.workoutId;
+            obj.score = question.$score_input.val();
+            obj.remark = question.$remark.val();
+            return obj;
+        }
 
         function save_all_mark_to_server()
         {
-            function get_mark_by_index(question)
-            {
-                var obj = {};
-                obj.id = question.workoutId;
-                obj.score = question.$score_input.val();
-                obj.remark = question.$remark.val();
-                return obj;
-            }
+
 
             arr = [];
             app.paper.questionList.map(function (item) {
                 if (item != null)
                 {
-                    arr.push(get_mark_by_index(item));
+                    arr.push(get_mark_by_question(item));
                 }
             });
 
@@ -353,6 +508,38 @@
                 }
             );
         }
+
+        $(document).ready(function () {
+            app.paper.questionList = reArrangeQuestionList(app.paper.questionList);
+            render_paper_title();
+            paper_mark_render_question_list();
+
+            get_student_exam_list(function (res) {
+                switch_paper(0);
+            });
+
+            navcard.init();
+
+            $("#save-mark").on("click", function () {
+                save_all_mark_to_server();
+            })
+
+            $("#next-paper").on("click", function () {
+                switch_next_paper();
+            });
+            $("#prev-paper").on("click", function () {
+                switch_prev_paper();
+            });
+
+            app.paper.questionList.map(initQuestion)
+
+
+            $(".question-mark-range").append();
+            $(".js-question-mark-range").ionRangeSlider();
+            var autoSaveTimer = setInterval(function () {
+                save_mark_changed();
+            }, 10000);
+        });
 
 
     </script>

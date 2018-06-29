@@ -303,6 +303,7 @@ function render_question_basics($question_panel, question)
     $question_panel.attr("id", "paper_question_" + question.index);
     $question_panel.attr("data-index", question.index);
     $question_panel.attr("data-type", question.type);
+    $question_panel.attr("data-id", question.id);
     $question_panel.find(".question-type").text(QuestionTypeMap(question.type));
     $question_panel.find(".question-index").text(question.index + 1 + ". ");
     $question_panel.find(".question-outline").text(question.outline);

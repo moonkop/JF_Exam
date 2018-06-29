@@ -23,9 +23,6 @@
 
                 <span class="question-value">
                     </span>
-                <span class="question-mark-teacher">
-
-                </span>
                 <span class="question-actions">
                     </span>
             </div>
@@ -36,7 +33,7 @@
                     <pre><code></code></pre>
                 </div>
             </div>
-            <div class="question-workout" >
+            <div class="question-workout">
 
             </div>
         </div>
@@ -45,17 +42,24 @@
 
 <script id="js-template-question-mark" type="text/html">
     <div class="question-mark">
-        <div class="question-remark">
-        <textarea class="question-remark-area"></textarea>
+        <div class="question-mark-info">
+            <span class="question-mark-info-teacher"></span>
+            <span class="question-mark-info-time"></span>
         </div>
-        <div class="question-mark-range">
-        <input type="text" class="js-question-mark-range">
+        <div class="question-mark-area">
+            <div class="question-mark-remark">
+                <textarea class="question-remark-area"></textarea>
+            </div>
+            <div class="question-mark-range">
+                <input type="text" class="js-question-mark-range">
+            </div>
+            <div class="question-mark-score">
+                <input type="text" class="question-mark-score-input">
+                <span>分</span>
+            </div>
         </div>
-        <div class="question-mark-score">
-        <input type="text" class="question-mark-score-input">
-        <span>分</span>
-        </div>
-        </div>
+    </div>
+
 </script>
 
 
@@ -336,7 +340,7 @@
         <div class="form-group">
             <label class="col-sm-2 control-label">备注</label>
             <div class="col-sm-9">
-                <textarea  class="form-control" name="comment"  rows="5"></textarea>
+                <textarea class="form-control" name="comment" rows="5"></textarea>
             </div>
         </div>
 
