@@ -28,18 +28,17 @@ public interface ExamManageEbi extends BaseEbi<ExamVo>
 
     /**
      * 发起考试
-     *
      */
-    public void save(ExamEditWrapper wrapper,TeacherVo teacherVo) throws Exception;
+    void save(ExamEditWrapper wrapper, TeacherVo teacherVo) throws Exception;
 
     /**
      * 修改考试
-     *
      */
-    public void update( ExamEditWrapper wrapper,TeacherVo teacherVo) throws Exception;
+    void update(ExamEditWrapper wrapper, TeacherVo teacherVo) throws Exception;
 
 
-    public ExamVo getWithPaper(Serializable uuid);
+    ExamVo getWithPaper(Serializable uuid);
+
     /**
      * 查询当前就是所发起的考试
      *
@@ -47,7 +46,7 @@ public interface ExamManageEbi extends BaseEbi<ExamVo>
      *
      * @return
      */
-    public List<ExamVo> getByCreateTeacher(String teacherId) throws Exception;
+    List<ExamVo> getByCreateTeacher(String teacherId) throws Exception;
 
     /**
      * 查询当前教师所参与阅卷的试卷
@@ -56,7 +55,7 @@ public interface ExamManageEbi extends BaseEbi<ExamVo>
      *
      * @return
      */
-    public List<ExamVo> getByMarkTeacher(String teacherId) throws Exception;
+    List<ExamVo> getByMarkTeacher(String teacherId) throws Exception;
 
     /**
      * 审核通过
@@ -64,7 +63,7 @@ public interface ExamManageEbi extends BaseEbi<ExamVo>
      * @param examVo
      * @param teacherVo
      */
-    public void setPass(ExamVo examVo, TeacherVo teacherVo) throws Exception;
+    void setPass(ExamVo examVo, TeacherVo teacherVo) throws Exception;
 
     /**
      * 审核不通过
@@ -72,7 +71,7 @@ public interface ExamManageEbi extends BaseEbi<ExamVo>
      * @param examVo
      * @param teacherVo
      */
-    public void setNoPass(ExamVo examVo, TeacherVo teacherVo) throws Exception;
+    void setNoPass(ExamVo examVo, TeacherVo teacherVo) throws Exception;
 
     /**
      * 取消考试
@@ -80,7 +79,7 @@ public interface ExamManageEbi extends BaseEbi<ExamVo>
      * @param examVo
      * @param teacherVo
      */
-    public void cancel(ExamVo examVo, TeacherVo teacherVo) throws Exception;
+    void cancel(ExamVo examVo, TeacherVo teacherVo) throws Exception;
 
     /**
      * 删除考试
@@ -88,7 +87,7 @@ public interface ExamManageEbi extends BaseEbi<ExamVo>
      * @param examVo
      * @param teacherVo
      */
-    public void deleteCanceled(ExamVo examVo, TeacherVo teacherVo) throws Exception;
+    void deleteCanceled(ExamVo examVo, TeacherVo teacherVo) throws Exception;
 
     /**
      * 更新阅卷教师
@@ -96,7 +95,8 @@ public interface ExamManageEbi extends BaseEbi<ExamVo>
      * @param examVo
      * @param markTeachers
      */
-    public void updateMarkTeacher(ExamVo examVo, String[] markTeachers) throws Exception;
+    void updateMarkTeacher(ExamVo examVo, String[] markTeachers) throws Exception;
+
     /**
      * 判断该考试该教师可以进行的操作
      *
@@ -104,9 +104,9 @@ public interface ExamManageEbi extends BaseEbi<ExamVo>
      *
      * @return
      */
-    public Set<String> getValidOperations(ExamVo exam, TeacherVo loginTeacher) throws UnLoginException, Exception;
+    Set<String> getValidOperations(ExamVo exam, TeacherVo loginTeacher) throws UnLoginException, Exception;
 
-    public Set<String> getValidOperations(StudentExamVo studentExamVo, StudentVo student) throws UnLoginException;
+    Set<String> getValidOperations(StudentExamVo studentExamVo, StudentVo student) throws UnLoginException;
 
 
     /**
@@ -120,9 +120,11 @@ public interface ExamManageEbi extends BaseEbi<ExamVo>
      *
      * @throws UnAuthorizedException
      */
-    public boolean checkPermission(String permission, TeacherVo loginUser, ExamVo exam) throws UnAuthorizedException, UnLoginException, Exception;
-    public boolean checkPermission(String permission, StudentVo loginUser, StudentExamVo exam) throws UnAuthorizedException, UnLoginException, Exception;
-    public void invoke(ExamInvoker examInvoker);
+    boolean checkPermission(String permission, TeacherVo loginUser, ExamVo exam) throws UnAuthorizedException, UnLoginException, Exception;
+
+    boolean checkPermission(String permission, StudentVo loginUser, StudentExamVo exam) throws UnAuthorizedException, UnLoginException, Exception;
+
+    void invoke(ExamInvoker examInvoker);
 
     /**
      * 管理员考试列表
@@ -132,7 +134,7 @@ public interface ExamManageEbi extends BaseEbi<ExamVo>
      *
      * @return
      */
-    public List<ExamVo> getAllByAdmin(String id, ExamListQueryModel examQueryModel) throws Exception;
+    List<ExamVo> getAllByAdmin(String id, ExamListQueryModel examQueryModel) throws Exception;
 
     /**
      * 获取指定考试所有学生的试卷
@@ -142,25 +144,29 @@ public interface ExamManageEbi extends BaseEbi<ExamVo>
      *
      * @return
      */
-    public List<StudentExamVo> getAllStudentExamByExam(ExamVo examVo, TeacherVo login) throws Exception;
+    List<StudentExamVo> getAllStudentExamByExam(ExamVo examVo, TeacherVo login) throws Exception;
 
-    public ExamVo getExamNotNull(ExamVo examVo) throws OperationException;
+    ExamVo getExamNotNull(ExamVo examVo) throws OperationException;
 
-    public void log(ScheduleVo scheduleVo, String method);
+    ExamVo getExamNotNull(String examId) throws OperationException;
 
-    public void outmodedSchedule(ScheduleVo scheduleVo);
+    void log(ScheduleVo scheduleVo, String method);
+
+    void outmodedSchedule(ScheduleVo scheduleVo);
 
     void stop(String examId, TeacherVo attribute) throws Exception;
 
     /**
      * 获取考试的可执行任务
+     *
      * @return
      */
-    public List<ScheduleVo> getAllByExecutable();
+    List<ScheduleVo> getAllByExecutable();
 
     /**
      * 更新任务状态
+     *
      * @param scheduleVo
      */
-    public void updateSchedule(ScheduleVo scheduleVo);
+    void updateSchedule(ScheduleVo scheduleVo);
 }

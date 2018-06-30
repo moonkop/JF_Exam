@@ -1,8 +1,11 @@
 package com.njmsita.exam.manager.model;
 
 import com.njmsita.exam.authentic.model.TeacherVo;
+import com.njmsita.exam.utils.consts.SysConsts;
 
 import javax.persistence.*;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -135,6 +138,13 @@ public class StudentExamQuestionVo
         this.remark = remark;
     }
 
+
+    @Transient
+    public boolean IsMarked()
+    {
+        return getScore() != null;
+    }
+
     @Override
     public int hashCode()
     {
@@ -156,5 +166,16 @@ public class StudentExamQuestionVo
                 Objects.equals(score, that.score) &&
                 Objects.equals(workout, that.answer) &&
                 Objects.equals(remark, that.remark);
+    }
+
+    @Transient
+    public List<String> getSelectedOptionList()
+    {
+        List<String> workoutList = Arrays.asList(getWorkout().split(","));
+        //去除所有空值
+        workoutList.removeAll(SysConsts.STRING_EMPTY_SET);
+        workoutList.sort(String::compareTo);
+        return workoutList;
+
     }
 }

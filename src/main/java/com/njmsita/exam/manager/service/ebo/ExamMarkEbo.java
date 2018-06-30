@@ -5,14 +5,18 @@ import com.njmsita.exam.authentic.model.StudentVo;
 import com.njmsita.exam.authentic.model.TeacherVo;
 import com.njmsita.exam.manager.dao.dao.*;
 import com.njmsita.exam.manager.model.ExamVo;
+import com.njmsita.exam.manager.model.QuestionVo;
 import com.njmsita.exam.manager.model.StudentExamQuestionVo;
 import com.njmsita.exam.manager.model.StudentExamVo;
+import com.njmsita.exam.manager.model.querymodel.ExamReport;
+import com.njmsita.exam.manager.model.querymodel.OptionReport;
+import com.njmsita.exam.manager.model.querymodel.QuestionReport;
+import com.njmsita.exam.manager.model.querymodel.WorkoutReport;
 import com.njmsita.exam.manager.service.ebi.ExamManageEbi;
 import com.njmsita.exam.manager.service.ebi.ExamMarkEbi;
 import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.exception.ItemNotFoundException;
 import com.njmsita.exam.utils.exception.OperationException;
-import com.njmsita.exam.utils.format.FormatUtil;
 import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.json.JsonListObjectMapper;
 import com.njmsita.exam.utils.json.JsonObjectMapper;
@@ -39,17 +43,19 @@ public class ExamMarkEbo implements ExamMarkEbi
     private QuestionTypeDao questionTypeDao;
     @Autowired
     private ExamManageEbi examManageEbi;
+    @Autowired
+    private ExamReportDao examReportDao;
 
 
     public void saveMarked(List<StudentExamQuestionVo> studentExamQuestionList, TeacherVo loginTeacher) throws Exception
     {
         if (studentExamQuestionList == null || studentExamQuestionList.size() < 0)
         {
-            return ;
+            return;
         }
 
         StudentExamQuestionVo first = studentExamQuestionDao.get(studentExamQuestionList.get(0).getId());
-        StudentExamVo studentExamPo =  first.getStudentExam();
+        StudentExamVo studentExamPo = first.getStudentExam();
         if (studentExamPo == null)
         {
             throw new OperationException("未找到该试卷");
@@ -73,7 +79,7 @@ public class ExamMarkEbo implements ExamMarkEbi
                 if (studentExamQuestionPo.getStudentExam().getExam().getId() == examPo.getId())
                 {
                     studentExamPo = studentExamQuestionPo.getStudentExam();
-                }else
+                } else
                 {
                     throw new OperationException("个别题目不属于该场考试");
                 }
@@ -90,9 +96,7 @@ public class ExamMarkEbo implements ExamMarkEbi
             }
 
 
-
-
-           // studentExamQuestionPo.setScore(FormatUtil.formatScore(studentExamQuestionVo.getScore()));
+            // studentExamQuestionPo.setScore(FormatUtil.formatScore(studentExamQuestionVo.getScore()));
             studentExamQuestionPo.setScore(studentExamQuestionVo.getScore());
             studentExamQuestionPo.setRemark(studentExamQuestionVo.getRemark());
             studentExamQuestionPo.setTeacherVo(loginTeacher);
@@ -101,29 +105,169 @@ public class ExamMarkEbo implements ExamMarkEbi
 
     }
 
-    public void submitMarked(ExamVo examVo, TeacherVo login) throws Exception
+    public void finishMark(String examId, TeacherVo loginTeacher) throws Exception
     {
-        if (StringUtil.isEmpty(examVo.getId()))
+        if (StringUtil.isEmpty(examId))
         {
 
         }
-        examVo = examManageEbi.getExamNotNull(examVo);
-        if (!examVo.getMarkTeachers().contains(login))
+        ExamVo examPo = examManageEbi.getExamNotNull(examId);
+        examManageEbi.checkPermission(SysConsts.EXAM_OPERATION_SUBMIT_MARK, loginTeacher, examPo);
+        List<StudentExamQuestionVo> questionList = studentExamQuestionDao.getByExam(examPo);
+
+        for (StudentExamQuestionVo studentExamQuestionVo : questionList)
         {
+            if (!studentExamQuestionVo.IsMarked())
+            {
+                throw new OperationException("所选考试下有题目尚未批阅，不能提交阅卷！");
+            }
+        }
+        List<StudentExamVo> papers = studentExamDao.getAllStudentExambyExamId(examId);
+        for (StudentExamVo paper : papers)
+        {
+            paper.setScore(getStudentExamScore(paper));
+        }
+        ExamReport report = buildExamReport(examId);
+        examReportDao.insert(report);
+
+        examPo.setExamStatus(SysConsts.EXAM_STATUS_ENDING);
+    }
+
+    @Override
+    public ExamReport buildExamReport(String examId)
+    {
+        ExamVo examPo = examManageEbi.getWithPaper(examId);
+        ExamReport report = new ExamReport();
+        List<StudentExamQuestionVo> studentExamQuestionVoList = studentExamQuestionDao.getByExam(examPo);
+        List<StudentExamVo> studentExamList = studentExamDao.getAllStudentExambyExamId(examId);
+
+        Iterator<StudentExamVo> iterator = studentExamList.iterator();
+
+        double examScoreMax = 0.0;
+        double examScoreMin = Double.MAX_VALUE;
+        double examScoreSum = 0.0;
+        report.setStudentCount(studentExamList.size());
+
+        while (iterator.hasNext())
+        {
+            StudentExamVo paper = iterator.next();
+            if (paper.IsEmpty())
+            {
+                iterator.remove();
+                continue;
+            }
+            paper.buildWorkoutMap();
+            if (examScoreMax < paper.getScore())
+            {
+                examScoreMax = paper.getScore();
+            }
+            if (examScoreMin > paper.getScore())
+            {
+                examScoreMin = paper.getScore();
+            }
+            examScoreSum += paper.getScore();
+        }
+        Integer attendCount = studentExamList.size();
+        report.setAttendCount(attendCount);
+        report.setScoreAvg(examScoreSum / attendCount);
+        report.setScoreMax(examScoreMax);
+        report.setScoreMin(examScoreMin);
+        report.setExamId(examId);
+        studentExamList.sort((o1, o2) ->
+                {
+                    if (o1 == null || o2 == null)
+                    {
+                        return (o1 == null && o2 == null) ? 0 : (o1 == null && o2 != null ? -1 : 1);
+                    } else if (o1.getScore() == null || o2.getScore() == null)
+                    {
+                        return (o1.getScore() == null && o2.getScore() == null) ? 0 : (o1.getScore() == null && o2.getScore() != null ? -1 : 1);
+                    } else
+                    {
+                        return o1.getScore() > o2.getScore() ? 1 : (o1.getScore().equals(o2.getScore()) ? 0 : -1);
+                    }
+                }
+        );
+        for (QuestionVo question : examPo.getPaperVo().getQuestionList())
+        {
+            QuestionReport questionReport = new QuestionReport();
+            report.questionReportList.add(questionReport);
+
+            double scoreSum = 0;
+            double scoreMax = 0;
+            double scoreMin = question.getValue();
+            for (StudentExamVo paper : studentExamList)
+            {
+                StudentExamQuestionVo workout = paper.getWorkoutMap().get(question.getIndex());
+                if (workout == null)
+                {
+                    //continue;
+                }
+                scoreSum += workout.getScore();
+                if (scoreMin > workout.getScore())
+                {
+                    scoreMin = workout.getScore();
+                }
+                if (scoreMax < workout.getScore())
+                {
+                    scoreMax = workout.getScore();
+                }
+            }
+
+            questionReport.setOutline(question.getOutline());
+            questionReport.setScoreAvg(scoreSum / attendCount);
+            questionReport.setScoreMax(scoreMax);
+            questionReport.setScoreMin(scoreMin);
+
+            switch (question.getType())
+            {
+                case SysConsts.QUESTION_TYPE_SINGLE_SELECTION:
+                case SysConsts.QUESTION_TYPE_MUTI_SELECTION:
+                {
+                    questionReport.optionList = new ArrayList<>();
+                    for (String optionText : question.getOptions())
+                    {
+                        OptionReport option = new OptionReport();
+                        option.students = new ArrayList<>();
+                        option.text = optionText;
+                        questionReport.optionList.add(option);
+                    }
+                    for (StudentExamVo paper : studentExamList)
+                    {
+                        StudentExamQuestionVo workout = paper.getWorkoutMap().get(question.getIndex());
+                        List<String> selectedOptionList = workout.getSelectedOptionList();
+                        for (String optionIndex : selectedOptionList)
+                        {
+                            OptionReport option = questionReport.optionList.get(Integer.valueOf(optionIndex));
+                            option.students.add(paper.getStudent().getStudentBrief());
+                        }
+                    }
+                    for (OptionReport optionReport : questionReport.optionList)
+                    {
+                        optionReport.setPickNum(optionReport.students.size());
+                        optionReport.setPickRate(optionReport.PickNum * 1.0 / attendCount);
+                    }
+                }
+                break;
+                case SysConsts.QUESTION_TYPE_SHORT_ANSWER:
+                {
+                    questionReport.workoutList = new ArrayList<>();
+                    for (StudentExamVo paper : studentExamList)
+                    {
+                        StudentExamQuestionVo workout = paper.getWorkoutMap().get(question.getIndex());
+                        WorkoutReport workoutReport = new WorkoutReport();
+                        workoutReport.setMarkTeacher(workout.getTeacherVo().getBrief());
+                        workoutReport.setRemark(workout.getRemark());
+                        workoutReport.setScore(workout.getScore());
+                        workoutReport.setStudent(paper.getStudent().getStudentBrief());
+                        workoutReport.setWorkout(workout.getWorkout());
+                        questionReport.workoutList.add(workoutReport);
+                    }
+                }
+                break;
+            }
 
         }
-        List<StudentExamQuestionVo> questionList = studentExamQuestionDao.getByExam(examVo);
-//        for (StudentExamQuestionVo studentExamQuestionVo : questionList)
-//        {
-//            if (studentExamQuestionVo.getQuestionTypeVo().equals(SysConsts.NO_ANSWER_QUESTION_TYPE_NAME))
-//            {
-//                if (null == studentExamQuestionVo.getTeacherVo())
-//                {
-//                    throw new OperationException("所选考试下有题目尚未批阅，不能提交阅卷！");
-//                }
-//            }
-//        }
-        examVo.setExamStatus(SysConsts.EXAM_STATUS_ENDING);
+        return report;
     }
 
     public List<StudentExamQuestionVo> GetManualMarkWorkOutFormStudentExam(String studentExamId) throws Exception
@@ -181,7 +325,7 @@ public class ExamMarkEbo implements ExamMarkEbi
                         .serializeList(workoutNeedMarkList));
         retMap.put("student",
                 new JsonObjectMapper<StudentVo>()
-                        .setFields("[id]getId(),[name]getName(),[classroom]getClassroom().getName(),[school]getSchool().getName()")
+                        .setFields("[id]getStudentId(),[name]getName(),[classroom]getClassroom().getName(),[school]getSchool().getName()")
                         .serializeObject(studentExamPo.getStudent())
         );
         return retMap;
@@ -208,6 +352,39 @@ public class ExamMarkEbo implements ExamMarkEbi
         return retMap;
     }
 
+    @Override
+    public List<Map<String, Object>> getStudentExamList(String examId)
+    {
+        List<Map<String, Object>> retMap = new ArrayList<>();
+
+        List<StudentExamVo> list = studentExamDao.getAllStudentExambyExamId(examId);
+        int index = 0;
+        for (StudentExamVo paper : list)
+        {
+            Map<String, Object> row = new HashMap<>();
+            row.put("index", index++);
+            row.put("id", paper.getId());
+            row.put("student_name", paper.getStudent().getName());
+            row.put("student_id", paper.getStudent().getId());
+            row.put("exam_status", paper.getStatus());
+            row.put("mark_status", getMarkStatus(paper));
+
+            retMap.add(row);
+        }
+        return retMap;
+
+    }
+
+    public Double getStudentExamScore(StudentExamVo studentExamVo)
+    {
+        Double scoreSum = 0.0;
+        for (StudentExamQuestionVo workout : studentExamVo.getStudentExamQuestionVos())
+        {
+            scoreSum += workout.getScore();
+        }
+        return scoreSum;
+    }
+
     private String getMarkStatus(StudentExamVo StudentExamPo)
     {
         String status = SysConsts.STUDENT_EXAM_MARK_PROGRESS_NOTSTARTED;
@@ -216,15 +393,15 @@ public class ExamMarkEbo implements ExamMarkEbi
             status = SysConsts.STUDENT_EXAM_MARK_PROGRESS_NOTFOUND;
         }
         boolean finished = true;
-        Set<StudentExamQuestionVo> workouts= StudentExamPo.getStudentExamQuestion_Manual_mark();
+        Set<StudentExamQuestionVo> workouts = StudentExamPo.getStudentExamQuestion_Manual_mark();
         for (StudentExamQuestionVo workout : workouts)
         {
             if (workout.getScore() != null)
             {
                 status = SysConsts.STUDENT_EXAM_MARK_PROGRESS_UNFINISHED;
-            }
-            else {
-                finished=false;
+            } else
+            {
+                finished = false;
             }
             if (finished)
             {
@@ -232,28 +409,5 @@ public class ExamMarkEbo implements ExamMarkEbi
             }
         }
         return status;
-    }
-
-    @Override
-    public List<Map<String, Object>> getStudentExamList(String examId)
-    {
-        List<Map<String, Object>> retMap = new ArrayList<>();
-
-        List<StudentExamVo> list = studentExamDao.getAllStudentExambyExamId(examId);
-        int index=0;
-        for (StudentExamVo paper : list)
-        {
-            Map<String, Object> row = new HashMap<>();
-            row.put("index", index++);
-            row.put("id",paper.getId());
-            row.put("student_name",paper.getStudent().getName());
-            row.put("student_id",paper.getStudent().getId());
-            row.put("exam_status",paper.getStatus());
-            row.put("mark_status", getMarkStatus(paper));
-
-            retMap.add(row);
-        }
-        return retMap;
-
     }
 }

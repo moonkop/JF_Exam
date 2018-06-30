@@ -1,5 +1,6 @@
 package com.njmsita.exam.authentic.model;
 
+import com.njmsita.exam.manager.model.querymodel.TeacherBrief;
 import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.validate.annotation.IDCardNoValifatorAnnocation;
 import com.njmsita.exam.utils.validate.annotation.TelephoneValidatorAnnotation;
@@ -50,6 +51,21 @@ public class TeacherVo extends UserModel
     private Integer gender;
     //所拥有的角色  n TO  1
     private TroleVo role;
+    @Transient
+    private TeacherBrief brief;
+
+@Transient
+public TeacherBrief getBrief()
+{
+    if (brief == null)
+    {
+        brief = new TeacherBrief();
+        brief.setId(this.getId());
+        brief.setName(this.getName());
+        brief.setTeacherId(this.getTeacherId());
+    }
+    return brief;
+}
 
     @Basic
     @Column(name = "role_id")

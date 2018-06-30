@@ -2,6 +2,8 @@ package com.njmsita.exam.authentic.model;
 
 import com.njmsita.exam.manager.model.ClassroomVo;
 import com.njmsita.exam.manager.model.SchoolVo;
+import com.njmsita.exam.manager.model.querymodel.ExamReport;
+import com.njmsita.exam.manager.model.querymodel.StudentBrief;
 import com.njmsita.exam.utils.validate.annotation.IDCardNoValifatorAnnocation;
 import com.njmsita.exam.utils.validate.annotation.TelephoneValidatorAnnotation;
 import com.njmsita.exam.utils.validate.validategroup.SetPassword;
@@ -61,6 +63,27 @@ public class StudentVo extends UserModel
     //所拥有的角色
     private TroleVo role;
 
+
+    StudentBrief brief;
+    @Transient
+    public StudentBrief getStudentBrief()
+    {
+        if (brief == null)
+        {
+            BuildBrief();
+        }
+        return this.brief;
+    }
+
+    public void BuildBrief()
+    {
+        brief = new StudentBrief();
+        brief.setClassroom(this.getClassroom().getId());
+        brief.setName(this.getName());
+        brief.setId(this.getId());
+        brief.setSchool(this.getSchool().getName());
+        brief.setStudentId(this.getStudentId());
+    }
 
     @Basic
     @Column(name = "gender")

@@ -1048,8 +1048,17 @@ function navigate_to_question(index)
     var $panel = $(".panel-question[data-index='" + index + "']");
     $(".question-list .focus").removeClass("focus");
     $panel[0].scrollIntoView(true);
-    var hread = $(window).scrollTop() - 150;
-    $(window).scrollTop(hread);
+
+    //如果滚动条到底了 就不往上滚
+    if(document.body.clientHeight+document.body.scrollTop==document.body.scrollHeight){
+
+    }else{
+        var hread = $(window).scrollTop() - 150;
+        $(window).scrollTop(hread);
+
+    }
+
+
 
     $panel.addClass("focus");
     setTimeout(function () {

@@ -1,8 +1,8 @@
 package com.njmsita.exam.manager.service.ebi;
 
 import com.njmsita.exam.authentic.model.TeacherVo;
-import com.njmsita.exam.manager.model.ExamVo;
 import com.njmsita.exam.manager.model.StudentExamQuestionVo;
+import com.njmsita.exam.manager.model.querymodel.ExamReport;
 import com.njmsita.exam.utils.exception.ItemNotFoundException;
 import com.njmsita.exam.utils.exception.OperationException;
 
@@ -21,10 +21,12 @@ public interface ExamMarkEbi
 
     /**
      * 提交阅卷
-     * @param examVo
-     * @param login
+     * @param examId
+     * @param loginTeacher
      */
-    public void submitMarked(ExamVo examVo, TeacherVo login) throws Exception;
+    public void finishMark(String examId, TeacherVo loginTeacher) throws Exception;
+
+    ExamReport buildExamReport(String examId);
 
     /**
      * 获取需要手动批阅的题目

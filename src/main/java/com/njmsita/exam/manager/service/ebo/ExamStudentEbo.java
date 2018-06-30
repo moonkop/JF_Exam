@@ -79,7 +79,7 @@ public class ExamStudentEbo implements ExamStudentEbi
         }
         if (!studentExamVo.getStudent().getId().equals(login.getId()))
         {
-            throw new OperationException("无法保存他人的试卷");
+        //    throw new OperationException("无法保存他人的试卷");
         }
         ExamVo examVo = studentExamVo.getExam();
         if (examVo.getExamStatus() >= SysConsts.EXAM_STATUS_IN_MARK)
@@ -118,11 +118,11 @@ public class ExamStudentEbo implements ExamStudentEbi
         }
         if (!studentExamVo.getStudent().getId().equals(loginStudent.getId()))
         {
-            throw new OperationException("不能提交他人试卷,请不要进行非法操作！");
+            //throw new OperationException("不能提交他人试卷,请不要进行非法操作！");
         }
         gradeStudentExam(studentExamVo);
 
-        studentExamVo.setStatus(SysConsts.STUDENT_EXAM_STATUS_SUBMITTED);
+        //studentExamVo.setStatus(SysConsts.STUDENT_EXAM_STATUS_SUBMITTED);
 
         //TODO answerContent存入MongoDB 在考试结束时执行
     }
@@ -272,7 +272,7 @@ public class ExamStudentEbo implements ExamStudentEbi
         Map<Integer, QuestionVo> paperQuestionMap = new HashMap<>();
         for (QuestionVo questionPo : paperPo.getQuestionList())
         {
-            paperQuestionMap.put(questionPo.getIndex() //todo index对齐 从0开始
+            paperQuestionMap.put(questionPo.getIndex()
                     , questionPo);
         }
         for (StudentExamQuestionVo studentExamQuestionPo : studentExamQuestionPoSet)
@@ -297,6 +297,8 @@ public class ExamStudentEbo implements ExamStudentEbi
                 if (studentExamQuestionVo.getWorkout().replace(",", "").replace(" ", "").equals(questionVo.getAnswer()))
                 {
                     studentExamQuestionVo.setScore((double) questionVo.getValue());
+                }else{
+                    studentExamQuestionVo.setScore(0.0);
                 }
                 break;
             case SysConsts.QUESTION_TYPE_MUTI_SELECTION:

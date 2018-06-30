@@ -28,7 +28,5 @@ public class ExamStatusModifyJob implements Job
             }
             examManageEbo.outmodedSchedule(scheduleVo);
         });
-
-
     }
 }

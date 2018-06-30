@@ -102,7 +102,7 @@ public class PaperMongoDaoImpl implements PaperMongoDao {
     {
         paperVo.setExamId(ExamId);
         paperVo.setId(IdUtil.getUUID());
-        this.insert(paperVo, SysConsts.EXAM_PAPER_SAVA_MONGO_OF_COLLECTION);
+        this.insert(paperVo, SysConsts.EXAM_PAPER_COLLECTION_NAME);
     }
 
     /**
@@ -114,7 +114,7 @@ public class PaperMongoDaoImpl implements PaperMongoDao {
      */
     public PaperVo getPaperVoByExamId(String examId)
     {
-        PaperVo paperVo = this.queryOne(new Query(Criteria.where("examId").is(examId)), SysConsts.EXAM_PAPER_SAVA_MONGO_OF_COLLECTION);
+        PaperVo paperVo = this.queryOne(new Query(Criteria.where("examId").is(examId)), SysConsts.EXAM_PAPER_COLLECTION_NAME);
 
         return paperVo;
     }
@@ -126,7 +126,7 @@ public class PaperMongoDaoImpl implements PaperMongoDao {
      */
     public void deletePaperFromMongoExamPaper(String ExamId)
     {
-        this.delete(new Query(Criteria.where("examId").is(ExamId)), SysConsts.EXAM_PAPER_SAVA_MONGO_OF_COLLECTION);
+        this.delete(new Query(Criteria.where("examId").is(ExamId)), SysConsts.EXAM_PAPER_COLLECTION_NAME);
     }
 
     /**

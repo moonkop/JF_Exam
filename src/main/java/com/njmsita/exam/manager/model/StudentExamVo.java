@@ -4,9 +4,7 @@ import com.njmsita.exam.authentic.model.StudentVo;
 import com.njmsita.exam.utils.consts.SysConsts;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "student_exam", schema = "jf_exam", catalog = "")
@@ -27,6 +25,29 @@ public class StudentExamVo
 
     private Set<StudentExamQuestionVo> studentExamQuestionVos;
 
+    @Transient
+    private Map<Integer, StudentExamQuestionVo> workoutMap;
+
+    @Transient
+    public Map<Integer, StudentExamQuestionVo> getWorkoutMap()
+    {
+        if (workoutMap == null)
+        {
+            buildWorkoutMap();
+        }
+        return workoutMap;
+    }
+
+    @Transient
+    public void buildWorkoutMap()
+    {
+        workoutMap = new HashMap<>();
+        for (StudentExamQuestionVo workout : studentExamQuestionVos)
+        {
+            workoutMap.put(workout.getIndex(), workout);
+        }
+    }
+
     public Set<StudentExamQuestionVo> getStudentExamQuestionVos()
     {
         return studentExamQuestionVos;
@@ -41,7 +62,7 @@ public class StudentExamVo
     public Set<StudentExamQuestionVo> getStudentExamQuestion_Manual_mark()
     {
         Set<StudentExamQuestionVo> workoutList = new HashSet<>();
-        for(StudentExamQuestionVo workout:getStudentExamQuestionVos())
+        for (StudentExamQuestionVo workout : getStudentExamQuestionVos())
         {
             if (SysConsts.MANUAL_MARK_QUESTION_TYPE_SET.contains(workout.getType()))
             {
@@ -167,5 +188,11 @@ public class StudentExamVo
                 Objects.equals(score, that.score) &&
                 Objects.equals(answerContent, that.answerContent) &&
                 Objects.equals(status, that.status);
+    }
+
+    public boolean IsEmpty()
+    {
+        return this.getStatus() == SysConsts.STUDENT_EXAM_STATUS_NOT_STARTED || this.getStudentExamQuestionVos() == null || this.getStudentExamQuestionVos().size() == 0;
+
     }
 }

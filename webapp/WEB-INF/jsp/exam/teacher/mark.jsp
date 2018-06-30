@@ -241,34 +241,76 @@
             }
         };
 
-        function switch_next_paper()
+        function get_next_paper_index()
         {
             var index = app.currentPaperIndex;
+            index++;
             while (index < app.paperList.length)
             {
-                index++;
                 if (app.paperList[index].mark_status != "notFound")
                 {
-                    switch_paper(index);
-                    return;
+                    return index;
                 }
+                index++;
             }
-            layer.msg("未找到试卷");
+        }
+
+        function get_prev_paper_index()
+        {
+
+            var index = app.currentPaperIndex;
+            index--;
+            while (index >= 0)
+            {
+                if (app.paperList[index].mark_status != "notFound")
+                {
+                    return index;
+                }
+                index--;
+            }
+        }
+
+        function switch_next_paper()
+        {
+            var index = get_next_paper_index();
+            if (index == null)
+            {
+                layer.msg("已经是最后一张试卷了");
+            } else
+            {
+                switch_paper(index);
+            }
         }
 
         function switch_prev_paper()
         {
-            var index = app.currentPaperIndex;
-            while (index >= 0)
+            var index = get_prev_paper_index();
+            if (index == null)
             {
-                index--;
-                if (app.paperList[index].mark_status != "notFound")
-                {
-                    switch_paper(index);
-                    return;
-                }
+                layer.msg("已经是第一张试卷了");
+            } else
+            {
+                switch_paper(index);
             }
-            layer.msg("未找到试卷");
+        }
+
+        function refresh_paper_switch_button()
+        {
+            if (get_next_paper_index() == null)
+            {
+                $("#next-paper").css("visibility","hidden");
+            } else
+            {
+                $("#next-paper").css("visibility","visible");
+            }
+
+            if (get_prev_paper_index() == null)
+            {
+                $("#prev-paper").css("visibility","hidden");
+            } else
+            {
+                $("#prev-paper").css("visibility","visible");
+            }
         }
 
         function switch_paper(index)
@@ -285,16 +327,22 @@
                     set_student_info(res.payload.student);
                     res.payload.workoutList.map(function (item) {
                         var question = app.paper.questionList[item.index];
-                        item._question = question;
-                        question.setMarkTeacher(item.teacher);
-                        question.setScore(item.score);
-                        question.$remark.val(item.remark);
-                        question.$workout.html(item.workout);
-                        question.workoutId = item.id;
+                        question_set_workout(question, item);
                     });
                     navcard.refresh_workout_list();
+                    refresh_paper_switch_button();
                 }
             )
+        }
+
+        function question_set_workout(question, workout)
+        {
+            workout._question = question;
+            question.setMarkTeacher(workout.teacher);
+            question.setScore(workout.score);
+            question.$remark.val(workout.remark);
+            question.$workout.html(workout.workout);
+            question.workoutId = workout.id;
         }
 
         function set_student_info(student)
@@ -302,7 +350,7 @@
             $(".student-info-name").text(student.name);
             $(".student-info-school").text(student.school);
             $(".student-info-classroom").text(student.classroom);
-            $(".student-info-id").text(student.id);
+            $(".student-info-id").text("学号："+ student.id);
         }
 
         function get_workout_from_server(studentExamId, callback)
@@ -415,35 +463,37 @@
             );
         }
 
-        function save_mark_changed()
+        function save_mark_changed(isManual)
         {
             var contentArr = [];
-            var questionUpdated = [];
             var workoutUpdated = [];
             app.currentStudentExam.workout.map(function (item) {
                 if (item._question.needUpdate == true)
                 {
                     contentArr.push(item._question.get_mark());
-                    questionUpdated.push(item._question);
                     workoutUpdated.push(item);
                 }
             })
+
             if (contentArr.length != 0)
             {
                 save_mark(contentArr, function (res) {
-                    questionUpdated.map(function (item) {
-                            item.needUpdate = false;
-                        }
-                    )
-                    workoutUpdated.map(function(item)
-                    {
-                        item.teacherId = User.id;
 
+                    workoutUpdated.map(function (item) {
+                        item.teacherId = User.id;
+                        item._question.needUpdate = false;
                     })
-                    layer.msg("自动保存成功", {
+                    layer.msg("所做更改已提交", {
                         offset: 't',
                     })
                 });
+            }else{
+                if(isManual==true)
+                {
+                    layer.msg("未找到需要保存的更改", {
+                        offset: 't',
+                    });
+                }
             }
         }
 
@@ -482,32 +532,30 @@
             return obj;
         }
 
-        function save_all_mark_to_server()
-        {
-
-
-            arr = [];
-            app.paper.questionList.map(function (item) {
-                if (item != null)
-                {
-                    arr.push(get_mark_by_question(item));
-                }
-            });
-
-            myajax(
-                {
-                    contentType: "application/json",
-                    type: "post",
-                    url: "/exam/operation/saveMark.do",
-                    data:
-                        JSON.stringify(arr)
-                    ,
-                    success: function () {
-                        layer.msg("保存成功");
-                    }
-                }
-            );
-        }
+        // function save_all_mark_to_server()
+        // {
+        //     arr = [];
+        //     app.paper.questionList.map(function (item) {
+        //         if (item != null)
+        //         {
+        //             arr.push(get_mark_by_question(item));
+        //         }
+        //     });
+        //
+        //     myajax(
+        //         {
+        //             contentType: "application/json",
+        //             type: "post",
+        //             url: "/exam/operation/saveMark.do",
+        //             data:
+        //                 JSON.stringify(arr)
+        //             ,
+        //             success: function () {
+        //                 layer.msg("保存成功");
+        //             }
+        //         }
+        //     );
+        // }
 
         $(document).ready(function () {
             app.paper.questionList = reArrangeQuestionList(app.paper.questionList);
@@ -521,7 +569,7 @@
             navcard.init();
 
             $("#save-mark").on("click", function () {
-                save_all_mark_to_server();
+                save_mark_changed(true);
             })
 
             $("#next-paper").on("click", function () {

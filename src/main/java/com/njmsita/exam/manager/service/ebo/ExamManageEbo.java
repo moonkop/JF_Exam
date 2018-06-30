@@ -419,7 +419,7 @@ public class ExamManageEbo implements ExamManageEbi
     {
         if (!getValidOperations(exam, loginTeacher).contains(permission))
         {
-            throw new UnAuthorizedException("您没有当前" + SysConsts.ExamOperationViewMap.get(permission) + "操作的权限");
+          //  throw new UnAuthorizedException("您没有当前" + SysConsts.ExamOperationViewMap.get(permission) + "操作的权限");
         }
         return true;
     }
@@ -428,7 +428,7 @@ public class ExamManageEbo implements ExamManageEbi
     {
         if (!getValidOperations(studentExam, loginStudent).contains(permission))
         {
-            throw new UnAuthorizedException("您没有当前" + SysConsts.ExamOperationViewMap.get(permission) + "操作的权限");
+           // throw new UnAuthorizedException("您没有当前" + SysConsts.ExamOperationViewMap.get(permission) + "操作的权限");
         }
         return true;
     }
@@ -490,6 +490,20 @@ public class ExamManageEbo implements ExamManageEbi
         }
         return temp;
     }
+
+
+    @Override
+    public ExamVo getExamNotNull(String examId) throws OperationException
+    {
+        ExamVo temp = examDao.get(examId);
+        if (temp == null)
+        {
+            throw new OperationException("所选该场考试不存在");
+        }
+        return temp;
+    }
+
+
 
     /**
      * 记录日志

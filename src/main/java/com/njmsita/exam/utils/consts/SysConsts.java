@@ -49,6 +49,21 @@ public class SysConsts
 	public static final int QUESTION_TYPE_MUTI_SELECTION=3;
 	//简答题
 	public static final int QUESTION_TYPE_SHORT_ANSWER=4;
+	//单选题
+	public static final String QUESTION_TYPE_SINGLE_SELECTION_VIEW="SINGLE_SELECTION";
+	//多选题
+	public static final String QUESTION_TYPE_MUTI_SELECTION_VIEW="MUTI_SELECTION";
+	//简答题
+	public static final String QUESTION_TYPE_SHORT_ANSWER_VIEW="SHORT_ANSWER";
+
+	public static final Map<Integer, String> QUESTION_TYPE_VIEW_MAP = new HashMap<>();
+
+
+	static{
+		QUESTION_TYPE_VIEW_MAP.put(QUESTION_TYPE_SINGLE_SELECTION, QUESTION_TYPE_SINGLE_SELECTION_VIEW);
+		QUESTION_TYPE_VIEW_MAP.put(QUESTION_TYPE_MUTI_SELECTION, QUESTION_TYPE_MUTI_SELECTION_VIEW);
+		QUESTION_TYPE_VIEW_MAP.put(QUESTION_TYPE_SHORT_ANSWER, QUESTION_TYPE_SHORT_ANSWER_VIEW);
+	}
 
 	public static final Set<Integer> MANUAL_MARK_QUESTION_TYPE_SET = new HashSet<>();
 
@@ -105,9 +120,13 @@ public class SysConsts
 	/**
 	 * 考试所包含的试卷存入MongoDB中的Collection名称
 	 */
-	public static final String EXAM_PAPER_SAVA_MONGO_OF_COLLECTION = "examPaper";
+	public static final String EXAM_PAPER_COLLECTION_NAME = "examPaper";
 
-	/**
+    public static final String EXAM_REPORT_COLLECTION_NAME="exam_report";
+
+
+
+    /**
 	 * 考试将允许提交时间放宽3分钟
 	 */
 	public static final int EXAM_SUBMIT_ADDITIONAL_TIME = 3 * 1000 * 60;
