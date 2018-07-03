@@ -4,7 +4,10 @@ import com.njmsita.exam.authentic.dao.dao.StudentDao;
 import com.njmsita.exam.authentic.model.StudentVo;
 import com.njmsita.exam.base.BaseQueryVO;
 import com.njmsita.exam.manager.dao.dao.*;
+import com.njmsita.exam.manager.dao.dao.PaperExamDao;
 import com.njmsita.exam.manager.model.*;
+import com.njmsita.exam.manager.model.querymodel.StudentExamArchive;
+import com.njmsita.exam.manager.model.querymodel.StudentExamArchiveDao;
 import com.njmsita.exam.manager.model.querymodel.StudentExamListQueryModel;
 import com.njmsita.exam.manager.service.ebi.ExamManageEbi;
 import com.njmsita.exam.manager.service.ebi.ExamStudentEbi;
@@ -28,6 +31,8 @@ import java.util.*;
 public class ExamStudentEbo implements ExamStudentEbi
 {
     @Autowired
+    StudentExamArchiveDao studentExamArchiveDao;
+    @Autowired
     private ExamDao examDao;
     @Autowired
     private ScheduleDao scheduleDao;
@@ -42,8 +47,7 @@ public class ExamStudentEbo implements ExamStudentEbi
     @Autowired
     private ExamManageEbi examManageEbi;
     @Autowired
-    private PaperMongoDao paperMongoDao;
-
+    private PaperExamDao paperExamDao;
 
     public List<StudentExamVo> getAll()
     {
@@ -79,7 +83,7 @@ public class ExamStudentEbo implements ExamStudentEbi
         }
         if (!studentExamVo.getStudent().getId().equals(login.getId()))
         {
-        //    throw new OperationException("无法保存他人的试卷");
+            //    throw new OperationException("无法保存他人的试卷");
         }
         ExamVo examVo = studentExamVo.getExam();
         if (examVo.getExamStatus() >= SysConsts.EXAM_STATUS_IN_MARK)
@@ -103,6 +107,7 @@ public class ExamStudentEbo implements ExamStudentEbi
             }
         }
     }
+
     @Transactional
     public void submit(StudentExamVo studentExamVo, StudentVo loginStudent) throws Exception
     {
@@ -111,16 +116,17 @@ public class ExamStudentEbo implements ExamStudentEbi
         {
             throw new OperationException("请确认要提交的试卷不为空,不要进行非法操作！");
         }
-        studentExamVo = studentExamDao.get(studentExamVo.getId());
-        if (studentExamVo == null)
+        StudentExamVo studentExamPo = studentExamDao.get(studentExamVo.getId());
+        if (studentExamPo == null)
         {
             throw new OperationException("请确认要提交的试卷不为空,不要进行非法操作！");
         }
-        if (!studentExamVo.getStudent().getId().equals(loginStudent.getId()))
+        if (!studentExamPo.getStudent().getId().equals(loginStudent.getId()))
         {
             //throw new OperationException("不能提交他人试卷,请不要进行非法操作！");
         }
-        gradeStudentExam(studentExamVo);
+        studentExamPo.setSubmitTime(System.currentTimeMillis());
+        gradeStudentExam(studentExamPo);
 
         //studentExamVo.setStatus(SysConsts.STUDENT_EXAM_STATUS_SUBMITTED);
 
@@ -142,6 +148,7 @@ public class ExamStudentEbo implements ExamStudentEbi
         }
         return studentExamVo;
     }
+
     @Transactional
     public StudentExamVo enterExam(String studentExamId, StudentVo loginStudent) throws Exception
     {
@@ -167,6 +174,7 @@ public class ExamStudentEbo implements ExamStudentEbi
         }
         return studentExamPo;
     }
+
     @Transactional
     public void studentExamStart(StudentExamVo studentExamPo) throws SchedulerException
     {
@@ -228,7 +236,7 @@ public class ExamStudentEbo implements ExamStudentEbi
         PaperVo paperPo;
         ExamVo examPo;
         if ((examPo = studentExamPo.getExam()) == null
-                || (paperPo = paperMongoDao.getPaperVoByExamId(examPo.getId())) == null
+                || (paperPo = paperExamDao.getPaperVoByExamId(examPo.getId())) == null
                 || (questionList = paperPo.getQuestionList()) == null)
         {
             throw new OperationException("未找到考试题目");
@@ -263,10 +271,18 @@ public class ExamStudentEbo implements ExamStudentEbi
     {
         return studentExamDao.getCount(queryModel);
     }
+
+    @Override
+    public StudentExamArchive getStudentExamArchive(String studentExamId)
+    {
+        return studentExamArchiveDao.get(studentExamId);
+
+    }
+
     @Transactional
     public void gradeStudentExam(StudentExamVo studentExamVo) throws Exception
     {
-        PaperVo paperPo = paperMongoDao.getPaperVoByExamId(studentExamVo.getExam().getId());
+        PaperVo paperPo = paperExamDao.getPaperVoByExamId(studentExamVo.getExam().getId());
 
         Set<StudentExamQuestionVo> studentExamQuestionPoSet = studentExamVo.getStudentExamQuestionVos();
         Map<Integer, QuestionVo> paperQuestionMap = new HashMap<>();
@@ -280,6 +296,7 @@ public class ExamStudentEbo implements ExamStudentEbi
             gradeQuestion(studentExamQuestionPo, paperQuestionMap.get(studentExamQuestionPo.getIndex()));
         }
     }
+
     @Transactional
     public void gradeQuestion(StudentExamQuestionVo studentExamQuestionVo, QuestionVo questionVo) throws Exception
     {
@@ -290,14 +307,16 @@ public class ExamStudentEbo implements ExamStudentEbi
         switch (questionVo.getType())
         {
             case SysConsts.QUESTION_TYPE_SINGLE_SELECTION:
-                if (studentExamQuestionVo.getWorkout()==null){
+                if (studentExamQuestionVo.getWorkout() == null)
+                {
                     studentExamQuestionVo.setScore(0.0);
                     break;
                 }
                 if (studentExamQuestionVo.getWorkout().replace(",", "").replace(" ", "").equals(questionVo.getAnswer()))
                 {
                     studentExamQuestionVo.setScore((double) questionVo.getValue());
-                }else{
+                } else
+                {
                     studentExamQuestionVo.setScore(0.0);
                 }
                 break;

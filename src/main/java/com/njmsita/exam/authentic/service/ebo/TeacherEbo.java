@@ -128,8 +128,8 @@ public class TeacherEbo implements TeacherEbi
         TeacherVo loginTea = teaDao.getTeaByTeaIdAndPwd(teacherId, password);
         if (loginTea != null)
         {
-            loginTea.setLastLoginTime(System.currentTimeMillis());
             loginTea.setLastLoginIp(loginIp);
+            loginTea.setLastLoginTime(System.currentTimeMillis());
         }
         return loginTea;
     }

@@ -39,8 +39,8 @@
                 'click .js-add-teacher': function (e, value, row, index) {
                     window.location.href = "/exam/operation/addMarkTeacher?id=" + row.id;
                 },
-                'click .js-viewScore': function (e, value, row, index) {
-                    window.location.href = "#" + row.id;
+                'click .js-result': function (e, value, row, index) {
+                    window.location.href = "/exam/student/result?id=" + row.id;
                 },
                 'click .js-review': function (e, value, row, index) {
                     window.location.href = "/exam/operation/review?id=" + row.id;
@@ -152,7 +152,7 @@
                                             'edit': '<i class="fa fa-pencil js-edit" title="修改"></i>',
                                             'cancel': '<i class="fa fa-times js-cancel" title="取消"></i>',
                                             'addMarkTeacher': '<i class="fa fa-user-plus js-add-teacher" title="添加批卷教师"></i>',
-                                            'viewScore': '<span class="label label-action label-info  js-enter">查看成绩</span>',
+                                            'viewScore': '<span class="label label-action label-info  js-result">查看成绩</span>',
                                             'delete': '<i class="fa fa-trash js-delete" title="删除"></i>',
                                             'mark': '<i class="fa fa-edit  js-mark" title="批阅"></i>',
                                             'submitMark': '<i class="fa fa-check js-submitMark" title="批阅提交"></i>',

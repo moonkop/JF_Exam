@@ -57,6 +57,7 @@ public class SysConsts
 	public static final String QUESTION_TYPE_SHORT_ANSWER_VIEW="SHORT_ANSWER";
 
 	public static final Map<Integer, String> QUESTION_TYPE_VIEW_MAP = new HashMap<>();
+	public static String PAPER_TEMPLATE_COLLECTION_NAME = "template_paper";
 
 
 	static{
@@ -120,10 +121,11 @@ public class SysConsts
 	/**
 	 * 考试所包含的试卷存入MongoDB中的Collection名称
 	 */
-	public static final String EXAM_PAPER_COLLECTION_NAME = "examPaper";
+	public static final String EXAM_PAPER_COLLECTION_NAME = "exam_paper";
 
     public static final String EXAM_REPORT_COLLECTION_NAME="exam_report";
 
+    public static final String STUDENT_EXAM_ARCHIVE_COLLECTION_NAME = "student_exam_archive";
 
 
     /**

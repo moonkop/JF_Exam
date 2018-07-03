@@ -2,8 +2,7 @@ package com.njmsita.exam.authentic.model;
 
 import com.njmsita.exam.manager.model.ClassroomVo;
 import com.njmsita.exam.manager.model.SchoolVo;
-import com.njmsita.exam.manager.model.querymodel.ExamReport;
-import com.njmsita.exam.manager.model.querymodel.StudentBrief;
+import com.njmsita.exam.manager.model.querymodel.report.StudentBrief;
 import com.njmsita.exam.utils.validate.annotation.IDCardNoValifatorAnnocation;
 import com.njmsita.exam.utils.validate.annotation.TelephoneValidatorAnnotation;
 import com.njmsita.exam.utils.validate.validategroup.SetPassword;

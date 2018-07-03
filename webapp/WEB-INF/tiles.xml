@@ -243,6 +243,14 @@
         </put-list-attribute>
     </definition>
 
+    <definition name="/exam/student/result" extends="student_base">
+        <put-attribute name="title" value="查看成绩"/>
+        <put-attribute name="body" value="/WEB-INF/jsp/exam/student/result.jsp"/>
+        <put-list-attribute name="additional-headers">
+            <add-attribute value="/WEB-INF/layout/additional-headers/highlight-header.jsp"/>
+        </put-list-attribute>
+    </definition>
+
 
     <definition name="/exam/teacher/mark" template="/WEB-INF/jsp/exam/teacher/mark.jsp">
         <put-attribute name="header" value="/WEB-INF/components/header.jsp"/>

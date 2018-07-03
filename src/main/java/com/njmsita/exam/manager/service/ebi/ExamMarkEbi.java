@@ -2,7 +2,8 @@ package com.njmsita.exam.manager.service.ebi;
 
 import com.njmsita.exam.authentic.model.TeacherVo;
 import com.njmsita.exam.manager.model.StudentExamQuestionVo;
-import com.njmsita.exam.manager.model.querymodel.ExamReport;
+import com.njmsita.exam.manager.model.querymodel.report.ExamReport;
+import com.njmsita.exam.manager.model.querymodel.StudentExamArchive;
 import com.njmsita.exam.utils.exception.ItemNotFoundException;
 import com.njmsita.exam.utils.exception.OperationException;
 
@@ -42,4 +43,9 @@ public interface ExamMarkEbi
     Map<String, Object> getMarkProgress(String ExamId) throws ItemNotFoundException;
 
     List<Map<String, Object>> getStudentExamList(String examId);
+
+    ExamReport getExamReport(String examId);
+
+    StudentExamArchive buildAndSaveStudentExamArchive(String studentExamId);
+
 }

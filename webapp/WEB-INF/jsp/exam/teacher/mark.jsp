@@ -580,9 +580,6 @@
             });
 
             app.paper.questionList.map(initQuestion)
-
-
-            $(".question-mark-range").append();
             $(".js-question-mark-range").ionRangeSlider();
             var autoSaveTimer = setInterval(function () {
                 save_mark_changed();

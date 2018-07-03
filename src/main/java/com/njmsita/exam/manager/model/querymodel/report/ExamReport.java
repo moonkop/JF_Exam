@@ -1,16 +1,16 @@
-package com.njmsita.exam.manager.model.querymodel;
+package com.njmsita.exam.manager.model.querymodel.report;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ExamReport
 {
-    public String examId;
     public Double scoreAvg;
     public Double scoreMin;
     public Double scoreMax;
     public Integer studentCount;
     public Integer attendCount;
+    private String id;
 
     public Integer getAttendCount()
     {
@@ -29,15 +29,6 @@ public class ExamReport
         this.questionReportList = new ArrayList<>();
     }
 
-    public String getExamId()
-    {
-        return examId;
-    }
-
-    public void setExamId(String examId)
-    {
-        this.examId = examId;
-    }
 
     public Double getScoreAvg()
     {
@@ -90,6 +81,15 @@ public class ExamReport
     }
 
 
+    public void setId(String id)
+    {
+        this.id = id;
+    }
+
+    public String getId()
+    {
+        return id;
+    }
 }
 
 

@@ -77,10 +77,11 @@
                                     <p class="form-control-static">${exam.subject.name}</p>
                                 </div>
                             </div>
+
                             <div class="form-group">
-                                <label class="col-sm-2 control-label">考试名称</label>
+                                <label class="col-sm-2 control-label">满分</label>
                                 <div class="col-sm-8">
-                                    <p class="form-control-static">${exam.name}</p>
+                                    <p class="form-control-static">${fullMark}</p>
                                 </div>
                             </div>
 

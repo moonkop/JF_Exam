@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import java.util.List;
 
 
-public interface PaperMongoDao
+public interface PaperTemplateDao
 {
     public void insert(PaperVo paperVo);
 
@@ -28,19 +28,6 @@ public interface PaperMongoDao
 
     public Long getCount(BaseQueryVO qm);
 
-    public void insert(PaperVo paperVo, String collection);
-
-    public PaperVo queryOne(Query query, String collection);
-
-    public void delete(Query query, String collection);
-
-    public void save(PaperVo paperVo, String collection);
-
-    public void savaPaperToMongoExamPaper(PaperVo paperVo, String ExamId);
-    public PaperVo getPaperVoByExamId(String examId);
-    public void deletePaperFromMongoExamPaper(String ExamId);
-
-    public void updatePaperFromMongoExamPaper(PaperVo paperVo, String examId);
     public PaperVo get(String id);
 
 }

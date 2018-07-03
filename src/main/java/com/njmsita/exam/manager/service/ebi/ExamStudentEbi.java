@@ -6,6 +6,7 @@ import com.njmsita.exam.manager.model.ExamVo;
 import com.njmsita.exam.manager.model.QuestionVo;
 import com.njmsita.exam.manager.model.StudentExamQuestionVo;
 import com.njmsita.exam.manager.model.StudentExamVo;
+import com.njmsita.exam.manager.model.querymodel.StudentExamArchive;
 import com.njmsita.exam.manager.model.querymodel.StudentExamListQueryModel;
 import com.njmsita.exam.utils.exception.UnLoginException;
 import org.quartz.SchedulerException;
@@ -90,6 +91,8 @@ public interface ExamStudentEbi
 
     public List<StudentExamVo> getStudentExamList(StudentExamListQueryModel queryModel) throws UnLoginException;
 
-
     int getStudentExamCount(StudentExamListQueryModel queryModel);
+
+    StudentExamArchive getStudentExamArchive(String studentExamId);
+
 }

@@ -18,27 +18,37 @@ import java.util.Objects;
 @Table(name = "paper", schema = "jf_exam", catalog = "")
 public class PaperVo
 {
-    @NotEmpty(message = "{id.notempty}",groups = {EditGroup.class})
+    @NotEmpty(message = "{id.notempty}", groups = {EditGroup.class})
     private String id;
 
-    @NotNull(message = "{title.notempty}",groups = {AddGroup.class, EditGroup.class})
-    @NotEmpty(message = "{title.notempty}",groups = {AddGroup.class, EditGroup.class})
+    @NotNull(message = "{title.notempty}", groups = {AddGroup.class, EditGroup.class})
+    @NotEmpty(message = "{title.notempty}", groups = {AddGroup.class, EditGroup.class})
     private String title;
 
-    @NotNull(message = "{comment.notempty}",groups = {AddGroup.class, EditGroup.class})
-    @NotEmpty(message = "{comment.notempty}",groups = {AddGroup.class, EditGroup.class})
+    @NotNull(message = "{comment.notempty}", groups = {AddGroup.class, EditGroup.class})
+    @NotEmpty(message = "{comment.notempty}", groups = {AddGroup.class, EditGroup.class})
     private String comment;
 
     private String examId;
-
+    //满分
+    private Double fullMark;
     //出卷教师  n  TO  1
     private TeacherVo teacher;
-
     //所属科目  n  TO  1
     private SubjectVo subject;
-
     private List<QuestionVo> questionList;
 
+    public Double getFullMark()
+    {
+        return fullMark;
+    }
+
+    public void setFullMark(Double fullMark)
+    {
+        this.fullMark = fullMark;
+    }
+
+    @Transient
     public List<QuestionVo> getQuestionList()
     {
         if (questionList == null)
@@ -137,7 +147,7 @@ public class PaperVo
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PaperVo paperVo = (PaperVo) o;
-        return  Objects.equals(id, paperVo.id) &&
+        return Objects.equals(id, paperVo.id) &&
                 Objects.equals(title, paperVo.title) &&
                 Objects.equals(comment, paperVo.comment);
     }

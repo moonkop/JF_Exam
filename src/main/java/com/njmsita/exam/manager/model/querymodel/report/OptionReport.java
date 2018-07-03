@@ -1,11 +1,11 @@
-package com.njmsita.exam.manager.model.querymodel;
+package com.njmsita.exam.manager.model.querymodel.report;
 
 import java.util.List;
 
 public class OptionReport
 {
     public String text;
-    public Integer PickNum;
+    public Integer pickNum;
     public Double pickRate;
     public List<StudentBrief> students;
 
@@ -21,12 +21,12 @@ public class OptionReport
 
     public Integer getPickNum()
     {
-        return PickNum;
+        return pickNum;
     }
 
     public void setPickNum(Integer pickNum)
     {
-        PickNum = pickNum;
+        this.pickNum = pickNum;
     }
 
     public Double getPickRate()

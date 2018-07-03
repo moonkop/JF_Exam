@@ -1,7 +1,7 @@
 package com.njmsita.exam.manager.dao.impl;
 
 import com.njmsita.exam.manager.dao.dao.ExamReportDao;
-import com.njmsita.exam.manager.model.querymodel.ExamReport;
+import com.njmsita.exam.manager.model.querymodel.report.ExamReport;
 import com.njmsita.exam.utils.consts.SysConsts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;

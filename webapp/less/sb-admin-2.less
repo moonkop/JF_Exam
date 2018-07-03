@@ -106,7 +106,7 @@ body {
             background: linear-gradient(to top left, #0c926b 30%, #ffffff 32%);
             color: #222222;
 
-            &.navcard-item-active{
+            &.navcard-item-active {
                 border-top: 2px solid #ffffff;
             }
         }
@@ -347,7 +347,6 @@ body {
         min-height: 100px;
         display: flex;
         align-items: center;
-
         margin-bottom: 15px;
         .question-mark-remark {
             width: 60%;
@@ -384,7 +383,38 @@ body {
     }
 }
 
+.question-result {
+    margin-top: 15px;
+    border-top: 1px solid #cccccc;
+    padding-top: 15px;
+    & > span {
+        margin: 0 20px;
+        color: #777777;
+    }
+    .question-result-remark {
+
+        color: #777777;
+        margin-left: 20px;
+
+        margin-top: 10px;
+        display: block;
+    }
+
+}
+
 .panel-question {
+    &.correct {
+        border-color: #e8ffea;
+        background: #e8ffea;
+    }
+    &.error {
+        border-color: #ffe8e8;
+        background: #ffe8e8;
+    }
+    &.warning {
+        border-color: #f5efe4;
+        background: #f5efe4;
+    }
     &.focus {
         outline-color: #0cb181;
         outline-style: auto;
@@ -513,15 +543,16 @@ body {
 }
 
 .app-side.app-side-opened {
-    transform: translateX(0);
+    //transform: translateX(0);
 }
 
 .app-side.app-side-closed {
+    transform: translateX(-100%);
     position: absolute !important;
 }
 
 .app-side {
-    transform: translateX(-100%);
+    transform: translateX(0);
     transition: all 0.3s ease-out;
 }
 
@@ -541,11 +572,12 @@ body {
     width: 100%;
 }
 
-@media (max-width: 768px) {
-    .navbar-default {
-        display: none;
-    }
+.navbar-header {
+    float: left;
+}
 
+.navbar-right {
+    float: right;
 }
 
 .navbar-top-links {
@@ -613,6 +645,7 @@ body {
 .sidebar {
 
     .sidebar-nav.navbar-collapse {
+        border: 0;
         padding-left: 0;
         padding-right: 0;
         height: 100%;
@@ -675,19 +708,17 @@ body {
     padding-left: 52px;
 }
 
-@media (min-width: 768px) {
-    .sidebar {
-        z-index: 1;
-        flex: 0 0 250px;
-        width: 250px;
-        height: 100%;
-    }
+.sidebar {
+    z-index: 1;
+    flex: 0 1 250px;
+    width: 250px;
+    height: 100%;
+}
 
-    .navbar-top-links .dropdown-messages,
-    .navbar-top-links .dropdown-tasks,
-    .navbar-top-links .dropdown-alerts {
-        margin-left: auto;
-    }
+.navbar-top-links .dropdown-messages,
+.navbar-top-links .dropdown-tasks,
+.navbar-top-links .dropdown-alerts {
+    margin-left: auto;
 }
 
 // Buttons

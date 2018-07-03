@@ -19,7 +19,7 @@
     <tiles:insertAttribute name="navbar" ignore="true"/>
 <div class="app-container">
     <tiles:insertAttribute name="sidebar" ignore="true"/>
-    <div class="side-visible-line hidden-xs" style="height: 100%;" data-side="collapse">
+    <div class="side-visible-line" style="height: 100%;" data-side="collapse">
         <i class="fa fa-caret-left" style="padding-top: 250px;" ></i>
     </div>
     <div id="page-wrapper">

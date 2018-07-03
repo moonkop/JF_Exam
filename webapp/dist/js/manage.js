@@ -6,7 +6,7 @@ queryParams = function (params) {
     var temp = {
         pageNum: params.pageNumber,
         pageSize: params.limit,
-        offset:params.offset
+        offset: params.offset
     };
     return temp;
 }
@@ -69,7 +69,7 @@ function myajax(config)
     if (config.success != undefined && config.success != null)
     {
         var success = config.success;
-        var error=config.error;
+        var error = config.error;
         config.success = function (res) {
             //success 请求成功，并且服务器返回200，error 请求成功，服务器返回错误码code=404
             OnResult(res, success, error);
@@ -84,7 +84,6 @@ function myajax(config)
     }
     $.ajax(config);
 }
-
 
 
 function OnResult(result, onsuccess, onfailure)
@@ -169,6 +168,11 @@ function DateTimeStringToTimeStamp(string)
 
 function TimeStampTDateTimeString(timestamp)
 {
+    if (typeof timestamp == "string")
+    {
+        timestamp = parseInt(timestamp);
+    }
+
     try
     {
         return new Date(timestamp).Format("yyyy-MM-dd hh:mm:ss");
@@ -177,6 +181,30 @@ function TimeStampTDateTimeString(timestamp)
         console.error(err);
         return null;
     }
+}
+
+function ConvertTimeDuration(timestampDiff)
+{
+    var du = moment.duration(timestampDiff, "ms");
+    var str = "";
+    var durationFormatMap = {
+        "years": "年",
+        "months": "月",
+        "days": "天",
+        "hours": "小时",
+        "minutes": "分钟",
+        "seconds": "秒"
+    };
+    for (key in durationFormatMap)
+    {
+        var val = du.get(key);
+        if (val != 0 || str != "")
+        {
+            str += val + durationFormatMap[key];
+        }
+    }
+    return str;
+
 }
 
 function emptyToUndefined(obj)
@@ -215,6 +243,7 @@ Date.prototype.Format = function (fmt) { //author: meizz
     }
     return fmt;
 }
+
 function convertTimeToStr(time)
 {
 
@@ -222,15 +251,16 @@ function convertTimeToStr(time)
     var str = "";
     var started = false;
     floor.forEach(function (item) {
-            var     num=parseInt(time/item) ;
-            if(started)
+            var num = parseInt(time / item);
+            if (started)
             {
-                str+=":";
+                str += ":";
             }
-            time%=item;
-            if(num!=0||started){
-                str+=num;
-                started=true;
+            time %= item;
+            if (num != 0 || started)
+            {
+                str += num;
+                started = true;
 
             }
         }

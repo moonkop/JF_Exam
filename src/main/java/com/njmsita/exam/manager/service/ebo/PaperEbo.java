@@ -1,7 +1,7 @@
 package com.njmsita.exam.manager.service.ebo;
 
 import com.njmsita.exam.base.BaseQueryVO;
-import com.njmsita.exam.manager.dao.dao.PaperMongoDao;
+import com.njmsita.exam.manager.dao.dao.PaperTemplateDao;
 import com.njmsita.exam.manager.dao.dao.SubjectDao;
 import com.njmsita.exam.manager.model.PaperVo;
 import com.njmsita.exam.manager.model.SubjectVo;
@@ -25,7 +25,7 @@ public class PaperEbo implements PaperEbi
     @Autowired
     private SubjectDao subjectDao;
     @Autowired
-    private PaperMongoDao paperMongoDao;
+    private PaperTemplateDao paperMongoDao;
 
     public List<PaperVo> getAll()
     {

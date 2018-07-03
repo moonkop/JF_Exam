@@ -25,7 +25,6 @@
 
     </div>
     <div class="paper-wrapper">
-
         <div class="paper-exam" style="margin-top: 50px">
             <div class="title-area">
                 <div class="title"></div>
@@ -350,7 +349,7 @@
 
         function get_workout_form_question_index(index)
         {
-            var $panel = $(".panel-question[data-index='" + index + "']");
+            var $panel = app.paper.questionList[index].$panel;
             var workout = "";
             switch (QuestionTypeMap($panel.attr("data-type")))
             {
@@ -380,38 +379,6 @@
             return workout;
         }
 
-        function set_workout(question)
-        {
-            var $panel = $(".panel-question[data-index='" + question.index + "']");
-            if (question.workout == null)
-            {
-                return;
-            }
-            var workout = question.workout.split(',').filter(function (item) {
-                    return item != "";
-                }
-            );
-
-            switch (QuestionTypeMap($panel.attr("data-type")))
-            {
-                case '单选题':
-                    if (workout.length != 0)
-                    {
-                        var $option = $panel.find("[data-option-index='" + workout[0] + "']");
-                        $option.attr("checked", true);
-                    }
-                    break;
-                case '多选题':
-                    workout.map(function (item) {
-                        var $option = $panel.find("[data-option-index='" + item + "']");
-                        $option.attr("checked", true);
-                    });
-                    break;
-                case '简答题':
-                    answer = $panel.find("textarea").val(workout);
-                    break;
-            }
-        }
 
 
     </script>

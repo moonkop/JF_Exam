@@ -1,16 +1,27 @@
-package com.njmsita.exam.manager.model.querymodel;
+package com.njmsita.exam.manager.model.querymodel.report;
 
 import java.util.List;
 
 public class QuestionReport
 {
     public Double scoreAvg;
-    public Double scoreMid;
+    public Double scoreMin;
     public Double scoreMax;
     public String outline;
     public Integer type;
+    public List<String> answer;
     public List<OptionReport> optionList;
     public List<WorkoutReport> workoutList;
+
+    public List<String> getAnswer()
+    {
+        return answer;
+    }
+
+    public void setAnswer(List<String> answer)
+    {
+        this.answer = answer;
+    }
 
     public Double getScoreAvg()
     {
@@ -22,14 +33,14 @@ public class QuestionReport
         this.scoreAvg = scoreAvg;
     }
 
-    public Double getScoreMid()
+    public Double getScoreMin()
     {
-        return scoreMid;
+        return scoreMin;
     }
 
     public void setScoreMin(Double scoreMid)
     {
-        this.scoreMid = scoreMid;
+        this.scoreMin = scoreMid;
     }
 
     public Double getScoreMax()

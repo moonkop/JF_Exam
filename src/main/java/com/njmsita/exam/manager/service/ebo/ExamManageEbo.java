@@ -6,6 +6,7 @@ import com.njmsita.exam.authentic.model.StudentVo;
 import com.njmsita.exam.authentic.model.TeacherVo;
 import com.njmsita.exam.base.BaseQueryVO;
 import com.njmsita.exam.manager.dao.dao.*;
+import com.njmsita.exam.manager.dao.dao.PaperExamDao;
 import com.njmsita.exam.manager.model.*;
 import com.njmsita.exam.manager.model.querymodel.ExamEditWrapper;
 import com.njmsita.exam.manager.model.querymodel.ExamListQueryModel;
@@ -59,7 +60,11 @@ public class ExamManageEbo implements ExamManageEbi
     private QuestionTypeDao questionTypeDao;
 
     @Autowired
-    private PaperMongoDao paperMongoDao;
+    private PaperExamDao paperExamDao;
+
+    @Autowired
+    private PaperTemplateDao paperTemplateDao;
+
 
     /**
      * 作废
@@ -104,7 +109,7 @@ public class ExamManageEbo implements ExamManageEbi
     public void delete(ExamVo examVo)
     {
         examDao.delete(examVo);
-        paperMongoDao.deletePaperFromMongoExamPaper(examVo.getId());
+        paperExamDao.deletePaperFromMongoExamPaper(examVo.getId());
     }
 
     @Transactional
@@ -115,7 +120,7 @@ public class ExamManageEbo implements ExamManageEbi
         checkPermission(SysConsts.EXAM_OPERATION_EDIT, loginTeacher, wrapper.getExam());
         setFieldsAndValidate(wrapper.getExam(), wrapper);
         examDao.save(wrapper.getExam());
-        paperMongoDao.updatePaperFromMongoExamPaper(wrapper.getExam().getPaperVo(), wrapper.getExam().getId());
+        paperExamDao.updatePaperFromMongoExamPaper(wrapper.getExam().getPaperVo(), wrapper.getExam().getId());
         createStudentExamByExam(wrapper.getExam(), wrapper.get_classroomIds());
         startImmediatelyIfNecessary(wrapper, loginTeacher);
     }
@@ -148,7 +153,7 @@ public class ExamManageEbo implements ExamManageEbi
         examPo.setRemark(wrapper.getExam().getRemark());
         examPo.setExamStatus(SysConsts.EXAM_STATUS_NO_CHECK);
         setFieldsAndValidate(examPo, wrapper);
-        paperMongoDao.updatePaperFromMongoExamPaper(examPo.getPaperVo(), examPo.getId());
+        paperExamDao.updatePaperFromMongoExamPaper(examPo.getPaperVo(), examPo.getId());
         createStudentExamByExam(examPo, wrapper.get_classroomIds());
         startImmediatelyIfNecessary(wrapper, loginTeacher);
     }
@@ -242,7 +247,7 @@ public class ExamManageEbo implements ExamManageEbi
 //            log(scheduleVo, "删除任务");
 //        }
         examDao.delete(examPo);
-        paperMongoDao.deletePaperFromMongoExamPaper(examPo.getId());
+        paperExamDao.deletePaperFromMongoExamPaper(examPo.getId());
     }
 
     @Transactional
@@ -534,6 +539,7 @@ public class ExamManageEbo implements ExamManageEbi
         ExamVo examPo = examDao.get(examId);
         checkPermission(SysConsts.EXAM_OPERATION_STOP, loginTeacher, examPo);
         examPo.setExamStatus(SysConsts.EXAM_STATUS_IN_MARK);
+        examPo.setCloseTime(System.currentTimeMillis());
         List<ScheduleVo> scheduleList = scheduleDao.getByTarget(examPo.getId());
         for (ScheduleVo scheduleVo : scheduleList)
         {
@@ -736,7 +742,7 @@ public class ExamManageEbo implements ExamManageEbi
 
         PaperVo paperVo;
         if (StringUtil.isEmpty(wrapper.getPaperId())
-                || ((paperVo = paperMongoDao.get(wrapper.getPaperId())) == null))
+                || ((paperVo = paperTemplateDao.get(wrapper.getPaperId())) == null))
         {
             throw new OperationException("试卷不能为空");
         }

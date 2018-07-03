@@ -6,6 +6,7 @@ import com.njmsita.exam.manager.model.QuestionVo;
 import com.njmsita.exam.manager.model.StudentExamQuestionVo;
 import com.njmsita.exam.manager.model.StudentExamVo;
 import com.njmsita.exam.manager.model.querymodel.ArchiveWrapper;
+import com.njmsita.exam.manager.model.querymodel.StudentExamArchive;
 import com.njmsita.exam.manager.model.querymodel.StudentExamListQueryModel;
 import com.njmsita.exam.manager.service.ebi.ExamManageEbi;
 import com.njmsita.exam.manager.service.ebi.ExamStudentEbi;
@@ -15,16 +16,17 @@ import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.exception.UnLoginException;
 import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.json.CustomJsonSerializer;
-import com.njmsita.exam.utils.json.JsonListObjectMapper;
 import com.njmsita.exam.utils.json.JsonListResponse;
 import com.njmsita.exam.utils.json.JsonResponse;
 import com.njmsita.exam.utils.logutils.SystemLogAnnotation;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import sun.awt.im.InputMethodWindow;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -126,20 +128,13 @@ public class ExamStudentController
         }
         StudentVo studentVo = (StudentVo) session.getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
         StudentExamVo studentExamPo = examStudentEbi.enterExam(studentExamId, studentVo);
-        ExamVo examPo = studentExamPo.getExam();
         ExamVo examVoWithPaper = examManageEbi.getWithPaper(studentExamPo.getExam().getId());
-        request.setAttribute("exam", examPo);
+        request.setAttribute("exam", examVoWithPaper);
         request.setAttribute("studentExam", studentExamPo);
         request.setAttribute("currentTime", System.currentTimeMillis());
-        if (examPo.getPaperVo() != null)
+        if (examVoWithPaper.getPaperVo() != null)
         {
-            request.setAttribute("paper", examVoWithPaper.getPaperVo());
-            request.setAttribute("questionList", CustomJsonSerializer.toJsonString_static
-                    (
-                            new JsonListObjectMapper<QuestionVo>().
-                                    setFields("id,outline,options,value,code,index,type").
-                                    serializeList(examVoWithPaper.getPaperVo().getQuestionList())
-                    ));
+            ExamOperationController.assignQuestionListToRequest(request, examVoWithPaper.getPaperVo().getQuestionList(), false);
         }
 
         return "/exam/student/workout";
@@ -243,12 +238,27 @@ public class ExamStudentController
     /**
      * 查看个人成绩
      */
-    @RequestMapping("checkMyGrages")
-    public String checkMyGrages(ExamVo examVo, HttpServletRequest request) throws Exception
+    @RequestMapping("result")
+    public String result(@RequestParam(name = "id") String StudentExamId, HttpServletRequest request) throws Exception
     {
         StudentVo login = (StudentVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
-        StudentExamVo studentExamVo = examStudentEbi.getStudentExam(examVo, login);
-        request.setAttribute("studentExam", studentExamVo);
-        return null;
+
+        StudentExamVo studentExamPo = examStudentEbi.get(StudentExamId);
+        if (studentExamPo == null || studentExamPo.getExam() == null)
+        {
+            throw new NotFoundException("未找到该考试");
+        }
+        ExamVo examPo = examManageEbi.getWithPaper(studentExamPo.getExam().getId());
+
+        ExamOperationController.assignQuestionListToRequest(request, examPo.getPaperVo().getQuestionList(), true);
+
+        request.setAttribute("exam", examPo);
+        request.setAttribute("fullMark", examPo.getPaperVo().getFullMark());
+        request.setAttribute("scorePercent", studentExamPo.getScore() * 100 / examPo.getPaperVo().getFullMark());
+        request.setAttribute("studentExam", studentExamPo);
+        StudentExamArchive archive= examStudentEbi.getStudentExamArchive(StudentExamId);
+
+        request.setAttribute("student_exam_archive", CustomJsonSerializer.toJson_JsonNode1(archive));
+        return "/exam/student/result";
     }
 }

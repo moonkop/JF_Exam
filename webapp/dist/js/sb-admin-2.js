@@ -13,14 +13,14 @@ $(function () {
     $(window).bind("load resize", function () {
         var topOffset = 50;
         var width = (this.window.innerWidth > 0) ? this.window.innerWidth : this.screen.width;
-        if (width < 768)
-        {
-            $('div.navbar-collapse').addClass('collapse');
-            topOffset = 100; // 2-row-menu
-        } else
-        {
-            $('div.navbar-collapse').removeClass('collapse');
-        }
+        // if (width < 768)
+        // {
+        //     $('div.navbar-collapse').addClass('collapse');
+        //     topOffset = 100; // 2-row-menu
+        // } else
+        // {
+        //     $('div.navbar-collapse').removeClass('collapse');
+        // }
 
         var height = ((this.window.innerHeight > 0) ? this.window.innerHeight : this.screen.height) - 1;
         height = height - topOffset;
@@ -60,7 +60,7 @@ var Side = {
     _body: $('body'),
     _ele: $(".app-side"),
     responsive: function responsive() {
-        $(window).width() < 768 ? Side._ele.removeClass('app-side-mini app-side-opened').addClass('app-side-closed') : Side._ele.addClass('app-side-opened').removeClass('app-side-closed');
+        $(window).width() < 0 ? Side._ele.removeClass('app-side-mini app-side-opened').addClass('app-side-closed') : Side._ele.addClass('app-side-opened').removeClass('app-side-closed');
 
         if (Side._ele.hasClass('page-fixed') & !Side._ele.hasClass('app-side-expand-on-hover'))
         {

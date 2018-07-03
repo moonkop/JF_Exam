@@ -1,4 +1,4 @@
-package com.njmsita.exam.manager.model.querymodel;
+package com.njmsita.exam.manager.model.querymodel.report;
 
 public class StudentBrief
 {

@@ -8,10 +8,11 @@ import com.njmsita.exam.manager.model.ExamVo;
 import com.njmsita.exam.manager.model.QuestionVo;
 import com.njmsita.exam.manager.model.StudentExamQuestionVo;
 import com.njmsita.exam.manager.model.StudentExamVo;
-import com.njmsita.exam.manager.model.querymodel.ExamReport;
-import com.njmsita.exam.manager.model.querymodel.OptionReport;
-import com.njmsita.exam.manager.model.querymodel.QuestionReport;
-import com.njmsita.exam.manager.model.querymodel.WorkoutReport;
+import com.njmsita.exam.manager.model.querymodel.*;
+import com.njmsita.exam.manager.model.querymodel.report.ExamReport;
+import com.njmsita.exam.manager.model.querymodel.report.OptionReport;
+import com.njmsita.exam.manager.model.querymodel.report.QuestionReport;
+import com.njmsita.exam.manager.model.querymodel.report.WorkoutReport;
 import com.njmsita.exam.manager.service.ebi.ExamManageEbi;
 import com.njmsita.exam.manager.service.ebi.ExamMarkEbi;
 import com.njmsita.exam.utils.consts.SysConsts;
@@ -45,6 +46,8 @@ public class ExamMarkEbo implements ExamMarkEbi
     private ExamManageEbi examManageEbi;
     @Autowired
     private ExamReportDao examReportDao;
+    @Autowired
+    private StudentExamArchiveDao studentExamArchiveDao;
 
 
     public void saveMarked(List<StudentExamQuestionVo> studentExamQuestionList, TeacherVo loginTeacher) throws Exception
@@ -128,7 +131,9 @@ public class ExamMarkEbo implements ExamMarkEbi
             paper.setScore(getStudentExamScore(paper));
         }
         ExamReport report = buildExamReport(examId);
+
         examReportDao.insert(report);
+        //todo delete student exam question
 
         examPo.setExamStatus(SysConsts.EXAM_STATUS_ENDING);
     }
@@ -138,6 +143,7 @@ public class ExamMarkEbo implements ExamMarkEbi
     {
         ExamVo examPo = examManageEbi.getWithPaper(examId);
         ExamReport report = new ExamReport();
+        report.setId(examId);
         List<StudentExamQuestionVo> studentExamQuestionVoList = studentExamQuestionDao.getByExam(examPo);
         List<StudentExamVo> studentExamList = studentExamDao.getAllStudentExambyExamId(examId);
 
@@ -168,11 +174,11 @@ public class ExamMarkEbo implements ExamMarkEbi
             examScoreSum += paper.getScore();
         }
         Integer attendCount = studentExamList.size();
+
         report.setAttendCount(attendCount);
         report.setScoreAvg(examScoreSum / attendCount);
         report.setScoreMax(examScoreMax);
         report.setScoreMin(examScoreMin);
-        report.setExamId(examId);
         studentExamList.sort((o1, o2) ->
                 {
                     if (o1 == null || o2 == null)
@@ -191,7 +197,7 @@ public class ExamMarkEbo implements ExamMarkEbi
         {
             QuestionReport questionReport = new QuestionReport();
             report.questionReportList.add(questionReport);
-
+            questionReport.setType(question.getType());
             double scoreSum = 0;
             double scoreMax = 0;
             double scoreMin = question.getValue();
@@ -244,7 +250,7 @@ public class ExamMarkEbo implements ExamMarkEbi
                     for (OptionReport optionReport : questionReport.optionList)
                     {
                         optionReport.setPickNum(optionReport.students.size());
-                        optionReport.setPickRate(optionReport.PickNum * 1.0 / attendCount);
+                        optionReport.setPickRate(optionReport.pickNum * 1.0 / attendCount);
                     }
                 }
                 break;
@@ -374,6 +380,24 @@ public class ExamMarkEbo implements ExamMarkEbi
         return retMap;
 
     }
+
+    @Override
+    public ExamReport getExamReport(String examId)
+    {
+        return examReportDao.get(examId);
+    }
+
+    @Override
+    public StudentExamArchive buildAndSaveStudentExamArchive(String studentExamId)
+    {
+        StudentExamVo studentExamPo = studentExamDao.get(studentExamId);
+        StudentExamArchive archive = new StudentExamArchive(studentExamPo);
+        archive.setId(studentExamId);
+        studentExamArchiveDao.insert(archive);
+        return archive;
+
+    }
+
 
     public Double getStudentExamScore(StudentExamVo studentExamVo)
     {

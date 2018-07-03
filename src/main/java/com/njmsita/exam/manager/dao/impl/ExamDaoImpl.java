@@ -1,12 +1,10 @@
 package com.njmsita.exam.manager.dao.impl;
 
 import com.njmsita.exam.base.BaseImpl;
-import com.njmsita.exam.base.BaseListQueryVo;
 import com.njmsita.exam.base.BaseQueryVO;
 import com.njmsita.exam.manager.dao.dao.ExamDao;
-import com.njmsita.exam.manager.dao.dao.PaperMongoDao;
+import com.njmsita.exam.manager.dao.dao.PaperExamDao;
 import com.njmsita.exam.manager.model.ExamVo;
-import com.njmsita.exam.manager.model.querymodel.ExamListQueryModel;
 import com.njmsita.exam.manager.model.querymodel.ExamQueryModel;
 import com.njmsita.exam.utils.format.StringUtil;
 import org.hibernate.criterion.DetachedCriteria;
@@ -24,7 +22,7 @@ import java.util.List;
 public class ExamDaoImpl extends BaseImpl<ExamVo> implements ExamDao
 {
     @Autowired
-    PaperMongoDao paperMongoDao;
+    PaperExamDao paperExamDao;
 
     public DetachedCriteria doQbc(DetachedCriteria dc, BaseQueryVO qm)
     {
@@ -74,13 +72,13 @@ public class ExamDaoImpl extends BaseImpl<ExamVo> implements ExamDao
     public ExamVo getExamWithPaper(Serializable uuid)
     {
         ExamVo examPo = super.get(uuid);
-        examPo.setPaperVo(paperMongoDao.getPaperVoByExamId(examPo.getId()));
+        examPo.setPaperVo(paperExamDao.getPaperVoByExamId(examPo.getId()));
         return examPo;
     }
 
     public void SetPaper(ExamVo examVo)
     {
-        examVo.setPaperVo(paperMongoDao.getPaperVoByExamId(examVo.getId()));
+        examVo.setPaperVo(paperExamDao.getPaperVoByExamId(examVo.getId()));
     }
 
 

@@ -1,6 +1,6 @@
 package com.njmsita.exam.authentic.model;
 
-import com.njmsita.exam.manager.model.querymodel.TeacherBrief;
+import com.njmsita.exam.manager.model.querymodel.report.TeacherBrief;
 import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.validate.annotation.IDCardNoValifatorAnnocation;
 import com.njmsita.exam.utils.validate.annotation.TelephoneValidatorAnnotation;
@@ -13,7 +13,6 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.security.spec.EncodedKeySpec;
 
 /**
  * 教师实体模型

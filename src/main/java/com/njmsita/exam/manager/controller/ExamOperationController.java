@@ -5,9 +5,11 @@ import com.njmsita.exam.authentic.service.ebi.TeacherEbi;
 import com.njmsita.exam.manager.model.ExamVo;
 import com.njmsita.exam.manager.model.QuestionVo;
 import com.njmsita.exam.manager.model.StudentExamQuestionVo;
-import com.njmsita.exam.manager.model.querymodel.ExamReport;
+import com.njmsita.exam.manager.model.querymodel.report.ExamReport;
+import com.njmsita.exam.manager.model.querymodel.StudentExamArchive;
 import com.njmsita.exam.manager.service.ebi.ExamManageEbi;
 import com.njmsita.exam.manager.service.ebi.ExamMarkEbi;
+import com.njmsita.exam.manager.service.ebi.ExamStudentEbi;
 import com.njmsita.exam.manager.service.ebi.SubjectEbi;
 import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.exception.ItemNotFoundException;
@@ -68,12 +70,7 @@ public class ExamOperationController
         if (examVo.getPaperVo() != null)
         {
             request.setAttribute("paper", examVo.getPaperVo());
-            request.setAttribute("questionList", CustomJsonSerializer.toJsonString_static
-                    (
-                            new JsonListObjectMapper<QuestionVo>().
-                                    setFields("id,outline,options,value,code,index,type,answer").
-                                    serializeList(examVo.getPaperVo().getQuestionList())
-                    ));
+            assignQuestionListToRequest(request, examVo.getPaperVo().getQuestionList(), true);
         }
         return "/manage/exam/review";
     }
@@ -243,14 +240,26 @@ public class ExamOperationController
                 }
             }
             request.setAttribute("exam", examVoWithPaper);
-            request.setAttribute("questionList", CustomJsonSerializer.toJsonString_static
-                    (
-                            new JsonListObjectMapper<QuestionVo>().
-                                    setFields("id,outline,options,value,code,index,type,answer").
-                                    serializeList(list_manual_mark)
-                    ));
+            assignQuestionListToRequest(request, list_manual_mark, true);
         }
         return "/exam/teacher/mark";
+    }
+
+    public static void assignQuestionListToRequest(HttpServletRequest request, List<QuestionVo> list_manual_mark, boolean showAnswer)
+    {
+        String fields = "id,outline,options,value,code,index,type";
+
+        if (showAnswer)
+        {
+            fields += ",answer";
+        }
+
+        request.setAttribute("questionList", CustomJsonSerializer.toJsonString_static
+                (
+                        new JsonListObjectMapper<QuestionVo>().
+                                setFields(fields).
+                                serializeList(list_manual_mark)
+                ));
     }
 
     @RequestMapping("report")
@@ -328,9 +337,23 @@ public class ExamOperationController
 
     @RequestMapping("buildExamReport.do")
     @ResponseBody
-    public ExamReport getExamReport(@RequestParam(name = "id") String examId)
+    public ExamReport buildExamReport(@RequestParam(name = "id") String examId)
     {
         return examMarkEbi.buildExamReport(examId);
+    }
+
+    @RequestMapping("getExamReport.do")
+    @ResponseBody
+    public ExamReport getExamReport(@RequestParam(name = "id") String examId)
+    {
+        return examMarkEbi.getExamReport(examId);
+    }
+
+    @RequestMapping("buildStudentExamArchive.do")
+    @ResponseBody
+    public StudentExamArchive buildStudentExamArchive(@RequestParam(name = "id") String studentExamId)
+    {
+        return examMarkEbi.buildAndSaveStudentExamArchive(studentExamId);
     }
 
 }
