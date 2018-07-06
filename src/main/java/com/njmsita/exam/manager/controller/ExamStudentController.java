@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import sun.awt.im.InputMethodWindow;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -134,7 +133,7 @@ public class ExamStudentController
         request.setAttribute("currentTime", System.currentTimeMillis());
         if (examVoWithPaper.getPaperVo() != null)
         {
-            ExamOperationController.assignQuestionListToRequest(request, examVoWithPaper.getPaperVo().getQuestionList(), false);
+            ExamOperationController.assignExamToView(request,examVoWithPaper,examVoWithPaper.getPaperVo(),examVoWithPaper.getPaperVo().getQuestionList(), false);
         }
 
         return "/exam/student/workout";
@@ -250,9 +249,7 @@ public class ExamStudentController
         }
         ExamVo examPo = examManageEbi.getWithPaper(studentExamPo.getExam().getId());
 
-        ExamOperationController.assignQuestionListToRequest(request, examPo.getPaperVo().getQuestionList(), true);
-
-        request.setAttribute("exam", examPo);
+        ExamOperationController.assignExamToView(request,examPo, examPo.getPaperVo(), examPo.getPaperVo().getQuestionList(), true);
         request.setAttribute("fullMark", examPo.getPaperVo().getFullMark());
         request.setAttribute("scorePercent", studentExamPo.getScore() * 100 / examPo.getPaperVo().getFullMark());
         request.setAttribute("studentExam", studentExamPo);

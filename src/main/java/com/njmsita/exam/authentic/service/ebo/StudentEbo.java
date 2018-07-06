@@ -165,9 +165,9 @@ public class StudentEbo implements StudentEbi
             throw new OperationException("当前学校不存在，请不要进行非法操作！");
         }
 //将要被修改的学生
-        StudentVo studentToEdit = studentDao.get(studentVo.getId());
+        StudentVo studentPo = studentDao.get(studentVo.getId());
 
-        if (studentToEdit == null)
+        if (studentPo == null)
         {
             throw new OperationException("未找到id为" + studentVo.getId() + "的学生。请勿非法操作！");
         }
@@ -179,20 +179,20 @@ public class StudentEbo implements StudentEbi
         {
             throw new OperationException("对不起，当前学校:" + schoolVo.getName() + "已存在学号为：" + studentVo.getStudentId() + "的学生。请勿重复操作！");
         }
-        studentToEdit.setRole(studentVo.getRole());
-        studentToEdit.setStudentId(studentVo.getStudentId());
-        studentToEdit.setName(studentVo.getName());
-        studentToEdit.setMail(studentVo.getMail());
-        studentToEdit.setIdCardNo(studentVo.getIdCardNo());
-        studentToEdit.setTelephone(studentVo.getTelephone());
+        studentPo.setRole(roleDao.get(SysConsts.STUDENT_ROLE_ID));
+        studentPo.setStudentId(studentVo.getStudentId());
+        studentPo.setName(studentVo.getName());
+        studentPo.setMail(studentVo.getMail());
+        studentPo.setIdCardNo(studentVo.getIdCardNo());
+        studentPo.setTelephone(studentVo.getTelephone());
         if (studentVo.getPassword() != null)
         {
-            studentToEdit.setPassword(MD5Utils.md5(studentVo.getPassword()));
+            studentPo.setPassword(MD5Utils.md5(studentVo.getPassword()));
         }
-        studentToEdit.setGender(studentVo.getGender());
-        studentToEdit.setModifytime(System.currentTimeMillis());
-        studentToEdit.setSchool(schoolVo);
-        studentToEdit.setClassroom(classroomVo);
+        studentPo.setGender(studentVo.getGender());
+        studentPo.setModifytime(System.currentTimeMillis());
+        studentPo.setSchool(schoolVo);
+        studentPo.setClassroom(classroomVo);
 
 
         /*

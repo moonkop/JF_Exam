@@ -388,7 +388,7 @@ body {
     border-top: 1px solid #cccccc;
     padding-top: 15px;
     & > span {
-        margin: 0 20px;
+        margin: 0 10px;
         color: #777777;
     }
     .question-result-remark {
@@ -399,7 +399,15 @@ body {
         margin-top: 10px;
         display: block;
     }
-
+}
+.question-report{
+    margin-top: 15px;
+    border-top: 1px solid #cccccc;
+    padding-top: 15px;
+    & > span {
+        margin: 0 20px;
+        color: #777777;
+    }
 }
 
 .panel-question {
@@ -454,8 +462,17 @@ body {
         .question-option-list {
             .question-option {
                 margin-top: 5px;
+                line-height: 33px;
+                padding-left: 10px;
                 label {
+                    display:inline;
+                    margin-left: 5px;
                     font-weight: normal;
+                }
+                .picknum{
+                    float: right;
+                    margin-right: 20px;
+                    color: #aaa;
                 }
             }
 

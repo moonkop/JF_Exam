@@ -81,11 +81,6 @@ function get_question_list()
 
 }
 
-var $question_detail_form = $("#js-template-question-panel");
-var $question_option_list = $("#js-template-question-option-list");
-var $question_option = $("#js-template-question-option-radio");
-var $question_option_checkbox = $("#js-template-question-option-checkbox");
-
 
 function question_manage_refresh_question_list()
 {
@@ -459,10 +454,24 @@ function exam_report_render_question_list()
 {
     function exam_report_render_question(question)
     {
+        var $question_panel = $($("#js-template-question-panel").html());
+        render_question_basics($question_panel, question);
+        render_question_code_if_needed($question_panel, question);
+        if (["单选题", '多选题'].indexOf(QuestionTypeMap(question)))
+        {
+            $question_panel.find(".question-body").append(render_exam_report_option_list((question)));
+        }
+        var $question_report = $($("#js-template-question-report").html());
+        $question_report.find(".question-report-scoreMax").text("最高分: " + question.report.scoreMax);
+        $question_report.find(".question-report-scoreMin").text("最低分: " + question.report.scoreMin);
+        $question_report.find(".question-report-scoreRate").text("得分率: " + Number(question.report.scoreRate * 100).toFixed(1) + "%");
+        $question_report.find(".question-report-scoreAvg").text("平均分: " + question.report.scoreAvg);
+        $question_panel.find(".panel-body").append($question_report);
 
+        return $question_panel;
     }
 
-    render_question_list(app.paper.questionList, $(".paper-exam-result"), exam_report_render_question);
+    render_question_list(app.paper.questionList, $(".paper-exam-report"), exam_report_render_question);
 
 
 }
@@ -484,7 +493,7 @@ function paper_exam_render_question_list()
     function paper_exam_render_question(question)
     {
         var $question_panel = get_basic_question_panel(question);
-        $question_panel.find("input").attr("disabled", "false");
+        $question_panel.find("input").removeAttr("disabled");
         if (QuestionTypeMap(question.type) == "简答题")
         {
             $question_panel.find(".question-workout").append($($("#js-template-question-workout-area").html()));
@@ -611,6 +620,62 @@ function question_manage_render_question_edit(questionDetail)
 }
 
 
+function render_exam_report_option_list(question)
+{
+    function setBackgoundBar($option, color, percent)
+    {
+        percent = percent*99+1;
+
+        $option.css("background", "linear-gradient(to right," + color + " " + percent + "%,transparent " + percent + "%)");
+    }
+
+    var colorMap = [
+        "#ffa",
+        "#aff",
+        "#faa",
+        "#afa"
+    ];
+
+
+    if (question.options == null || question.options == "")
+    {
+        return "";
+    }
+    var $question_option_list = $($("#js-template-question-option-list").html());
+    question.$options = [];
+
+    for (var key in question.options)
+    {
+        switch (QuestionTypeMap(question.type))
+        {
+            case "单选题":
+                var $question_option = $($("#js-template-question-option-radio").html());
+                break;
+            case "多选题":
+                var $question_option = $($("#js-template-question-option-checkbox").html());
+                break;
+            case "简答题":
+                break;
+        }
+        var $question_option_label = $question_option.find("label");
+        var $question_option_input = $question_option.find("input");
+        $question_option_input.attr("disabled", "disabled");
+        $question_option_label.text(question.options[key]);
+        //$question_option.text(question_report.text)
+        var option_report = question.report.optionList[key];
+
+        setBackgoundBar($question_option, colorMap[key % colorMap.length], option_report.pickRate);
+        if (option_report.pickNum != 0)
+        {
+
+            $question_option.append("<span class='picknum'>" + option_report.pickNum + "人选择</span>");
+        }
+
+        $question_option_list.append($question_option);
+    }
+    return $question_option_list;
+}
+
 //显示题目列表
 function render_question_option_list(question)
 {
@@ -626,17 +691,16 @@ function render_question_option_list(question)
         switch (QuestionTypeMap(question.type))
         {
             case "单选题":
-                $question_option = $($("#js-template-question-option-radio").html());
+                var $question_option = $($("#js-template-question-option-radio").html());
                 break;
             case "多选题":
-                $question_option = $($("#js-template-question-option-checkbox").html());
+                var $question_option = $($("#js-template-question-option-checkbox").html());
                 break;
             case "简答题":
                 break;
         }
         var $question_option_label = $question_option.find("label");
         var $question_option_input = $question_option.find("input");
-
         var option_id = "question_" + question.index + "_" + key;
         $question_option_label.text(question.options[key]);
         $question_option_label.attr("for", option_id);
@@ -1134,7 +1198,7 @@ function render_paper_title()
 //------------workout-and-mark--------------------//
 
 //用index为数组下标重组questionList
-function reArrangeQuestionList(list)
+function sort_question_List(list)
 {
     var questionlist = [];
     list.map(function (item) {

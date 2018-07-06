@@ -85,7 +85,7 @@
 
         $(document).ready(function () {
 
-            app.paper.questionList = reArrangeQuestionList(app.paper.questionList);
+            app.paper.questionList = sort_question_List(app.paper.questionList);
 
             //渲染试卷标题
             render_paper_title();
@@ -164,7 +164,7 @@
         //设置倒计时时间
         function set_left_time(time)
         {
-            $("#count-down").text(TimeStampTDateTimeString(time));
+            $("#count-down").text(ConvertTimeDuration(time));
         }
 
         var $workout_list;
@@ -198,7 +198,7 @@
                     }
                 }
             )
-            $("#complete-rate").text(question_completed / app.paper.questionList.length * 100 + "%")
+            $("#complete-rate").text(Number(question_completed / app.paper.questionList.length * 100).toFixed(1) + "%")
         }
 
         //收集修改过的作答

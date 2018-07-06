@@ -5,5 +5,5 @@ public interface StudentExamArchiveDao
 
     StudentExamArchive get(String id);
 
-    void insert(StudentExamArchive archive);
+    void save(StudentExamArchive archive);
 }

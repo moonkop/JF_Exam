@@ -7,5 +7,5 @@ public interface ExamReportDao
     ExamReport get(String id);
 
 
-    void insert(ExamReport report);
+    void save(ExamReport report);
 }

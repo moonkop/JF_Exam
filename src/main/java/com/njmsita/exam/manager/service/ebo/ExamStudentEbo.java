@@ -12,6 +12,7 @@ import com.njmsita.exam.manager.model.querymodel.StudentExamListQueryModel;
 import com.njmsita.exam.manager.service.ebi.ExamManageEbi;
 import com.njmsita.exam.manager.service.ebi.ExamStudentEbi;
 import com.njmsita.exam.utils.consts.SysConsts;
+import com.njmsita.exam.utils.exception.ItemNotFoundException;
 import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.exception.UnLoginException;
 import com.njmsita.exam.utils.format.FormatUtil;
@@ -114,21 +115,21 @@ public class ExamStudentEbo implements ExamStudentEbi
 
         if (StringUtil.isEmpty(studentExamVo.getId()))
         {
-            throw new OperationException("请确认要提交的试卷不为空,不要进行非法操作！");
+            throw new ItemNotFoundException("请确认要提交的试卷不为空,不要进行非法操作！");
         }
         StudentExamVo studentExamPo = studentExamDao.get(studentExamVo.getId());
         if (studentExamPo == null)
         {
-            throw new OperationException("请确认要提交的试卷不为空,不要进行非法操作！");
+            throw new ItemNotFoundException("请确认要提交的试卷不为空,不要进行非法操作！");
         }
         if (!studentExamPo.getStudent().getId().equals(loginStudent.getId()))
         {
-            //throw new OperationException("不能提交他人试卷,请不要进行非法操作！");
+            throw new OperationException("不能提交他人试卷,请不要进行非法操作！");
         }
         studentExamPo.setSubmitTime(System.currentTimeMillis());
         gradeStudentExam(studentExamPo);
 
-        //studentExamVo.setStatus(SysConsts.STUDENT_EXAM_STATUS_SUBMITTED);
+        studentExamPo.setStatus(SysConsts.STUDENT_EXAM_STATUS_SUBMITTED);
 
         //TODO answerContent存入MongoDB 在考试结束时执行
     }

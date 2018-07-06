@@ -182,7 +182,7 @@ public class SysConsts
 	public static final String EXAM_OPERATION_EDIT = "edit";
 	public static final String EXAM_OPERATION_CANCEL = "cancel";
 	public static final String EXAM_OPERATION_ADD_MARK_TEACHER = "addMarkTeacher";
-	public static final String EXAM_OPERATION_VIEW_SCORE = "viewScore";
+	public static final String EXAM_OPERATION_RESULT = "result";
 	public static final String EXAM_OPERATION_REVIEW = "review";
 	public static final String EXAM_OPERATION_DELETE = "delete";
 	public static final String EXAM_OPERATION_MARK = "mark";
@@ -191,6 +191,7 @@ public class SysConsts
 	public static final String EXAM_OPERATION_PREVIEW_VISIBLE = "preview"; //显示在list上
 	public static final String EXAM_OPERATION_PREVIEW = "preview_permission";//真正的预览权限
     public static final String EXAM_OPERATION_STOP = "stop";
+    public static final String EXAM_OPERATION_REPORT = "report";
 
 
 
@@ -222,7 +223,7 @@ public class SysConsts
         ExamOperationViewMap.put(SysConsts.EXAM_OPERATION_EDIT, SysConsts.EXAM_OPERATION_EDIT_VIEW);
         ExamOperationViewMap.put(SysConsts.EXAM_OPERATION_CANCEL, SysConsts.EXAM_OPERATION_CANCEL_VIEW);
         ExamOperationViewMap.put(SysConsts.EXAM_OPERATION_ADD_MARK_TEACHER, SysConsts.EXAM_OPERATION_ADD_MARK_TEACHER_VIEW);
-        ExamOperationViewMap.put(SysConsts.EXAM_OPERATION_VIEW_SCORE, SysConsts.EXAM_OPERATION_VIEW_SCORE_VIEW);
+        ExamOperationViewMap.put(SysConsts.EXAM_OPERATION_RESULT, SysConsts.EXAM_OPERATION_VIEW_SCORE_VIEW);
         ExamOperationViewMap.put(SysConsts.EXAM_OPERATION_REVIEW, SysConsts.EXAM_OPERATION_REVIEW_VIEW);
         ExamOperationViewMap.put(SysConsts.EXAM_OPERATION_DELETE, SysConsts.EXAM_OPERATION_DELETE_VIEW);
         ExamOperationViewMap.put(SysConsts.EXAM_OPERATION_MARK, SysConsts.EXAM_OPERATION_MARK_VIEW);

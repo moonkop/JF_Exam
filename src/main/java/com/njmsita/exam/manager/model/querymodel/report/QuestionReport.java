@@ -7,11 +7,33 @@ public class QuestionReport
     public Double scoreAvg;
     public Double scoreMin;
     public Double scoreMax;
+    public Double scoreRate;
     public String outline;
     public Integer type;
+    public Integer index;
     public List<String> answer;
     public List<OptionReport> optionList;
     public List<WorkoutReport> workoutList;
+
+    public Double getScoreRate()
+    {
+        return scoreRate;
+    }
+
+    public void setScoreRate(Double scoreRate)
+    {
+        this.scoreRate = scoreRate;
+    }
+
+    public Integer getIndex()
+    {
+        return index;
+    }
+
+    public void setIndex(Integer index)
+    {
+        this.index = index;
+    }
 
     public List<String> getAnswer()
     {

@@ -66,12 +66,22 @@
             <span class="question-result-score"></span>
             <span class="question-result-workout"></span>
             <span class="question-result-teacher"></span>
-<div class="question-result-remark">
+            <div class="question-result-remark">
 
-</div>
+            </div>
         </div>
 
     </script>
+
+    <script id="js-template-question-report" type="text/html">
+        <div class="question-report">
+            <span class="question-report-scoreAvg"></span>
+            <span class="question-report-scoreRate"></span>
+            <span class="question-report-scoreMax"></span>
+            <span class="question-report-scoreMin"></span>
+        </div>
+    </script>
+
 
     <script id="js-template-question-workout-area" type="text/html">
         <textarea class="form-control" style="width: 100%" cols="5"></textarea>

@@ -132,7 +132,7 @@ public class ExamMarkEbo implements ExamMarkEbi
         }
         ExamReport report = buildExamReport(examId);
 
-        examReportDao.insert(report);
+        examReportDao.save(report);
         //todo delete student exam question
 
         examPo.setExamStatus(SysConsts.EXAM_STATUS_ENDING);
@@ -198,6 +198,8 @@ public class ExamMarkEbo implements ExamMarkEbi
             QuestionReport questionReport = new QuestionReport();
             report.questionReportList.add(questionReport);
             questionReport.setType(question.getType());
+            questionReport.setIndex(question.getIndex());
+
             double scoreSum = 0;
             double scoreMax = 0;
             double scoreMin = question.getValue();
@@ -221,6 +223,7 @@ public class ExamMarkEbo implements ExamMarkEbi
 
             questionReport.setOutline(question.getOutline());
             questionReport.setScoreAvg(scoreSum / attendCount);
+            questionReport.setScoreRate(scoreSum / (attendCount * question.getValue()));
             questionReport.setScoreMax(scoreMax);
             questionReport.setScoreMin(scoreMin);
 
@@ -393,7 +396,7 @@ public class ExamMarkEbo implements ExamMarkEbi
         StudentExamVo studentExamPo = studentExamDao.get(studentExamId);
         StudentExamArchive archive = new StudentExamArchive(studentExamPo);
         archive.setId(studentExamId);
-        studentExamArchiveDao.insert(archive);
+        studentExamArchiveDao.save(archive);
         return archive;
 
     }

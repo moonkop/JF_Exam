@@ -22,8 +22,8 @@ public class StudentExamArchiveDaoImpl implements StudentExamArchiveDao
     }
 
     @Override
-    public void insert(StudentExamArchive archive)
+    public void save(StudentExamArchive archive)
     {
-        mongoTemplate.insert(archive, SysConsts.STUDENT_EXAM_ARCHIVE_COLLECTION_NAME);
+        mongoTemplate.save(archive, SysConsts.STUDENT_EXAM_ARCHIVE_COLLECTION_NAME);
     }
 }

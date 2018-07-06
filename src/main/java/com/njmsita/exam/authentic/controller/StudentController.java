@@ -321,6 +321,16 @@ public class StudentController extends BaseController
             studentEbi.save(studentVo);
         } else
         {
+            SchoolVo schoolVo = new SchoolVo();
+            schoolVo.setId(schoolID);
+            studentVo.setSchool(schoolVo);
+            ClassroomVo classroomVo = new ClassroomVo();
+            if (classroomID != null && classroomID != "")
+            {
+                classroomVo.setId(classroomID);
+                studentVo.setClassroom(classroomVo);
+            }
+
             studentEbi.update(studentVo);
         }
         return "redirect:/student/manage";

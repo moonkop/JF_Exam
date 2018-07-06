@@ -30,7 +30,7 @@
         $("#startTime").text(TimeStampTDateTimeString(app.exam.studentExam.startTime));
         $("#submitTime").text(TimeStampTDateTimeString(app.exam.studentExam.submitTime));
         $("#workoutTime").text(ConvertTimeDuration(app.exam.studentExam.submitTime - app.exam.studentExam.startTime));
-        app.paper.questionList = reArrangeQuestionList(app.paper.questionList);
+        app.paper.questionList = sort_question_List(app.paper.questionList);
         render_paper_title();
         exam_result_render_question_list();
 

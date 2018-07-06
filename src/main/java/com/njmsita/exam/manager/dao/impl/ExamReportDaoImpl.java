@@ -23,8 +23,9 @@ public class ExamReportDaoImpl implements ExamReportDao
     }
 
     @Override
-    public void insert(ExamReport report)
+    public void save(ExamReport report)
     {
-        mongoTemplate.insert(report, SysConsts.EXAM_REPORT_COLLECTION_NAME);
+
+        mongoTemplate.save(report, SysConsts.EXAM_REPORT_COLLECTION_NAME);
     }
 }

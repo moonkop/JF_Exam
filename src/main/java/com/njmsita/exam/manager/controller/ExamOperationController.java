@@ -3,13 +3,13 @@ package com.njmsita.exam.manager.controller;
 import com.njmsita.exam.authentic.model.TeacherVo;
 import com.njmsita.exam.authentic.service.ebi.TeacherEbi;
 import com.njmsita.exam.manager.model.ExamVo;
+import com.njmsita.exam.manager.model.PaperVo;
 import com.njmsita.exam.manager.model.QuestionVo;
 import com.njmsita.exam.manager.model.StudentExamQuestionVo;
 import com.njmsita.exam.manager.model.querymodel.report.ExamReport;
 import com.njmsita.exam.manager.model.querymodel.StudentExamArchive;
 import com.njmsita.exam.manager.service.ebi.ExamManageEbi;
 import com.njmsita.exam.manager.service.ebi.ExamMarkEbi;
-import com.njmsita.exam.manager.service.ebi.ExamStudentEbi;
 import com.njmsita.exam.manager.service.ebi.SubjectEbi;
 import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.exception.ItemNotFoundException;
@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.awt.print.Paper;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,7 +71,7 @@ public class ExamOperationController
         if (examVo.getPaperVo() != null)
         {
             request.setAttribute("paper", examVo.getPaperVo());
-            assignQuestionListToRequest(request, examVo.getPaperVo().getQuestionList(), true);
+            assignExamToView(request,examVo,examVo.getPaperVo(),examVo.getPaperVo().getQuestionList(), true);
         }
         return "/manage/exam/review";
     }
@@ -229,7 +230,6 @@ public class ExamOperationController
 
         if (examVoWithPaper.getPaperVo() != null)
         {
-            request.setAttribute("paper", examVoWithPaper.getPaperVo());
             List<QuestionVo> list = examVoWithPaper.getPaperVo().getQuestionList();
             List<QuestionVo> list_manual_mark = new ArrayList<>();
             for (QuestionVo item : list)
@@ -239,35 +239,33 @@ public class ExamOperationController
                     list_manual_mark.add(item);
                 }
             }
-            request.setAttribute("exam", examVoWithPaper);
-            assignQuestionListToRequest(request, list_manual_mark, true);
+            assignExamToView(request,examVoWithPaper,examVoWithPaper.getPaperVo(),list_manual_mark, true);
         }
         return "/exam/teacher/mark";
     }
 
-    public static void assignQuestionListToRequest(HttpServletRequest request, List<QuestionVo> list_manual_mark, boolean showAnswer)
+    public static void assignExamToView(HttpServletRequest request,
+                                        ExamVo examWithPaper,
+                                        PaperVo paper,
+                                        List<QuestionVo>questionVoList,
+                                        boolean showAnswer)
     {
-        String fields = "id,outline,options,value,code,index,type";
 
+        request.setAttribute("exam", examWithPaper);
+        request.setAttribute("paper", paper);
+        String fields = "id,outline,options,value,code,index,type";
         if (showAnswer)
         {
             fields += ",answer";
         }
-
         request.setAttribute("questionList", CustomJsonSerializer.toJsonString_static
                 (
                         new JsonListObjectMapper<QuestionVo>().
                                 setFields(fields).
-                                serializeList(list_manual_mark)
+                                serializeList(questionVoList)
                 ));
     }
 
-    @RequestMapping("report")
-    public String report(String examId, HttpServletRequest request)
-    {
-
-        return "/exam/report";
-    }
 
     @Deprecated
     @ResponseBody
@@ -356,4 +354,21 @@ public class ExamOperationController
         return examMarkEbi.buildAndSaveStudentExamArchive(studentExamId);
     }
 
+    @RequestMapping("report")
+    public String report(@RequestParam(name = "id") String examId, HttpServletRequest request) throws ItemNotFoundException
+    {
+        ExamReport report = getExamReport(examId);
+        ExamVo ExamPo = examManageEbi.getWithPaper(examId);
+        request.setAttribute("report_json", CustomJsonSerializer.toJson_JsonNode1(report));
+        request.setAttribute("report", report);
+
+        if (ExamPo.getPaperVo() == null)
+        {
+            throw new ItemNotFoundException("未找到该试卷");
+        }
+        assignExamToView(request, ExamPo, ExamPo.getPaperVo(), ExamPo.getPaperVo().getQuestionList(), true);
+
+
+        return "/exam/teacher/report";
+    }
 }

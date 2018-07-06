@@ -360,7 +360,7 @@ public class ExamManageEbo implements ExamManageEbi
                     }
                     break;
                 case SysConsts.EXAM_STATUS_ENDING:
-                    operationSet.add(SysConsts.EXAM_OPERATION_VIEW_SCORE);
+                    operationSet.add(SysConsts.EXAM_OPERATION_REPORT);
                     break;
             }
         }
@@ -413,7 +413,7 @@ public class ExamManageEbo implements ExamManageEbi
             case SysConsts.EXAM_STATUS_IN_CANCEL:
                 break;
             case SysConsts.EXAM_STATUS_ENDING:
-                operationSet.add(SysConsts.EXAM_OPERATION_VIEW_SCORE);
+                operationSet.add(SysConsts.EXAM_OPERATION_RESULT);
                 break;
         }
 
@@ -424,7 +424,7 @@ public class ExamManageEbo implements ExamManageEbi
     {
         if (!getValidOperations(exam, loginTeacher).contains(permission))
         {
-          //  throw new UnAuthorizedException("您没有当前" + SysConsts.ExamOperationViewMap.get(permission) + "操作的权限");
+            throw new UnAuthorizedException("您没有当前" + SysConsts.ExamOperationViewMap.get(permission) + "操作的权限");
         }
         return true;
     }
@@ -433,7 +433,7 @@ public class ExamManageEbo implements ExamManageEbi
     {
         if (!getValidOperations(studentExam, loginStudent).contains(permission))
         {
-           // throw new UnAuthorizedException("您没有当前" + SysConsts.ExamOperationViewMap.get(permission) + "操作的权限");
+            throw new UnAuthorizedException("您没有当前" + SysConsts.ExamOperationViewMap.get(permission) + "操作的权限");
         }
         return true;
     }

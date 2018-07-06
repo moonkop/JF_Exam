@@ -558,7 +558,7 @@
         // }
 
         $(document).ready(function () {
-            app.paper.questionList = reArrangeQuestionList(app.paper.questionList);
+            app.paper.questionList = sort_question_List(app.paper.questionList);
             render_paper_title();
             paper_mark_render_question_list();
 

@@ -24,12 +24,10 @@
                 'click .js-cancel': function (e, value, row, index) {
                     if (confirm("确定要取消本场考试吗？") == true)
                     {
-                        $.ajax(
+                        myajax(
                             {
                                 url: '/exam/operation/cancel.do?id=' + row.id,
-                                type: "post",
                                 success: function (res) {
-                                    OnResult(res);
                                     $("#table").bootstrapTable('refresh');
                                 }
                             }
@@ -46,16 +44,51 @@
                     window.location.href = "/exam/operation/review?id=" + row.id;
                 },
                 'click .js-delete': function (e, value, row, index) {
-                    window.location.href = "#" + row.id;
+                    if (confirm("确定要取消本场考试吗？") == true)
+                    {
+                        myajax(
+                            {
+                                url: '/exam/manage/delete.do?id=' + row.id,
+                                success: function (res) {
+                                    $("#table").bootstrapTable('refresh');
+                                }
+                            }
+                        );
+                    }
+                },'click .js-stop': function (e, value, row, index) {
+                    if (confirm("确定要终止本场考试吗？") == true)
+                    {
+                        myajax(
+                            {
+                                url: '/exam/manage/stop.do?id=' + row.id,
+                                success: function (res) {
+                                    $("#table").bootstrapTable('refresh');
+                                }
+                            }
+                        );
+                    }
                 },
                 'click .js-mark': function (e, value, row, index) {
-                    window.location.href = "#" + row.id;
+                    window.location.href = "/exam/operation/mark?id=" + row.id;
                 },
                 'click .js-submitMark': function (e, value, row, index) {
-                    window.location.href = "#" + row.id;
+                    if (confirm("确定要提交批改结果吗？提交后不可更改") == true)
+                    {
+                        myajax(
+                            {
+                                url: '/exam/operation/submitMark.do?id=' + row.id,
+                                success: function (res) {
+                                    $("#table").bootstrapTable('refresh');
+                                }
+                            }
+                        );
+                    }
                 },
                 'click .js-enter': function (e, value, row, index) {
                     window.location.href = "/exam/student/enter?id=" + row.id;
+                },
+                'click .js-report': function (e, value, row, index) {
+                    window.location.href = "/exam/operation/report?id=" + row.id;
                 },
                 'click .js-preview': function (e, value, row, index) {
                     window.location.href = "/exam/student/preview?id=" + row.id;
@@ -106,13 +139,20 @@
                                 {
                                     field: 'duration',
                                     title: '考试时间',
-                                    formatter:function (value, row, index) {
-                                        if(value=="0"){
+                                    formatter: function (value, row, index) {
+                                        if (value == "0")
+                                        {
                                             return '不限';
-                                        }else {
+                                        } else
+                                        {
                                             return value;
                                         }
                                     }
+
+                                },
+                                {
+                                    field: 'teacher',
+                                    title: '发起人'
                                 },
                                 {
                                     field: 'subject',
@@ -147,17 +187,22 @@
                                     formatter: function (value, row, index) {
                                         var act = value;
                                         var dic = {
+                                            'enter': '<span class="label label-action label-success js-enter">参加考试</span>',
+                                            'result': '<span class="label label-action label-info  js-result">查看成绩</span>',
                                             'review': '<span class="label label-action label-danger text-danger js-review">审核</span>',
+
+
                                             'view': '<i class="fa fa-search js-view" title="预览"></i>',
                                             'edit': '<i class="fa fa-pencil js-edit" title="修改"></i>',
                                             'cancel': '<i class="fa fa-times js-cancel" title="取消"></i>',
                                             'addMarkTeacher': '<i class="fa fa-user-plus js-add-teacher" title="添加批卷教师"></i>',
-                                            'viewScore': '<span class="label label-action label-info  js-result">查看成绩</span>',
                                             'delete': '<i class="fa fa-trash js-delete" title="删除"></i>',
                                             'mark': '<i class="fa fa-edit  js-mark" title="批阅"></i>',
                                             'submitMark': '<i class="fa fa-check js-submitMark" title="批阅提交"></i>',
-                                            'enter': '<span class="label label-action label-success js-enter">参加考试</span>',
-                                            'preview': '<i class="fa fa-eye js-preview" title="查看概要"></i>'
+                                            'preview': '<i class="fa fa-eye js-preview" title="查看概要"></i>',
+                                            'stop': '<i class="fa fa-ban js-stop" title="终止考试"></i>',
+                                            'report': '<i class="fa fa-bar-chart js-report" title="查看报告"></i>'
+
                                         };
                                         var html = '';
                                         for (var i = 0; i < act.length; i++)
