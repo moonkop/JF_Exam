@@ -200,8 +200,6 @@ public class ExamManageController extends BaseController
      * 列表
      *
      * @param examListQueryModel 查询条件（考试开始区间  发起教师  科目  考试状态）--->考试开始区间分为：startTime endTime
-     * @param pageNum
-     * @param pageSize
      *
      * @return
      */

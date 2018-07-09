@@ -65,7 +65,8 @@ public class ClassroomEbo implements ClassroomEbi
 
     public void update(ClassroomVo classroomVo) throws OperationException
     {
-        if(null==classroomDao.findByNameFrom(classroomVo.getName(),classroomVo.getSchoolVo().getId())){
+        ClassroomVo classroomVo1=classroomDao.findByNameFrom(classroomVo.getName(),classroomVo.getSchoolVo().getId());
+        if(null==classroomVo1||classroomVo1.getId().equals(classroomVo.getId())){
             classroomDao.update(classroomVo);
         }else{
             SchoolVo schoolVo=schoolDao.get(classroomVo.getSchoolVo().getId());

@@ -20,7 +20,7 @@ public class ResourceDaoImpl extends BaseImpl<TresourceVo> implements ResourceDa
 
     public DetachedCriteria doQbc(DetachedCriteria dc, BaseQueryVO qm)
     {
-return dc;
+        return dc;
     }
 
     public List<TresourceVo> getAllByLoginId(String id)

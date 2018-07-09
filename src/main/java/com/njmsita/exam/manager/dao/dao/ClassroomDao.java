@@ -2,7 +2,6 @@ package com.njmsita.exam.manager.dao.dao;
 
 import com.njmsita.exam.base.BaseDao;
 import com.njmsita.exam.manager.model.ClassroomVo;
-import com.njmsita.exam.manager.model.SchoolVo;
 
 import java.util.List;
 

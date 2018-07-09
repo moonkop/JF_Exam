@@ -43,12 +43,13 @@ public class ClassroomDaoImpl extends BaseImpl<ClassroomVo> implements Classroom
         return list.size()>0?list.get(0):null;
     }
 
-    public ClassroomVo getByClassroomIdFromSchool(String classroomId, String schoolId)
+    public ClassroomVo getByClassroomIdFromSchool(String classroomName, String schoolId)
     {
         //classroom---->school
-        String hql="from ClassroomVo where id=? and schoolVo.id=?";
-        List<ClassroomVo> list= (List<ClassroomVo>) this.getHibernateTemplate().find(hql,classroomId,schoolId);
+        String hql="from ClassroomVo where name=? and schoolVo.id=?";
+        List<ClassroomVo> list= (List<ClassroomVo>) this.getHibernateTemplate().find(hql,classroomName,schoolId);
         return list.size()>0?list.get(0):null;
     }
+
 
 }

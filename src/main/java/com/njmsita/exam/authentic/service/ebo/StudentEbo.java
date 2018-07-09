@@ -343,7 +343,7 @@ public class StudentEbo implements StudentEbi
             throw new OperationException("新密码不能为空，请不要进行非法操作！");
         }
         loginStudent = studentDao.get(loginStudent.getId());
-        loginStudent.setPassword(MD5Utils.md5(newPassword));
+        loginStudent.setPassword(newPassword);
     }
 
     /**

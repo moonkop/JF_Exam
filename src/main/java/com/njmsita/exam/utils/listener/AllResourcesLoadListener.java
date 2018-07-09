@@ -50,7 +50,7 @@ public class AllResourcesLoadListener implements ServletContextListener
         Object o=ctx.getBean("schedulerFactoryBean");
         StdScheduler stdScheduler= (StdScheduler) o;
 
-        List<ScheduleVo> list=examManageEbo.getAllByExecutable();
+        /*List<ScheduleVo> list=examManageEbo.getAllByExecutable();
         Set<String> outmodedGroup=new HashSet<>();
         try
         {
@@ -64,7 +64,7 @@ public class AllResourcesLoadListener implements ServletContextListener
                 Long time= FormatUtil.getTimeByCron(scheduleVo.getCronexpression());
                 if(time<System.currentTimeMillis())
                 {
-                    setOutmoded(examManageEbo,scheduleVo);
+                    //setOutmoded(examManageEbo,scheduleVo);
                     ExamVo examVo=examManageEbo.get(scheduleVo.getTargetVoId());
                     examVo.setExamStatus(SysConsts.EXAM_STATUS_OUTMODED);
                     examManageEbo.update(examVo);
@@ -76,7 +76,7 @@ public class AllResourcesLoadListener implements ServletContextListener
         } catch (Exception e)
         {
             e.printStackTrace();
-        }
+        }*/
     }
 
     private void setOutmoded(ExamManageEbi examManageEbo,ScheduleVo scheduleVo)

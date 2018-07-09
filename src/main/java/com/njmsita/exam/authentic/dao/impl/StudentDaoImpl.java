@@ -6,7 +6,11 @@ import com.njmsita.exam.authentic.model.TeacherVo;
 import com.njmsita.exam.authentic.model.querymodel.StudentQueryModel;
 import com.njmsita.exam.base.BaseImpl;
 import com.njmsita.exam.base.BaseQueryVO;
+import com.njmsita.exam.utils.format.StringUtil;
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -21,6 +25,14 @@ public class StudentDaoImpl extends BaseImpl<StudentVo> implements StudentDao
     public DetachedCriteria doQbc(DetachedCriteria dc, BaseQueryVO qm)
     {
         StudentQueryModel sqm= (StudentQueryModel) qm;
+        if(sqm.getSchool()!=null&& !StringUtil.isEmpty(sqm.getSchool().getId())){
+            dc.createAlias("school","sc");
+            dc.add(Restrictions.eq("sc.id",sqm.getSchool().getId()));
+        }
+        if(sqm.getClassroom()!=null&& !StringUtil.isEmpty(sqm.getClassroom().getId())){
+            dc.createAlias("classroom","cr");
+            dc.add(Restrictions.eq("cr.id",sqm.getClassroom().getId()));
+        }
         return dc;
     }
 

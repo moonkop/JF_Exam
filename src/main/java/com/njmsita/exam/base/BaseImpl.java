@@ -33,6 +33,7 @@ public abstract class BaseImpl<T>  extends HibernateDaoSupport implements BaseDa
 		this.getHibernateTemplate().save(t);
 	}
 	public void update(T t) {
+		this.getHibernateTemplate().clear();
         this.getHibernateTemplate().update(t);
     }
 	public void delete(T t) {

@@ -18,6 +18,7 @@ import com.njmsita.exam.manager.service.ebi.LogEbi;
 import com.njmsita.exam.manager.service.ebi.SchoolEbi;
 import com.njmsita.exam.base.BaseController;
 import com.njmsita.exam.utils.consts.SysConsts;
+import com.njmsita.exam.utils.consts.ValidatedErrorUtil;
 import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.json.CustomJsonSerializer;
 import com.njmsita.exam.utils.json.JsonListResponse;
@@ -134,19 +135,16 @@ public class SystemManagerController extends BaseController
      */
     @RequestMapping("school/edit.do")
     @SystemLogAnnotation(module = "学校管理", methods = "学校添加/修改")
-    public String doAdd(@Validated(value = {AddGroup.class}) SchoolVo school, BindingResult bindingResult,
+    @ResponseBody
+    public JsonResponse doAdd(@Validated(value = {AddGroup.class}) SchoolVo school, BindingResult bindingResult,
                         HttpServletRequest request) throws OperationException
     {
+        JsonResponse jsonResponse = new JsonResponse();
         if (bindingResult.hasErrors())
         {
-            List<FieldError> list = bindingResult.getFieldErrors();
-            for (FieldError fieldError : list)
-            {
-                //校验信息，key=属性名+Error
-                request.setAttribute(fieldError.getField() + "Error", fieldError.getDefaultMessage());
-            }
-            request.setAttribute("school", school);
-            return "/back";
+            jsonResponse.setCode(400);
+            jsonResponse.setPayload(ValidatedErrorUtil.getErrorMessage(bindingResult));
+            return jsonResponse;
         }
         if (null == school.getId() || "".equals(school.getId())) //fixed empty
         {
@@ -155,7 +153,8 @@ public class SystemManagerController extends BaseController
         {
             schoolEbi.update(school);
         }
-        return "redirect:/manage/school";
+        jsonResponse.setMessage("操作成功！");
+        return jsonResponse;
     }
     /**
      * 删除学校
@@ -403,21 +402,18 @@ public class SystemManagerController extends BaseController
      * @return 跳转班级列表页面
      */
     @RequestMapping("classroom/edit.do")
+    @ResponseBody
     @SystemLogAnnotation(module = "班级管理", methods = "班级添加/编辑")
-    public String classroomDoAdd(@Validated(value = {AddGroup.class}) ClassroomVo classroomVo, BindingResult bindingResult,
+    public JsonResponse classroomDoAdd(@Validated(value = {AddGroup.class}) ClassroomVo classroomVo, BindingResult bindingResult,
                                  HttpServletRequest request) throws OperationException
     {
 
+        JsonResponse jsonResponse = new JsonResponse();
         if (bindingResult.hasErrors())
         {
-            List<FieldError> list = bindingResult.getFieldErrors();
-            for (FieldError fieldError : list)
-            {
-                //校验信息，key=属性名+Error
-                request.setAttribute(fieldError.getField() + "Error", fieldError.getDefaultMessage());
-            }
-            request.setAttribute("classroomVo", classroomVo);
-            return "/back";
+            jsonResponse.setCode(400);
+            jsonResponse.setPayload(ValidatedErrorUtil.getErrorMessage(bindingResult));
+            return jsonResponse;
         }
         if (null == classroomVo.getId() || "".equals(classroomVo.getId().trim()))
         {
@@ -426,7 +422,8 @@ public class SystemManagerController extends BaseController
         {
             classroomEbi.update(classroomVo);
         }
-        return "redirect:/manage/classroom";
+        jsonResponse.setMessage("操作成功！");
+        return jsonResponse;
     }
     /**
      * 删除班级
@@ -532,22 +529,19 @@ public class SystemManagerController extends BaseController
      * @param tresourceVo 需要添加的信息(必须包含学校id)
      * @return 跳转资源列表页面
      */
+    @ResponseBody
     @RequestMapping("resource/edit.do")
     @SystemLogAnnotation(module = "资源管理", methods = "资源添加/修改")
-    public String resourceDoAdd(@Validated(value = {AddGroup.class}) TresourceVo tresourceVo, BindingResult bindingResult,
+    public JsonResponse resourceDoAdd(@Validated(value = {AddGroup.class}) TresourceVo tresourceVo, BindingResult bindingResult,
                                 HttpServletRequest request) throws OperationException
     {
 
+        JsonResponse jsonResponse = new JsonResponse();
         if (bindingResult.hasErrors())
         {
-            List<FieldError> list = bindingResult.getFieldErrors();
-            for (FieldError fieldError : list)
-            {
-                //校验信息，key=属性名+Error
-                request.setAttribute(fieldError.getField() + "Error", fieldError.getDefaultMessage());
-            }
-            request.setAttribute("tresourceVo", tresourceVo);
-            return "redirect:/back";
+            jsonResponse.setCode(400);
+            jsonResponse.setPayload(ValidatedErrorUtil.getErrorMessage(bindingResult));
+            return jsonResponse;
         }
         if (null == tresourceVo.getId() || "".equals(tresourceVo.getId().trim()))
         {
@@ -559,7 +553,8 @@ public class SystemManagerController extends BaseController
         {
             resourceEbi.update(tresourceVo);
         }
-        return "redirect:/manage/resource";
+        jsonResponse.setMessage("操作成功！");
+        return jsonResponse;
     }
 
 

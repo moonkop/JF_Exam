@@ -13,6 +13,7 @@ import com.njmsita.exam.manager.service.ebi.ClassroomEbi;
 import com.njmsita.exam.manager.service.ebi.LogEbi;
 import com.njmsita.exam.manager.service.ebi.SchoolEbi;
 import com.njmsita.exam.utils.consts.SysConsts;
+import com.njmsita.exam.utils.consts.ValidatedErrorUtil;
 import com.njmsita.exam.utils.exception.FormatException;
 import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.format.*;
@@ -38,7 +39,9 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -291,19 +294,16 @@ public class StudentController extends BaseController
      */
     @RequestMapping("manage/edit.do")
     @SystemLogAnnotation(module = "学生管理", methods = "学生添加/修改")
-    public String doAdd(@Validated(value = {StudentAddGroup.class}) StudentVo studentVo, BindingResult bindingResult, String schoolID, String classroomID,
+    @ResponseBody
+    public JsonResponse doAdd(@Validated(value = {StudentAddGroup.class}) StudentVo studentVo, BindingResult bindingResult, String schoolID, String classroomID,
                         HttpServletRequest request) throws OperationException
     {
+        JsonResponse jsonResponse= new JsonResponse();
         if (bindingResult.hasErrors())
         {
-            List<FieldError> list = bindingResult.getFieldErrors();
-            for (FieldError fieldError : list)
-            {
-                //校验信息，key=属性名+Error
-                request.setAttribute(fieldError.getField() + "Error", fieldError.getDefaultMessage());
-            }
-            request.setAttribute("studentVo", studentVo);
-            return "/manage/student/edit";
+            jsonResponse.setCode(400);
+            jsonResponse.setPayload(ValidatedErrorUtil.getErrorMessage(bindingResult));
+            return jsonResponse;
         }
 
         if (null == studentVo.getId() || "".equals(studentVo.getStudentId().trim()) || "".equals(studentVo.getId()))
@@ -333,7 +333,8 @@ public class StudentController extends BaseController
 
             studentEbi.update(studentVo);
         }
-        return "redirect:/student/manage";
+        jsonResponse.setMessage("操作成功！");
+        return jsonResponse;
     }
 
     /**
@@ -395,22 +396,26 @@ public class StudentController extends BaseController
      */
     @RequestMapping("manage/resetPassword.do")
     @SystemLogAnnotation(module = "学生管理", methods = "密码重置")
-    public String resetPassword(@Validated(value = EditGroup.class) StudentVo studentVo, BindingResult bindingResult,
+    public JsonResponse resetPassword(@Validated(value = EditGroup.class) StudentVo studentVo, BindingResult bindingResult,
                                 HttpServletRequest request)
     {
+        JsonResponse jsonResponse = new JsonResponse();
         if (bindingResult.hasErrors())
         {
+            Map<String,Object> error = new HashMap<>();
             List<FieldError> list = bindingResult.getFieldErrors();
             for (FieldError fieldError : list)
             {
                 //校验信息，key = 属性名+Error
-                request.setAttribute(fieldError.getField() + "Error", fieldError.getDefaultMessage());
+                error.put(fieldError.getField() + "Error", fieldError.getDefaultMessage());
             }
-            request.setAttribute("student", studentVo);
-            return "/back";
+            jsonResponse.setCode(400);
+            jsonResponse.setPayload(error);
+            return jsonResponse;
         }
         studentEbi.resetPassword(studentVo);
-        return "";
+        jsonResponse.setMessage("密码重置成功！默认密码为学生学号！");
+        return jsonResponse;
     }
 
     //-------------------------------StudentManager-----------END-------------------------------------------
