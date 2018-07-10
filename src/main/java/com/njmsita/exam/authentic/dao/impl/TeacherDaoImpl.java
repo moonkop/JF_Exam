@@ -26,6 +26,7 @@ public class TeacherDaoImpl extends BaseImpl<TeacherVo> implements TeacherDao
             dc.createAlias("role","r");
             dc.add(Restrictions.eq("r.id",sqm.getRole().getId()));
         }
+
         return dc;
 
     }
