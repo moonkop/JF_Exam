@@ -1,10 +1,18 @@
 package com.njmsita.exam.utils.exception;
 
+import javax.swing.*;
+
 public class UnifyException extends Exception
 {
     protected Integer code;
     //异常信息
     private String message;
+
+    public UnifyException()
+    {
+        this.message = "error";
+        this.code = 500;
+    }
 
     public UnifyException(String message)
     {

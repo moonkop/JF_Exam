@@ -6,6 +6,7 @@ import com.njmsita.exam.authentic.model.UserModel;
 import com.njmsita.exam.authentic.service.ebi.ResourceEbi;
 import com.njmsita.exam.authentic.service.ebi.RoleEbi;
 import com.njmsita.exam.utils.consts.SysConsts;
+import com.njmsita.exam.utils.exception.FieldErrorException;
 import com.njmsita.exam.utils.json.JsonResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -27,21 +28,29 @@ public class BaseController
     private RoleEbi roleEbi;
     @Autowired
     private ResourceEbi resourceEbi;
-    public static boolean GetJsonErrorFields(BindingResult bindingResult, JsonResponse response)
+
+
+    public static boolean CheckErrorFields(BindingResult bindingResult) throws FieldErrorException
     {
+        FieldErrorException exception = null;
+
         if (bindingResult.hasErrors())
         {
+            if (exception == null)
+            {
+                exception = new FieldErrorException();
+            }
+
             List<FieldError> list = bindingResult.getFieldErrors();
             for (FieldError fieldError : list)
             {
+                exception.getErrorMessages().add(fieldError.getField() + " Error:" + fieldError.getDefaultMessage());
                 //校验信息，key=属性名+Error
-                response.put(fieldError.getField() + "Error", fieldError.getDefaultMessage());
             }
-            return true;
+            throw exception;
         }
         return false;
     }
-
 
     /**
      * 用户跳转JSP页面
@@ -50,6 +59,7 @@ public class BaseController
      *
      * @param folder  路径
      * @param jspName JSP名称(不加后缀)
+     *
      * @return 指定JSP页面
      */
     @RequestMapping("/{folder}/{jspName}")
@@ -89,11 +99,11 @@ public class BaseController
     {
         if (tresourceVo.getChilds() != null)
         {
-            Set<TresourceVo> set= tresourceVo.getChilds();
-            Iterator<TresourceVo> iterator=  set.iterator();
+            Set<TresourceVo> set = tresourceVo.getChilds();
+            Iterator<TresourceVo> iterator = set.iterator();
             while (iterator.hasNext())
             {
-                TresourceVo tresourceVo1=iterator.next();
+                TresourceVo tresourceVo1 = iterator.next();
                 if (tresourceVo1.getResourcetype().getId().equals("1"))
                 {
                     iterator.remove();

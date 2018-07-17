@@ -2,6 +2,7 @@ package com.njmsita.exam.manager.controller;
 
 import com.njmsita.exam.authentic.model.TeacherVo;
 import com.njmsita.exam.authentic.service.ebi.TeacherEbi;
+import com.njmsita.exam.base.BaseController;
 import com.njmsita.exam.manager.model.PaperVo;
 import com.njmsita.exam.manager.model.QuestionVo;
 import com.njmsita.exam.manager.model.SubjectVo;
@@ -10,6 +11,7 @@ import com.njmsita.exam.manager.service.ebi.PaperEbi;
 import com.njmsita.exam.manager.service.ebi.QuestionEbi;
 import com.njmsita.exam.manager.service.ebi.SubjectEbi;
 import com.njmsita.exam.utils.consts.SysConsts;
+import com.njmsita.exam.utils.exception.FieldErrorException;
 import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.idutil.IdUtil;
@@ -32,7 +34,7 @@ import java.util.List;
  */
 @Controller
 @RequestMapping("/paper")
-public class PaperManageController
+public class PaperManageController extends BaseController
 {
     @Autowired
     private PaperEbi paperEbi;
@@ -108,13 +110,15 @@ public class PaperManageController
         return "/manage/paper/add";
     }
 
-
+    @ResponseBody
     @RequestMapping("add.do")
     @SystemLogAnnotation(module = "试卷管理", methods = "试卷添加/修改")
-    public String paperAdd(PaperVo paperVo, BindingResult bindingResult,
-                           HttpServletRequest request, int subject_id) throws OperationException
+    public JsonResponse paperAdd(PaperVo paperVo, BindingResult bindingResult,
+                                 HttpServletRequest request, int subject_id) throws OperationException, FieldErrorException
     {
-
+        JsonResponse response = new JsonResponse();
+        CheckErrorFields(bindingResult);
+//fixme 校验
         TeacherVo teacherVo1 = new TeacherVo();
         TeacherVo teacherVo = (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
         teacherVo1.setId(teacherVo.getId());
@@ -127,7 +131,7 @@ public class PaperManageController
         paperVo.setSubject(subjectVo);
         paperEbi.save(paperVo);
 
-        return "redirect:/paper/edit?id=" + paperVo.getId();
+        return response;
     }
 
 

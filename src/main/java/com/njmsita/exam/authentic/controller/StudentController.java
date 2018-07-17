@@ -13,11 +13,10 @@ import com.njmsita.exam.manager.service.ebi.ClassroomEbi;
 import com.njmsita.exam.manager.service.ebi.LogEbi;
 import com.njmsita.exam.manager.service.ebi.SchoolEbi;
 import com.njmsita.exam.utils.consts.SysConsts;
-import com.njmsita.exam.utils.consts.ValidatedErrorUtil;
+import com.njmsita.exam.utils.exception.FieldErrorException;
 import com.njmsita.exam.utils.exception.FormatException;
 import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.format.*;
-import com.njmsita.exam.utils.idutil.IdUtil;
 import com.njmsita.exam.utils.json.JsonListResponse;
 import com.njmsita.exam.utils.json.JsonResponse;
 import com.njmsita.exam.utils.logutils.SystemLogAnnotation;
@@ -30,7 +29,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -39,9 +37,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -157,21 +153,13 @@ public class StudentController extends BaseController
     /**
      * 个人信息编辑
      */
+    @ResponseBody
     @RequestMapping("edit.do")
     @SystemLogAnnotation(module = "学生个人", methods = "个人信息编辑")
-    public String doEdit(@Validated(value = {EditGroup.class}) StudentVo studentVo, BindingResult bindingResult, String classroomId, HttpServletRequest request, HttpSession session) throws OperationException
+    public JsonResponse doEdit(@Validated(value = {EditGroup.class}) StudentVo studentVo, BindingResult bindingResult, String classroomId, HttpServletRequest request, HttpSession session) throws OperationException, FieldErrorException
     {
-        if (bindingResult.hasErrors())
-        {
-            List<FieldError> list = bindingResult.getFieldErrors();
-            for (FieldError fieldError : list)
-            {
-                //校验信息，key=属性名+Error
-                request.setAttribute(fieldError.getField() + "Error", fieldError.getDefaultMessage());
-            }
-            request.setAttribute("studentVo", studentVo);
-            return "/back";
-        }
+        JsonResponse response = new JsonResponse();
+        CheckErrorFields(bindingResult);
         StudentVo studentLogin = (StudentVo) session.getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
         if (null != studentVo)
         {
@@ -184,7 +172,7 @@ public class StudentController extends BaseController
             //重新将数据保存到session用于修改成功后的回显
             session.setAttribute(SysConsts.USER_LOGIN_OBJECT_NAME, newStudent);
         }
-        return "redirect:/student/detail";
+        return response;
     }
 
     /**
@@ -296,15 +284,10 @@ public class StudentController extends BaseController
     @SystemLogAnnotation(module = "学生管理", methods = "学生添加/修改")
     @ResponseBody
     public JsonResponse doAdd(@Validated(value = {StudentAddGroup.class}) StudentVo studentVo, BindingResult bindingResult, String schoolID, String classroomID,
-                        HttpServletRequest request) throws OperationException
+                        HttpServletRequest request) throws OperationException, FieldErrorException
     {
-        JsonResponse jsonResponse= new JsonResponse();
-        if (bindingResult.hasErrors())
-        {
-            jsonResponse.setCode(400);
-            jsonResponse.setPayload(ValidatedErrorUtil.getErrorMessage(bindingResult));
-            return jsonResponse;
-        }
+        JsonResponse response= new JsonResponse();
+        CheckErrorFields(bindingResult);
 
         if (null == studentVo.getId() || "".equals(studentVo.getStudentId().trim()) || "".equals(studentVo.getId()))
         {
@@ -333,8 +316,8 @@ public class StudentController extends BaseController
 
             studentEbi.update(studentVo);
         }
-        jsonResponse.setMessage("操作成功！");
-        return jsonResponse;
+        response.setMessage("操作成功！");
+        return response;
     }
 
     /**
@@ -394,28 +377,17 @@ public class StudentController extends BaseController
      *
      * @return
      */
+    @ResponseBody
     @RequestMapping("manage/resetPassword.do")
     @SystemLogAnnotation(module = "学生管理", methods = "密码重置")
     public JsonResponse resetPassword(@Validated(value = EditGroup.class) StudentVo studentVo, BindingResult bindingResult,
-                                HttpServletRequest request)
+                                HttpServletRequest request) throws FieldErrorException
     {
-        JsonResponse jsonResponse = new JsonResponse();
-        if (bindingResult.hasErrors())
-        {
-            Map<String,Object> error = new HashMap<>();
-            List<FieldError> list = bindingResult.getFieldErrors();
-            for (FieldError fieldError : list)
-            {
-                //校验信息，key = 属性名+Error
-                error.put(fieldError.getField() + "Error", fieldError.getDefaultMessage());
-            }
-            jsonResponse.setCode(400);
-            jsonResponse.setPayload(error);
-            return jsonResponse;
-        }
+        JsonResponse response = new JsonResponse();
+        CheckErrorFields(bindingResult);
         studentEbi.resetPassword(studentVo);
-        jsonResponse.setMessage("密码重置成功！默认密码为学生学号！");
-        return jsonResponse;
+        response.setMessage("密码重置成功！默认密码为学生学号！");
+        return response;
     }
 
     //-------------------------------StudentManager-----------END-------------------------------------------

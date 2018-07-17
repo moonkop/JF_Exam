@@ -1,5 +1,10 @@
 package com.njmsita.exam.utils.json;
 
+import com.njmsita.exam.utils.exception.FieldErrorException;
+import com.njmsita.exam.utils.exception.UnifyException;
+import org.springframework.validation.FieldError;
+
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,6 +18,17 @@ public class JsonResponse
     {
         this.message = "ok";
         this.code = 100;
+    }
+
+    public JsonResponse(UnifyException exception)
+    {
+        this.message = exception.getMessage();
+        this.code = exception.getCode();
+        if (exception instanceof FieldErrorException)
+        {
+            this.getPayload().put("errors", ((FieldErrorException) exception).getErrorMessages());
+
+        }
     }
 
     public JsonResponse(String message)

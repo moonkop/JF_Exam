@@ -9,7 +9,7 @@ import com.njmsita.exam.authentic.service.ebi.TeacherEbi;
 import com.njmsita.exam.base.BaseController;
 import com.njmsita.exam.manager.service.ebi.LogEbi;
 import com.njmsita.exam.utils.consts.SysConsts;
-import com.njmsita.exam.utils.consts.ValidatedErrorUtil;
+import com.njmsita.exam.utils.exception.FieldErrorException;
 import com.njmsita.exam.utils.exception.FormatException;
 import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.format.*;
@@ -26,7 +26,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -35,9 +34,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 教师控制器
@@ -155,15 +152,10 @@ public class TeacherController extends BaseController
     @RequestMapping("edit.do")
     @SystemLogAnnotation(module = "教师个人", methods = "个人信息编辑")
     @ResponseBody
-    public JsonResponse doEdit(@Validated(value = {SelfEditGroup.class}) TeacherVo teacherQuery, BindingResult bindingResult, HttpServletRequest request, HttpSession session) throws OperationException
+    public JsonResponse doEdit(@Validated(value = {SelfEditGroup.class}) TeacherVo teacherQuery, BindingResult bindingResult, HttpServletRequest request, HttpSession session) throws OperationException, FieldErrorException
     {
-        JsonResponse jsonResponse= new JsonResponse();
-        if (bindingResult.hasErrors())
-        {
-            jsonResponse.setCode(400);
-            jsonResponse.setPayload(ValidatedErrorUtil.getErrorMessage(bindingResult));
-            return jsonResponse;
-        }
+        JsonResponse response = new JsonResponse();
+        CheckErrorFields(bindingResult);
         TeacherVo teacherVo = (TeacherVo) session.getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
         if (null != teacherQuery)
         {
@@ -173,7 +165,7 @@ public class TeacherController extends BaseController
             //重新将数据保存到session用于修改成功后的回显
             session.setAttribute(SysConsts.USER_LOGIN_OBJECT_NAME, newteacher);
         }
-        return jsonResponse;
+        return response;
     }
 
     /**
@@ -328,15 +320,10 @@ public class TeacherController extends BaseController
     @SystemLogAnnotation(module = "教师管理", methods = "教师添加/修改")
     @ResponseBody
     public JsonResponse doAdd(@Validated(value = {AddGroup.class}) TeacherVo teacher, BindingResult bindingResult,
-                        HttpServletRequest request) throws OperationException
+                        HttpServletRequest request) throws OperationException, FieldErrorException
     {
-        JsonResponse jsonResponse = new JsonResponse();
-        if (bindingResult.hasErrors())
-        {
-            jsonResponse.setCode(400);
-            jsonResponse.setPayload(ValidatedErrorUtil.getErrorMessage(bindingResult));
-            return jsonResponse;
-        }
+        JsonResponse response = new JsonResponse();
+        CheckErrorFields(bindingResult);
         String id = teacher.getId();
         if (null == teacher.getId() || "".equals(teacher.getId().trim()))
         {
@@ -345,8 +332,8 @@ public class TeacherController extends BaseController
         {
             teaEbi.update(teacher);
         }
-        jsonResponse.setMessage("操作成功！");
-        return jsonResponse;
+        response.setMessage("操作成功！");
+        return response;
     }
 
 

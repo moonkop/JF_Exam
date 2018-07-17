@@ -43,7 +43,6 @@ public class UnifyExceptionResoler implements HandlerExceptionResolver
 
         message = unifyException.getMessage();
         String requestHeader = request.getHeader("x-requested-with");
-        ModelAndView modelAndView = new ModelAndView();
         if (requestHeader != null && requestHeader.equals("XMLHttpRequest"))
         {
             try
@@ -56,7 +55,10 @@ public class UnifyExceptionResoler implements HandlerExceptionResolver
                 response.setCharacterEncoding("UTF-8");
                 response.setHeader("Cache-Control", "no-cache,must-revalidate");
                 PrintWriter writer = response.getWriter();
-                writer.write(CustomJsonSerializer.toJsonString_static(new JsonResponse(unifyException.getCode(), "操作失败" + message)));
+
+                JsonResponse jsonResponse = new JsonResponse(unifyException);
+
+                writer.write(CustomJsonSerializer.toJsonString_static(jsonResponse));
                 writer.flush();
             } catch (Exception e)
             {

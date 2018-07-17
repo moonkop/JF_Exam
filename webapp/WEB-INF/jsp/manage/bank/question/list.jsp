@@ -146,9 +146,10 @@
 
         initTree();
         getResourceTree();
-
+        question_manage_bind_actions();
         $("#select-subject").on("change", function () {
             getResourceTree();
+
         })
     })
 

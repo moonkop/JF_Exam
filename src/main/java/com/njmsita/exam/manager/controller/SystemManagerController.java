@@ -18,7 +18,7 @@ import com.njmsita.exam.manager.service.ebi.LogEbi;
 import com.njmsita.exam.manager.service.ebi.SchoolEbi;
 import com.njmsita.exam.base.BaseController;
 import com.njmsita.exam.utils.consts.SysConsts;
-import com.njmsita.exam.utils.consts.ValidatedErrorUtil;
+import com.njmsita.exam.utils.exception.FieldErrorException;
 import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.json.CustomJsonSerializer;
 import com.njmsita.exam.utils.json.JsonListResponse;
@@ -32,7 +32,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -137,15 +136,10 @@ public class SystemManagerController extends BaseController
     @SystemLogAnnotation(module = "学校管理", methods = "学校添加/修改")
     @ResponseBody
     public JsonResponse doAdd(@Validated(value = {AddGroup.class}) SchoolVo school, BindingResult bindingResult,
-                        HttpServletRequest request) throws OperationException
+                        HttpServletRequest request) throws OperationException, FieldErrorException
     {
-        JsonResponse jsonResponse = new JsonResponse();
-        if (bindingResult.hasErrors())
-        {
-            jsonResponse.setCode(400);
-            jsonResponse.setPayload(ValidatedErrorUtil.getErrorMessage(bindingResult));
-            return jsonResponse;
-        }
+        JsonResponse response = new JsonResponse();
+        CheckErrorFields(bindingResult);
         if (null == school.getId() || "".equals(school.getId())) //fixed empty
         {
             schoolEbi.save(school);
@@ -153,8 +147,8 @@ public class SystemManagerController extends BaseController
         {
             schoolEbi.update(school);
         }
-        jsonResponse.setMessage("操作成功！");
-        return jsonResponse;
+        response.setMessage("操作成功！");
+        return response;
     }
     /**
      * 删除学校
@@ -292,13 +286,10 @@ public class SystemManagerController extends BaseController
     @RequestMapping("role/edit.do")
     @SystemLogAnnotation(module = "角色管理", methods = "角色添加/修改")
     public JsonResponse roleDoAdd(@Validated(value = {AddGroup.class}) TroleVo roleVo, BindingResult bindingResult,
-                                  @RequestParam(value = "resourceIds[]") String[] resourceIds) throws OperationException
+                                  @RequestParam(value = "resourceIds[]") String[] resourceIds) throws OperationException, FieldErrorException
     {
         JsonResponse response = new JsonResponse();
-        if (GetJsonErrorFields(bindingResult, response))
-        {
-            return response.setCode(417);
-        }
+        CheckErrorFields(bindingResult);
         if (null == roleVo.getId() || "".equals(roleVo.getId().trim()))
         {
             roleEbi.save(roleVo, resourceIds);
@@ -405,16 +396,11 @@ public class SystemManagerController extends BaseController
     @ResponseBody
     @SystemLogAnnotation(module = "班级管理", methods = "班级添加/编辑")
     public JsonResponse classroomDoAdd(@Validated(value = {AddGroup.class}) ClassroomVo classroomVo, BindingResult bindingResult,
-                                 HttpServletRequest request) throws OperationException
+                                 HttpServletRequest request) throws OperationException, FieldErrorException
     {
 
-        JsonResponse jsonResponse = new JsonResponse();
-        if (bindingResult.hasErrors())
-        {
-            jsonResponse.setCode(400);
-            jsonResponse.setPayload(ValidatedErrorUtil.getErrorMessage(bindingResult));
-            return jsonResponse;
-        }
+        JsonResponse response = new JsonResponse();
+        CheckErrorFields(bindingResult);
         if (null == classroomVo.getId() || "".equals(classroomVo.getId().trim()))
         {
             classroomEbi.save(classroomVo);
@@ -422,8 +408,8 @@ public class SystemManagerController extends BaseController
         {
             classroomEbi.update(classroomVo);
         }
-        jsonResponse.setMessage("操作成功！");
-        return jsonResponse;
+        response.setMessage("操作成功！");
+        return response;
     }
     /**
      * 删除班级
@@ -533,16 +519,11 @@ public class SystemManagerController extends BaseController
     @RequestMapping("resource/edit.do")
     @SystemLogAnnotation(module = "资源管理", methods = "资源添加/修改")
     public JsonResponse resourceDoAdd(@Validated(value = {AddGroup.class}) TresourceVo tresourceVo, BindingResult bindingResult,
-                                HttpServletRequest request) throws OperationException
+                                HttpServletRequest request) throws OperationException, FieldErrorException
     {
 
-        JsonResponse jsonResponse = new JsonResponse();
-        if (bindingResult.hasErrors())
-        {
-            jsonResponse.setCode(400);
-            jsonResponse.setPayload(ValidatedErrorUtil.getErrorMessage(bindingResult));
-            return jsonResponse;
-        }
+        JsonResponse response = new JsonResponse();
+        CheckErrorFields(bindingResult);
         if (null == tresourceVo.getId() || "".equals(tresourceVo.getId().trim()))
         {
             tresourceVo.setId(tresourceVo.getUrl().substring(1).replace("/", "_"));
@@ -553,8 +534,8 @@ public class SystemManagerController extends BaseController
         {
             resourceEbi.update(tresourceVo);
         }
-        jsonResponse.setMessage("操作成功！");
-        return jsonResponse;
+        response.setMessage("操作成功！");
+        return response;
     }
 
 

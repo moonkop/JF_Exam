@@ -13,17 +13,14 @@ import com.njmsita.exam.manager.service.ebi.SubjectEbi;
 import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.format.StringUtil;
-import com.njmsita.exam.utils.idutil.IdUtil;
 import com.njmsita.exam.utils.json.CustomJsonSerializer;
 import com.njmsita.exam.utils.json.JsonListObjectMapper;
 import com.njmsita.exam.utils.json.JsonListResponse;
 import com.njmsita.exam.utils.json.JsonResponse;
 import com.njmsita.exam.utils.logutils.SystemLogAnnotation;
-import com.njmsita.exam.utils.validate.validategroup.AddGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -131,11 +128,11 @@ public class ExamManageController extends BaseController
     {
 
         JsonResponse response = new JsonResponse();
-        if (GetJsonErrorFields(bindingResult, response)) return response.setCode(417);
+        CheckErrorFields(bindingResult);
         TeacherVo loginTeacher = (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
         if (StringUtil.isEmpty(wrapper.getExam().getId()))
         {
-            examManageEbi.save(wrapper,loginTeacher);
+            examManageEbi.save(wrapper, loginTeacher);
         } else
         {
             examManageEbi.update(wrapper, loginTeacher);
@@ -173,9 +170,9 @@ public class ExamManageController extends BaseController
     {
         if (StringUtil.isEmpty(examId))
         {
-            throw  new OperationException("所选的该场考试的id不能为空");
+            throw new OperationException("所选的该场考试的id不能为空");
         }
-        examManageEbi.stop(examId,(TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME));
+        examManageEbi.stop(examId, (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME));
 
         return new JsonResponse("终止成功");
     }

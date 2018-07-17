@@ -13,6 +13,12 @@ import java.util.Set;
 public class SysConsts
 {
 
+
+	/**
+	 * error codes
+	 */
+	public static final int ERROR_CODE_ERROR_WITH_PAYLOAD =417;
+
 	/**
 	 * 超级管理员ID
 	 */

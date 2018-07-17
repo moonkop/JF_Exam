@@ -146,22 +146,14 @@ public class QuestionBankManagerController extends BaseController
      *
      * @return 跳转学科列表页面
      */
+    @ResponseBody
     @RequestMapping("subject/edit.do")
     @SystemLogAnnotation(module = "学科管理", methods = "学科添加/修改")
-    public String doAdd(@Validated(value = {AddGroup.class}) SubjectVo subject, BindingResult bindingResult,
+    public JsonResponse doAdd(@Validated(value = {AddGroup.class}) SubjectVo subject, BindingResult bindingResult,
                         HttpServletRequest request) throws Exception
     {
-        if (bindingResult.hasErrors())
-        {
-            List<FieldError> list = bindingResult.getFieldErrors();
-            for (FieldError fieldError : list)
-            {
-                //校验信息，key=属性名+Error
-                request.setAttribute(fieldError.getField() + "Error", fieldError.getDefaultMessage());
-            }
-            request.setAttribute("subject", subject);
-            return "redirect:/manage/bank/subject";
-        }
+        JsonResponse response = new JsonResponse();
+        CheckErrorFields(bindingResult);
         if (subject.getId() != null && subject.getId() != 0)
         {
             subjectEbi.update(subject);
@@ -170,7 +162,7 @@ public class QuestionBankManagerController extends BaseController
             //todo 添加科目的同时添加该科目的根知识点
             subjectEbi.save(subject);
         }
-        return "redirect:/manage/bank/subject";
+        return response;
     }
 
     /**
@@ -277,22 +269,14 @@ public class QuestionBankManagerController extends BaseController
      *
      * @return 跳转题型列表页面
      */
+    @ResponseBody
     @RequestMapping("questionType/edit.do")
     @SystemLogAnnotation(module = "题型管理", methods = "题型添加/修改")
-    public String doAdd(@Validated(value = {AddGroup.class}) QuestionTypeVo questionType, BindingResult bindingResult,
+    public JsonResponse doAdd(@Validated(value = {AddGroup.class}) QuestionTypeVo questionType, BindingResult bindingResult,
                         HttpServletRequest request) throws Exception
     {
-        if (bindingResult.hasErrors())
-        {
-            List<FieldError> list = bindingResult.getFieldErrors();
-            for (FieldError fieldError : list)
-            {
-                //校验信息，key=属性名+Error
-                request.setAttribute(fieldError.getField() + "Error", fieldError.getDefaultMessage());
-            }
-            request.setAttribute("questionType", questionType);
-            return "/manage/bank/questionType/edit";
-        }
+        JsonResponse response = new JsonResponse();
+        CheckErrorFields(bindingResult);
         if (questionType.getId() != null && questionType.getId() != 0)
         {
             questionTypeEbi.update(questionType);
@@ -300,7 +284,7 @@ public class QuestionBankManagerController extends BaseController
         {
             questionTypeEbi.save(questionType);
         }
-        return "redirect:/manage/bank/questionType";
+        return response;
     }
 
     /**

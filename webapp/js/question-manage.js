@@ -350,6 +350,8 @@ function question_manage_render_question_list(question_list)
     }
 
     render_question_list(question_list, $(".question-manage .question-list"), question_manage_render_question)
+
+
 }
 
 //试卷编辑部分列表渲染
