@@ -414,19 +414,19 @@ public class StudentEbo implements StudentEbi
         }
 
         //属性校验
-        if (idCardNo.length() > 18)
+        if (!StringUtil.isEmpty(idCardNo)&&idCardNo.length() > 18)
         {
             throw new FormatException("表格中第" + (rowNum + 1) + "行的“身份证号”属性格式错误，请核对后重新导入！");
         }
-        if (telephone.length() > 11)
+        if (!StringUtil.isEmpty(telephone)&&telephone.length() > 11)
         {
             throw new FormatException("表格中第" + (rowNum + 1) + "行的“手机号”属性格式错误，请核对后重新导入！");
         }
-        if (name == null || name.trim().equals(""))
+        if (StringUtil.isEmpty(name))
         {
             throw new FormatException("表格中第" + (rowNum + 1) + "行的“姓名”属性为空，请核对后重新导入！");
         }
-        if (studentId == null || studentId.trim().equals(""))
+        if (StringUtil.isEmpty(studentId))
         {
             throw new FormatException("表格中第" + (rowNum + 1) + "行的“学号”属性为空，请核对后重新导入！");
         } else if (studentId.length() > 32)
