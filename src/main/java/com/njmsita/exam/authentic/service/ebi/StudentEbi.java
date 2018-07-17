@@ -32,8 +32,9 @@ public interface StudentEbi extends BaseEbi<StudentVo>
      * 根据表格批量导入学生信息
      * @param sheet         表格
      * @param schoolId
+     * @param classroomId
      */
-    public void bulkInputBySheet(HSSFSheet sheet, String schoolId) throws OperationException, FormatException;
+    public void bulkInputBySheet(HSSFSheet sheet, String schoolId, String classroomId) throws OperationException, FormatException;
 
 
     /**

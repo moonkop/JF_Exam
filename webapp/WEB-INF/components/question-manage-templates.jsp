@@ -313,39 +313,6 @@
         </div>
     </script>
 
-    <script id="js-template-import" type="text/html">
-        <form action="/manage/bank/question/import.do" class="form-horizontal" method="post"
-              enctype="multipart/form-data">
-            <div class="form-group">
-                <label class="col-sm-4 control-label">您选择的科目</label>
-                <div class="col-sm-7">
-                    <label>科目</label>
-                    <select class="input-sm" name="subjectId">
-                        <c:forEach items="${requestScope.subjects}" var="subject">
-                            <option value="${subject.id}"
-                                    <c:if test="${subjectSelected==subject.id}">selected</c:if>   >
-                                    ${subject.name}
-                            </option>
-                        </c:forEach>
-                    </select>
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-4 control-label">选择文件</label>
-                <div class="col-sm-7">
-                    <input type="file" class="form-control" name="questionFile" data-field="file"/>
-                </div>
-            </div>
-            <div class="form-group">
-
-                <label class="col-sm-4 control-label"></label>
-                <div class="col-sm-7">
-                    <button class="form-control" type="submit"> 提交</button>
-                </div>
-
-            </div>
-        </form>
-    </script>
 
 
     <script id="js-template-edit-title" type="text/html">

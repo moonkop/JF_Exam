@@ -217,8 +217,9 @@ public class StudentController extends BaseController
     //------------------------------------------StudentManager----------------------------------------------
 
     @RequestMapping("manage")
-    public String toStudentList()
+    public String toStudentList(HttpServletRequest request)
     {
+        request.setAttribute("schools", schoolEbi.getAll());
         return "/manage/student/list";
     }
 
@@ -235,6 +236,9 @@ public class StudentController extends BaseController
     @RequestMapping("manage/list.do")
     public JsonResponse StudentList(StudentQueryModel studentQueryModel, Integer pageNum, Integer pageSize)
     {
+
+
+
         return new JsonListResponse<>(
                 studentEbi.getAll(studentQueryModel, pageNum, pageSize),
                 "name," +
@@ -286,9 +290,7 @@ public class StudentController extends BaseController
     public JsonResponse doAdd(@Validated(value = {StudentAddGroup.class}) StudentVo studentVo, BindingResult bindingResult, String schoolID, String classroomID,
                         HttpServletRequest request) throws OperationException, FieldErrorException
     {
-        JsonResponse response= new JsonResponse();
         CheckErrorFields(bindingResult);
-
         if (null == studentVo.getId() || "".equals(studentVo.getStudentId().trim()) || "".equals(studentVo.getId()))
         {
             SchoolVo schoolVo = new SchoolVo();
@@ -300,7 +302,6 @@ public class StudentController extends BaseController
                 classroomVo.setId(classroomID);
                 studentVo.setClassroom(classroomVo);
             }
-
             studentEbi.save(studentVo);
         } else
         {
@@ -316,8 +317,7 @@ public class StudentController extends BaseController
 
             studentEbi.update(studentVo);
         }
-        response.setMessage("操作成功！");
-        return response;
+        return new JsonResponse("操作成功");
     }
 
     /**
@@ -351,10 +351,12 @@ public class StudentController extends BaseController
      * @throws OperationException
      * @throws IOException
      */
+    @ResponseBody
     @RequestMapping("import.do")
     @SystemLogAnnotation(module = "学生管理", methods = "批量导入")
-    public String inputXls(MultipartFile studentInfo, String schoolId) throws FormatException, OperationException, IOException
+    public JsonResponse inputXls(MultipartFile studentInfo, String schoolId, String classroomId) throws FormatException, OperationException, IOException
     {
+
         if (studentInfo != null)
         {
             if (SysConsts.INFO_BULK_INPUT_FILE_CONTENT_TYPE.equals(studentInfo.getContentType()))
@@ -362,10 +364,10 @@ public class StudentController extends BaseController
 
                 HSSFWorkbook workbook = new HSSFWorkbook(studentInfo.getInputStream());
                 HSSFSheet sheet = workbook.getSheetAt(0);
-                studentEbi.bulkInputBySheet(sheet, schoolId);
+                studentEbi.bulkInputBySheet(sheet, schoolId, classroomId);
             }
         }
-        return "redirect:/student/list?pageNum=1&pageSize=10";
+        return new JsonResponse();
     }
 
     /**

@@ -15,7 +15,6 @@ import com.njmsita.exam.utils.exception.FormatException;
 import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.format.MD5Utils;
 import com.njmsita.exam.utils.format.StringUtil;
-import com.njmsita.exam.utils.idutil.IdUtil;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.usermodel.Row;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -280,12 +279,18 @@ public class StudentEbo implements StudentEbi
         return temp;
     }
 
-    public void bulkInputBySheet(HSSFSheet sheet, String schoolId) throws OperationException, FormatException
+    public void bulkInputBySheet(HSSFSheet sheet, String schoolId, String classroomId) throws OperationException, FormatException
     {
         SchoolVo schoolVo = schoolDao.get(schoolId);
         if (schoolVo == null)
         {
             throw new OperationException("不存在当前选择的学校，请勿非法操作！");
+        }
+
+        ClassroomVo classroomVo = classroomDao.get(classroomId);
+        if (classroomVo == null)
+        {
+            throw new OperationException("不存在当前选择的班级，请勿非法操作！");
         }
         List<StudentVo> students = new ArrayList<StudentVo>();
         for (Row row : sheet)
@@ -305,6 +310,8 @@ public class StudentEbo implements StudentEbi
                     StudentVo temp = setStudent(row);
 
                     //设置初始信息
+                    temp.setClassroom(classroomVo);
+
                     temp.setLastLoginIp("-");
                     temp.setLastLoginTime(0l);
                     temp.setCreatetime(System.currentTimeMillis());

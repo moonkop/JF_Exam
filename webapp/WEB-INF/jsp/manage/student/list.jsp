@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 
         <!-- start content -->
@@ -9,7 +10,7 @@
                 </h3>
                 <div class="table-btns">
                     <a class="btn btn-primary" href="/student/manage/edit"> 添加学生</a>
-                    <button class="btn btn-default"> 批量导入学生</button>
+                    <button class="btn btn-default" id="import"> 批量导入学生</button>
                 </div>
                 <script src="/vendor/bootstrap-table/bootstrap-table.js"></script>
                 <script>
@@ -104,14 +105,99 @@
                                     ]
                                 }
                             );
+
+                            $("#import").on("click", function () {
+                                layer.open(
+                                    {
+                                        type: 5,
+                                        closeBtn: 2,
+                                        title: '批量导入学生',
+                                        area: ['800x', '240px'],
+                                        content: $("#js-template-import").html()
+                                    }
+                                )
+
+                                function refreshClassroomSelect()
+                                {
+                                    $.ajax(
+                                        {
+                                            url: "/manage/getClassroomBySchoolID.do",
+                                            data: {
+                                                id: $("#selectSchool").val()
+                                            },
+                                            success: function (result) {
+                                                $("#selectClassroom").empty();
+                                                $.each(result, function (key, val) {
+                                                    $("#selectClassroom").append(
+                                                        '<option value=' + val.id + '>' + val.name + '</option>'
+                                                    )
+                                                });
+                                            }
+                                        }
+                                    )
+                                }
+
+                                refreshClassroomSelect();
+                                $("#selectSchool").on("change",function()
+                                {
+                                    refreshClassroomSelect();
+                                })
+                            })
+
                         }
                     )
                     ;
                 </script>
                 <table id="table"/>
 
+
+
+
             </div>
 
         </div>
+
+
+
+<script id="js-template-import" type="text/html">
+    <form action="/student/import.do" class="form-horizontal" method="post"
+          enctype="multipart/form-data">
+        <div class="form-group">
+            <label class="col-sm-4 control-label">学校</label>
+            <div class="col-sm-7">
+                <select class="form-control" name="schoolId" id="selectSchool">
+                    <c:forEach items="${schools}" var="school">
+                        <option value="${school.id}">
+                                ${school.name}
+                        </option>
+                    </c:forEach>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-4 control-label">班级</label>
+            <div class="col-sm-7">
+
+                <select class="form-control" name="classroomId" id="selectClassroom">
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-4 control-label">选择文件</label>
+            <div class="col-sm-7">
+                <input type="file" class="form-control" name="studentInfo" data-field="file"/>
+            </div>
+        </div>
+        <div class="form-group">
+
+            <label class="col-sm-4 control-label"></label>
+            <div class="col-sm-7">
+                <button class="form-control" type="submit"> 提交</button>
+            </div>
+
+        </div>
+    </form>
+</script>
 
         <!-- end content -->

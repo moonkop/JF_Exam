@@ -626,7 +626,7 @@ function render_exam_report_option_list(question)
 {
     function setBackgoundBar($option, color, percent)
     {
-        percent = percent*99+1;
+        percent = percent * 99 + 1;
 
         $option.css("background", "linear-gradient(to right," + color + " " + percent + "%,transparent " + percent + "%)");
     }
@@ -1173,13 +1173,27 @@ function paper_edit_on_edit_title()
 
 function paper_edit_on_submit()
 {
+    var paper = app.paper;
+    paper.questionList = app.paper.questionList.map(function (item) {
+        var question = {};
+        question["outline"] = item["outline"];
+        question["id"] = item["id"];
+        question["options"] = item["options"];
+        question["answer"] = item["answer"];
+        question["code"] = item["code"];
+        question["type"] = item["type"];
+        question["value"] = item["value"];
+        question["index"] = item["index"];
+        return question;
+    });
+
     $.ajax(
         {
             url: '/paper/edit.do',
             type: "POST",
             contentType: "application/json",
             dataType: "json",
-            data: JSON.stringify(app.paper),
+            data: JSON.stringify(paper),
             success: function (res) {
                 OnResult(res, function (res) {
                     layer.msg("提交成功")
