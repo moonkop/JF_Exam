@@ -439,8 +439,7 @@ function exam_result_render_question_list()
                     set_workout(question);
                     break;
                 case "简答题" :
-                    $question_panel.find(".question-workout").append("<pre></pre>");
-                    $question_panel.find(".question-workout pre").html(question.workout);
+                    $question_panel.find(".question-workout").append("<pre>"+question.workout+"</pre>");
                     break;
             }
         }

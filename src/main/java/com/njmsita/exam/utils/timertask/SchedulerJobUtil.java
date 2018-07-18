@@ -1,8 +1,16 @@
 package com.njmsita.exam.utils.timertask;
 
+import com.njmsita.exam.manager.model.ExamVo;
 import com.njmsita.exam.manager.model.ScheduleVo;
+import com.njmsita.exam.manager.service.ebi.ExamManageEbi;
+import com.njmsita.exam.utils.consts.SysConsts;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
+import org.springframework.web.context.ContextLoader;
+
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 
 public class SchedulerJobUtil
 {
@@ -18,9 +26,52 @@ public class SchedulerJobUtil
         //不存在，创建一个
         if (trigger == null)
         {
-            JobDetail jobDetail = JobBuilder.newJob(ExamStatusModifyJob.class)
+            JobDetail jobDetail = JobBuilder.newJob(new Job()
+            {
+                @Override
+                public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException
+                {
+                    System.out.println("任务正在运行");
+                    ScheduleVo scheduleVo = (ScheduleVo) jobExecutionContext.getMergedJobDataMap().get("scheduleVo");
+                    System.out.println("任务名称 = [" + scheduleVo.getJobName() + "]");
+                    ContextLoader.getCurrentWebApplicationContext().getBean(ExamManageEbi.class).invoke(examManageEbo ->
+                    {
+
+                        ExamVo exam = examManageEbo.get(scheduleVo.getTargetVoId());
+
+
+                        if (exam.getExamStatus() == scheduleVo.getNowStatu())
+                        {
+                            switch (scheduleVo.getAffterStatu())
+                            {
+                                case SysConsts.EXAM_STATUS_OPEN:
+
+
+                                    break;
+                                case SysConsts.EXAM_STATUS_CLOSE:
+
+
+                                    break;
+                                case SysConsts.EXAM_STATUS_IN_MARK:
+
+
+                                    break;
+                                case SysConsts.EXAM_STATUS_ENDING:
+
+
+                                    break;
+                            }
+
+
+                            exam.setExamStatus(scheduleVo.getAffterStatu());
+                        }
+                        examManageEbo.outmodedSchedule(scheduleVo);
+                    });
+                }
+            }.getClass())
                     .withIdentity(job.getJobName(), job.getJobGroup()).build();
             jobDetail.getJobDataMap().put("scheduleVo", job);
+
 
             //按新的cronExpression表达式构建一个新的trigger
             trigger = TriggerBuilder.newTrigger().withIdentity(triggerKey).

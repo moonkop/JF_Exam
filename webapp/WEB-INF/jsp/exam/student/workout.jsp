@@ -102,7 +102,7 @@
                 })
                 refresh_answer_card();
                 //自动保存定时器
-                autoSaveTimer = setInterval(auto_upload_workout, 5000);
+                autoSaveTimer = setInterval(auto_upload_workout, 30*1000);
             })
             set_up_count_down();
             render_answer_card();

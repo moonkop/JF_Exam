@@ -81,11 +81,11 @@
 
                             <div class="form-group">
                                 <input class="form-control" id="studentid" placeholder="学号" name="studentId"
-                                       type="studentId" value="4537" autofocus>
+                                       type="studentId" value="" autofocus>
                             </div>
                             <div class="form-group">
                                 <input class="form-control" id="password" placeholder="密码" name="password"
-                                       type="password" value="123">
+                                       type="password" value="">
                             </div>
                             <div class="checkbox text-right">
                                 <label>

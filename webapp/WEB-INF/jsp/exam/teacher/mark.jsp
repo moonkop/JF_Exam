@@ -341,7 +341,7 @@
             question.setMarkTeacher(workout.teacher);
             question.setScore(workout.score);
             question.$remark.val(workout.remark);
-            question.$workout.html(workout.workout);
+            question.$workout.text(workout.workout);
             question.workoutId = workout.id;
         }
 
