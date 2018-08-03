@@ -76,7 +76,7 @@ public class ExamDaoImpl extends BaseImpl<ExamVo> implements ExamDao
         return examPo;
     }
 
-    public void SetPaper(ExamVo examVo)
+    public void initPaperForExam(ExamVo examVo)
     {
         examVo.setPaperVo(paperExamDao.getPaperVoByExamId(examVo.getId()));
     }

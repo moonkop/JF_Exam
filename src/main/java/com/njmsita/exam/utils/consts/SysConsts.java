@@ -137,8 +137,21 @@ public class SysConsts
     /**
 	 * 考试将允许提交时间放宽3分钟
 	 */
-	public static final int EXAM_SUBMIT_ADDITIONAL_TIME = 3 * 1000 * 60;
-	/**
+    public static final int EXAM_SUBMIT_ADDITIONAL_TIME = 3 * 1000 * 60;
+
+
+    /**
+     * 定时器任务类型
+     */
+    //考试开始
+    public static final int EXAM_SCHEDULE_ACTION_TYPE_EXAM_START = 1;
+    //关闭考试入口
+    public static final int EXAM_SCHEDULE_ACTION_TYPE_EXAM_CLOSE_ENTRANCE = 2;
+    //结束考试
+    public static final int EXAM_SCHEDULE_ACTION_TYPE_EXAM_END = 3;
+
+
+    /**
 	 * 考试状态码int
 	 */
 	//todo 补充每一位状态的意意义
@@ -239,13 +252,12 @@ public class SysConsts
     }
 
 
-    /**
-	 * 定时任务类型
-	 */
-	public static final int SCHEDULEVO_JOB_TYPE_OPEN = 0;
-	public static final int SCHEDULEVO_JOB_TYPE_CLOSE = 1;
-	public static final int SCHEDULEVO_JOB_TYPE_FINISH = 2;
-	public static final int SCHEDULEVO_JOB_TYPE_ONETIME = -1;
+//    /**
+//	 * 定时任务类型
+//	 */
+//	public static final int SCHEDULEVO_JOB_TYPE_OPEN = 0;
+//	public static final int SCHEDULEVO_JOB_TYPE_CLOSE = 1;
+//	public static final int SCHEDULEVO_JOB_TYPE_FINISH = 2;
 
 	/**
 	 * 定时任务类型视图
@@ -266,13 +278,13 @@ public class SysConsts
 	/**
 	 * 定时任务类型视图转换
 	 */
-	public static Map<Integer, String> SCHEDULEVO_JOB_TYPE_MAP = new HashMap<>();
+	public static Map<Integer, String> EXAM_SCHEDULE_ACTION_TYPE_MAP = new HashMap<>();
 
 	static
 	{
-		SCHEDULEVO_JOB_TYPE_MAP.put(SysConsts.SCHEDULEVO_JOB_TYPE_OPEN, SysConsts.SCHEDULEVO_JOB_TYPE_CLOSE_VIEW);
-		SCHEDULEVO_JOB_TYPE_MAP.put(SysConsts.SCHEDULEVO_JOB_TYPE_CLOSE, SysConsts.SCHEDULEVO_JOB_TYPE_OPEN_VIEW);
-		SCHEDULEVO_JOB_TYPE_MAP.put(SysConsts.SCHEDULEVO_JOB_TYPE_FINISH, SysConsts.SCHEDULEVO_JOB_TYPE_FINISH_VIEW);
+		EXAM_SCHEDULE_ACTION_TYPE_MAP.put(SysConsts.EXAM_SCHEDULE_ACTION_TYPE_EXAM_START, SysConsts.SCHEDULEVO_JOB_TYPE_CLOSE_VIEW);
+		EXAM_SCHEDULE_ACTION_TYPE_MAP.put(SysConsts.EXAM_SCHEDULE_ACTION_TYPE_EXAM_CLOSE_ENTRANCE, SysConsts.SCHEDULEVO_JOB_TYPE_OPEN_VIEW);
+		EXAM_SCHEDULE_ACTION_TYPE_MAP.put(SysConsts.EXAM_SCHEDULE_ACTION_TYPE_EXAM_END, SysConsts.SCHEDULEVO_JOB_TYPE_FINISH_VIEW);
 	}
 
 	/**

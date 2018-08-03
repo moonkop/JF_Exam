@@ -197,8 +197,6 @@ public class TresourceVo
                 ", remark='" + remark + '\'' +
                 ", seq=" + seq +
                 ", url='" + url + '\'' +
-                ", resourcetype=" + resourcetype +
-                ", roles=" + roles +
                 '}';
     }
 }

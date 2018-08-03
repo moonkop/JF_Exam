@@ -157,7 +157,7 @@ public class ExamStudentEbo implements ExamStudentEbi
 
         if (studentExamPo == null)
         {
-            throw new OperationException("未找到该场考试");
+            throw new ItemNotFoundException("未找到该场考试");
         }
         ExamVo examPo = studentExamPo.getExam();
         examManageEbi.checkPermission(SysConsts.EXAM_OPERATION_ENTER, loginStudent, studentExamPo);
@@ -195,26 +195,6 @@ public class ExamStudentEbo implements ExamStudentEbi
             seq.setType(questionVoList.get(i).getType());
             studentExamQuestionDao.save(seq);
         }
-        //创建自动提交定时任务
-        ScheduleVo scheduleVo = new ScheduleVo();
-        scheduleVo.setId(IdUtil.getUUID());
-        scheduleVo.setJobName("学生考试：" + studentExamPo.getId() + ":自动提交定时任务");
-        scheduleVo.setJobGroup("default");
-        scheduleVo.setJobStatus(SysConsts.SCHEDULEVO_JOB_STATUS_ONETIME);
-        //不限制考试时间则 考试终止时交卷。
-        if (examPo.getDuration() != 0)
-        {
-            scheduleVo.setCronexpression(FormatUtil.cronExpression(systemTime + examPo.getDuration() * 60 * 1000));
-        } else
-        {
-            scheduleVo.setCronexpression(FormatUtil.cronExpression(examPo.getCloseTime()));
-        }
-        scheduleVo.setDescribe(scheduleVo.getJobName());
-        scheduleVo.setDao(studentExamDao);
-        scheduleVo.setTargetVoId(studentExamPo.getId());
-        scheduleVo.setJobType(SysConsts.SCHEDULEVO_JOB_TYPE_ONETIME);
-        SchedulerJobUtil.addJob(scheduleVo);
-        examManageEbi.log(scheduleVo, scheduleVo.getDescribe());
     }
 
     public List<StudentExamQuestionVo> getStudentAnswer(String studentExamId, StudentVo loginStudent) throws Exception
@@ -240,7 +220,7 @@ public class ExamStudentEbo implements ExamStudentEbi
                 || (paperPo = paperExamDao.getPaperVoByExamId(examPo.getId())) == null
                 || (questionList = paperPo.getQuestionList()) == null)
         {
-            throw new OperationException("未找到考试题目");
+            throw new ItemNotFoundException("未找到考试题目");
         }
 
         examManageEbi.checkPermission(SysConsts.EXAM_OPERATION_ENTER, loginStudent, studentExamPo);

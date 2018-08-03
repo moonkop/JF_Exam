@@ -19,6 +19,7 @@ import java.lang.reflect.UndeclaredThrowableException;
  */
 public class UnifyExceptionResoler implements HandlerExceptionResolver
 {
+    @Override
     public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object o, Exception exception)
     {
         //输出异常
@@ -43,6 +44,7 @@ public class UnifyExceptionResoler implements HandlerExceptionResolver
 
         message = unifyException.getMessage();
         String requestHeader = request.getHeader("x-requested-with");
+        //如果是ajax异步请求 则返回异步错误字符串
         if (requestHeader != null && requestHeader.equals("XMLHttpRequest"))
         {
             try
@@ -65,19 +67,34 @@ public class UnifyExceptionResoler implements HandlerExceptionResolver
                 e.printStackTrace();
             }
         } else
+            //如果是同步请求则返回错误页面
         {
-            request.setAttribute("exceptionMessage", message);
-            try
+            if (exception instanceof UnLoginException)
             {
-                response.setStatus(unifyException.getCode());
-                request.getRequestDispatcher("/WEB-INF/jsp/error/500.jsp").forward(request, response);
-            } catch (ServletException e)
-            {
-                e.printStackTrace();
-            } catch (IOException e)
-            {
-                e.printStackTrace();
+                try
+                {
+                    response.sendRedirect("/");
+                } catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+
             }
+            else{
+                request.setAttribute("exceptionMessage", message);
+                try
+                {
+                    response.setStatus(unifyException.getCode());
+                    request.getRequestDispatcher("/WEB-INF/jsp/error/500.jsp").forward(request, response);
+                } catch (ServletException e)
+                {
+                    e.printStackTrace();
+                } catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+
         }
         return new ModelAndView();
     }

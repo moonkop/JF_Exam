@@ -10,6 +10,7 @@ import com.njmsita.exam.manager.model.StudentExamVo;
 import com.njmsita.exam.manager.model.querymodel.ExamEditWrapper;
 import com.njmsita.exam.manager.model.querymodel.ExamListQueryModel;
 import com.njmsita.exam.manager.service.ebo.ExamInvoker;
+import com.njmsita.exam.utils.exception.ItemNotFoundException;
 import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.exception.UnAuthorizedException;
 import com.njmsita.exam.utils.exception.UnLoginException;
@@ -124,7 +125,7 @@ public interface ExamManageEbi extends BaseEbi<ExamVo>
 
     boolean checkPermission(String permission, StudentVo loginUser, StudentExamVo exam) throws UnAuthorizedException, UnLoginException, Exception;
 
-    void invoke(ExamInvoker examInvoker);
+    void invoke(ExamInvoker examInvoker) throws Exception;
 
     /**
      * 管理员考试列表

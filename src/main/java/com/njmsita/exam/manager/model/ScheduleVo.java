@@ -1,7 +1,5 @@
 package com.njmsita.exam.manager.model;
 
-import com.njmsita.exam.base.BaseDao;
-
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -18,10 +16,18 @@ public class ScheduleVo
     private Integer jobType;
 
     private String targetVoId;
+    private Integer ScheduleActionType;
+    private Integer StatusBefore;
 
-    private Integer nowStatu;
-    private Integer affterStatu;
-    private BaseDao dao;
+    public Integer getScheduleActionType()
+    {
+        return ScheduleActionType;
+    }
+
+    public void setScheduleActionType(Integer scheduleActionType)
+    {
+        ScheduleActionType = scheduleActionType;
+    }
 
     @Basic
     @Column(name = "targetVo_id")
@@ -35,34 +41,14 @@ public class ScheduleVo
         this.targetVoId = examVo;
     }
 
-    public Integer getNowStatu()
+    public Integer getStatusBefore()
     {
-        return nowStatu;
+        return StatusBefore;
     }
 
-    public void setNowStatu(Integer nowStatu)
+    public void setStatusBefore(Integer StatusBefore)
     {
-        this.nowStatu = nowStatu;
-    }
-
-    public Integer getAffterStatu()
-    {
-        return affterStatu;
-    }
-
-    public void setAffterStatu(Integer affterStatu)
-    {
-        this.affterStatu = affterStatu;
-    }
-
-    public BaseDao getDao()
-    {
-        return dao;
-    }
-
-    public void setDao(BaseDao examDao)
-    {
-        this.dao = examDao;
+        this.StatusBefore = StatusBefore;
     }
 
     @Id
@@ -184,9 +170,7 @@ public class ScheduleVo
                 ", describe='" + describe + '\'' +
                 ", jobType=" + jobType +
                 ", examVo=" + targetVoId +
-                ", nowStatu=" + nowStatu +
-                ", affterStatu=" + affterStatu +
-                ", examDao=" + dao +
+                ", nowStatu=" + StatusBefore +
                 '}';
     }
 }

@@ -12,6 +12,7 @@ import com.njmsita.exam.manager.model.querymodel.ExamEditWrapper;
 import com.njmsita.exam.manager.model.querymodel.ExamListQueryModel;
 import com.njmsita.exam.manager.service.ebi.ExamManageEbi;
 import com.njmsita.exam.utils.consts.SysConsts;
+import com.njmsita.exam.utils.exception.ItemNotFoundException;
 import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.exception.UnAuthorizedException;
 import com.njmsita.exam.utils.exception.UnLoginException;
@@ -82,6 +83,7 @@ public class ExamManageEbo implements ExamManageEbi
         return examDao.getAll();
     }
 
+    @Transactional
     public ExamVo get(Serializable uuid)
     {
         ExamVo examPo = examDao.get(uuid);
@@ -99,7 +101,7 @@ public class ExamManageEbo implements ExamManageEbi
     }
 
 
-    @Deprecated
+    @Transactional
     public void update(ExamVo examVo)
     {
         examDao.update(examVo);
@@ -115,14 +117,21 @@ public class ExamManageEbo implements ExamManageEbi
     @Transactional
     public void save(ExamEditWrapper wrapper, TeacherVo loginTeacher) throws Exception
     {
+
+        checkPermission(SysConsts.EXAM_OPERATION_EDIT, loginTeacher, null);
         wrapper.getExam().setCreateTeacher(loginTeacher);
-        wrapper.getExam().setExamStatus(SysConsts.EXAM_STATUS_NO_CHECK);
-        checkPermission(SysConsts.EXAM_OPERATION_EDIT, loginTeacher, wrapper.getExam());
+        if (loginTeacher.IsAdmin())
+        {
+            wrapper.getExam().setExamStatus(SysConsts.EXAM_STATUS_PASS);
+        } else
+        {
+            wrapper.getExam().setExamStatus(SysConsts.EXAM_STATUS_NO_CHECK);
+        }
         setFieldsAndValidate(wrapper.getExam(), wrapper);
         examDao.save(wrapper.getExam());
         paperExamDao.updatePaperFromMongoExamPaper(wrapper.getExam().getPaperVo(), wrapper.getExam().getId());
         createStudentExamByExam(wrapper.getExam(), wrapper.get_classroomIds());
-        startImmediatelyIfNecessary(wrapper, loginTeacher);
+        startIfNecessary(wrapper, loginTeacher);
     }
 
     //-----------------------------------以上为基本操作-------------------------------------
@@ -150,12 +159,25 @@ public class ExamManageEbo implements ExamManageEbi
         examPo.setSubject(wrapper.getExam().getSubject());
         examPo.setName(wrapper.getExam().getName());
         examPo.setOpenDuration(wrapper.getExam().getOpenDuration());
-        examPo.setRemark(wrapper.getExam().getRemark());
-        examPo.setExamStatus(SysConsts.EXAM_STATUS_NO_CHECK);
+        wrapper.setExam(examPo);
+
         setFieldsAndValidate(examPo, wrapper);
         paperExamDao.updatePaperFromMongoExamPaper(examPo.getPaperVo(), examPo.getId());
         createStudentExamByExam(examPo, wrapper.get_classroomIds());
-        startImmediatelyIfNecessary(wrapper, loginTeacher);
+        startIfNecessary(wrapper, loginTeacher);
+    }
+
+
+    private void startIfNecessary(ExamEditWrapper wrapper, TeacherVo teacherVo) throws Exception
+    {
+        if (teacherVo.IsAdmin())
+        {
+            createExamSchedules(wrapper.getExam(), wrapper.getImmediately());
+        }else
+        {
+            wrapper.getExam().setExamStatus(SysConsts.EXAM_STATUS_NO_CHECK);
+
+        }
     }
 
     public ExamVo getWithPaper(Serializable uuid)
@@ -167,14 +189,14 @@ public class ExamManageEbo implements ExamManageEbi
     public List<ExamVo> getByCreateTeacher(String teacherId) throws Exception
     {
         List<ExamVo> list = examDao.getEvictObjects(examDao.getByCreateTeacher(teacherId));
-        operationValid(list, teacherId);
+        operationValidate(list, teacherId);
         return list;
     }
 
     public List<ExamVo> getByMarkTeacher(String teacherId) throws Exception
     {
         List<ExamVo> list = examDao.getEvictObjects(examDao.getByMarkTeacher(teacherId));
-        operationValid(list, teacherId);
+        operationValidate(list, teacherId);
         return list;
     }
 
@@ -189,13 +211,7 @@ public class ExamManageEbo implements ExamManageEbi
         }
         checkPermission(SysConsts.EXAM_OPERATION_REVIEW, loginTeacher, examPo);
         examPo.setExamStatus(SysConsts.EXAM_STATUS_PASS);
-        createSchedulerJob(examPo, SysConsts.SCHEDULEVO_JOB_TYPE_OPEN);
-
-        if (examPo.getOpenDuration() != 0)
-        {
-            createSchedulerJob(examPo, SysConsts.SCHEDULEVO_JOB_TYPE_CLOSE);
-        }
-        createSchedulerJob(examPo, SysConsts.SCHEDULEVO_JOB_TYPE_FINISH);
+        createExamSchedules(examPo, false);
     }
 
     @Transactional
@@ -227,7 +243,7 @@ public class ExamManageEbo implements ExamManageEbi
             scheduleVo.setJobStatus(SysConsts.SCHEDULEVO_JOB_STATUS_FORBIDDEN);
             new SchedulerJobUtil().deleteJob(scheduleVo, schedulerFactoryBean.getScheduler());
             //new SchedulerJobUtil().pauseJob(scheduleVo, schedulerFactoryBean.getScheduler());
-            log(scheduleVo, "删除任务");
+           // log(scheduleVo, "删除任务");
             //log(scheduleVo, "禁用任务");
         }
     }
@@ -266,9 +282,12 @@ public class ExamManageEbo implements ExamManageEbi
         {
             throw new UnLoginException();
         }
-        if (loginTeacher instanceof TeacherVo)
+        Hibernate.initialize(loginTeacher);
+        if (exam == null)
         {
-            Hibernate.initialize(loginTeacher);
+            //exam ==null 则为添加考试
+            operationSet.add(SysConsts.EXAM_OPERATION_EDIT);
+        }else{
             //所有状态下
             // 是该老师发起的考试
             // 或老师批阅的考试
@@ -365,6 +384,8 @@ public class ExamManageEbo implements ExamManageEbi
             }
         }
 
+
+
         return operationSet;
 
     }
@@ -439,24 +460,18 @@ public class ExamManageEbo implements ExamManageEbi
     }
 
     @Transactional
-    public void invoke(ExamInvoker examInvoker)
+    public void invoke(ExamInvoker examInvoker) throws Exception
     {
         examInvoker.invoke(this);
     }
 
+    @Transactional(readOnly = true)
     public List<ExamVo> getAllByAdmin(String teacherId, ExamListQueryModel examListQueryModel) throws Exception
     {
-        List<ExamVo> list = examDao.getEvictObjects(examDao.getAll(examListQueryModel));
-        operationValid(list, teacherId);
+        List<ExamVo> list = examDao.getAll(examListQueryModel);
+        operationValidate(list, teacherId);
         return list;
     }
-
-
-    //-----------------------------------以上为业务操作-------------------------------------
-    //-----------------------------------以上为业务操作-------------------------------------
-    //-----------------------------------以上为业务操作-------------------------------------
-    //-----------------------------------以上为业务操作-------------------------------------
-    //-----------------------------------以上为业务操作-------------------------------------
 
     public List<StudentExamVo> getAllStudentExamByExam(ExamVo examVo, TeacherVo login) throws Exception
     {
@@ -477,6 +492,13 @@ public class ExamManageEbo implements ExamManageEbi
         return null;
     }
 
+
+    //-----------------------------------以上为业务操作-------------------------------------
+    //-----------------------------------以上为业务操作-------------------------------------
+    //-----------------------------------以上为业务操作-------------------------------------
+    //-----------------------------------以上为业务操作-------------------------------------
+    //-----------------------------------以上为业务操作-------------------------------------
+
     /**
      * 判空
      *
@@ -496,7 +518,6 @@ public class ExamManageEbo implements ExamManageEbi
         return temp;
     }
 
-
     @Override
     public ExamVo getExamNotNull(String examId) throws OperationException
     {
@@ -507,8 +528,6 @@ public class ExamManageEbo implements ExamManageEbi
         }
         return temp;
     }
-
-
 
     /**
      * 记录日志
@@ -526,6 +545,7 @@ public class ExamManageEbo implements ExamManageEbi
         logDao.save(logVo);
     }
 
+    @Transactional
     public void outmodedSchedule(ScheduleVo scheduleVo)
     {
         scheduleVo.setJobStatus(SysConsts.SCHEDULEVO_JOB_STATUS_OUTMODED);
@@ -543,19 +563,9 @@ public class ExamManageEbo implements ExamManageEbi
         List<ScheduleVo> scheduleList = scheduleDao.getByTarget(examPo.getId());
         for (ScheduleVo scheduleVo : scheduleList)
         {
-            scheduleVo.setJobStatus(SysConsts.SCHEDULEVO_JOB_STATUS_FORBIDDEN);
             SchedulerJobUtil.deleteJob(scheduleVo, schedulerFactoryBean.getScheduler());
-            log(scheduleVo, "删除任务");
+            scheduleDao.delete(scheduleVo);
         }
-
-    }
-
-
-
-
-    private void finish(ExamVo examPo)
-    {
-
     }
 
     public List<ScheduleVo> getAllByExecutable()
@@ -568,6 +578,40 @@ public class ExamManageEbo implements ExamManageEbi
         scheduleDao.update(scheduleVo);
     }
 
+    //检查该考试的试卷是否只有选择题
+    public boolean paperIsSelectProblemsOnly(ExamVo examVo) throws ItemNotFoundException
+    {
+        if (examVo == null)
+        {
+            throw new ItemNotFoundException("该考试不存在");
+        }
+        if (examVo.getPaperVo() == null)
+        {
+            examDao.initPaperForExam(examVo);
+        }
+        examVo.getPaperVo();
+        List<QuestionVo> questions = examVo.getPaperVo().getQuestionList();
+        Map<Integer, QuestionTypeVo> questionTypeMap = new HashMap<>();
+        for (QuestionTypeVo questionType : questionTypeDao.getAll())
+        {
+            questionTypeMap.put(questionType.getId(), questionType);
+        }
+        for (int i = 0; i < questions.size(); i++)
+        {
+            QuestionTypeVo questionTypeVo = questionTypeMap.get(questions.get(i).getType());
+            if (questionTypeVo.getName().equals(SysConsts.NO_ANSWER_QUESTION_TYPE_NAME))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void finish(ExamVo examPo)
+    {
+
+    }
+
     /**
      * 判空
      *
@@ -577,16 +621,16 @@ public class ExamManageEbo implements ExamManageEbi
      *
      * @throws OperationException
      */
-    public ExamVo getExamWithPaperNotNull(ExamVo examVo) throws OperationException
+    public ExamVo getExamWithPaperNotNull(ExamVo examVo) throws ItemNotFoundException
     {
         ExamVo temp = examDao.getExamWithPaper(examVo.getId());
         if (temp == null)
         {
-            throw new OperationException("所选该场考试不存在");
+            throw new ItemNotFoundException("所选该场考试不存在");
         }
         if (examVo.getPaperVo() == null)
         {
-            throw new OperationException("本场考试的试卷不存在");
+            throw new ItemNotFoundException("本场考试的试卷不存在");
         }
         return temp;
     }
@@ -598,68 +642,40 @@ public class ExamManageEbo implements ExamManageEbi
      *
      * @throws Exception
      */
-    private void createSchedulerJob(ExamVo exam, Integer jobType) throws Exception
+    private void createSchedulerJob(ExamVo exam, Integer action) throws Exception
     {
         ScheduleVo scheduleVo = new ScheduleVo();
-        String jobTypeView = SysConsts.SCHEDULEVO_JOB_TYPE_MAP.get(jobType);
+        String jobTypeView = SysConsts.EXAM_SCHEDULE_ACTION_TYPE_MAP.get(action);
 
         //设置任务信息
         scheduleVo.setId(IdUtil.getUUID());
         scheduleVo.setJobName(exam.getName() + "_" + jobTypeView);
         scheduleVo.setJobGroup(exam.getId());
         scheduleVo.setDescribe("定时" + jobTypeView + ".ExamId：" + exam.getId());
-        scheduleVo.setJobType(jobType);
+        scheduleVo.setJobType(action);
         scheduleVo.setTargetVoId(exam.getId());
-
-        switch (jobType)
+        scheduleVo.setScheduleActionType(action);
+        switch (action)
         {
-            case SysConsts.SCHEDULEVO_JOB_TYPE_OPEN:
-                scheduleVo.setNowStatu(SysConsts.EXAM_STATUS_PASS);
-                scheduleVo.setAffterStatu(SysConsts.EXAM_STATUS_OPEN);
+            case SysConsts.EXAM_SCHEDULE_ACTION_TYPE_EXAM_START:
+                scheduleVo.setStatusBefore(SysConsts.EXAM_STATUS_PASS);
                 scheduleVo.setCronexpression(FormatUtil.cronExpression(exam.getOpenTime()));
                 break;
-            case SysConsts.SCHEDULEVO_JOB_TYPE_CLOSE:
-                scheduleVo.setNowStatu(SysConsts.EXAM_STATUS_OPEN);
-                scheduleVo.setAffterStatu(SysConsts.EXAM_STATUS_CLOSE);
-                scheduleVo.setCronexpression(FormatUtil.cronExpression(exam.getOpenTime() + exam.getOpenDuration() * 60 * 100));
+            case SysConsts.EXAM_SCHEDULE_ACTION_TYPE_EXAM_CLOSE_ENTRANCE:
+                scheduleVo.setStatusBefore(SysConsts.EXAM_STATUS_OPEN);
+                scheduleVo.setCronexpression(FormatUtil.cronExpression(exam.getOpenTime() + exam.getOpenDuration() * 60 * 1000));
                 break;
-            case SysConsts.SCHEDULEVO_JOB_TYPE_FINISH:
-                examDao.SetPaper(exam);
+            case SysConsts.EXAM_SCHEDULE_ACTION_TYPE_EXAM_END:
 
-                List<QuestionVo> questions = exam.getPaperVo().getQuestionList();
-                boolean flag = true;
-                Map<Integer, QuestionTypeVo> questionTypeMap = new HashMap<>();
-                for (QuestionTypeVo questionType : questionTypeDao.getAll())
-                {
-                    questionTypeMap.put(questionType.getId(), questionType);
-                }
-                for (int i = 0; i < questions.size(); i++)
-                {
-                    QuestionTypeVo questionTypeVo = questionTypeMap.get(questions.get(i).getType());
-                    if (questionTypeVo.getName().equals(SysConsts.NO_ANSWER_QUESTION_TYPE_NAME))
-                    {
-                        flag = false;
-                    }
-                }
-                scheduleVo.setNowStatu(SysConsts.EXAM_STATUS_CLOSE);
-                if (flag)
-                {
-                    scheduleVo.setAffterStatu(SysConsts.EXAM_STATUS_ENDING);
-                } else
-                {
-                    scheduleVo.setAffterStatu(SysConsts.EXAM_STATUS_IN_MARK);
-                }
                 if (exam.getDuration() == 0)
                 {
                     scheduleVo.setCronexpression(FormatUtil.cronExpression(exam.getCloseTime()));
                 } else
                 {
-                    scheduleVo.setCronexpression(FormatUtil.cronExpression(exam.getOpenTime() + (exam.getDuration() + exam.getOpenDuration() * 60 * 100)));
+                    scheduleVo.setCronexpression(FormatUtil.cronExpression(exam.getOpenTime() + (exam.getDuration() * 60 * 1000)));
                 }
                 break;
         }
-
-        scheduleVo.setDao(examDao);
         scheduleVo.setJobStatus(SysConsts.SCHEDULEVO_JOB_STATUS_START);
         scheduleDao.save(scheduleVo);
         SchedulerJobUtil.createJob(scheduleVo, schedulerFactoryBean.getScheduler());
@@ -701,7 +717,7 @@ public class ExamManageEbo implements ExamManageEbi
      * @param list
      * @param teacherId
      */
-    private void operationValid(List<ExamVo> list, String teacherId) throws Exception
+    private void operationValidate(List<ExamVo> list, String teacherId) throws Exception
     {
         TeacherVo loginTeacher = teacherDao.get(teacherId);
         for (ExamVo examVo : list)
@@ -775,7 +791,7 @@ public class ExamManageEbo implements ExamManageEbi
         {
             exam.setOpenDuration(0);
         }
-        if (exam.getOpenTime() > exam.getCloseTime())
+        if (exam.getOpenTime() > exam.getCloseTime() || wrapper.getImmediately() == true && System.currentTimeMillis() > exam.getCloseTime())
         {
             throw new OperationException("结束时间不能早于开始时间");
         }
@@ -790,21 +806,28 @@ public class ExamManageEbo implements ExamManageEbi
         {
             throw new OperationException("开始时间已过");
         }
+
     }
 
-    private void startImmediatelyIfNecessary(ExamEditWrapper wrapper, TeacherVo teacherVo) throws Exception
+
+
+
+    private void createExamSchedules(ExamVo examVo, boolean immediately) throws Exception
     {
-        if (wrapper.getImmediately() == true)
+        if (immediately)
         {
-            checkPermission(SysConsts.EXAM_OPERATION_REVIEW, teacherVo, wrapper.getExam());
-            wrapper.getExam().setExamStatus(SysConsts.EXAM_STATUS_OPEN);
-            createStudentExamByExam(wrapper.getExam(), wrapper.get_classroomIds());
-            if (wrapper.getExam().getOpenDuration() != 0)
-            {
-                createSchedulerJob(wrapper.getExam(), SysConsts.SCHEDULEVO_JOB_TYPE_CLOSE);
-            }
-            createSchedulerJob(wrapper.getExam(), SysConsts.SCHEDULEVO_JOB_TYPE_FINISH);
+            examVo.setExamStatus(SysConsts.EXAM_STATUS_OPEN);
+
+        } else
+        {
+            examVo.setExamStatus(SysConsts.EXAM_STATUS_PASS);
+            createSchedulerJob(examVo, SysConsts.EXAM_SCHEDULE_ACTION_TYPE_EXAM_START);
         }
+        if (examVo.getOpenDuration() != 0)
+        {
+            createSchedulerJob(examVo, SysConsts.EXAM_SCHEDULE_ACTION_TYPE_EXAM_CLOSE_ENTRANCE);
+        }
+        createSchedulerJob(examVo, SysConsts.EXAM_SCHEDULE_ACTION_TYPE_EXAM_END);
     }
 
 

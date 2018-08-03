@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	   xmlns:context="http://www.springframework.org/schema/context"
-	   xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:mongo="http://www.springframework.org/schema/data/mongo"
-	xsi:schemaLocation="
+       xsi:schemaLocation="
 		http://www.springframework.org/schema/beans 
 		http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context 
@@ -13,102 +13,114 @@
 		http://www.springframework.org/schema/tx/spring-tx.xsd
 		http://www.springframework.org/schema/data/mongo http://www.springframework.org/schema/data/mongo/spring-mongo.xsd
 		">
-	<!-- 注解事务驱动 -->
-	<tx:annotation-driven transaction-manager="transactionManager"/>
+    <!-- 注解事务驱动 -->
+    <tx:annotation-driven transaction-manager="transactionManager"/>
 
-	<context:property-placeholder location="classpath:mongodb.properties"/>
-	<context:component-scan base-package="com.njmsita.exam"/>
-	
-	<!-- 事务管理器 -->
-	<bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
-		<property name="sessionFactory" ref="sessionFactory"/>
-	</bean>
+    <context:property-placeholder location="classpath:mongodb.properties"/>
+    <context:component-scan base-package="com.njmsita.exam"/>
 
-	<!--============================================Quartz任务集===================================================-->
-	<bean name="schedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean"/>
-	<!--=========================================Quartz任务集=========END==========================================-->
+    <!-- 事务管理器 -->
+    <bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
 
-	<!-- SessionFactory -->
-	<bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
-		<property name="dataSource" ref="dataSource"/>
-		<property name="hibernateProperties">
-			<props>
-				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
-				<prop key="hibernate.show_sql">true</prop>
-				<prop key="hibernate.format_sql">false</prop>
-				<prop key="hibernate.connection.url">jdbc:mysql://192.168.1.166:3306/jf_exam</prop>
-				<prop key="hibernate.connection.driver_class">com.mysql.jdbc.Driver</prop>
+    <!--============================================Quartz任务集===================================================-->
+    <bean name="schedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean"/>
+    <!--=========================================Quartz任务集=========END==========================================-->
+
+    <!-- SessionFactory -->
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
+                <prop key="hibernate.show_sql">true</prop>
+                <prop key="hibernate.format_sql">false</prop>
+                <prop key="hibernate.connection.url">jdbc:mysql://192.168.1.166:3306/jf_exam</prop>
+                <prop key="hibernate.connection.driver_class">com.mysql.jdbc.Driver</prop>
+
             </props>
-		</property>
-		<property name="mappingLocations">
-			<list>
-				<value>classpath:mapping/StudentVo.hbm.xml</value>
-				<value>classpath:mapping/TeacherVo.hbm.xml</value>
-				<value>classpath:mapping/TresourceVo.hbm.xml</value>
-				<value>classpath:mapping/TresourcetypeVo.hbm.xml</value>
-				<value>classpath:mapping/TroleVo.hbm.xml</value>
-				<value>classpath:mapping/SchoolVo.hbm.xml</value>
+        </property>
+        <property name="mappingLocations">
+            <list>
+                <value>classpath:mapping/StudentVo.hbm.xml</value>
+                <value>classpath:mapping/TeacherVo.hbm.xml</value>
+                <value>classpath:mapping/TresourceVo.hbm.xml</value>
+                <value>classpath:mapping/TresourcetypeVo.hbm.xml</value>
+                <value>classpath:mapping/TroleVo.hbm.xml</value>
+                <value>classpath:mapping/SchoolVo.hbm.xml</value>
                 <value>classpath:mapping/ClassroomVo.hbm.xml</value>
                 <value>classpath:mapping/QuestionVo.hbm.xml</value>
                 <value>classpath:mapping/QuestionTypeVo.hbm.xml</value>
                 <value>classpath:mapping/SubjectVo.hbm.xml</value>
                 <value>classpath:mapping/LogVo.hbm.xml</value>
                 <value>classpath:mapping/TopicVo.hbm.xml</value>
-				<value>classpath:mapping/PaperVo.hbm.xml</value>
+                <value>classpath:mapping/PaperVo.hbm.xml</value>
                 <value>classpath:mapping/ExamVo.hbm.xml</value>
                 <value>classpath:mapping/ScheduleVo.hbm.xml</value>
                 <value>classpath:mapping/StudentExamVo.hbm.xml</value>
                 <value>classpath:mapping/StudentExamQuestionVo.hbm.xml</value>
             </list>
-		</property>
-		<property name="annotatedClasses">
-			<list>
-				<value>com.njmsita.exam.authentic.model.StudentVo</value>
-				<value>com.njmsita.exam.authentic.model.TeacherVo</value>
-				<value>com.njmsita.exam.authentic.model.TresourceVo</value>
-				<value>com.njmsita.exam.authentic.model.TresourcetypeVo</value>
-				<value>com.njmsita.exam.authentic.model.TroleVo</value>
-				<value>com.njmsita.exam.manager.model.SchoolVo</value>
+        </property>
+        <property name="annotatedClasses">
+            <list>
+                <value>com.njmsita.exam.authentic.model.StudentVo</value>
+                <value>com.njmsita.exam.authentic.model.TeacherVo</value>
+                <value>com.njmsita.exam.authentic.model.TresourceVo</value>
+                <value>com.njmsita.exam.authentic.model.TresourcetypeVo</value>
+                <value>com.njmsita.exam.authentic.model.TroleVo</value>
+                <value>com.njmsita.exam.manager.model.SchoolVo</value>
                 <value>com.njmsita.exam.manager.model.ClassroomVo</value>
                 <value>com.njmsita.exam.manager.model.QuestionVo</value>
                 <value>com.njmsita.exam.manager.model.QuestionTypeVo</value>
                 <value>com.njmsita.exam.manager.model.SubjectVo</value>
                 <value>com.njmsita.exam.manager.model.LogVo</value>
                 <value>com.njmsita.exam.manager.model.TopicVo</value>
-				<value>com.njmsita.exam.manager.model.PaperVo</value>
+                <value>com.njmsita.exam.manager.model.PaperVo</value>
                 <value>com.njmsita.exam.manager.model.ExamVo</value>
                 <value>com.njmsita.exam.manager.model.ScheduleVo</value>
                 <value>com.njmsita.exam.manager.model.StudentExamVo</value>
                 <value>com.njmsita.exam.manager.model.StudentExamQuestionVo</value>
             </list>
-		</property>
-	</bean>
-	
-	<!-- DataSource -->
-	<!--<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">-->
-		<!--<property name="driverClassName" value="com.mysql.jdbc.Driver"/>-->
-		<!--<property name="url" value="jdbc:mysql://192.168.1.166:3306/jf_exam"/>-->
-		<!--<property name="username" value="root"/>-->
-		<!--<property name="password" value="root"/>-->
-	<!--</bean>-->
-    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
-        <property name="driverClass" value="com.mysql.jdbc.Driver" />
-		<!--<property name="jdbcUrl" value="jdbc:mysql://192.168.1.166:3306/jf_exam" />-->
-		<property name="user" value="root" />
-		<!--<property name="password" value="root" />-->
-		<property name="jdbcUrl" value="jdbc:mysql://moonkop.com:3306/jf_exam" />
-		<property name="password" value="451979253a" />
+        </property>
     </bean>
 
-	<mongo:mongo-client id="mongo" host="${mongo.host}" port="${mongo.port}" credentials="${mongo.userName}:${mongo.password}@${mongo.dbname}">
+    <!-- DataSource -->
+    <!--<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">-->
+    <!--<property name="driverClassName" value="com.mysql.jdbc.Driver"/>-->
+    <!--<property name="url" value="jdbc:mysql://192.168.1.166:3306/jf_exam"/>-->
+    <!--<property name="username" value="root"/>-->
+    <!--<property name="password" value="root"/>-->
+    <!--</bean>-->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <property name="driverClass" value="com.mysql.jdbc.Driver"/>
+        <property name="user" value="root"/>
+        <property name="maxStatements" value="200"></property>
+        <property name="idleConnectionTestPeriod" value="30"></property>
+        <!--<property name="password" value="root" />-->
+        <property name="jdbcUrl" value="jdbc:mysql://moonkop.com:3306/jf_exam?autoReconnect=true"/>
+        <property name="testConnectionOnCheckout" value="true"></property>
+        <property name="password" value="451979253a"/>
+        <property name="checkoutTimeout" value="1500"></property>
+        <property name="loginTimeout" value="1500"></property>
+        <property name="unreturnedConnectionTimeout" value="1500"></property>
 
-		<mongo:client-options write-concern="NORMAL" />
+    </bean>
 
-	</mongo:mongo-client>
+    <mongo:mongo-client id="mongo" host="${mongo.host}" port="${mongo.port}"
+                        credentials="${mongo.userName}:${mongo.password}@${mongo.dbname}">
 
-	<bean class="org.springframework.data.mongodb.core.MongoTemplate" id="mongoTemplate">
-		<constructor-arg name="mongo" ref="mongo"/>
-		<constructor-arg name="databaseName" value="${mongo.dbname}"/>
-	</bean>
+        <mongo:client-options write-concern="NORMAL"
+                              connect-timeout="1000"
+                              heartbeat-connect-timeout="1000"
+                              socket-timeout="1000"
+        />
+
+    </mongo:mongo-client>
+
+    <bean class="org.springframework.data.mongodb.core.MongoTemplate" id="mongoTemplate">
+        <constructor-arg name="mongo" ref="mongo"/>
+        <constructor-arg name="databaseName" value="${mongo.dbname}"/>
+    </bean>
 </beans>	
 	

@@ -15,9 +15,9 @@
         <property name="url" column="URL"/>
 
         <many-to-one name="resourcetype" column="tresourcetype_id" class="com.njmsita.exam.authentic.model.TresourcetypeVo" lazy="false"/>
-        <many-to-one name="parent" column="pid" class="com.njmsita.exam.authentic.model.TresourceVo" lazy="proxy"/>
+        <many-to-one name="parent" column="pid" class="com.njmsita.exam.authentic.model.TresourceVo"/>
 
-        <set name="childs" cascade="delete" inverse="true" lazy="false" order-by="seq">
+        <set name="childs" cascade="delete" inverse="true" order-by="seq">
             <key column="pid"></key>
             <one-to-many class="com.njmsita.exam.authentic.model.TresourceVo"/>
         </set>

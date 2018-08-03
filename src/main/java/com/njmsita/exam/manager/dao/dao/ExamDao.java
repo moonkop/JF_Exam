@@ -29,5 +29,5 @@ public interface ExamDao extends BaseDao<ExamVo>
     public List<ExamVo> getByMarkTeacher(String teacherId);
 
     public ExamVo getExamWithPaper(Serializable uuid);
-    public void SetPaper(ExamVo examVo);
+    public void initPaperForExam(ExamVo examVo);
 }

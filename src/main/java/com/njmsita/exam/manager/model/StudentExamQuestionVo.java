@@ -4,6 +4,7 @@ import com.njmsita.exam.authentic.model.TeacherVo;
 import com.njmsita.exam.utils.consts.SysConsts;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -171,6 +172,10 @@ public class StudentExamQuestionVo
     @Transient
     public List<String> getSelectedOptionList()
     {
+        if (getWorkout() == null)
+        {
+            return new ArrayList<>();
+        }
         List<String> workoutList = Arrays.asList(getWorkout().split(","));
         //去除所有空值
         workoutList.removeAll(SysConsts.STRING_EMPTY_SET);

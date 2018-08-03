@@ -18,13 +18,13 @@
 
         <many-to-one name="createTeacher" column="create_teacher_id" class="com.njmsita.exam.authentic.model.TeacherVo"/>
 
-        <many-to-one name="subject" column="subject_id" class="com.njmsita.exam.manager.model.SubjectVo" lazy="false"/>
+        <many-to-one name="subject" column="subject_id" class="com.njmsita.exam.manager.model.SubjectVo"/>
 
-        <set name="markTeachers" table="exam_markteacher" lazy="false">
+        <set name="markTeachers" table="exam_markteacher">
             <key column="exam_id"></key>
             <many-to-many column="teacher_id" class="com.njmsita.exam.authentic.model.TeacherVo"/>
         </set>
-        <set name="classrooms" table="exam_classroom" lazy="true">
+        <set name="classrooms" table="exam_classroom" >
             <key column="exam_id"></key>
             <many-to-many column="classroom_id" class="com.njmsita.exam.manager.model.ClassroomVo"/>
         </set>

@@ -207,7 +207,7 @@ public class ExamManageController extends BaseController
         TeacherVo login = (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
         List<ExamVo> list = examManageEbi.getAllByAdmin(login.getId(), examListQueryModel);
         return new JsonListResponse<ExamVo>(list,
-                "id,name,openTime,duration,remark,operation,[teacher]getCreateTeacher().getName(),[subject]subject.name,examStatusView", examManageEbi.getCount(examListQueryModel));
+                "id,name,openTime,duration,remark,operation,[teacher]getCreateTeacher().getName(),[subject]getSubject().getName(),examStatusView", examManageEbi.getCount(examListQueryModel));
     }
 
 

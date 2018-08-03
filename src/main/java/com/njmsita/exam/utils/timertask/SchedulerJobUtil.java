@@ -1,16 +1,22 @@
 package com.njmsita.exam.utils.timertask;
 
 import com.njmsita.exam.manager.model.ExamVo;
+import com.njmsita.exam.manager.model.QuestionTypeVo;
+import com.njmsita.exam.manager.model.QuestionVo;
 import com.njmsita.exam.manager.model.ScheduleVo;
 import com.njmsita.exam.manager.service.ebi.ExamManageEbi;
+import com.njmsita.exam.manager.service.ebo.ExamInvoker;
+import com.njmsita.exam.manager.service.ebo.ExamManageEbo;
 import com.njmsita.exam.utils.consts.SysConsts;
+import com.njmsita.exam.utils.exception.ItemNotFoundException;
+import com.njmsita.exam.utils.exception.OperationException;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
 import org.springframework.web.context.ContextLoader;
 
-import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class SchedulerJobUtil
 {
@@ -21,68 +27,23 @@ public class SchedulerJobUtil
         //获取trigger，即在spring配置文件中定义的 bean id="myTrigger"
         CronTrigger trigger = (CronTrigger) scheduler.getTrigger(triggerKey);
         //表达式调度构建器
-        CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule(job
-                .getCronexpression());
+        CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule(job.getCronexpression());
         //不存在，创建一个
         if (trigger == null)
         {
-            JobDetail jobDetail = JobBuilder.newJob(new Job()
-            {
-                @Override
-                public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException
-                {
-                    System.out.println("任务正在运行");
-                    ScheduleVo scheduleVo = (ScheduleVo) jobExecutionContext.getMergedJobDataMap().get("scheduleVo");
-                    System.out.println("任务名称 = [" + scheduleVo.getJobName() + "]");
-                    ContextLoader.getCurrentWebApplicationContext().getBean(ExamManageEbi.class).invoke(examManageEbo ->
-                    {
-
-                        ExamVo exam = examManageEbo.get(scheduleVo.getTargetVoId());
-
-
-                        if (exam.getExamStatus() == scheduleVo.getNowStatu())
-                        {
-                            switch (scheduleVo.getAffterStatu())
-                            {
-                                case SysConsts.EXAM_STATUS_OPEN:
-
-
-                                    break;
-                                case SysConsts.EXAM_STATUS_CLOSE:
-
-
-                                    break;
-                                case SysConsts.EXAM_STATUS_IN_MARK:
-
-
-                                    break;
-                                case SysConsts.EXAM_STATUS_ENDING:
-
-
-                                    break;
-                            }
-
-
-                            exam.setExamStatus(scheduleVo.getAffterStatu());
-                        }
-                        examManageEbo.outmodedSchedule(scheduleVo);
-                    });
-                }
-            }.getClass())
+            JobDetail jobDetail = JobBuilder.newJob(ExamStatusModifyJob.class)
                     .withIdentity(job.getJobName(), job.getJobGroup()).build();
             jobDetail.getJobDataMap().put("scheduleVo", job);
 
 
             //按新的cronExpression表达式构建一个新的trigger
-            trigger = TriggerBuilder.newTrigger().withIdentity(triggerKey).
-                    withSchedule(scheduleBuilder).build();
+            trigger = TriggerBuilder.newTrigger().withIdentity(triggerKey).withSchedule(scheduleBuilder).build();
             scheduler.scheduleJob(jobDetail, trigger);
         } else
         {
             // Trigger已存在，那么更新相应的定时设置
             //按新的cronExpression表达式重新构建trigger
-            trigger = trigger.getTriggerBuilder().withIdentity(triggerKey)
-                    .withSchedule(scheduleBuilder).build();
+            trigger = trigger.getTriggerBuilder().withIdentity(triggerKey).withSchedule(scheduleBuilder).build();
             //按新的trigger重新设置job执行
             scheduler.rescheduleJob(triggerKey, trigger);
         }
@@ -100,25 +61,7 @@ public class SchedulerJobUtil
         scheduler.deleteJob(jobKey);
     }
 
-    /**
-     * 添加一次性任务
-     *
-     * @param scheduleVo
-     *
-     * @throws SchedulerException
-     */
-    public static void addJob(ScheduleVo scheduleVo) throws SchedulerException
-    {
-        Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
-        JobDetail jobDetail = JobBuilder.newJob(StudentSubmitJob.class)
-                .withIdentity(scheduleVo.getJobName(), scheduleVo.getJobGroup()).build();
-        jobDetail.getJobDataMap().put("scheduleVo", scheduleVo);
-        CronTrigger trigger = TriggerBuilder.newTrigger()
-                .withIdentity(scheduleVo.getJobName(), scheduleVo.getJobGroup())
-                .withSchedule(CronScheduleBuilder.cronSchedule(scheduleVo.getCronexpression()))
-                .build();
-        scheduler.scheduleJob(jobDetail, trigger);// 将任务信息添加到sheduler中
-    }
+
 
     /**
      * 删除任务

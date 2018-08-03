@@ -277,7 +277,7 @@ public class TeacherController extends BaseController
     {
         return new JsonListResponse<>(
                 teaEbi.getAll(teacherQueryVo, pageNum, pageSize),
-                "name,id,teacherId,[role]role.name",
+                "name,id,teacherId,[role]getRole().getName()",
                 teaEbi.getCount(teacherQueryVo));
 
     }

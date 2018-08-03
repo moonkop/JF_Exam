@@ -79,12 +79,13 @@ public class BaseController
         UserModel login = (UserModel) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
         TroleVo troleVo = roleEbi.get(login.getUserRole());
         List<TresourceVo> loginMenu = resourceEbi.getMenuByRole(troleVo.getId());
-        //过滤type==1，即资源为功能，不是菜单，不该显示
+
         if (loginMenu != null)
         {
             for (int i = 0; i < loginMenu.size(); i++)
             {
                 delLoginMenuChilds(loginMenu.get(i));
+                //过滤type==1，即资源为功能，不是菜单，不该显示
                 if (loginMenu.get(i).getResourcetype().getId().equals("1"))
                 {
                     loginMenu.remove(loginMenu.get(i));

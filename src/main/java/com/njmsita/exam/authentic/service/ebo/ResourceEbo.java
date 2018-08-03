@@ -37,7 +37,7 @@ public class ResourceEbo implements ResourceEbi
 
     }
 
-
+    @Transactional(readOnly = true)
     public List<TresourceVo> getAll()
     {
         return resourceDao.getAllOrderBySeq();
@@ -88,16 +88,18 @@ public class ResourceEbo implements ResourceEbi
     //------------------------------以上为基本方法--------------------------------------------
     //------------------------------以上为基本方法--------------------------------------------
 
-
+    @Transactional(readOnly = true)
     public List<TresourceVo> getAllByLogin(String id)
     {
         return resourceDao.getAllByLoginId(id);
     }
 
+    @Transactional(readOnly = true)
     public List<TresourceVo> getAllByLogin_stu(String id){
         return resourceDao.getAllByLoginId_stu(id);
     }
 
+    @Transactional(readOnly = true)
     public List<TresourceVo> getMenuByRole(String id)
     {
         List<TresourceVo> tresourceVoList = resourceDao.getMenuByRole(id);
