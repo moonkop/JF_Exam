@@ -122,7 +122,7 @@ public class ExamManageEbo implements ExamManageEbi
         wrapper.getExam().setCreateTeacher(loginTeacher);
         if (loginTeacher.IsAdmin())
         {
-            wrapper.getExam().setExamStatus(SysConsts.EXAM_STATUS_PASS);
+            wrapper.getExam().setExamStatus(SysConsts.EXAM_STATUS_WAITING);
         } else
         {
             wrapper.getExam().setExamStatus(SysConsts.EXAM_STATUS_NO_CHECK);
@@ -206,11 +206,11 @@ public class ExamManageEbo implements ExamManageEbi
         ExamVo examPo = getExamNotNull(examVo);
         if ((examPo.getOpenTime() - System.currentTimeMillis()) < 0)
         {
-            examPo.setExamStatus(SysConsts.EXAM_STATUS_OUTMODED);
+            examPo.setExamStatus(SysConsts.EXAM_STATUS_OUTDATED);
             throw new OperationException("该场考试已经过时，请勿执行该操作！");
         }
         checkPermission(SysConsts.EXAM_OPERATION_REVIEW, loginTeacher, examPo);
-        examPo.setExamStatus(SysConsts.EXAM_STATUS_PASS);
+        examPo.setExamStatus(SysConsts.EXAM_STATUS_WAITING);
         createExamSchedules(examPo, false);
     }
 
@@ -233,7 +233,7 @@ public class ExamManageEbo implements ExamManageEbi
         ExamVo examPo = getExamNotNull(examVo);
         checkPermission(SysConsts.EXAM_OPERATION_CANCEL, loginTeacher, examPo);
 
-        examPo.setExamStatus(SysConsts.EXAM_STATUS_IN_CANCEL);
+        examPo.setExamStatus(SysConsts.EXAM_STATUS_CANCELED);
         studentExamDao.deleteAllByExam(examVo);
 
         //取消时直接删除任务
@@ -322,7 +322,7 @@ public class ExamManageEbo implements ExamManageEbi
                     }
 
                     break;
-                case SysConsts.EXAM_STATUS_PASS:
+                case SysConsts.EXAM_STATUS_WAITING:
                     if (loginTeacher.IsAdmin())
                     {
                         operationSet.add(SysConsts.EXAM_OPERATION_CANCEL);
@@ -335,6 +335,10 @@ public class ExamManageEbo implements ExamManageEbi
                     operationSet.add(SysConsts.EXAM_OPERATION_ADD_MARK_TEACHER);
                     break;
                 case SysConsts.EXAM_STATUS_OPEN:
+                    if (loginTeacher.IsAdmin())
+                    {
+                        operationSet.add(SysConsts.EXAM_OPERATION_CANCEL);
+                    }
                     operationSet.add(SysConsts.EXAM_OPERATION_ADD_MARK_TEACHER);
                     if (SysConsts.SUPER_ADMIN_ID.equals(loginTeacher.getId()))
                     {
@@ -342,13 +346,21 @@ public class ExamManageEbo implements ExamManageEbi
                     }
                     break;
 
-                case SysConsts.EXAM_STATUS_CLOSE:
+                case SysConsts.EXAM_STATUS_CLOSED:
+                    if (loginTeacher.IsAdmin())
+                    {
+                        operationSet.add(SysConsts.EXAM_OPERATION_CANCEL);
+                    }
                     if (SysConsts.SUPER_ADMIN_ID.equals(loginTeacher.getId()))
                     {
                         operationSet.add(SysConsts.EXAM_OPERATION_STOP);
                     }
                     break;
-                case SysConsts.EXAM_STATUS_IN_MARK:
+                case SysConsts.EXAM_STATUS_MARKING:
+                    if (loginTeacher.IsAdmin())
+                    {
+                        operationSet.add(SysConsts.EXAM_OPERATION_CANCEL);
+                    }
                     operationSet.add(SysConsts.EXAM_OPERATION_ADD_MARK_TEACHER);
                     if (exam.getMarkTeachers().contains(loginTeacher))
                     {
@@ -356,7 +368,7 @@ public class ExamManageEbo implements ExamManageEbi
                         operationSet.add(SysConsts.EXAM_OPERATION_SUBMIT_MARK);
                     }
                     break;
-                case SysConsts.EXAM_STATUS_IN_CANCEL:
+                case SysConsts.EXAM_STATUS_CANCELED:
                     if (exam.getCreateTeacher().equalsById(loginTeacher))
                     {
                         operationSet.add(SysConsts.EXAM_OPERATION_EDIT);
@@ -366,7 +378,7 @@ public class ExamManageEbo implements ExamManageEbi
                         operationSet.add(SysConsts.EXAM_OPERATION_DELETE);
                     }
                     break;
-                case SysConsts.EXAM_STATUS_OUTMODED:
+                case SysConsts.EXAM_STATUS_OUTDATED:
                     if (exam.getCreateTeacher().equalsById(loginTeacher))
                     {
                         operationSet.add(SysConsts.EXAM_OPERATION_CANCEL);
@@ -402,7 +414,7 @@ public class ExamManageEbo implements ExamManageEbi
         {
             case SysConsts.EXAM_STATUS_NO_CHECK:
                 break;
-            case SysConsts.EXAM_STATUS_PASS:
+            case SysConsts.EXAM_STATUS_WAITING:
                 operationSet.add(SysConsts.EXAM_OPERATION_PREVIEW_VISIBLE);
                 operationSet.add(SysConsts.EXAM_OPERATION_PREVIEW);
                 break;
@@ -413,7 +425,7 @@ public class ExamManageEbo implements ExamManageEbi
                 operationSet.add(SysConsts.EXAM_OPERATION_PREVIEW);
 
                 break;
-            case SysConsts.EXAM_STATUS_CLOSE:
+            case SysConsts.EXAM_STATUS_CLOSED:
                 operationSet.add(SysConsts.EXAM_OPERATION_PREVIEW);
                 if (studentExamVo.getStatus() == SysConsts.STUDENT_EXAM_STATUS_STARTED)
                 {
@@ -427,11 +439,11 @@ public class ExamManageEbo implements ExamManageEbi
                 operationSet.add(SysConsts.EXAM_OPERATION_PREVIEW_VISIBLE);
                 operationSet.add(SysConsts.EXAM_OPERATION_PREVIEW);
                 break;
-            case SysConsts.EXAM_STATUS_IN_MARK:
+            case SysConsts.EXAM_STATUS_MARKING:
                 operationSet.add(SysConsts.EXAM_OPERATION_PREVIEW_VISIBLE);
                 operationSet.add(SysConsts.EXAM_OPERATION_PREVIEW);
                 break;
-            case SysConsts.EXAM_STATUS_IN_CANCEL:
+            case SysConsts.EXAM_STATUS_CANCELED:
                 break;
             case SysConsts.EXAM_STATUS_ENDING:
                 operationSet.add(SysConsts.EXAM_OPERATION_RESULT);
@@ -546,10 +558,9 @@ public class ExamManageEbo implements ExamManageEbi
     }
 
     @Transactional
-    public void outmodedSchedule(ScheduleVo scheduleVo)
+    public void deleteUsedSchedule(ScheduleVo scheduleVo)
     {
-        scheduleVo.setJobStatus(SysConsts.SCHEDULEVO_JOB_STATUS_OUTMODED);
-        scheduleDao.update(scheduleVo);
+        scheduleDao.delete(scheduleVo);
     }
 
     @Override
@@ -558,7 +569,7 @@ public class ExamManageEbo implements ExamManageEbi
     {
         ExamVo examPo = examDao.get(examId);
         checkPermission(SysConsts.EXAM_OPERATION_STOP, loginTeacher, examPo);
-        examPo.setExamStatus(SysConsts.EXAM_STATUS_IN_MARK);
+        examPo.setExamStatus(SysConsts.EXAM_STATUS_MARKING);
         examPo.setCloseTime(System.currentTimeMillis());
         List<ScheduleVo> scheduleList = scheduleDao.getByTarget(examPo.getId());
         for (ScheduleVo scheduleVo : scheduleList)
@@ -658,22 +669,17 @@ public class ExamManageEbo implements ExamManageEbi
         switch (action)
         {
             case SysConsts.EXAM_SCHEDULE_ACTION_TYPE_EXAM_START:
-                scheduleVo.setStatusBefore(SysConsts.EXAM_STATUS_PASS);
+                scheduleVo.setStatusAfter(SysConsts.EXAM_STATUS_OPEN);
                 scheduleVo.setCronexpression(FormatUtil.cronExpression(exam.getOpenTime()));
                 break;
             case SysConsts.EXAM_SCHEDULE_ACTION_TYPE_EXAM_CLOSE_ENTRANCE:
-                scheduleVo.setStatusBefore(SysConsts.EXAM_STATUS_OPEN);
+                scheduleVo.setStatusAfter(SysConsts.EXAM_STATUS_CLOSED);
                 scheduleVo.setCronexpression(FormatUtil.cronExpression(exam.getOpenTime() + exam.getOpenDuration() * 60 * 1000));
                 break;
             case SysConsts.EXAM_SCHEDULE_ACTION_TYPE_EXAM_END:
+                scheduleVo.setStatusAfter(SysConsts.EXAM_STATUS_MARKING);
 
-                if (exam.getDuration() == 0)
-                {
-                    scheduleVo.setCronexpression(FormatUtil.cronExpression(exam.getCloseTime()));
-                } else
-                {
-                    scheduleVo.setCronexpression(FormatUtil.cronExpression(exam.getOpenTime() + (exam.getDuration() * 60 * 1000)));
-                }
+              scheduleVo.setCronexpression(FormatUtil.cronExpression(exam.getCloseTime()));
                 break;
         }
         scheduleVo.setJobStatus(SysConsts.SCHEDULEVO_JOB_STATUS_START);
@@ -820,7 +826,7 @@ public class ExamManageEbo implements ExamManageEbi
 
         } else
         {
-            examVo.setExamStatus(SysConsts.EXAM_STATUS_PASS);
+            examVo.setExamStatus(SysConsts.EXAM_STATUS_WAITING);
             createSchedulerJob(examVo, SysConsts.EXAM_SCHEDULE_ACTION_TYPE_EXAM_START);
         }
         if (examVo.getOpenDuration() != 0)

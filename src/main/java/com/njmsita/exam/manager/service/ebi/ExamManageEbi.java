@@ -153,7 +153,7 @@ public interface ExamManageEbi extends BaseEbi<ExamVo>
 
     void log(ScheduleVo scheduleVo, String method);
 
-    void outmodedSchedule(ScheduleVo scheduleVo);
+    void deleteUsedSchedule(ScheduleVo scheduleVo);
 
     void stop(String examId, TeacherVo attribute) throws Exception;
 

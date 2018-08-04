@@ -156,41 +156,41 @@ public class SysConsts
 	 */
 	//todo 补充每一位状态的意意义
 	public final static int EXAM_STATUS_NO_CHECK = 101;
-	public final static int EXAM_STATUS_PASS = 111;
+	public final static int EXAM_STATUS_WAITING = 111;
 	public final static int EXAM_STATUS_NO_PASS = 112;
 	public final static int EXAM_STATUS_OPEN = 121;
-	public final static int EXAM_STATUS_CLOSE = 122;
+	public final static int EXAM_STATUS_CLOSED = 122;
 	public final static int EXAM_STATUS_SUBMITTED = 123;
-	public final static int EXAM_STATUS_IN_MARK = 131;
-	public final static int EXAM_STATUS_IN_CANCEL = 141;
-	public final static int EXAM_STATUS_OUTMODED = 151;
+	public final static int EXAM_STATUS_MARKING = 131;
+	public final static int EXAM_STATUS_CANCELED = 141;
+	public final static int EXAM_STATUS_OUTDATED = 151;
 	public final static int EXAM_STATUS_ENDING = 199;
 	/**
      * 考试状态视图
      */
-	public static final String EXAM_STATUS_NO_CHECK_VIEW = "待审核";
-    public static final String EXAM_STATUS_PASS_VIEW = "未开始";
-    public static final String EXAM_STATUS_NO_PASS_VIEW = "待修改";
+	public static final String EXAM_STATUS_PENDING_VIEW = "待审核";
+    public static final String EXAM_STATUS_WAITING_VIEW = "未开始";
+    public static final String EXAM_STATUS_REJECTED_VIEW = "待修改";
     public static final String EXAM_STATUS_OPEN_VIEW = "进行中";
-    public static final String EXAM_STATUS_CLOSE_VIEW = "答题中";
+    public static final String EXAM_STATUS_CLOSED_VIEW = "答题中";
     public static final String EXAM_STATUS_SUBMITTED_VIEW = "已交卷";
-    public static final String EXAM_STATUS_IN_MARK_VIEW = "阅卷中";
-    public static final String EXAM_STATUS_IN_CANCEL_VIEW = "已取消";
-    public static final String EXAM_STATUS_OUTMODED_VIEW = "已过时";
+    public static final String EXAM_STATUS_MARKING_VIEW = "阅卷中";
+    public static final String EXAM_STATUS_CANCELED_VIEW = "已取消";
+    public static final String EXAM_STATUS_OUTDATED_VIEW = "已过时";
     public static final String EXAM_STATUS_ENDING_VIEW = "已结束";
 
     public final static Map<Integer, String> ExamStatusViewMap = new HashMap<>();
     static {
-        ExamStatusViewMap.put(SysConsts.EXAM_STATUS_NO_CHECK,SysConsts.EXAM_STATUS_NO_CHECK_VIEW );
-        ExamStatusViewMap.put(SysConsts.EXAM_STATUS_PASS,SysConsts.EXAM_STATUS_PASS_VIEW );
-        ExamStatusViewMap.put(SysConsts.EXAM_STATUS_NO_PASS,SysConsts.EXAM_STATUS_NO_PASS_VIEW );
+        ExamStatusViewMap.put(SysConsts.EXAM_STATUS_NO_CHECK,SysConsts.EXAM_STATUS_PENDING_VIEW );
+        ExamStatusViewMap.put(SysConsts.EXAM_STATUS_WAITING,SysConsts.EXAM_STATUS_WAITING_VIEW);
+        ExamStatusViewMap.put(SysConsts.EXAM_STATUS_NO_PASS,SysConsts.EXAM_STATUS_REJECTED_VIEW);
         ExamStatusViewMap.put(SysConsts.EXAM_STATUS_OPEN,SysConsts.EXAM_STATUS_OPEN_VIEW );
-        ExamStatusViewMap.put(SysConsts.EXAM_STATUS_CLOSE,SysConsts.EXAM_STATUS_CLOSE_VIEW );
+        ExamStatusViewMap.put(SysConsts.EXAM_STATUS_CLOSED,SysConsts.EXAM_STATUS_CLOSED_VIEW);
         ExamStatusViewMap.put(SysConsts.EXAM_STATUS_SUBMITTED,SysConsts.EXAM_STATUS_SUBMITTED_VIEW );
-        ExamStatusViewMap.put(SysConsts.EXAM_STATUS_IN_MARK,SysConsts.EXAM_STATUS_IN_MARK_VIEW );
-        ExamStatusViewMap.put(SysConsts.EXAM_STATUS_IN_CANCEL,SysConsts.EXAM_STATUS_IN_CANCEL_VIEW );
+        ExamStatusViewMap.put(SysConsts.EXAM_STATUS_MARKING,SysConsts.EXAM_STATUS_MARKING_VIEW);
+        ExamStatusViewMap.put(SysConsts.EXAM_STATUS_CANCELED,SysConsts.EXAM_STATUS_CANCELED_VIEW);
         ExamStatusViewMap.put(SysConsts.EXAM_STATUS_ENDING,SysConsts.EXAM_STATUS_ENDING_VIEW );
-        ExamStatusViewMap.put(SysConsts.EXAM_STATUS_OUTMODED,SysConsts.EXAM_STATUS_OUTMODED_VIEW );
+        ExamStatusViewMap.put(SysConsts.EXAM_STATUS_OUTDATED,SysConsts.EXAM_STATUS_OUTDATED_VIEW);
     }
 
 

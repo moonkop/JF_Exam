@@ -8,6 +8,8 @@
         exam: {
             openTime: emptyToUndefined(${exam.openTime}),
             closeTime: emptyToUndefined(${exam.closeTime}),
+            duration:emptyToUndefined(${exam.duration}),
+            openDuration:emptyToUndefined(${exam.openDuration}),
             classroomIds: [
                 <c:forEach items="${exam.classrooms}" var="classroom">
                 '${classroom.id}',
@@ -21,6 +23,7 @@
         function getPapers()
         {
             var subject = $("#select-subject").val();
+
 
             if (User.role == '0')
             {
@@ -127,13 +130,11 @@
         var timer="";
         $("#is-start-immediately").on("change",function()
         {
+            autoSetStartTime();
             if($("#is-start-immediately").prop("checked"))
             {
                 $("#input-start_time").prop("disabled",true);
-                timer=setInterval(function(){
-                    $("#input-start_time").val(TimeStampTDateTimeString(new Date().getTime()));
-                    $("#input-start_time").trigger("change");
-                },1000)
+                timer=setInterval(autoSetStartTime,1000);
             }else{
                 $("#input-start_time").prop("disabled",false);
                 clearInterval(timer);
@@ -141,11 +142,17 @@
 
         })
 
+        function autoSetStartTime()
+        {
+            $("#input-start_time").val(TimeStampTDateTimeString(new Date().getTime()));
+            $("#input-start_time").trigger("change");
+        }
 
         function autoSetEndTime()
         {
             var time = DateTimeStringToTimeStamp($("#input-start_time").val()) + $("#input-duration").val() * 60 * 1000 + $("#input-enter_time").val() * 60 * 1000;
             $("#input-finish_time").val(TimeStampTDateTimeString(time));
+            $("#input-finish_time").trigger("change");
         }
 
 
@@ -169,6 +176,17 @@
         if (app.exam.openTime == undefined)
         {
             app.exam.openTime = Date.now();
+        }
+        if(app.exam.duration!=0&&app.exam.duration!=undefined)
+        {
+            $("#is-limit-duration").prop("checked", true);
+            $("#is-limit-duration").trigger("change");
+
+        }
+        if (app.exam.openDuration!=0&&app.exam.openDuration!=undefined)
+        {
+            $("#is-limit-open-duration").prop("checked", true);
+            $("#is-limit-open-duration").trigger("change");
         }
         $("#input-start_time").val(TimeStampTDateTimeString(app.exam.openTime));
         $("#input-finish_time").val(TimeStampTDateTimeString(app.exam.closeTime));

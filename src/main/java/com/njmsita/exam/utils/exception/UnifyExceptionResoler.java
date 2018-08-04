@@ -39,7 +39,7 @@ public class UnifyExceptionResoler implements HandlerExceptionResolver
             unifyException = (UnifyException) exception;
         } else
         {
-            unifyException = new UnifyException("未知错误，测试阶段详情见日志信息！");
+            unifyException = new UnifyException("未知错误，请刷新后重试！");
         }
 
         message = unifyException.getMessage();

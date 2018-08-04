@@ -33,37 +33,31 @@ public class ExamStatusModifyJob implements Job
                 public void invoke(ExamManageEbo examManageEbo) throws ItemNotFoundException
                 {
                     ExamVo examPo = examManageEbo.get(scheduleVo.getTargetVoId());
-                    if (examPo.getExamStatus() == scheduleVo.getStatusBefore())
+                    if (examPo.getExamStatus()<scheduleVo.getStatusAfter())
                     {
+                        examPo.setExamStatus(scheduleVo.getStatusAfter());
                         switch (scheduleVo.getScheduleActionType())
                         {
                             case SysConsts.EXAM_SCHEDULE_ACTION_TYPE_EXAM_START:
-
-                                examPo.setExamStatus(SysConsts.EXAM_STATUS_OPEN);
                                 break;
                             case SysConsts.EXAM_SCHEDULE_ACTION_TYPE_EXAM_CLOSE_ENTRANCE:
-
-                                examPo.setExamStatus(SysConsts.EXAM_STATUS_CLOSE);
                                 break;
                             case SysConsts.EXAM_SCHEDULE_ACTION_TYPE_EXAM_END:
-
                                 if (examManageEbo.paperIsSelectProblemsOnly(examPo))
                                 {
                                     examPo.setExamStatus(SysConsts.EXAM_STATUS_ENDING);
-                                } else
-                                {
-                                    examPo.setExamStatus(SysConsts.EXAM_STATUS_IN_MARK);
                                 }
                                 break;
                         }
+                    }else{
+                        System.err.println("任务执行失败，条件不满足！");
                     }
-
-                    examManageEbo.outmodedSchedule(scheduleVo);
+                    examManageEbo.deleteUsedSchedule(scheduleVo);
                 }
             });
         } catch (Exception e)
         {
-            System.out.println("任务执行失败");
+            System.err.println("任务执行失败");
             e.printStackTrace();
         }
 

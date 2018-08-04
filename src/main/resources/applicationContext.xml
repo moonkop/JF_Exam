@@ -25,7 +25,9 @@
     </bean>
 
     <!--============================================Quartz任务集===================================================-->
-    <bean name="schedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean"/>
+    <bean name="schedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+
+    </bean>
     <!--=========================================Quartz任务集=========END==========================================-->
 
     <!-- SessionFactory -->

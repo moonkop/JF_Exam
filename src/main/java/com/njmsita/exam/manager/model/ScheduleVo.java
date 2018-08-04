@@ -17,7 +17,18 @@ public class ScheduleVo
 
     private String targetVoId;
     private Integer ScheduleActionType;
-    private Integer StatusBefore;
+
+    public Integer getStatusAfter()
+    {
+        return StatusAfter;
+    }
+
+    public void setStatusAfter(Integer statusAfter)
+    {
+        StatusAfter = statusAfter;
+    }
+
+    private Integer StatusAfter;
 
     public Integer getScheduleActionType()
     {
@@ -41,15 +52,6 @@ public class ScheduleVo
         this.targetVoId = examVo;
     }
 
-    public Integer getStatusBefore()
-    {
-        return StatusBefore;
-    }
-
-    public void setStatusBefore(Integer StatusBefore)
-    {
-        this.StatusBefore = StatusBefore;
-    }
 
     @Id
     @Column(name = "id")
@@ -170,7 +172,7 @@ public class ScheduleVo
                 ", describe='" + describe + '\'' +
                 ", jobType=" + jobType +
                 ", examVo=" + targetVoId +
-                ", nowStatu=" + StatusBefore +
+                ", StatusAfter=" + StatusAfter +
                 '}';
     }
 }

@@ -66,7 +66,7 @@ public class AllResourcesLoadListener implements ServletContextListener
                 {
                     //setOutmoded(examManageEbo,scheduleVo);
                     ExamVo examVo=examManageEbo.get(scheduleVo.getTargetVoId());
-                    examVo.setExamStatus(SysConsts.EXAM_STATUS_OUTMODED);
+                    examVo.setExamStatus(SysConsts.EXAM_STATUS_OUTDATED);
                     examManageEbo.update(examVo);
                     outmodedGroup.add(scheduleVo.getJobGroup());
                 }else {

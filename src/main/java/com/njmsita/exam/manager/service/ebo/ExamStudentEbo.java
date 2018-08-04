@@ -15,10 +15,8 @@ import com.njmsita.exam.utils.consts.SysConsts;
 import com.njmsita.exam.utils.exception.ItemNotFoundException;
 import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.exception.UnLoginException;
-import com.njmsita.exam.utils.format.FormatUtil;
 import com.njmsita.exam.utils.format.StringUtil;
 import com.njmsita.exam.utils.idutil.IdUtil;
-import com.njmsita.exam.utils.timertask.SchedulerJobUtil;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -87,7 +85,7 @@ public class ExamStudentEbo implements ExamStudentEbi
             //    throw new OperationException("无法保存他人的试卷");
         }
         ExamVo examVo = studentExamVo.getExam();
-        if (examVo.getExamStatus() >= SysConsts.EXAM_STATUS_IN_MARK)
+        if (examVo.getExamStatus() >= SysConsts.EXAM_STATUS_MARKING)
         {
             throw new OperationException("考试已结束，不允许保存");
         }
@@ -238,7 +236,7 @@ public class ExamStudentEbo implements ExamStudentEbi
             ExamVo examVo = studentExamVo.getExam();
             if (studentExamVo.getStatus() == SysConsts.STUDENT_EXAM_STATUS_SUBMITTED
                     && (examVo.getExamStatus() == SysConsts.EXAM_STATUS_OPEN
-                    || examVo.getExamStatus() == SysConsts.EXAM_STATUS_CLOSE))
+                    || examVo.getExamStatus() == SysConsts.EXAM_STATUS_CLOSED))
             {
                 examVo.setExamStatus(SysConsts.EXAM_STATUS_SUBMITTED);
             }
