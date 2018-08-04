@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
@@ -52,11 +53,14 @@ public abstract class BaseImpl<T>  extends HibernateDaoSupport implements BaseDa
 	}
 	public List<T> getAll(BaseQueryVO qm,Integer pageNum,Integer pageSize) {
 		DetachedCriteria dc=DetachedCriteria.forClass(entityClass);
+		dc.addOrder(Order.desc("id"));
+
 		doQbc(dc, qm);
 		return (List<T>) this.getHibernateTemplate().findByCriteria(dc,(pageNum-1)*pageSize,pageSize);
 	}
 	public List<T> getAll(BaseListQueryVo baseListQueryVo) {
 		DetachedCriteria dc=DetachedCriteria.forClass(entityClass);
+		dc.addOrder(Order.desc("id"));
 		doQbc(dc, baseListQueryVo);
 		return (List<T>) this.getHibernateTemplate().findByCriteria(dc, baseListQueryVo.getOffset(), baseListQueryVo.getPageSize());
 	}

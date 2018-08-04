@@ -1,5 +1,6 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 <!-- start content -->
+
 <div class="row">
     <div class="col-lg-12">
         <h3>
@@ -11,16 +12,17 @@
                     <div class="col-lg-12">
                         <form role="form" class="form-horizontal" action="/manage/school/edit.do">
                             <div class="form-group" style="display:none">
-                                <label class="col-sm-2 control-label" >学校id</label>
+                                <label class="col-sm-2 control-label">学校id</label>
                                 <div class="col-sm-8">
                                     <input type="text" class="form-control" id="input-id" name="id" value="${school.id}"
                                            placeholder="请输入学校名">
                                 </div>
                             </div>
-                            <div class="form-group" >
+                            <div class="form-group">
                                 <label class="col-sm-2 control-label" for="input-name">学校名</label>
                                 <div class="col-sm-8">
-                                    <input type="text" class="form-control" id="input-name" name="name" value="${school.name}"
+                                    <input type="text" class="form-control" id="input-name" name="name"
+                                           value="${school.name}"
                                            placeholder="请输入学校名">
                                 </div>
                             </div>
@@ -38,5 +40,7 @@
         </div>
     </div>
 </div>
-
+<script>
+    MyAjaxForm("form");
+</script>
 <!-- end content -->

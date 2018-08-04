@@ -2,12 +2,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 
 <script>
-    $(document).ready(function () {
-        $("#cancel").on("click",function () {
-            window.history.go(-1);
-        })
-
-    })
+    MyAjaxForm("form");
 </script>
         <!-- start content -->
         <div class="row">

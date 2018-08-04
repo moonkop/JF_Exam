@@ -1195,7 +1195,14 @@ function paper_edit_on_submit()
             data: JSON.stringify(paper),
             success: function (res) {
                 OnResult(res, function (res) {
-                    layer.msg("提交成功")
+                    layer.confirm('提交成功，是否返回？', {
+                        btn: ['是','否'] //按钮
+                    }, function(){
+                        window.location.href = "/paper";
+                    }, function(){
+
+                    });
+
                 })
             }
         }

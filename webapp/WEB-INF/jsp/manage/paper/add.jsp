@@ -1,8 +1,16 @@
-
 <%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-
+<script>
+    MyAjaxForm("form", {
+        success: function (res) {
+            defaultOnSuccess(res);
+            setTimeout(function () {
+                window.location.href = "/paper/edit?id=" + res.payload.id;
+            }, 700)
+        }
+    });
+</script>
 <!-- start content -->
 <div class="row">
     <div class="col-lg-12">

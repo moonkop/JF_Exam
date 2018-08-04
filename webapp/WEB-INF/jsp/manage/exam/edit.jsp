@@ -228,9 +228,6 @@
 
         $("#is-limit-open-duration").prop("checked") || (data.openDuration = 0);
         $("#is-limit-duration").prop("checked") || (data.duration = 0);
-
-        debugger;
-
         return data;
     }
 

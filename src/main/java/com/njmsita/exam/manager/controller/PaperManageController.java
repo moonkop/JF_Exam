@@ -118,7 +118,7 @@ public class PaperManageController extends BaseController
     {
         JsonResponse response = new JsonResponse();
         CheckErrorFields(bindingResult);
-//fixme 校验
+
         TeacherVo teacherVo1 = new TeacherVo();
         TeacherVo teacherVo = (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
         teacherVo1.setId(teacherVo.getId());
@@ -130,7 +130,7 @@ public class PaperManageController extends BaseController
         subjectVo.setId(subject_id);
         paperVo.setSubject(subjectVo);
         paperEbi.save(paperVo);
-
+        response.put("id", paperVo.getId());
         return response;
     }
 

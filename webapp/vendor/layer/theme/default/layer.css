@@ -119,6 +119,10 @@ html #layuicss-layer{display: none; position: absolute; width: 1989px;}
 .layui-layer-molv .layui-layer-btn a{background: #009f95; border-color: #009f95;}
 .layui-layer-molv .layui-layer-btn .layui-layer-btn1{background:#92B8B1;}
 
+.layui-layer-red .layui-layer-title{background: #cd0a00; color:#fff; border: none;}
+.layui-layer-red .layui-layer-btn a{background: #9f0800; border-color: #840002;}
+.layui-layer-red .layui-layer-btn .layui-layer-btn1{background:#92B8B1;}
+
 
 /**
  

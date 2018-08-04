@@ -1,12 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 
 <script>
-    $(document).ready(function () {
-        $("#cancel").on("click",function () {
-            window.history.go(-1);
-        })
-
-    })
+    MyAjaxForm("form");
 </script>
         <!-- start content -->
         <div class="row">
@@ -37,7 +32,7 @@
                                     </div>
                                     <div class="col-sm-offset-2">
                                         <button type="submit" class="btn btn-primary">提交</button>
-                                        <button class="btn btn-default js-cancel " id="cancel">取消</button>
+                                        <button class="btn btn-default js-cancel">取消</button>
                                     </div>
                                 </form>
                             </div>

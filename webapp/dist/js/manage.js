@@ -79,10 +79,63 @@ function myajax(config)
     //如果直接请求失败，则为网络错误，重写error方法
     {
         config.error = function () {
-            layer.msg("网络错误");
+            defaultOnFailure(
+                {
+                    code: '503',
+                    message: "网络错误"
+                }
+            );
         }
     }
     $.ajax(config);
+}
+
+
+function MyAjaxForm(selector, config)
+{
+    if (config == undefined)
+    {
+        config = {};
+    }
+
+    function onsuccess(res)
+    {
+        defaultOnSuccess(res);
+        setTimeout(function () {
+            window.history.go(-1);
+        }, 700);
+    }
+
+    if (typeof config.success == "function")
+    {
+        onsuccess = config.success;
+    }
+    config.success = function (res) {
+        if (res.code == 100)
+        {
+            onsuccess(res);
+        } else
+        {
+            defaultOnFailure(res);
+        }
+    }
+
+    if (typeof config.error != "function")
+    {
+        config.error = function () {
+            defaultOnFailure(
+                {
+                    code: '503',
+                    message: "网络错误"
+                }
+            );
+        }
+    }
+    $(document).ready(
+        function () {
+            $(selector).ajaxForm(config);
+        }
+    )
 }
 
 
@@ -140,7 +193,15 @@ function defaultOnFailure(res)
             });
             break;
         default:
-            var message = "操作失败" + res.code + ":" + res.message;
+            var message = "操作失败";
+            if (res.code != undefined)
+            {
+                message += res.code + ":";
+            }
+            if (res.message != undefined)
+            {
+                message += res.message;
+            }
             for (key in res.payload)
             {
                 message += "<br>" + key + "  " + res.payload[key];

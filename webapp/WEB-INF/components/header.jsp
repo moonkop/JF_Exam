@@ -16,6 +16,7 @@
 <script src="/vendor/laydate/laydate.js"></script>
 <script src="/vendor/momentjs/moment.min.js"></script>
 <script src="/dist/js/manage.js"></script>
+<script src="/vendor/jquery/jquery.form.js"></script>
 <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
 <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
