@@ -16,10 +16,14 @@ MONGO连接不稳定
 
 知识点加载速度提高
 
-#项目git地址：
+随机出题
+
+完善资源管理中学生资源
+
+# 项目git地址：
 http://git.moonkop.com/root/JF_Exam
 
-#环境要求
+# 环境要求
 若有前端开发需求，包括修改js 修改css等 需要node环境。
 
 初次进行前端开发，请在/webapp目录下 运行npm install以安装依赖库。
