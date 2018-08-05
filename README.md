@@ -36,3 +36,6 @@ http://git.moonkop.com/root/JF_Exam
 
 mysql mongo数据库地址在配置文件中已被配置为远程服务器，若需要切换为本地数据库请修改配置文件application-context.xml与mongodb.properties
 
+----------
+
+若有任何疑问 可联系qq451979253
