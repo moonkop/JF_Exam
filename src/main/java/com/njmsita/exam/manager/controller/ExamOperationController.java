@@ -357,8 +357,20 @@ public class ExamOperationController
     @RequestMapping("report")
     public String report(@RequestParam(name = "id") String examId, HttpServletRequest request) throws ItemNotFoundException
     {
-        ExamReport report = getExamReport(examId);
+
+        //只有选择题的考试并且考试已经完成，自动生成report
+        TeacherVo login = (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
         ExamVo ExamPo = examManageEbi.getWithPaper(examId);
+        ExamReport report = getExamReport(examId);
+        if(report==null)
+        {
+            try {
+                examMarkEbi.finishMark(ExamPo.getId(),login);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+//      ExamVo ExamPo = examManageEbi.getWithPaper(examId);
         request.setAttribute("report_json", CustomJsonSerializer.toJson_JsonNode1(report));
         request.setAttribute("report", report);
 

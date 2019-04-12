@@ -35,9 +35,9 @@ public interface TeacherEbi extends BaseEbi<TeacherVo>
 
     /**
      * 密码重置
-     * @param teacherVo
+     * @param id
      */
-    public void resetPassword(TeacherVo teacherVo);
+    public void resetPassword(String id);
 
     /**
      * 修改密码

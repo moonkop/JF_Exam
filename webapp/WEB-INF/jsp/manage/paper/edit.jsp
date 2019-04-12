@@ -51,9 +51,9 @@
                 编辑标题
             </button>
 
-            <button class="btn btn-primary">
-                设置分值
-            </button>
+            <%--<button class="btn btn-primary">--%>
+                <%--设置分值--%>
+            <%--</button>--%>
 
             <button class="btn btn-primary" id="js-btn-submit">
                 提交修改
@@ -141,13 +141,15 @@
                                         action: function (data) {
                                             question_add_on_click();
                                         }
-                                    },
-                                    addToPaper: {
-                                        label: '批量添加到试卷',
-                                        action: function (data) {
-                                            question_add_to_paper();
-                                        }
                                     }
+                                    //删除批量添加question，未实现
+                                    // },
+                                    // addToPaper: {
+                                    //     label: '批量添加到试卷',
+                                    //     action: function (data) {
+                                    //         question_add_to_paper();
+                                    //     }
+                                    // }
                                 };
                                 return tmp;
                             }

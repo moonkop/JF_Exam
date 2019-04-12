@@ -8,7 +8,7 @@
         <div class="row">
             <div class="col-lg-12">
                 <h3>
-                    教师管理 - 添加
+                    教师管理
                 </h3>
                 <div class="panel panel-primary main-panel">
                     <div class="panel-body">
@@ -93,7 +93,7 @@
                                     </div>
                                     <div class="col-sm-offset-2">
                                         <button type="submit" class="btn btn-primary">提交</button>
-                                        <button class="btn btn-default js-back">取消</button>
+                                        <button class="btn btn-default js-cancel" onclick="window.location.href='/teacher/manage'">取消</button>
                                     </div>
                                 </form>
                             </div>

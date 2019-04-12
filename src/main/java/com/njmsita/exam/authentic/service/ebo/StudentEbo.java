@@ -15,6 +15,7 @@ import com.njmsita.exam.utils.exception.FormatException;
 import com.njmsita.exam.utils.exception.OperationException;
 import com.njmsita.exam.utils.format.MD5Utils;
 import com.njmsita.exam.utils.format.StringUtil;
+import org.apache.bcel.generic.NEW;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.usermodel.Row;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -337,10 +338,11 @@ public class StudentEbo implements StudentEbi
         studentDao.bulkInput(students);
     }
 
-    public void resetPassword(StudentVo studentVo)
+    public void resetPassword(String id)
     {
-        studentVo = studentDao.get(studentVo.getStudentId());
-        studentVo.setPassword(MD5Utils.md5(studentVo.getStudentId()));
+        StudentVo temp= new StudentVo();
+        temp = studentDao.get(id);
+        temp.setPassword(MD5Utils.md5(temp.getStudentId()));
     }
 
     public void modifyPassword(StudentVo loginStudent, String oldPassword, String newPassword) throws OperationException
@@ -350,7 +352,7 @@ public class StudentEbo implements StudentEbi
             throw new OperationException("新密码不能为空，请不要进行非法操作！");
         }
         loginStudent = studentDao.get(loginStudent.getId());
-        loginStudent.setPassword(newPassword);
+        loginStudent.setPassword(MD5Utils.md5(newPassword));
     }
 
     /**

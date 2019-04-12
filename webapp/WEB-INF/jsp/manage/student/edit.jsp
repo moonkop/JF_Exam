@@ -8,7 +8,7 @@
         <div class="row">
             <div class="col-lg-12">
                 <h3>
-                    学生管理 - 添加
+                    学生管理
                 </h3>
                 <div class="panel panel-primary main-panel">
                     <div class="panel-body">
@@ -50,18 +50,13 @@
                                     </script>
 
 
-
-
-
-
                                     <div class="form-group">
                                         <label for="selectSchool" class="col-sm-2 control-label">学校</label>
 
                                         <div class="col-sm-8">
                                             <select name="schoolID" id="selectSchool" class="form-control" >
                                                 <c:forEach items="${requestScope.schools}" var="subject" >
-                                                    <option value="${subject.id}"
-                                                            <c:if test="${student.school==subject}">selected</c:if>   >
+                                                    <option value="${subject.id}" <c:if test="${student.school==subject}">selected</c:if>>
                                                             ${subject.name}
                                                     </option>
                                                 </c:forEach>
@@ -128,18 +123,30 @@
 
 
                                     <div class="form-group">
-                                        <label for="selectRole" class="col-sm-2 control-label">身份</label>
+                                        <label  class="col-sm-2 control-label">身份</label>
+
+                                        <%--<div class="col-sm-8">--%>
+                                            <%--<select name="roleID" id="selectRole" class="form-control">--%>
+                                                <%--<c:forEach items="${requestScope.roles}" var="role">--%>
+                                                    <%--<option value="${role.id}"--%>
+                                                            <%--<c:if test="${student.role==role}">selected</c:if>   >--%>
+                                                            <%--${role.name}--%>
+                                                    <%--</option>--%>
+                                                <%--</c:forEach>--%>
+                                            <%--</select>--%>
+                                        <%--</div>--%>
+                                        <%--学生添加页面，身份为学生--%>
 
                                         <div class="col-sm-8">
-                                            <select name="roleID" id="selectRole" class="form-control">
-                                                <c:forEach items="${requestScope.roles}" var="role">
-                                                    <option value="${role.id}"
-                                                            <c:if test="${student.role==role}">selected</c:if>   >
-                                                            ${role.name}
-                                                    </option>
-                                                </c:forEach>
-                                            </select>
+                                            <input type="text" class="form-control" id="selectRole" name="roleID"
+                                                   value="2" style="display: none;">
                                         </div>
+
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control"
+                                                   value="学生" disabled="disabled">
+                                        </div>
+
                                     </div>
                                     <div class="form-group">
                                         <label class="col-sm-2 control-label">身份证号码</label>
@@ -164,7 +171,8 @@
                                     </div>
                                     <div class="col-sm-offset-2">
                                         <button type="submit" class="btn btn-primary">提交</button>
-                                        <button id="cancel" class="btn btn-default">取消</button>
+                                        <button class="btn btn-default js-cancel" onclick="window.location.href='/student/manage'">取消</button>
+
                                     </div>
                                 </form>
                             </div>

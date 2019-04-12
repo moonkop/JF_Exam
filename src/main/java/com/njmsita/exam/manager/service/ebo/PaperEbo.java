@@ -62,6 +62,7 @@ public class PaperEbo implements PaperEbi
         temp.setComment(paperVo.getComment());
         temp.setTitle(paperVo.getTitle());
         temp.setQuestionList(paperVo.getQuestionList());
+        temp.setFullMark(paperVo.getFullMark());
         paperMongoDao.save(temp);
     }
 

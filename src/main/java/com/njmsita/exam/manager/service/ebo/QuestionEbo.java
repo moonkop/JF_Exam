@@ -205,12 +205,14 @@ public class QuestionEbo implements QuestionEbi
 
     public void delete(QuestionVo questionVo, TeacherVo teacherVo) throws UnAuthorizedException
     {
+        teacherVo=teacherDao.get(teacherVo.getId());
         questionVo = questionDao.get(questionVo.getId());
-        if (!teacherVo.getId().equals(questionVo.getTeacher().getId()) && teacherVo.getRole().getId() != SysConsts.ADMIN_ROLE_ID)
+        if (teacherVo.getId().equals(questionVo.getTeacher().getId()) || teacherVo.getRole().getId().equals(SysConsts.ADMIN_ROLE_ID) )
         {
-            throw new UnAuthorizedException("您不能删除这个题目");
+            questionDao.delete(questionVo);
+        }else{
+        throw new UnAuthorizedException("您不能删除这个题目");
         }
-        questionDao.delete(questionVo);
     }
 
     public QuestionVo updateOrSaveToMe(QuestionVo questionVo, TeacherVo teacherVo) throws OperationException
@@ -580,7 +582,7 @@ public class QuestionEbo implements QuestionEbi
                 throw new OperationException("答案格式不正确，请核对后重新导入！");
             }
             int aint=Integer.valueOf(a);
-            if (aint>=optionCount)
+            if (aint>optionCount)
             {
                 throw new OperationException("答案格式不正确，请核对后重新导入！");
             }

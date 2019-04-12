@@ -100,7 +100,7 @@
         <property name="maxStatements" value="200"></property>
         <property name="idleConnectionTestPeriod" value="30"></property>
         <!--<property name="password" value="root" />-->
-        <property name="jdbcUrl" value="jdbc:mysql://moonkop.com:3306/jf_exam?autoReconnect=true"/>
+        <property name="jdbcUrl" value="jdbc:mysql://han.moonkop.com:3306/jf_exam?autoReconnect=true"/>
         <property name="testConnectionOnCheckout" value="true"></property>
         <property name="password" value="451979253a"/>
         <property name="checkoutTimeout" value="1500"></property>

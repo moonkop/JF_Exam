@@ -63,8 +63,8 @@
                             </div>
                         </div>
                         <div class="col-sm-offset-2">
-                            <a class="btn btn-default" href= '/teacher/edit'>编辑</a>
-                            <a class="btn btn-default" href= '/teacher/setpassword'>修改密码</a>
+                            <a class="btn btn-default" href= '/student/edit'>编辑</a>
+                            <a class="btn btn-default" href= '/student/setpassword'>修改密码</a>
                         </div>
 
                     </div>

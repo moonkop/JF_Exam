@@ -9,7 +9,6 @@
                 </h3>
                 <div class="table-btns">
                     <a class="btn btn-primary" href="/teacher/manage/edit"> 添加教师</a>
-                    <button class="btn btn-default"> 批量导入教师</button>
                 </div>
                 <script src="/vendor/bootstrap-table/bootstrap-table.js"></script>
                 <script>
@@ -58,7 +57,7 @@
                                     sidePagination: "server",
                                     pageNumber: 1,
                                     pageSize: 10,                       //每页的记录行数（*）
-                                    pageList: [10, 25, 50, 100],
+                                    pageList: [10, 25, 50,],
                                     columns: [
                                         {
                                             field: 'id',

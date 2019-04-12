@@ -1,10 +1,12 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 <!-- start content -->
-
+<script>
+    MyAjaxForm("form");
+</script>
 <div class="row">
     <div class="col-lg-12">
         <h3>
-            学校管理 - 编辑
+            学校管理
         </h3>
         <div class="panel panel-primary main-panel">
             <div class="panel-body">
@@ -28,7 +30,7 @@
                             </div>
                             <div class="col-sm-offset-2">
                                 <button type="submit" class="btn btn-primary">提交</button>
-                                <button class="btn btn-default js-cancel">取消</button>
+                                <a class="btn btn-default " onclick="window.location.href='/manage/school'">取消</a>
                             </div>
                         </form>
                     </div>
@@ -40,7 +42,4 @@
         </div>
     </div>
 </div>
-<script>
-    MyAjaxForm("form");
-</script>
 <!-- end content -->

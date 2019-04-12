@@ -89,7 +89,23 @@ function myajax(config)
     }
     $.ajax(config);
 }
+// copy
+// 截成两部分，再从后一部分中截取相对路径。如果截取到的相对路径中有参数，则把参数去掉。
+// 举例：假如当前 Url 是 http// www. liangshunet. com/pub/item.aspx?t=osw7，则截取到的相对路径为：/pub/item.aspx。
+function GetUrlRelativePath()
+{
+    var url = document.location.toString();
+    var arrUrl = url.split("//");
 
+    var start = arrUrl[1].indexOf("/");
+    var relUrl = arrUrl[1].substring(start);//stop省略，截取从start开始到结尾的所有字符
+
+    if (relUrl.indexOf("?") != -1)
+    {
+        relUrl = relUrl.split("?")[0];
+    }
+    return relUrl;
+}
 
 function MyAjaxForm(selector, config)
 {
@@ -102,7 +118,10 @@ function MyAjaxForm(selector, config)
     {
         defaultOnSuccess(res);
         setTimeout(function () {
-            window.history.go(-1);
+            // var url = GetUrlRelativePath();
+            //访问URL，而不是history-1，修改的数据及时刷新。
+            var url=history.go(-1).url;
+            window.href=url;
         }, 700);
     }
 

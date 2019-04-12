@@ -10,7 +10,7 @@
             <div class="panel-body">
                 <div class="row">
                     <div class="col-lg-12">
-                        <form role="form" class="form-horizontal" action="/teacher/edit.do">
+                        <form role="form" class="form-horizontal" action="/student/edit.do">
                             <div class="form-group">
                                 <label class="col-sm-2 control-label">姓名</label>
                                 <div class="col-sm-8">
@@ -47,7 +47,8 @@
                             </div>
                             <div class="col-sm-offset-2">
                                 <input type="submit" class="btn btn-primary" value="提交">
-                                <button class="btn btn-default" onclick="window.location.href='/teacher/detail'" >取消</button>
+
+                                <button class="btn btn-default" onclick="window.location.href='/student/detail'" >取消</button>
                             </div>
                         </form>
                     </div>

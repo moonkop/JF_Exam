@@ -118,13 +118,11 @@ public class PaperManageController extends BaseController
     {
         JsonResponse response = new JsonResponse();
         CheckErrorFields(bindingResult);
-
-        TeacherVo teacherVo1 = new TeacherVo();
         TeacherVo teacherVo = (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
-        teacherVo1.setId(teacherVo.getId());
-        teacherVo1.setName(teacherVo.getName());
-        teacherVo1.setRole(null);
-        paperVo.setTeacher(teacherVo1);
+
+//        teacherVo=teacherEbi.get(teacherVo.getId());
+
+        paperVo.setTeacher(teacherVo);
         paperVo.setId(IdUtil.getUUID());
         SubjectVo subjectVo = new SubjectVo();
         subjectVo.setId(subject_id);
@@ -185,6 +183,7 @@ public class PaperManageController extends BaseController
         request.setAttribute("paper", paperVo);
         JsonListResponse<QuestionVo> response = new JsonListResponse<QuestionVo>(paperVo.getQuestionList(),
                 "id,outline,options,value,code,index,type,answer", 0);
+        //add questionList
         request.setAttribute("questionList", CustomJsonSerializer.toJsonString_static(response.getPayload().get("rows")));
         return "/manage/paper/edit";
     }
@@ -194,6 +193,14 @@ public class PaperManageController extends BaseController
     @SystemLogAnnotation(module = "试卷管理", methods = "试卷修改")
     public JsonResponse paperDoAdd(@RequestBody PaperVo paperVo) throws OperationException
     {
+        //设置fullMark
+        double fullMark =0;
+        List<QuestionVo> questionVoList=paperVo.getQuestionList();
+        for (QuestionVo temp:questionVoList)
+        {
+            fullMark+=(double)temp.getValue();
+        }
+        paperVo.setFullMark(fullMark);
         paperEbi.update(paperVo);
         return new JsonResponse();
     }

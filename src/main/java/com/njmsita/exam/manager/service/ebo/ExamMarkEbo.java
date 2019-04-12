@@ -118,6 +118,31 @@ public class ExamMarkEbo implements ExamMarkEbi
         examManageEbi.checkPermission(SysConsts.EXAM_OPERATION_SUBMIT_MARK, loginTeacher, examPo);
         List<StudentExamQuestionVo> questionList = studentExamQuestionDao.getByExam(examPo);
 
+        //全是选择题,自动生成report
+//        boolean allOptions=true;
+//        if(examPo.getExamStatusView().equals("已结束"))
+//        {
+//           for (StudentExamQuestionVo questionVo : questionList)
+//           {
+//           if (questionVo.getType()==SysConsts.QUESTION_TYPE_SHORT_ANSWER)
+//               {
+//                   allOptions = false;
+//                   break;
+//               }
+//           }
+//        }else {
+//            return;
+//        }
+//        if (!allOptions)
+//        {
+//            //简答题，并且有权限
+//            if(examPo.getOperation().contains("submitMark"))
+//            {
+//                examManageEbi.checkPermission(SysConsts.EXAM_OPERATION_SUBMIT_MARK, loginTeacher, examPo);
+//            }else{
+//                return;
+//            }
+//        }
         for (StudentExamQuestionVo studentExamQuestionVo : questionList)
         {
             if (!studentExamQuestionVo.IsMarked())

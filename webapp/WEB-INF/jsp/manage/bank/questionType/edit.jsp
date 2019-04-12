@@ -13,18 +13,21 @@
                                 <form role="form" class="form-horizontal" action="/manage/bank/questionType/edit.do">
                                     <input type="text" class="form-control" style="display: none;" name="id"
                                            value="${questionType.id}">
+                                    <input type="text" class="form-control" style="display: none;" name="name"
+                                           value="${questionType.name}">
                                     <div class="form-group">
-                                        <label class="col-sm-2 control-label">题目类型id</label>
-                                        <div class="col-sm-8">
-                                            <p class="form-control-static">${questionType.id}</p>
-                                        </div>
-                                    </div>
+                                        <%--<label class="col-sm-2 control-label">题目类型id</label>--%>
+                                        <%--<div class="col-sm-8">--%>
+                                            <%--<p class="form-control-static">${questionType.id}</p>--%>
+                                        <%--</div>--%>
+                                    <%--</div>--%>
+                                    <%--题目类型不予许修改--%>
                                     <div class="form-group">
                                         <label class="col-sm-2 control-label" for="input-name">题目类型名</label>
                                         <div class="col-sm-8">
                                             <input type="text" class="form-control" id="input-name" name="name"
                                                    value="${questionType.name}"
-                                                   placeholder="请输入题目类型名">
+                                                   disabled="disabled">
                                         </div>
                                     </div>
                                     <div class="form-group">

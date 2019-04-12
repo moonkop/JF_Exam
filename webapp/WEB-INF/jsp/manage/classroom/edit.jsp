@@ -1,11 +1,14 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8"%>
+<script>
+    MyAjaxForm("form");
+</script>
 
 <!-- start content -->
 <div class="row">
     <div class="col-lg-12">
         <h3>
-            班级管理 - 编辑
+            班级管理
         </h3>
         <div class="panel panel-primary main-panel">
             <div class="panel-body">
@@ -42,7 +45,7 @@
                             </div>
                             <div class="col-sm-offset-2">
                                 <button type="submit" class="btn btn-primary">提交</button>
-                                <button class="btn btn-default js-cancel">取消</button>
+                                <a class="btn btn-default" onclick="window.location.href='/manage/classroom'">取消</a>
                             </div>
                         </form>
                     </div>
@@ -55,8 +58,5 @@
     </div>
 </div>
 
-<script>
-    MyAjaxForm("form");
-</script>
 
 <!-- end content -->

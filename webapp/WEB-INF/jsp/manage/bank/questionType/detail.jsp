@@ -11,12 +11,14 @@
                         <div class="row">
                             <div class="col-lg-12">
                                 <div class="form-horizontal">
-                                    <div class="form-group">
-                                        <label class="col-sm-2 control-label">题目类型id</label>
-                                        <div class="col-sm-8">
-                                            <p class="form-control-static">${questionType.id}</p>
-                                        </div>
-                                    </div>
+                                    <%--<div class="form-group">--%>
+                                        <%--<label class="col-sm-2 control-label">题目类型id</label>--%>
+                                        <%--<div class="col-sm-8">--%>
+                                            <%--<p class="form-control-static">${questionType.id}</p>--%>
+                                        <%--</div>--%>
+                                    <%--</div>--%>
+                                    <input type="text" class="form-control" style="display: none;" name="id"
+                                           value="${questionType.id}">
 
                                     <div class="form-group">
                                         <label class="col-sm-2 control-label">题目类型名称</label>

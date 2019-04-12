@@ -5,7 +5,7 @@
         $("#resetpassword").on("click",function () {
 
             // var password=$("#idCardNo").contents().text();
-            var id=$("#id").val();
+            var id=${student.id};
             $.ajax({
                 type: "post",
                 dataType: "json",

@@ -84,6 +84,7 @@ public class ClassroomEbo implements ClassroomEbi
     {
         List<StudentVo> students=studentDao.getAllByClassroomId(classroomVo.getId());
         if(0==students.size()){
+            classroomVo=classroomDao.get(classroomVo.getId());
             classroomDao.delete(classroomVo);
         }else{
             throw new OperationException("该班级有关联的学生，不能执行该操作");

@@ -31,7 +31,7 @@ public class PaperTemplateDaoImpl implements PaperTemplateDao
         }
         if (paperQueryModel.getTeacher() != null)
         {
-            query.addCriteria(Criteria.where("teacher.id").is(paperQueryModel.getSubject().getId()));
+            query.addCriteria(Criteria.where("teacher.id").is(paperQueryModel.getTeacher().getId()));
         }
     }
 

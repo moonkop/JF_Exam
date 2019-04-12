@@ -280,31 +280,28 @@ public class QuestionBankManagerController extends BaseController
         if (questionType.getId() != null && questionType.getId() != 0)
         {
             questionTypeEbi.update(questionType);
-        } else
-        {
-            questionTypeEbi.save(questionType);
         }
         return response;
     }
-
-    /**
-     * 删除题型
-     *
-     * @param questionType 需要删除的题型
-     *
-     * @return 跳转题型列表页面
-     */
-    @ResponseBody
-    @RequestMapping("questionType/delete.do")
-    @SystemLogAnnotation(module = "题型管理", methods = "题型删除")
-    public JsonResponse questionTypeDelete(QuestionTypeVo questionType) throws Exception
-    {
-        if (questionType.getId() != 0 && questionType.getId() != null)
-        {
-            questionTypeEbi.delete(questionType);
-        }
-        return new JsonResponse("删除成功");
-    }
+    //不允许删除
+//    /**
+//     * 删除题型
+//     *
+//     * @param questionType 需要删除的题型
+//     *
+//     * @return 跳转题型列表页面
+//     */
+//    @ResponseBody
+//    @RequestMapping("questionType/delete.do")
+//    @SystemLogAnnotation(module = "题型管理", methods = "题型删除")
+//    public JsonResponse questionTypeDelete(QuestionTypeVo questionType) throws Exception
+//    {
+//        if (questionType.getId() != 0 && questionType.getId() != null)
+//        {
+//            questionTypeEbi.delete(questionType);
+//        }
+//        return new JsonResponse("删除成功");
+//    }
 
     @ResponseBody
     @RequestMapping("getQuestionType.do")

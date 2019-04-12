@@ -203,9 +203,10 @@ public class TeacherEbo implements TeacherEbi
         teaDao.bulkInput(teachers);
     }
 
-    public void resetPassword(TeacherVo teacherVo)
+    public void resetPassword(String id)
     {
-        teacherVo=teaDao.get(teacherVo.getId());
+        TeacherVo teacherVo=new TeacherVo();
+        teacherVo=teaDao.get(id);
         teacherVo.setPassword(MD5Utils.md5(teacherVo.getIdCardNo().substring(12,18)));
     }
 

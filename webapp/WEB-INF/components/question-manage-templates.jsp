@@ -264,9 +264,9 @@
                 <div class="btn btn-primary js-submit">
                     确认修改
                 </div>
-                <div class="btn btn-primary js-submit1">
-                    确认修改1
-                </div>
+                <%--<div class="btn btn-primary js-submit1">--%>
+                    <%--确认修改1--%>
+                <%--</div>--%>
             </div>
         </div>
     </script>

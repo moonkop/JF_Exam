@@ -299,15 +299,15 @@
 
 
 
-    <definition name="/manage/me/detail" extends="teacher_base">
+    <definition name="/manage/me/detail" extends="student_base">
         <put-attribute name="body" value="/WEB-INF/jsp/manage/me/student/detail.jsp"/>
 
     </definition>
-    <definition name="/manage/me/edit" extends="teacher_base">
+    <definition name="/manage/me/edit" extends="student_base">
         <put-attribute name="body" value="/WEB-INF/jsp/manage/me/student/edit.jsp"/>
     </definition>
 
-    <definition name="/manage/me/setpassword" extends="teacher_base">
+    <definition name="/manage/me/student/setpassword" extends="student_base">
         <put-attribute name="body" value="/WEB-INF/jsp/manage/me/student/setpassword.jsp"/>
     </definition>
 

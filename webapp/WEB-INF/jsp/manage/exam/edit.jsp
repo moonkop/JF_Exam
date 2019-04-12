@@ -376,7 +376,9 @@
                             </div>
                             <div class="col-sm-offset-2">
                                 <button type="submit" class="btn btn-primary">提交</button>
-                                <button class="btn btn-default js-cancel">取消</button>
+                                <%--<button class="btn btn-default js-cancel">取消</button>--%>
+                                <a class="btn btn-default " onclick="window.location.href='/exam/manage'">取消</a>
+
                             </div>
                         </form>
                     </div>
