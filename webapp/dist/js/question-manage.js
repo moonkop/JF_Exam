@@ -910,11 +910,11 @@ function question_manage_edit_on_submit(url)
         layer.alert("可见性不能为空");
         return;
     }
-    if ($.trim(question['id']) == "" || question['id'] == undefined || question['id'] == null)
-    {
-        layer.alert("id不能为空");
-        return;
-    }
+    // if ($.trim(question['id']) == "" || question['id'] == undefined || question['id'] == null)
+    // {
+    //     layer.alert("id不能为空");
+    //     return;
+    // }
 
     switch (question['questionType.id'])
     {

@@ -117,7 +117,7 @@
                 审核意见
             </div>
             <div class="panel-body">
-                <textarea id="text-remark" style="width: 100%;min-height: 300px;"></textarea>
+                <textarea id="text-remark" style="width: 100%;min-height: 200px;"></textarea>
             </div>
         </div>
         <div class="panel">

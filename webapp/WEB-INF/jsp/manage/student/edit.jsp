@@ -86,7 +86,7 @@
 
 
                                     <div class="form-group">
-                                        <label class="col-sm-2 control-label">账号</label>
+                                        <label class="col-sm-2 control-label">学号</label>
                                         <div class="col-sm-8">
                                             <input type="text" class="form-control" id="inputID" name="studentId"
                                                    value="${student.studentId}">

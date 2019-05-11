@@ -78,18 +78,18 @@
                                         <span>2018年6月24日19:26:00</span>
                                     </span>
                             </div>
-                            <div class="question-mark-area">
-                                <div class="question-mark-remark">
-                                    <textarea class="question-remark-area"></textarea>
-                                </div>
-                                <div class="question-mark-range">
-                                    <input type="text" class="js-question-mark-range">
-                                </div>
-                                <div class="question-mark-score">
-                                    <input type="text" class="question-mark-score-input">
-                                    <span>分</span>
-                                </div>
-                            </div>
+                            <%--<div class="question-mark-area">--%>
+                                <%--<div class="question-mark-remark">--%>
+                                    <%--<textarea class="question-remark-area"></textarea>--%>
+                                <%--</div>--%>
+                                <%--<div class="question-mark-range">--%>
+                                    <%--<input type="text" class="js-question-mark-range">--%>
+                                <%--</div>--%>
+                                <%--<div class="question-mark-score">--%>
+                                    <%--<input type="text" class="question-mark-score-input">--%>
+                                    <%--<span>分</span>--%>
+                                <%--</div>--%>
+                            <%--</div>--%>
                         </div>
                     </div>
                 </div>

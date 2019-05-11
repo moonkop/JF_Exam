@@ -10,7 +10,7 @@
                 </h3>
                 <div class="table-btns">
                     <a class="btn btn-primary" href="/student/manage/edit"> 添加学生</a>
-                    <button class="btn btn-default" id="import"> 批量导入学生</button>
+                    <%--<button class="btn btn-default" id="import"> 批量导入学生</button>--%>
                 </div>
                 <script src="/vendor/bootstrap-table/bootstrap-table.js"></script>
                 <script>

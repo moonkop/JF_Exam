@@ -45,9 +45,9 @@
                 <span class="question-mark-info-time"></span>
             </div>
             <div class="question-mark-area">
-                <div class="question-mark-remark">
-                    <textarea class="question-remark-area"></textarea>
-                </div>
+                <%--<div class="question-mark-remark">--%>
+                    <%--<textarea class="question-remark-area"></textarea>--%>
+                <%--</div>--%>
                 <div class="question-mark-range">
                     <input type="text" class="js-question-mark-range">
                 </div>

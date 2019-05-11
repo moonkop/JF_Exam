@@ -25,7 +25,7 @@ public interface ExamMarkEbi
      * @param examId
      * @param loginTeacher
      */
-    public void finishMark(String examId, TeacherVo loginTeacher) throws Exception;
+    public void finishMark(String examId, TeacherVo loginTeacher,Boolean isAuto) throws Exception;
 
     ExamReport buildExamReport(String examId);
 

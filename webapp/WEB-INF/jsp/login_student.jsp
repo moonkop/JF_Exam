@@ -64,7 +64,7 @@
         <div class="col-md-4 col-md-offset-4">
             <div class="login-panel panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title">学生登录</h3>
+                    <h3 class="panel-title" align="center">学生登录</h3>
                 </div>
                 <div class="panel-body">
                     <form role="form" method="post">
@@ -72,7 +72,7 @@
                         <fieldset>
 
                             <div class="form-group">
-                                <select class="form-control" placeholder="学号" name="schoolId" id="schoolId" autofocus>
+                                <select class="form-control"  name="schoolId" id="schoolId" autofocus>
                                     <c:forEach items="${schoolList}" var="item">
                                         <option value="${item.id}">${item.name}</option>
                                     </c:forEach>
@@ -87,11 +87,11 @@
                                 <input class="form-control" id="password" placeholder="密码" name="password"
                                        type="password" value="">
                             </div>
-                            <div class="checkbox text-right">
-                                <label>
-                                    <input name="remember" type="checkbox" value="Remember Me">记住我
-                                </label>
-                            </div>
+                            <%--<div class="checkbox text-right">--%>
+                                <%--<label>--%>
+                                    <%--<input name="remember" type="checkbox" value="Remember Me">记住我--%>
+                                <%--</label>--%>
+                            <%--</div>--%>
                             <!-- Change this to a button or input when using this as a form -->
                             <a href="javascript:void(0)" id="commit" class="btn btn-lg btn-success btn-block">登录</a>
                         </fieldset>

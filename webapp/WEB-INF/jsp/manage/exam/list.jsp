@@ -114,7 +114,7 @@
                             sidePagination: "server",
                             pageNumber: 1,
                             pageSize: 10,                       //每页的记录行数（*）
-                            pageList: [10, 25, 50, 100],
+                            pageList: [10, 20, 40, 50],
                             columns: [
                                 {
                                     field: 'id',

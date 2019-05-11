@@ -64,7 +64,7 @@
             <div class="col-md-4 col-md-offset-4">
                 <div class="login-panel panel panel-default">
                     <div class="panel-heading">
-                        <h3 class="panel-title">教师登录</h3>
+                        <h3 class="panel-title" align="center">教师登录</h3>
                     </div>
                     <div class="panel-body">
                         <form role="form" action="/teacher/login.do" method="post">
@@ -75,11 +75,11 @@
                             <div class="form-group">
                                 <input class="form-control" placeholder="密码" id="password" type="password" value="">
                             </div>
-                            <div class="checkbox text-right">
-                                <label>
-                                    <input name="remember" type="checkbox" value="Remember Me">记住我
-                                </label>
-                            </div>
+                            <%--<div class="checkbox text-right">--%>
+                                <%--<label>--%>
+                                    <%--<input name="remember" type="checkbox" value="Remember Me">记住我--%>
+                                <%--</label>--%>
+                            <%--</div>--%>
                             <!-- Change this to a button or input when using this as a form -->
                             <a  id="commit" class="btn btn-lg btn-success btn-block">登录</a>
                         </fieldset>

@@ -98,7 +98,7 @@ public class StudentController extends BaseController {
 
         if (loginStudent == null) {
             //用户信息验证失败
-            return new JsonResponse(501, "登录失败，账号或密码不正确！！");
+            return new JsonResponse(501, "登录失败，学号或密码不正确！！");
         }
         //用户信息验证成功
         //用户名密码验证成功获取当前登录人的所有权限
@@ -120,7 +120,7 @@ public class StudentController extends BaseController {
         logEbi.login(loginStudent, loginIp);
         //TODO 首次登陆强制跳转个人信息页面添加班级信息？还是直接批量导入时设置班级
         //fixme 应该是批量导入时设置班级
-        return new JsonResponse("登录成功");
+        return new JsonResponse();
     }
 
     /**

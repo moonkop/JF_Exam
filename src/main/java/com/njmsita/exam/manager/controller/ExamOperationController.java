@@ -329,7 +329,7 @@ public class ExamOperationController
     public JsonResponse submitMarked(@RequestParam(name = "id") String examId, HttpServletRequest request) throws Exception
     {
         TeacherVo loginTeacher = (TeacherVo) request.getSession().getAttribute(SysConsts.USER_LOGIN_OBJECT_NAME);
-        examMarkEbi.finishMark(examId, loginTeacher);
+        examMarkEbi.finishMark(examId, loginTeacher,false);
         return new JsonResponse("提交成功");
     }
 
@@ -355,7 +355,7 @@ public class ExamOperationController
     }
 
     @RequestMapping("report")
-    public String report(@RequestParam(name = "id") String examId, HttpServletRequest request) throws ItemNotFoundException
+    public String report(@RequestParam(name = "id") String examId, HttpServletRequest request) throws Exception
     {
 
         //只有选择题的考试并且考试已经完成，自动生成report
@@ -364,11 +364,7 @@ public class ExamOperationController
         ExamReport report = getExamReport(examId);
         if(report==null)
         {
-            try {
-                examMarkEbi.finishMark(ExamPo.getId(),login);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            examMarkEbi.finishMark(ExamPo.getId(),login,true);
         }
 //      ExamVo ExamPo = examManageEbi.getWithPaper(examId);
         request.setAttribute("report_json", CustomJsonSerializer.toJson_JsonNode1(report));

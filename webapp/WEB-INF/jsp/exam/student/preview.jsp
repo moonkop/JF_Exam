@@ -78,12 +78,12 @@
                                 </div>
                             </div>
 
-                            <div class="form-group">
-                                <label class="col-sm-2 control-label">满分</label>
-                                <div class="col-sm-8">
-                                    <p class="form-control-static">${fullMark}</p>
-                                </div>
-                            </div>
+                            <%--<div class="form-group">--%>
+                                <%--<label class="col-sm-2 control-label">满分</label>--%>
+                                <%--<div class="col-sm-8">--%>
+                                    <%--<p class="form-control-static">${fullMark}</p>--%>
+                                <%--</div>--%>
+                            <%--</div>--%>
 
 
                         </div>

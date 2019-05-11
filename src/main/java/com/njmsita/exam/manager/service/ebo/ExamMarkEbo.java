@@ -108,16 +108,25 @@ public class ExamMarkEbo implements ExamMarkEbi
 
     }
 
-    public void finishMark(String examId, TeacherVo loginTeacher) throws Exception
+
+    public void finishMark(String examId, TeacherVo loginTeacher,Boolean isAuto) throws Exception
     {
         if (StringUtil.isEmpty(examId))
         {
 
         }
         ExamVo examPo = examManageEbi.getExamNotNull(examId);
-        examManageEbi.checkPermission(SysConsts.EXAM_OPERATION_SUBMIT_MARK, loginTeacher, examPo);
         List<StudentExamQuestionVo> questionList = studentExamQuestionDao.getByExam(examPo);
-
+        if (!isAuto) {
+            examManageEbi.checkPermission(SysConsts.EXAM_OPERATION_SUBMIT_MARK, loginTeacher, examPo);
+            for (StudentExamQuestionVo studentExamQuestionVo : questionList)
+            {
+                if (!studentExamQuestionVo.IsMarked())
+                {
+                    throw new OperationException("所选考试下有题目尚未批阅，不能提交阅卷！");
+                }
+            }
+        }
         //全是选择题,自动生成report
 //        boolean allOptions=true;
 //        if(examPo.getExamStatusView().equals("已结束"))
@@ -143,13 +152,13 @@ public class ExamMarkEbo implements ExamMarkEbi
 //                return;
 //            }
 //        }
-        for (StudentExamQuestionVo studentExamQuestionVo : questionList)
-        {
-            if (!studentExamQuestionVo.IsMarked())
-            {
-                throw new OperationException("所选考试下有题目尚未批阅，不能提交阅卷！");
-            }
-        }
+//        for (StudentExamQuestionVo studentExamQuestionVo : questionList)
+//        {
+//            if (!studentExamQuestionVo.IsMarked())
+//            {
+//                throw new OperationException("所选考试下有题目尚未批阅，不能提交阅卷！");
+//            }
+//        }
         List<StudentExamVo> papers = studentExamDao.getAllStudentExambyExamId(examId);
         for (StudentExamVo paper : papers)
         {
@@ -162,7 +171,7 @@ public class ExamMarkEbo implements ExamMarkEbi
 
         examPo.setExamStatus(SysConsts.EXAM_STATUS_ENDING);
     }
-
+//生成考试报告
     @Override
     public ExamReport buildExamReport(String examId)
     {

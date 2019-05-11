@@ -64,6 +64,7 @@
 </div>
 
 <script>
-    MyAjaxForm("form");
+    $("form").ajaxForm();
+
 </script>
 <!-- end content -->

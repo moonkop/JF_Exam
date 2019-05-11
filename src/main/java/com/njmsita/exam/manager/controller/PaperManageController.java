@@ -52,7 +52,7 @@ public class PaperManageController extends BaseController
      * @return 跳转试卷列表
      */
     @RequestMapping("")
-    public String toPaperList(Integer pageNum, Integer pageSize, HttpServletRequest request)
+    public String toPaperList( HttpServletRequest request)
     {
         List<SubjectVo> subjectList = subjectEbi.getAll();
         request.setAttribute("subjectList", subjectList);
